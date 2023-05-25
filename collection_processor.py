@@ -6,7 +6,7 @@ STAC API collection processor
 Create a STAC collection or update its summaries based on its queryables.
 """
 __author__ = "Mathieu Provencher"
-__date__ = "20 Apr 2022"
+__date__ = "2022-04-20"
 __copyright__ = "Copyright 2022 Computer Research Institute of Montreal"
 __license__ = "MIT"
 __holder__ = "Computer Research Institute of Montreal (CRIM)"
