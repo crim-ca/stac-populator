@@ -9,15 +9,16 @@ RUN apt-get update && apt-get install -y build-essential git
 
 RUN git clone https://github.com/cedadev/stac-generator-example.git
 
-COPY ./requirements.txt /
+WORKDIR /populator
+
+COPY ./requirements.txt .
 
 RUN pip install -r requirements.txt
 
 RUN apt install wget
-RUN wget https://github.com/vishnubob/wait-for-it/blob/master/wait-for-it.sh
+RUN wget https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh
+RUN chmod +x wait-for-it.sh
 
-COPY . /populator
-
-WORKDIR /populator
+COPY . .
 
 CMD ["/bin/sh", "-c", "./populate.sh"]
