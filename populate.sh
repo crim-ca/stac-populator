@@ -24,6 +24,9 @@ fi
 
 cd $BASE_PATH/populator
 
+# replace STAC host name of collection processor
+sed -i "/stac_host:/c\stac_host: $STAC_HOST" collections.yaml
+
 # create collections
 python3 ./collection_processor.py collections.yaml
 
