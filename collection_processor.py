@@ -76,7 +76,7 @@ class CollectionProcessor:
 
         Returns the collection JSON.
         """
-        r = requests.get(os.path.join(stac_host, "collections", collection_id))
+        r = requests.get(os.path.join(stac_host, "collections", collection_id), verify=False)
 
         if r.status_code == 200:
             return r.json()
@@ -89,7 +89,7 @@ class CollectionProcessor:
 
         Returns the queryables JSON.
         """
-        r = requests.get(os.path.join(stac_host, "collections", collection_id, "queryables"))
+        r = requests.get(os.path.join(stac_host, "collections", collection_id, "queryables"), verify=False)
 
         if r.status_code == 200:
             return r.json()
@@ -146,13 +146,13 @@ class CollectionProcessor:
         Returns the collection id.
         """
         collection_id = json_data['id']
-        r = requests.post(os.path.join(stac_host, "collections"), json=json_data)
+        r = requests.post(os.path.join(stac_host, "collections"), json=json_data, verify=False)
 
         if r.status_code == 200:
             print(f"{bcolors.OKGREEN}[INFO] Pushed STAC collection [{collection_id}] to [{stac_host}] ({r.status_code}){bcolors.ENDC}")
         elif r.status_code == 409:
             print(f"{bcolors.WARNING}[INFO] STAC collection [{collection_id}] already exists on [{stac_host}] ({r.status_code}), updating..{bcolors.ENDC}")
-            r = requests.put(os.path.join(stac_host, "collections"), json=json_data)
+            r = requests.put(os.path.join(stac_host, "collections"), json=json_data, verify=False)
             r.raise_for_status()
         else:
             r.raise_for_status()
