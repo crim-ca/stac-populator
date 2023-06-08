@@ -21,4 +21,4 @@ RUN chmod +x wait-for-it.sh
 
 COPY . .
 
-CMD ["/bin/sh", "-c", "./populate.sh"]
+CMD [ "python3", "./populate.py"]
