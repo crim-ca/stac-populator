@@ -28,6 +28,7 @@ class CMIP6populator(STACpopulatorBase):
         super().__init__(catalog, hostname, config, thredds_crawler, crawler_args={"depth": None})
 
     def process_STAC_item(self):  # noqa N802
+        # TODO: next step is to implement this
         print("here")
 
 
