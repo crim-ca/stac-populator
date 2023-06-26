@@ -1,0 +1,28 @@
+{
+    "cmake.configureOnOpen": false,
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,  
+    "python.linting.flake8Path": "/Users/dchandan/local/mambaforge/bin/flake8",  
+    // "python.linting.flake8Args": [
+    //     "--max-line-length=120",
+    //     "--ignore=E402,F841,F401,E302,E305,F821",
+    // ],
+    "flake8.args": [
+        "--ignore=E402,F841,F401,E302,E305,F821",
+        "--max-line-length=120"
+    ],
+    "python.formatting.provider": "black",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        },
+      },
+    "isort.args": [
+        "--profile",
+        "black"
+    ],
+    // "python.formatting.blackPath": "/Users/dchandan/local/mambaforge/bin/black",
+}

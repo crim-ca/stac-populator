@@ -1,0 +1,49 @@
+version: "3.4"
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    max-size: "50m"
+    max-file: "10"
+
+services:
+  stac:
+    container_name: stac-populator-test
+    image: ghcr.io/crim-ca/stac-app:main
+    depends_on:
+      - stac-db
+    ports:
+      - "8880:8000"
+    environment:
+      - POSTGRES_USER=dchandan
+      - POSTGRES_PASS=password
+      - POSTGRES_DBNAME=postgis
+      - POSTGRES_HOST_READER=stac-db
+      - POSTGRES_HOST_WRITER=stac-db
+      - POSTGRES_PORT=5432
+      - ROUTER_PREFIX=/stac
+    logging: *default-logging
+    restart: always
+
+  stac-db:
+    container_name: stac-populator-test-db
+    image: ghcr.io/stac-utils/pgstac:v0.6.10
+    environment:
+      - POSTGRES_USER=dchandan
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=postgis
+      - PGUSER=dchandan
+      - PGPASSWORD=password
+      - PGHOST=localhost
+      - PGDATABASE=postgis
+    volumes:
+      - stac-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  stac-db:
