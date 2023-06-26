@@ -12,25 +12,26 @@ __license__ = "MIT"
 __holder__ = "Computer Research Institute of Montreal (CRIM)"
 __contact__ = "mathieu.provencher@crim.ca"
 
-import requests
-import os
-import pystac
 import datetime
 import hashlib
-import yaml
+import os
 import sys
+
+import pystac
+import requests
+import yaml
 
 
 class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+    HEADER = "\033[95m"
+    OKBLUE = "\033[94m"
+    OKCYAN = "\033[96m"
+    OKGREEN = "\033[92m"
+    WARNING = "\033[93m"
+    FAIL = "\033[91m"
+    ENDC = "\033[0m"
+    BOLD = "\033[1m"
+    UNDERLINE = "\033[4m"
 
 
 class CollectionProcessor:
@@ -55,9 +56,7 @@ class CollectionProcessor:
             self.process_collection(stac_host, col["name"], col["description"])
 
     def process_collection(self, stac_host, collection_name, collection_description):
-        collection_id = hashlib.md5(
-            collection_name.encode("utf-8")
-        ).hexdigest()
+        collection_id = hashlib.md5(collection_name.encode("utf-8")).hexdigest()
         stac_collection = self.get_stac_collection(stac_host, collection_id)
 
         if stac_collection:
@@ -119,23 +118,20 @@ class CollectionProcessor:
         """
 
         sp_extent = pystac.SpatialExtent([[-140.99778, 41.6751050889, -52.6480987209, 83.23324]])
-        capture_date = datetime.datetime.strptime('2015-10-22', '%Y-%m-%d')
-        end_capture_date = datetime.datetime.strptime('2100-10-22', '%Y-%m-%d')
+        capture_date = datetime.datetime.strptime("2015-10-22", "%Y-%m-%d")
+        end_capture_date = datetime.datetime.strptime("2100-10-22", "%Y-%m-%d")
         tmp_extent = pystac.TemporalExtent([(capture_date, end_capture_date)])
         extent = pystac.Extent(sp_extent, tmp_extent)
 
-        collection = pystac.Collection(id=collection_id,
-                                       title=collection_name,
-                                       description=collection_description,
-                                       extent=extent,
-                                       keywords=[
-                                           "climate change",
-                                           "CMIP5",
-                                           "WCRP",
-                                           "CMIP"
-                                       ],
-                                       providers=None,
-                                       summaries=pystac.Summaries({"needs_summaries_update": ["true"]}))
+        collection = pystac.Collection(
+            id=collection_id,
+            title=collection_name,
+            description=collection_description,
+            extent=extent,
+            keywords=["climate change", "CMIP5", "WCRP", "CMIP"],
+            providers=None,
+            summaries=pystac.Summaries({"needs_summaries_update": ["true"]}),
+        )
 
         return collection.to_dict()
 
@@ -145,13 +141,17 @@ class CollectionProcessor:
 
         Returns the collection id.
         """
-        collection_id = json_data['id']
+        collection_id = json_data["id"]
         r = requests.post(os.path.join(stac_host, "collections"), json=json_data, verify=False)
 
         if r.status_code == 200:
-            print(f"{bcolors.OKGREEN}[INFO] Pushed STAC collection [{collection_id}] to [{stac_host}] ({r.status_code}){bcolors.ENDC}")
+            print(
+                f"{bcolors.OKGREEN}[INFO] Pushed STAC collection [{collection_id}] to [{stac_host}] ({r.status_code}){bcolors.ENDC}"
+            )
         elif r.status_code == 409:
-            print(f"{bcolors.WARNING}[INFO] STAC collection [{collection_id}] already exists on [{stac_host}] ({r.status_code}), updating..{bcolors.ENDC}")
+            print(
+                f"{bcolors.WARNING}[INFO] STAC collection [{collection_id}] already exists on [{stac_host}] ({r.status_code}), updating..{bcolors.ENDC}"
+            )
             r = requests.put(os.path.join(stac_host, "collections"), json=json_data, verify=False)
             r.raise_for_status()
         else:
