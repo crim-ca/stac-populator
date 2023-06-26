@@ -19,10 +19,31 @@
         "editor.codeActionsOnSave": {
             "source.organizeImports": true
         },
+        "editor.wordBasedSuggestions": true,
+        "editor.quickSuggestions": {
+            "comments": "on",
+            "strings": "on",
+            "other": "on"
+        },
+
       },
     "isort.args": [
         "--profile",
         "black"
     ],
     // "python.formatting.blackPath": "/Users/dchandan/local/mambaforge/bin/black",
+
+    "[markdown]": {
+        "editor.unicodeHighlight.ambiguousCharacters": false,
+        "editor.unicodeHighlight.invisibleCharacters": false,
+        "diffEditor.ignoreTrimWhitespace": false,
+        "editor.wordWrap": "on",
+        "editor.quickSuggestions": {
+            "comments": "on",
+            "strings": "on",
+            "other": "on"
+        },
+        "editor.wordBasedSuggestions": true,
+        
+    }
 }
