@@ -1,7 +1,4 @@
-version: "3.4"
-
-x-logging:
-  &default-logging
+x-logging: &default-logging
   driver: "json-file"
   options:
     max-size: "50m"
@@ -30,7 +27,7 @@ services:
     container_name: stac-populator-test-db
     image: ghcr.io/stac-utils/pgstac:v0.6.10
     environment:
-      - POSTGRES_USER=dchandan
+      - POSTGRES_USER=testuser
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=postgis
       - PGUSER=dchandan
@@ -40,7 +37,7 @@ services:
     volumes:
       - stac-db:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
+      test: [ "CMD-SHELL", "pg_isready" ]
       interval: 10s
       timeout: 5s
       retries: 5

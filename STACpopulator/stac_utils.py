@@ -6,7 +6,7 @@ import pystac
 import requests
 
 
-def stac_collection_exists(stac_host: str, collection_id: str):
+def stac_collection_exists(stac_host: str, collection_id: str) -> bool:
     """
     Get a STAC collection
 
@@ -14,10 +14,10 @@ def stac_collection_exists(stac_host: str, collection_id: str):
     """
     r = requests.get(os.path.join(stac_host, "collections", collection_id), verify=False)
 
-    return True if r.status_code == 200 else False
+    return r.status_code == 200
 
 
-def create_stac_collection(collection_id: str, collection_info) -> dict[str, Any]:
+def create_stac_collection(collection_id: str, collection_info: dict[str, Any]) -> dict[str, Any]:
     """
     Create a basic STAC collection.
 
