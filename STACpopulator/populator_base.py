@@ -111,3 +111,7 @@ class STACpopulatorBase(ABC):
     @abstractmethod
     def process_STAC_item(self):  # noqa N802
         pass
+
+    @abstractmethod
+    def validate_STAC_item_CV(self):  # noqa N802
+        pass
