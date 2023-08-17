@@ -1,17 +1,17 @@
 import hashlib
 import logging
 from abc import ABC, abstractmethod
-from typing import Iterator, Optional
 
 import yaml
 from colorlog import ColoredFormatter
-from siphon.catalog import TDSCatalog
 
-from STACpopulator.crawlers import Crawler
+from STACpopulator.input import GenericLoader
 from STACpopulator.stac_utils import (
     create_stac_collection,
     post_collection,
     stac_collection_exists,
+    stac_host_reachable,
+    url_validate,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -27,22 +27,19 @@ LOGGER.propagate = False
 class STACpopulatorBase(ABC):
     def __init__(
         self,
-        catalog: str,
         stac_host: str,
+        data_loader: GenericLoader,
         collection_info_filename: str,
-        crawler: Crawler,
-        crawler_args: Optional[dict] = {},
     ) -> None:
         """Constructor
 
-        Parameters
-        ----------
-        catalog : str
-        stac_host : STAC API address
-        collection_info_filename : Name of the configuration file containing info about the collection
-        crawler : callable that knows how to iterate over the organization
-                  structure of the catalog in order to find individual items
-        crawler_args : any optional arguments to pass to the crawler
+        :param stac_host: URL to the STAC API
+        :type stac_host: str
+        :param data_loader: A concrete implementation of the GenericLoader abstract base class
+        :type data_loader: GenericLoader
+        :param collection_info_filename: Yaml file containing the information about the collection to populate
+        :type collection_info_filename: str
+        :raises RuntimeError: Raised if one of the required definitions is not found in the collection info filename
         """
 
         super().__init__()
@@ -55,21 +52,12 @@ class STACpopulatorBase(ABC):
                 LOGGER.error(f"'{req}' is required in the configuration file")
                 raise RuntimeError(f"'{req}' is required in the configuration file")
 
-        if catalog.endswith(".html"):
-            catalog = catalog.replace(".html", ".xml")
-            LOGGER.info("Converting catalog URL from html to xml")
-        self._catalog = TDSCatalog(catalog)
+        self._ingest_pipeline = data_loader
         self._stac_host = self.validate_host(stac_host)
-        self._crawler = crawler
-        self._crawler_args = crawler_args
 
         self._collection_id = hashlib.md5(self.collection_name.encode("utf-8")).hexdigest()
         LOGGER.info("Initialization complete")
         LOGGER.info(f"Collection {self.collection_name} is assigned id {self._collection_id}")
-
-    @property
-    def catalog(self) -> TDSCatalog:
-        return self._catalog
 
     @property
     def collection_name(self) -> str:
@@ -80,16 +68,15 @@ class STACpopulatorBase(ABC):
         return self._stac_host
 
     @property
-    def crawler(self) -> Crawler:
-        return self._crawler
-
-    @property
     def collection_id(self) -> str:
         return self._collection_id
 
     def validate_host(self, stac_host: str) -> str:
-        # TODO: check the format of the host is URL type
-        # TODO: check if the host is reachable??
+        if not url_validate(stac_host):
+            raise ValueError("stac_host URL is not appropriately formatted")
+        if not stac_host_reachable(stac_host):
+            raise ValueError("stac_host is not reachable")
+
         return stac_host
 
     def ingest(self) -> None:
@@ -109,9 +96,9 @@ class STACpopulatorBase(ABC):
         pass
 
     @abstractmethod
-    def process_STAC_item(self):  # noqa N802
+    def process_stac_item(self):  # noqa N802
         pass
 
     @abstractmethod
-    def validate_STAC_item_CV(self):  # noqa N802
+    def validate_stac_item_cv(self):  # noqa N802
         pass
