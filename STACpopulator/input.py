@@ -1,4 +1,5 @@
 import logging
+import requests
 from abc import ABC, abstractmethod
 from typing import Optional
 
@@ -67,6 +68,36 @@ class THREDDSLoader(GenericLoader):
                 self.catalog_head = ref.follow()
                 self._depth -= 1
                 yield from self
+
+
+class THREDDSAttrsLoader(THREDDSLoader):
+    """Return dictionary of dataset attributes for each item in the catalog.
+
+    Attributes are requested through the NcML service.
+    """
+    def __iter__(self):
+        """Return response to NcML request."""
+        import xncml
+        from tempfile import NamedTemporaryFile
+
+        for name, ds in super().__iter__():
+            # Get URL for NCML service
+            url = ds.access_urls["NCML"]
+
+            # Setting `params` reproduces the NcML response we get when we click on the NcML service on THREDDS.
+            # For some reason, this is required to obtain the "THREDDSMetadata" group and the available services.
+            # Note that the OPENDAP link would have been available from the top "location" attribute.
+            LOGGER.info("Requesting NcML dataset description")
+            r = requests.get(url, params={"catalog": self.catalog.catalog_url, "dataset": ds.url_path})
+
+            # Write response to temporary file
+            f = NamedTemporaryFile()
+            f.write(r.content)
+
+            # Convert NcML to CF-compliant dictionary
+            attrs = xncml.Dataset(f.name).to_cf_dict()
+
+            yield name, attrs
 
 
 class RemoteTHREDDSLoader(THREDDSLoader):
