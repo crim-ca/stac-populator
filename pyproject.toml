@@ -5,7 +5,15 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "STACpopulator"
 version = "0.0.1"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
+dependencies = [
+    "colorlog",
+    "pyyaml",
+    "siphon",
+    "pystac"
+]
 
 [tool.setuptools]
 py-modules = ["STACpopulator"]
+
+
