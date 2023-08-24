@@ -10,6 +10,7 @@ from STACpopulator.input import GenericLoader
 from STACpopulator.stac_utils import (
     create_stac_collection,
     post_collection,
+    post_stac_item,
     stac_collection_exists,
     stac_host_reachable,
     url_validate,
@@ -95,7 +96,7 @@ class STACpopulatorBase(ABC):
             LOGGER.info(f"Creating STAC representation for {item_name}")
             stac_item = self.create_stac_item(item_name, item_data)
             if self.validate_stac_item_cv(stac_item):
-                if self.post_item(stac_item):
+                if post_stac_item(self.stac_host, self.collection_id, stac_item):
                     LOGGER.info(f"{item_name} successfully posted")
                 else:
                     LOGGER.error(f"Posting {item_name} failed")
@@ -103,9 +104,6 @@ class STACpopulatorBase(ABC):
             else:
                 LOGGER.error(f"Validation failed for item {item_name}")
                 self.handle_ingestion_error("Validation Error", item_name, item_data)
-
-    def post_item(self, data: dict[str, dict]) -> bool:
-        pass
 
     @abstractmethod
     def handle_ingestion_error(self, error: str, item_name: str, item_data: MutableMapping[str, Any]):

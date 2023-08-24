@@ -97,3 +97,7 @@ def post_collection(stac_host: str, json_data: dict[str, Any]) -> None:
         r.raise_for_status()
     else:
         r.raise_for_status()
+
+
+def post_stac_item(stac_host: str, collection_id: str, data: dict[str, dict]) -> bool:
+    pass
