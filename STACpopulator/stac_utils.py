@@ -76,7 +76,7 @@ def create_stac_collection(collection_id: str, collection_info: dict[str, Any]) 
     return collection.to_dict()
 
 
-def post_collection(stac_host: str, json_data: dict[str, Any]) -> None:
+def post_stac_collection(stac_host: str, json_data: dict[str, Any]) -> None:
     """
     Post a STAC collection.
 

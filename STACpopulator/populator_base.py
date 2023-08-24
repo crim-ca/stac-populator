@@ -9,7 +9,7 @@ from colorlog import ColoredFormatter
 from STACpopulator.input import GenericLoader
 from STACpopulator.stac_utils import (
     create_stac_collection,
-    post_collection,
+    post_stac_collection,
     post_stac_item,
     stac_collection_exists,
     stac_host_reachable,
@@ -86,7 +86,7 @@ class STACpopulatorBase(ABC):
         if not stac_collection_exists(self.stac_host, self.collection_id):
             LOGGER.info(f"Creating collection '{self.collection_name}'")
             pystac_collection = create_stac_collection(self.collection_id, self._collection_info)
-            post_collection(self.stac_host, pystac_collection)
+            post_stac_collection(self.stac_host, pystac_collection)
             LOGGER.info("Collection successfully created")
         else:
             LOGGER.info(f"Collection '{self.collection_name}' already exists")
