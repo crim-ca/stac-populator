@@ -1,3 +1,5 @@
 *.pyc
 STACpopulator.egg-info/
 .vscode/
+.venv/
+jupyter/
