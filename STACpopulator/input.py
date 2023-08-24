@@ -1,8 +1,13 @@
 import logging
 from abc import ABC, abstractmethod
-from typing import Optional
+from tempfile import NamedTemporaryFile
+from typing import Any, Iterator, MutableMapping, Optional, Tuple
 
+import requests
+import siphon
+import xncml
 from colorlog import ColoredFormatter
+from numpy import extract
 from siphon.catalog import TDSCatalog
 
 LOGGER = logging.getLogger(__name__)
@@ -58,9 +63,12 @@ class THREDDSLoader(GenericLoader):
         """Reset the generator."""
         self.catalog_head = self.catalog
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Tuple[str, MutableMapping[str, Any]]]:
         """Return a generator walking a THREDDS data catalog for datasets."""
-        yield from self.catalog_head.datasets.items()
+        if self.catalog_head.datasets.items():
+            for item_name, ds in self.catalog_head.datasets.items():
+                attrs = self.extract_metadata(ds)
+                yield item_name, attrs
 
         if self._depth > 0:
             for name, ref in self.catalog_head.catalog_refs.items():
@@ -68,11 +76,34 @@ class THREDDSLoader(GenericLoader):
                 self._depth -= 1
                 yield from self
 
+    def extract_metadata(self, ds: siphon.catalog.Dataset) -> MutableMapping[str, Any]:
+        # Get URL for NCML service
+        url = ds.access_urls["NCML"]
 
-class RemoteTHREDDSLoader(THREDDSLoader):
-    def __init__(self, thredds_catalog_url: str, depth: int | None = None) -> None:
-        super().__init__(thredds_catalog_url, depth)
-        # more stuff to follow based on needs of a concrete implementation
+        LOGGER.info("Requesting NcML dataset description")
+        r = requests.get(url)
+
+        # Write response to temporary file
+        f = NamedTemporaryFile()
+        f.write(r.content)
+
+        # Convert NcML to CF-compliant dictionary
+        attrs = xncml.Dataset(f.name).to_cf_dict()
+
+        attrs["access_urls"] = ds.access_urls
+
+        return attrs
+
+
+class STACLoader(GenericLoader):
+    def __init__(self) -> None:
+        super().__init__()
+
+    def __iter__(self):
+        raise NotImplementedError
+
+    def reset(self):
+        raise NotImplementedError
 
 
 class GeoServerLoader(GenericLoader):
