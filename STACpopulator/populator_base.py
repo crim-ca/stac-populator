@@ -1,6 +1,7 @@
 import hashlib
 import logging
 from abc import ABC, abstractmethod
+from typing import Any, MutableMapping
 
 import yaml
 from colorlog import ColoredFormatter
@@ -88,17 +89,32 @@ class STACpopulatorBase(ABC):
             LOGGER.info("Collection successfully created")
         else:
             LOGGER.info(f"Collection '{self.collection_name}' already exists")
-        # for item in self.crawler(self.catalog, **self._crawler_args):
-        #     stac_item = self.process_STAC_item(item)
-        #     self.post_item(stac_item)
 
-    def post_item(self, data: dict[str, dict]) -> None:
+        # Item ingestion loop
+        for item_name, item_data in self._ingest_pipeline:
+            LOGGER.info(f"Creating STAC representation for {item_name}")
+            stac_item = self.create_stac_item(item_name, item_data)
+            if self.validate_stac_item_cv(stac_item):
+                if self.post_item(stac_item):
+                    LOGGER.info(f"{item_name} successfully posted")
+                else:
+                    LOGGER.error(f"Posting {item_name} failed")
+                    self.handle_ingestion_error("Posting Error", item_name, item_data)
+            else:
+                LOGGER.error(f"Validation failed for item {item_name}")
+                self.handle_ingestion_error("Validation Error", item_name, item_data)
+
+    def post_item(self, data: dict[str, dict]) -> bool:
         pass
 
     @abstractmethod
-    def process_stac_item(self):  # noqa N802
+    def handle_ingestion_error(self, error: str, item_name: str, item_data: MutableMapping[str, Any]):
         pass
 
     @abstractmethod
-    def validate_stac_item_cv(self):  # noqa N802
+    def create_stac_item(self, item_name: str, item_data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
+        pass
+
+    @abstractmethod
+    def validate_stac_item_cv(self, data: MutableMapping[str, Any]) -> bool:
         pass

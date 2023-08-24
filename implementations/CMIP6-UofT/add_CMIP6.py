@@ -1,5 +1,6 @@
 import argparse
 import logging
+from typing import Any, MutableMapping
 
 from colorlog import ColoredFormatter
 
@@ -39,11 +40,14 @@ class CMIP6populator(STACpopulatorBase):
             print(item)
         super().__init__(stac_host, data_loader, config_filename)
 
-    def process_stac_item(self):  # noqa N802
+    def handle_ingestion_error(self, error: str, item_name: str, item_data: MutableMapping[str, Any]):
+        pass
+
+    def create_stac_item(self, item_name: str, item_data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
         # TODO: next step is to implement this
         print("here")
 
-    def validate_stac_item_cv(self):
+    def validate_stac_item_cv(self, data: MutableMapping[str, Any]) -> bool:
         # TODO: next step is to implement this
         pass
 
