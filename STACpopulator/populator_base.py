@@ -8,14 +8,14 @@ import pystac
 import yaml
 from colorlog import ColoredFormatter
 
-from STACpopulator.input import GenericLoader
-from STACpopulator.stac_utils import (
+from STACpopulator.api_requests import (
     post_stac_collection,
     post_stac_item,
     stac_collection_exists,
     stac_host_reachable,
-    url_validate,
 )
+from STACpopulator.input import GenericLoader
+from STACpopulator.stac_utils import url_validate
 
 LOGGER = logging.getLogger(__name__)
 LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
