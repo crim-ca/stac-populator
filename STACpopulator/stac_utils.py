@@ -1,9 +1,7 @@
 import os
 import re
-from datetime import datetime
 from typing import Any
 
-import pystac
 import requests
 
 
@@ -49,31 +47,6 @@ def stac_collection_exists(stac_host: str, collection_id: str) -> bool:
     r = requests.get(os.path.join(stac_host, "collections", collection_id), verify=False)
 
     return r.status_code == 200
-
-
-def create_stac_collection(collection_id: str, collection_info: dict[str, Any]) -> dict[str, Any]:
-    """
-    Create a basic STAC collection.
-
-    Returns the collection.
-    """
-
-    sp_extent = pystac.SpatialExtent([collection_info.pop("spatialextent")])
-    tmp = collection_info.pop("temporalextent")
-    tmp_extent = pystac.TemporalExtent(
-        [
-            [
-                datetime.strptime(tmp[0], "%Y-%m-%d") if tmp[0] is not None else None,
-                datetime.strptime(tmp[1], "%Y-%m-%d") if tmp[1] is not None else None,
-            ]
-        ]
-    )
-    collection_info["extent"] = pystac.Extent(sp_extent, tmp_extent)
-    collection_info["summaries"] = pystac.Summaries({"needs_summaries_update": ["true"]})
-
-    collection = pystac.Collection(id=collection_id, **collection_info)
-
-    return collection.to_dict()
 
 
 def post_stac_collection(stac_host: str, json_data: dict[str, Any]) -> None:
