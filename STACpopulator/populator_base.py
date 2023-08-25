@@ -60,6 +60,7 @@ class STACpopulatorBase(ABC):
         self._collection_id = hashlib.md5(self.collection_name.encode("utf-8")).hexdigest()
         LOGGER.info("Initialization complete")
         LOGGER.info(f"Collection {self.collection_name} is assigned id {self._collection_id}")
+        self.create_collection()
 
     @property
     def collection_name(self) -> str:
@@ -81,8 +82,7 @@ class STACpopulatorBase(ABC):
 
         return stac_host
 
-    def ingest(self) -> None:
-        # First create collection if it doesn't exist
+    def create_collection(self):
         if not stac_collection_exists(self.stac_host, self.collection_id):
             LOGGER.info(f"Creating collection '{self.collection_name}'")
             pystac_collection = create_stac_collection(self.collection_id, self._collection_info)
@@ -91,7 +91,7 @@ class STACpopulatorBase(ABC):
         else:
             LOGGER.info(f"Collection '{self.collection_name}' already exists")
 
-        # Item ingestion loop
+    def ingest(self) -> None:
         for item_name, item_data in self._ingest_pipeline:
             LOGGER.info(f"Creating STAC representation for {item_name}")
             stac_item = self.create_stac_item(item_name, item_data)
