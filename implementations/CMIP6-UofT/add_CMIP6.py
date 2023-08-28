@@ -22,10 +22,6 @@ LOGGER.addHandler(stream)
 LOGGER.setLevel(logging.INFO)
 LOGGER.propagate = False
 
-
-
-
-
 # CMIP6 controlled vocabulary (CV)
 CV = pyessv.WCRP.CMIP6
 
@@ -72,22 +68,20 @@ class Properties(BaseModel):
     tracking_id: str = Field(..., alias="tracking_id")
 
 
-
-
-
 def make_cmip6_id(attrs: MutableMapping[str, Any]) -> str:
     """Return unique ID for CMIP6 data collection (multiple variables)."""
-    keys = ["activity_id", "institution_id", "source_id", "experiment_id", "member_id", "table_id", "grid_label", "version"]
+    keys = ["activity_id", "institution_id", "source_id", "experiment_id", "member_id", "table_id", "grid_label",
+            "version"]
     return "_".join(attrs[k] for k in keys)
 
 
 class CMIP6populator(STACpopulatorBase):
     def __init__(
-        self,
-        stac_host: str,
-        thredds_catalog_url: str,
-        config_filename: str,
-        validator: callable = None
+            self,
+            stac_host: str,
+            thredds_catalog_url: str,
+            config_filename: str,
+            validator: callable = None
     ) -> None:
         """Constructor
 
@@ -103,7 +97,6 @@ class CMIP6populator(STACpopulatorBase):
         data_loader = THREDDSLoader(thredds_catalog_url)
         self.validator = validator
 
-
         for item in data_loader:
             print(item)
         super().__init__(stac_host, data_loader, config_filename)
@@ -116,16 +109,15 @@ class CMIP6populator(STACpopulatorBase):
 
         # Create STAC item geometry from CFMetadata
         item = dict(
-            id = make_cmip6_id(item_data["attributes"]),
-            geometry = THREDDSLoader.ncattrs_to_geometry(item_data["groups"]["CFMetadata"]["attributes"]),
-            bbox = THREDDSLoader.ncattrs_to_bbox(item_data["groups"]["CFMetadata"]["attributes"]),
-            properties = Properties(item_data["attributes"]).dump_model(),
-            start_datetime = item_data["groups"]["CFMetadata"]["attributes"]["time_coverage_start"],
-            end_datetime = item_data["groups"]["CFMetadata"]["attributes"]["time_coverage_end"],
+            id=make_cmip6_id(item_data["attributes"]),
+            geometry=THREDDSLoader.ncattrs_to_geometry(item_data["groups"]["CFMetadata"]["attributes"]),
+            bbox=THREDDSLoader.ncattrs_to_bbox(item_data["groups"]["CFMetadata"]["attributes"]),
+            properties=Properties(item_data["attributes"]).dump_model(),
+            start_datetime=item_data["groups"]["CFMetadata"]["attributes"]["time_coverage_start"],
+            end_datetime=item_data["groups"]["CFMetadata"]["attributes"]["time_coverage_end"],
         )
 
         return pystac.Item(**item)
-
 
     def validate_stac_item_cv(self, data: MutableMapping[str, Any]) -> bool:
         # Validation is done at the item creating stage, using the Properties class.
