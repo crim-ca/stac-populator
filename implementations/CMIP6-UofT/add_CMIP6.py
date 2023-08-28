@@ -1,17 +1,16 @@
 import argparse
 import logging
-from typing import Any, MutableMapping
+from typing import Any, MutableMapping, Literal, List
+import datetime as dt
 
 from colorlog import ColoredFormatter
-from collections import OrderedDict
 import pystac
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, FieldValidationInfo, field_validator, ValidationError
 from STACpopulator import STACpopulatorBase
 from STACpopulator.input import THREDDSLoader
 from STACpopulator.stac_utils import collection2enum
 import pyessv
 
-# from STACpopulator.metadata_parsers import nc_attrs_from_ncml
 
 LOGGER = logging.getLogger(__name__)
 LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
@@ -30,15 +29,15 @@ Activity = collection2enum(CV.activity_id)
 Experiment = collection2enum(CV.experiment_id)
 Frequency = collection2enum(CV.frequency)
 GridLabel = collection2enum(CV.grid_label)
-Institute = collection2enum(CV.institution_id)
-Member = collection2enum(CV.member_id)
+Institution = collection2enum(CV.institution_id)
+# Member = collection2enum(CV.member_id)  # This is empty
 Resolution = collection2enum(CV.nominal_resolution)
 Realm = collection2enum(CV.realm)
 Source = collection2enum(CV.source_id)
 SourceType = collection2enum(CV.source_type)
 SubExperiment = collection2enum(CV.sub_experiment_id)
 Table = collection2enum(CV.table_id)
-Variable = collection2enum(CV.variable_id)
+Variable = collection2enum(CV.variable_id)  # This is empty
 
 
 class Properties(BaseModel):
@@ -48,30 +47,47 @@ class Properties(BaseModel):
     experiment: Experiment = Field(..., alias="experiment_id")
     frequency: Frequency
     grid_label: GridLabel
-    institute: Institute = Field(..., alias="institute_id")
-    member: Member = Field(..., alias="member_id")
+    institution: Institution = Field(..., alias="institution_id")
     resolution: Resolution = Field(..., alias="nominal_resolution")
-    realm: Realm = Field(..., alias="realm")
+    realm: List[Realm] = Field(..., alias="realm")
     source: Source = Field(..., alias="source_id")
-    source_type: SourceType = Field(..., alias="source_type")
-    sub_experiment: SubExperiment = Field(..., alias="sub_experiment_id")
+    source_type: List[SourceType] = Field(..., alias="source_type")
+    sub_experiment: SubExperiment | Literal['none'] = Field(..., alias="sub_experiment_id")
     table: Table = Field(..., alias="table_id")
-    variable: Variable = Field(..., alias="variable_id")
+    variable: Variable = str  # Field(..., alias="variable_id")
+    variant_label: str
     initialization_index: int
     physics_index: int
     realization_index: int
     forcing_index: int
     variant_label: str
-    version: str
+    tracking_id: str
+    version: str = None
     license: str = None
     grid: str = None
-    tracking_id: str = Field(..., alias="tracking_id")
+
+    @field_validator("initialization_index", "physics_index", "realization_index", "forcing_index", mode="before")
+    @classmethod
+    def first_item(cls, v: list, info: FieldValidationInfo):
+        """Pick single item from list."""
+        assert len(v) == 1, f"{info.field_name} must have one item only."
+        return v[0]
+
+    @field_validator("realm", "source_type", mode="before")
+    @classmethod
+    def split(cls, v: str, info: FieldValidationInfo):
+        """Split string into list."""
+        return v.split(" ")
+
+
+class STACItem(BaseModel):
+    start_datetime: dt.datetime
+    end_datetime: dt.datetime
 
 
 def make_cmip6_id(attrs: MutableMapping[str, Any]) -> str:
     """Return unique ID for CMIP6 data collection (multiple variables)."""
-    keys = ["activity_id", "institution_id", "source_id", "experiment_id", "member_id", "table_id", "grid_label",
-            "version"]
+    keys = ["activity_id", "institution_id", "source_id", "experiment_id", "variant_label", "table_id", "grid_label",]
     return "_".join(attrs[k] for k in keys)
 
 
@@ -97,8 +113,9 @@ class CMIP6populator(STACpopulatorBase):
         data_loader = THREDDSLoader(thredds_catalog_url)
         self.validator = validator
 
-        for item in data_loader:
-            print(item)
+        for name, item in data_loader:
+            # self.create_stac_item(name, item)
+            print(name)
         super().__init__(stac_host, data_loader, config_filename)
 
     def handle_ingestion_error(self, error: str, item_name: str, item_data: MutableMapping[str, Any]):
@@ -106,16 +123,20 @@ class CMIP6populator(STACpopulatorBase):
 
     def create_stac_item(self, item_name: str, item_data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
         # TODO: next step is to implement this
+        attrs = item_data["attributes"]
+        meta = item_data["groups"]["CFMetadata"]["attributes"]
 
         # Create STAC item geometry from CFMetadata
         item = dict(
-            id=make_cmip6_id(item_data["attributes"]),
-            geometry=THREDDSLoader.ncattrs_to_geometry(item_data["groups"]["CFMetadata"]["attributes"]),
-            bbox=THREDDSLoader.ncattrs_to_bbox(item_data["groups"]["CFMetadata"]["attributes"]),
-            properties=Properties(item_data["attributes"]).dump_model(),
-            start_datetime=item_data["groups"]["CFMetadata"]["attributes"]["time_coverage_start"],
-            end_datetime=item_data["groups"]["CFMetadata"]["attributes"]["time_coverage_end"],
+            id=make_cmip6_id(attrs),
+            geometry=THREDDSLoader.ncattrs_to_geometry(meta),
+            bbox=THREDDSLoader.ncattrs_to_bbox(meta),
+            properties=Properties(**attrs).model_dump(),
+            datetime=None,
         )
+
+        item.update(STACItem(start_datetime=meta["time_coverage_start"],
+            end_datetime=meta["time_coverage_end"],).model_dump())
 
         return pystac.Item(**item)
 
