@@ -1,20 +1,21 @@
 import hashlib
 import logging
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import Any, MutableMapping
 
+import pystac
 import yaml
 from colorlog import ColoredFormatter
 
-from STACpopulator.input import GenericLoader
-from STACpopulator.stac_utils import (
-    create_stac_collection,
+from STACpopulator.api_requests import (
     post_stac_collection,
     post_stac_item,
     stac_collection_exists,
     stac_host_reachable,
-    url_validate,
 )
+from STACpopulator.input import GenericLoader
+from STACpopulator.stac_utils import url_validate
 
 LOGGER = logging.getLogger(__name__)
 LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
@@ -60,6 +61,7 @@ class STACpopulatorBase(ABC):
         self._collection_id = hashlib.md5(self.collection_name.encode("utf-8")).hexdigest()
         LOGGER.info("Initialization complete")
         LOGGER.info(f"Collection {self.collection_name} is assigned id {self._collection_id}")
+        self.create_stac_collection()
 
     @property
     def collection_name(self) -> str:
@@ -81,17 +83,34 @@ class STACpopulatorBase(ABC):
 
         return stac_host
 
-    def ingest(self) -> None:
-        # First create collection if it doesn't exist
-        if not stac_collection_exists(self.stac_host, self.collection_id):
-            LOGGER.info(f"Creating collection '{self.collection_name}'")
-            pystac_collection = create_stac_collection(self.collection_id, self._collection_info)
-            post_stac_collection(self.stac_host, pystac_collection)
-            LOGGER.info("Collection successfully created")
-        else:
-            LOGGER.info(f"Collection '{self.collection_name}' already exists")
+    def create_stac_collection(self):
+        """
+        Create a basic STAC collection.
 
-        # Item ingestion loop
+        Returns the collection.
+        """
+        if stac_collection_exists(self.stac_host, self.collection_id):
+            LOGGER.info(f"Collection '{self.collection_name}' already exists")
+        else:
+            LOGGER.info(f"Creating collection '{self.collection_name}'")
+            sp_extent = pystac.SpatialExtent([self._collection_info.pop("spatialextent")])
+            tmp = self._collection_info.pop("temporalextent")
+            tmp_extent = pystac.TemporalExtent(
+                [
+                    [
+                        datetime.strptime(tmp[0], "%Y-%m-%d") if tmp[0] is not None else None,
+                        datetime.strptime(tmp[1], "%Y-%m-%d") if tmp[1] is not None else None,
+                    ]
+                ]
+            )
+            self._collection_info["extent"] = pystac.Extent(sp_extent, tmp_extent)
+            self._collection_info["summaries"] = pystac.Summaries({"needs_summaries_update": ["true"]})
+
+            collection = pystac.Collection(id=self.collection_id, **self._collection_info)
+            LOGGER.info("Collection successfully created")
+            post_stac_collection(self.stac_host, collection.to_dict())
+
+    def ingest(self) -> None:
         for item_name, item_data in self._ingest_pipeline:
             LOGGER.info(f"Creating STAC representation for {item_name}")
             stac_item = self.create_stac_item(item_name, item_data)
