@@ -25,6 +25,7 @@ class CMIP6populator(STACpopulatorBase):
         stac_host: str,
         thredds_catalog_url: str,
         config_filename: str,
+        validator: callable = None
     ) -> None:
         """Constructor
 
@@ -34,8 +35,12 @@ class CMIP6populator(STACpopulatorBase):
         :type thredds_catalog_url: str
         :param config_filename: Yaml file containing the information about the collection to populate
         :type config_filename: str
+        :param: validator: a function that validates and returns a dictionary of attributes.
         """
+
         data_loader = THREDDSLoader(thredds_catalog_url)
+        self.validator = validator
+
         for item in data_loader:
             print(item)
         super().__init__(stac_host, data_loader, config_filename)
@@ -45,11 +50,15 @@ class CMIP6populator(STACpopulatorBase):
 
     def create_stac_item(self, item_name: str, item_data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
         # TODO: next step is to implement this
-        print("here")
+        self.validator(**item_data)
 
     def validate_stac_item_cv(self, data: MutableMapping[str, Any]) -> bool:
         # TODO: next step is to implement this
         pass
+
+
+
+
 
 
 if __name__ == "__main__":
