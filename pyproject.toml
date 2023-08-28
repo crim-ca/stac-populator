@@ -10,7 +10,9 @@ dependencies = [
     "colorlog",
     "pyyaml",
     "siphon",
-    "pystac"
+    "pystac",
+    "pydantic",
+    "pyessv"
 ]
 
 [tool.setuptools]
