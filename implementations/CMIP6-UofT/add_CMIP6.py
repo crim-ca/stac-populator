@@ -1,13 +1,14 @@
 import argparse
 import logging
 from typing import Any, MutableMapping
-from enum import Enum
+
 from colorlog import ColoredFormatter
 from collections import OrderedDict
 import pystac
 from pydantic import BaseModel, Field
 from STACpopulator import STACpopulatorBase
 from STACpopulator.input import THREDDSLoader
+from STACpopulator.stac_utils import collection2enum
 import pyessv
 
 # from STACpopulator.metadata_parsers import nc_attrs_from_ncml
@@ -22,21 +23,7 @@ LOGGER.setLevel(logging.INFO)
 LOGGER.propagate = False
 
 
-def collection2enum(collection):
-    """Create Enum based on terms from pyessv collection.
 
-    Parameters
-    ----------
-    collection : pyessv.model.collection.Collection
-      pyessv collection of terms.
-
-    Returns
-    -------
-    Enum
-      Enum storing terms and their labels from collection.
-    """
-    mp = {term.name: term.label for term in collection}
-    return Enum(collection.raw_name.capitalize(), mp, module="base")
 
 
 # CMIP6 controlled vocabulary (CV)
@@ -85,45 +72,7 @@ class Properties(BaseModel):
     tracking_id: str = Field(..., alias="tracking_id")
 
 
-def ncattrs_to_geometry(attrs: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
-    """Create Polygon geometry from CFMetadata."""
-    return {
-        "type": "Polygon",
-        "coordinates": [
-            [
-                [
-                    attrs["geospatial_lon_min"],
-                    attrs["geospatial_lat_min"],
-                ],
-                [
-                    attrs["geospatial_lon_min"],
-                    attrs["geospatial_lat_max"],
-                ],
-                [
-                    attrs["geospatial_lon_max"],
-                    attrs["geospatial_lat_max"],
-                ],
-                [
-                    attrs["geospatial_lon_max"],
-                    attrs["geospatial_lat_min"],
-                ],
-                [
-                    attrs["geospatial_lon_min"],
-                    attrs["geospatial_lat_min"],
-                ],
-            ]
-        ],
-    }
 
-
-def ncattrs_to_bbox(attrs: MutableMapping[str, Any]) -> list:
-    """Create BBOX from CFMetadata."""
-    return [
-        attrs["geospatial_lon_min"],
-        attrs["geospatial_lat_min"],
-        attrs["geospatial_lon_max"],
-        attrs["geospatial_lat_max"],
-    ]
 
 
 def make_cmip6_id(attrs: MutableMapping[str, Any]) -> str:
@@ -168,8 +117,8 @@ class CMIP6populator(STACpopulatorBase):
         # Create STAC item geometry from CFMetadata
         item = dict(
             id = make_cmip6_id(item_data["attributes"]),
-            geometry = ncattrs_to_geometry(item_data["groups"]["CFMetadata"]["attributes"]),
-            bbox = ncattrs_to_bbox(item_data["groups"]["CFMetadata"]["attributes"]),
+            geometry = THREDDSLoader.ncattrs_to_geometry(item_data["groups"]["CFMetadata"]["attributes"]),
+            bbox = THREDDSLoader.ncattrs_to_bbox(item_data["groups"]["CFMetadata"]["attributes"]),
             properties = Properties(item_data["attributes"]).dump_model(),
             start_datetime = item_data["groups"]["CFMetadata"]["attributes"]["time_coverage_start"],
             end_datetime = item_data["groups"]["CFMetadata"]["attributes"]["time_coverage_end"],
