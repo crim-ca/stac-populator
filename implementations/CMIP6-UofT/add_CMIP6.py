@@ -1,16 +1,21 @@
 import argparse
-import logging
-from typing import Any, MutableMapping, Literal, List
 import datetime as dt
+import logging
+from typing import Any, List, Literal, MutableMapping
 
-from colorlog import ColoredFormatter
+import pyessv
 import pystac
-from pydantic import BaseModel, Field, FieldValidationInfo, field_validator, ValidationError
+from colorlog import ColoredFormatter
+from pydantic import (
+    BaseModel,
+    Field,
+    FieldValidationInfo,
+    ValidationError,
+    field_validator,
+)
+
 from STACpopulator import STACpopulatorBase
 from STACpopulator.input import THREDDSLoader
-from STACpopulator.stac_utils import collection2enum
-import pyessv
-
 
 LOGGER = logging.getLogger(__name__)
 LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
@@ -41,8 +46,8 @@ Variable = collection2enum(CV.variable_id)  # This is empty
 
 
 class Properties(BaseModel):
-    """Data model for CMIP6 Controlled Vocabulary.
-    """
+    """Data model for CMIP6 Controlled Vocabulary."""
+
     activity: Activity = Field(..., alias="activity_id")
     experiment: Experiment = Field(..., alias="experiment_id")
     frequency: Frequency
@@ -52,7 +57,7 @@ class Properties(BaseModel):
     realm: List[Realm] = Field(..., alias="realm")
     source: Source = Field(..., alias="source_id")
     source_type: List[SourceType] = Field(..., alias="source_type")
-    sub_experiment: SubExperiment | Literal['none'] = Field(..., alias="sub_experiment_id")
+    sub_experiment: SubExperiment | Literal["none"] = Field(..., alias="sub_experiment_id")
     table: Table = Field(..., alias="table_id")
     variable: Variable = str  # Field(..., alias="variable_id")
     variant_label: str
@@ -87,18 +92,20 @@ class STACItem(BaseModel):
 
 def make_cmip6_id(attrs: MutableMapping[str, Any]) -> str:
     """Return unique ID for CMIP6 data collection (multiple variables)."""
-    keys = ["activity_id", "institution_id", "source_id", "experiment_id", "variant_label", "table_id", "grid_label",]
+    keys = [
+        "activity_id",
+        "institution_id",
+        "source_id",
+        "experiment_id",
+        "variant_label",
+        "table_id",
+        "grid_label",
+    ]
     return "_".join(attrs[k] for k in keys)
 
 
 class CMIP6populator(STACpopulatorBase):
-    def __init__(
-            self,
-            stac_host: str,
-            thredds_catalog_url: str,
-            config_filename: str,
-            validator: callable = None
-    ) -> None:
+    def __init__(self, stac_host: str, thredds_catalog_url: str, config_filename: str) -> None:
         """Constructor
 
         :param stac_host: URL to the STAC API
@@ -107,11 +114,9 @@ class CMIP6populator(STACpopulatorBase):
         :type thredds_catalog_url: str
         :param config_filename: Yaml file containing the information about the collection to populate
         :type config_filename: str
-        :param: validator: a function that validates and returns a dictionary of attributes.
         """
 
         data_loader = THREDDSLoader(thredds_catalog_url)
-        self.validator = validator
 
         for name, item in data_loader:
             # self.create_stac_item(name, item)
@@ -135,8 +140,12 @@ class CMIP6populator(STACpopulatorBase):
             datetime=None,
         )
 
-        item.update(STACItem(start_datetime=meta["time_coverage_start"],
-            end_datetime=meta["time_coverage_end"],).model_dump())
+        item.update(
+            STACItem(
+                start_datetime=meta["time_coverage_start"],
+                end_datetime=meta["time_coverage_end"],
+            ).model_dump()
+        )
 
         return pystac.Item(**item)
 
