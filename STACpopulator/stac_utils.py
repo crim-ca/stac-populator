@@ -1,6 +1,14 @@
 import re
 from enum import Enum
 
+import pyessv
+
+try:
+    from enum import EnumType as enumtype
+except ImportError:
+    # < Python 3.11
+    from enum import EnumMeta as enumtype
+
 
 def url_validate(target: str) -> bool:
     """Validate whether a supplied URL is reliably written.
@@ -26,7 +34,7 @@ def url_validate(target: str) -> bool:
     return True if re.match(url_regex, target) else False
 
 
-def collection2enum(collection):
+def collection2enum(collection: pyessv.model.collection.Collection) -> enumtype:
     """Create Enum based on terms from pyessv collection.
 
     Parameters
