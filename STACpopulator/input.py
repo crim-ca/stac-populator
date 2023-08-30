@@ -1,6 +1,5 @@
 import logging
 from abc import ABC, abstractmethod
-from tempfile import NamedTemporaryFile
 from typing import Any, Iterator, MutableMapping, Optional, Tuple
 
 import requests
@@ -83,16 +82,53 @@ class THREDDSLoader(GenericLoader):
         LOGGER.info("Requesting NcML dataset description")
         r = requests.get(url)
 
-        # Write response to temporary file
-        f = NamedTemporaryFile()
-        f.write(r.content)
-
         # Convert NcML to CF-compliant dictionary
-        attrs = xncml.Dataset(f.name).to_cf_dict()
+        attrs = xncml.Dataset.from_text(r.content).to_cf_dict()
 
         attrs["access_urls"] = ds.access_urls
 
         return attrs
+
+    @staticmethod
+    def ncattrs_to_geometry(attrs: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
+        """Create Polygon geometry from CFMetadata."""
+        return {
+            "type": "Polygon",
+            "coordinates": [
+                [
+                    [
+                        attrs["geospatial_lon_min"],
+                        attrs["geospatial_lat_min"],
+                    ],
+                    [
+                        attrs["geospatial_lon_min"],
+                        attrs["geospatial_lat_max"],
+                    ],
+                    [
+                        attrs["geospatial_lon_max"],
+                        attrs["geospatial_lat_max"],
+                    ],
+                    [
+                        attrs["geospatial_lon_max"],
+                        attrs["geospatial_lat_min"],
+                    ],
+                    [
+                        attrs["geospatial_lon_min"],
+                        attrs["geospatial_lat_min"],
+                    ],
+                ]
+            ],
+        }
+
+    @staticmethod
+    def ncattrs_to_bbox(attrs: MutableMapping[str, Any]) -> list:
+        """Create BBOX from CFMetadata."""
+        return [
+            attrs["geospatial_lon_min"],
+            attrs["geospatial_lat_min"],
+            attrs["geospatial_lon_max"],
+            attrs["geospatial_lat_max"],
+        ]
 
 
 class STACLoader(GenericLoader):
