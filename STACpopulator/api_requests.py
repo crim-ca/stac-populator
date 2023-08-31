@@ -37,36 +37,53 @@ def stac_collection_exists(stac_host: str, collection_id: str) -> bool:
 
 
 def post_stac_collection(stac_host: str, json_data: dict[str, Any], update: Optional[bool] = True) -> None:
-    """
-    Post a STAC collection.
+    """Post/create a collection on the STAC host
 
-    Returns the collection id.
+    :param stac_host: address of the STAC host
+    :type stac_host: str
+    :param json_data: JSON representation of the STAC collection
+    :type json_data: dict[str, Any]
+    :param update: if True, update the collection on the host server if it is already present, defaults to True
+    :type update: Optional[bool], optional
     """
     collection_id = json_data["id"]
     r = requests.post(os.path.join(stac_host, "collections"), json=json_data, verify=False)
 
     if r.status_code == 200:
-        LOGGER.info(f"Created STAC collection {collection_id}")
+        LOGGER.info(f"Collection {collection_id} successfully created")
     elif r.status_code == 409:
         if update:
-            LOGGER.info(f"STAC collection {collection_id} already exists. Updating.")
+            LOGGER.info(f"Collection {collection_id} already exists. Updating.")
             r = requests.put(os.path.join(stac_host, "collections"), json=json_data, verify=False)
             r.raise_for_status()
         else:
-            LOGGER.info(f"STAC collection {collection_id} already exists.")
+            LOGGER.info(f"Collection {collection_id} already exists.")
     else:
         r.raise_for_status()
 
 
 def post_stac_item(
-    stac_host: str, collection_id: str, json_data: dict[str, dict], update: Optional[bool] = True
-) -> bool:
+    stac_host: str, collection_id: str, item_name: str, json_data: dict[str, dict], update: Optional[bool] = True
+) -> None:
+    """Post a STAC item to the host server.
+
+    :param stac_host: address of the STAC host
+    :type stac_host: str
+    :param collection_id: ID of the collection to which to post this item
+    :type collection_id: str
+    :param item_name: name of the STAC item
+    :type item_name: str
+    :param json_data: JSON representation of the STAC item
+    :type json_data: dict[str, dict]
+    :param update: if True, update the item on the host server if it is already present, defaults to True
+    :type update: Optional[bool], optional
+    """
     item_id = json_data["id"]
 
     r = requests.post(urljoin(stac_host, f"collections/{collection_id}/items"), json=json_data)
 
     if r.status_code == 200:
-        LOGGER.info(f"Created item {item_id}")
+        LOGGER.info(f"Item {item_name} successfully added")
     elif r.status_code == 409:
         if update:
             LOGGER.info(f"Item {item_id} already exists. Updating.")
