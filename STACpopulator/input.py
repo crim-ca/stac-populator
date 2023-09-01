@@ -92,30 +92,22 @@ class THREDDSLoader(GenericLoader):
     @staticmethod
     def ncattrs_to_geometry(attrs: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
         """Create Polygon geometry from CFMetadata."""
+        # Oddly, for any attribute tag that has a "value" attribute, ncml metadata is returned
+        # as a list (of length 1). So, here, I convert the list to a value.
+        lon_min = attrs["geospatial_lon_min"][0]
+        lon_max = attrs["geospatial_lon_max"][0]
+        lat_min = attrs["geospatial_lat_min"][0]
+        lat_max = attrs["geospatial_lat_max"][0]
+
         return {
             "type": "Polygon",
             "coordinates": [
                 [
-                    [
-                        attrs["geospatial_lon_min"],
-                        attrs["geospatial_lat_min"],
-                    ],
-                    [
-                        attrs["geospatial_lon_min"],
-                        attrs["geospatial_lat_max"],
-                    ],
-                    [
-                        attrs["geospatial_lon_max"],
-                        attrs["geospatial_lat_max"],
-                    ],
-                    [
-                        attrs["geospatial_lon_max"],
-                        attrs["geospatial_lat_min"],
-                    ],
-                    [
-                        attrs["geospatial_lon_min"],
-                        attrs["geospatial_lat_min"],
-                    ],
+                    [lon_min, lat_min],
+                    [lon_min, lat_max],
+                    [lon_max, lat_max],
+                    [lon_max, lat_min],
+                    [lon_min, lat_min],
                 ]
             ],
         }
@@ -124,10 +116,10 @@ class THREDDSLoader(GenericLoader):
     def ncattrs_to_bbox(attrs: MutableMapping[str, Any]) -> list:
         """Create BBOX from CFMetadata."""
         return [
-            attrs["geospatial_lon_min"],
-            attrs["geospatial_lat_min"],
-            attrs["geospatial_lon_max"],
-            attrs["geospatial_lat_max"],
+            attrs["geospatial_lon_min"][0],
+            attrs["geospatial_lat_min"][0],
+            attrs["geospatial_lon_max"][0],
+            attrs["geospatial_lat_max"][0],
         ]
 
 
