@@ -8,7 +8,7 @@ import pystac
 from pydantic import BaseModel, Field, FieldValidationInfo, field_validator, ValidationError
 from STACpopulator import STACpopulatorBase
 from STACpopulator.input import THREDDSLoader
-from STACpopulator.stac_utils import collection2enum
+from STACpopulator.stac_utils import collection2literal
 import pyessv
 
 
@@ -24,20 +24,22 @@ LOGGER.propagate = False
 # CMIP6 controlled vocabulary (CV)
 CV = pyessv.WCRP.CMIP6
 
+
+
 # Enum classes built from the pyessv' CV
-Activity = collection2enum(CV.activity_id)
-Experiment = collection2enum(CV.experiment_id)
-Frequency = collection2enum(CV.frequency)
-GridLabel = collection2enum(CV.grid_label)
-Institution = collection2enum(CV.institution_id)
-# Member = collection2enum(CV.member_id)  # This is empty
-Resolution = collection2enum(CV.nominal_resolution)
-Realm = collection2enum(CV.realm)
-Source = collection2enum(CV.source_id)
-SourceType = collection2enum(CV.source_type)
-SubExperiment = collection2enum(CV.sub_experiment_id)
-Table = collection2enum(CV.table_id)
-Variable = collection2enum(CV.variable_id)  # This is empty
+Activity = collection2literal(CV.activity_id)
+Experiment = collection2literal(CV.experiment_id)
+Frequency = collection2literal(CV.frequency)
+GridLabel = collection2literal(CV.grid_label)
+Institution = collection2literal(CV.institution_id)
+# Member = collection2literal(CV.member_id)  # This is empty
+Resolution = collection2literal(CV.nominal_resolution)
+Realm = collection2literal(CV.realm)
+Source = collection2literal(CV.source_id)
+SourceType = collection2literal(CV.source_type)
+SubExperiment = collection2literal(CV.sub_experiment_id)
+Table = collection2literal(CV.table_id)
+# Variable = collection2literal(CV.variable_id)  # This is empty
 
 
 class Properties(BaseModel):
@@ -54,7 +56,7 @@ class Properties(BaseModel):
     source_type: List[SourceType] = Field(..., alias="source_type")
     sub_experiment: SubExperiment | Literal['none'] = Field(..., alias="sub_experiment_id")
     table: Table = Field(..., alias="table_id")
-    variable: Variable = str  # Field(..., alias="variable_id")
+    # variable: str  # Field(..., alias="variable_id")
     variant_label: str
     initialization_index: int
     physics_index: int
@@ -137,7 +139,7 @@ class CMIP6populator(STACpopulatorBase):
 
         item.update(STACItem(start_datetime=meta["time_coverage_start"],
             end_datetime=meta["time_coverage_end"],).model_dump())
-
+        
         return pystac.Item(**item)
 
     def validate_stac_item_cv(self, data: MutableMapping[str, Any]) -> bool:

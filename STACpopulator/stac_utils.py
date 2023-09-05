@@ -41,3 +41,10 @@ def collection2enum(collection):
     """
     mp = {term.name: term.label for term in collection}
     return Enum(collection.raw_name.capitalize(), mp, module="base")
+
+
+def collection2literal(collection):
+    import typing
+    terms = tuple(term.label for term in collection)
+    return typing.Literal[terms]
+
