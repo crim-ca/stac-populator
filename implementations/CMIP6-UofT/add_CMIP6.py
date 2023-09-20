@@ -13,6 +13,20 @@ from STACpopulator.stac_utils import collection2literal
 import pyessv
 
 
+media_types = {"httpserver_service": "application/x-netcdf",
+               "opendap_service": pystac.MediaType.HTML,
+               "wcs_service": pystac.MediaType.XML,
+               "wms_service": pystac.MediaType.XML,
+               "nccs_service": "application/x-netcdf",
+               "HTTPServer": "application/x-netcdf",
+               "OPENDAP": pystac.MediaType.HTML,
+               "NCML": pystac.MediaType.XML,
+               "WCS": pystac.MediaType.XML,
+               "ISO": pystac.MediaType.XML,
+               "WMS": pystac.MediaType.XML,
+               "NetcdfSubset": "application/x-netcdf",
+               }
+
 LOGGER = logging.getLogger(__name__)
 LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
 formatter = ColoredFormatter(LOGFORMAT)
@@ -143,7 +157,14 @@ class CMIP6populator(STACpopulatorBase):
         item.update(STACItem(start_datetime=meta["time_coverage_start"],
             end_datetime=meta["time_coverage_end"],).model_dump())
 
-        return pystac.Item(**item).to_dict()
+        stac_item = pystac.Item(**item)
+
+        # Add assets
+        for name, url in item_data["access_urls"].items():
+            asset = pystac.Asset(href=url, media_type=media_types.get(name, None))
+            stac_item.add_asset(name, asset)
+
+        return stac_item.to_dict()
 
     def validate_stac_item_cv(self, data: MutableMapping[str, Any]) -> bool:
         # Validation is done at the item creating stage, using the Properties class.
