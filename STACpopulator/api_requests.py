@@ -1,6 +1,5 @@
 import os
 from typing import Any
-
 import requests
 
 
@@ -35,11 +34,11 @@ def post_stac_collection(stac_host: str, json_data: dict[str, Any]) -> None:
 
     if r.status_code == 200:
         print(
-            f"{bcolors.OKGREEN}[INFO] Pushed STAC collection [{collection_id}] to [{stac_host}] ({r.status_code}){bcolors.ENDC}"
+            f"[INFO] Pushed STAC collection [{collection_id}] to [{stac_host}] ({r.status_code})"
         )
     elif r.status_code == 409:
         print(
-            f"{bcolors.WARNING}[INFO] STAC collection [{collection_id}] already exists on [{stac_host}] ({r.status_code}), updating..{bcolors.ENDC}"
+            f"[INFO] STAC collection [{collection_id}] already exists on [{stac_host}] ({r.status_code}), updating.."
         )
         r = requests.put(os.path.join(stac_host, "collections"), json=json_data, verify=False)
         r.raise_for_status()
@@ -48,4 +47,32 @@ def post_stac_collection(stac_host: str, json_data: dict[str, Any]) -> None:
 
 
 def post_stac_item(stac_host: str, collection_id: str, data: dict[str, dict]) -> bool:
-    pass
+    """
+    Post a STAC item.
+    """
+    item_id = data["id"]
+    r = requests.post(
+        os.path.join(stac_host, "collections", collection_id, "items"),
+        json=data,
+        verify=False,
+    )
+
+    if r.status_code == 200:
+        print(
+            f"[INFO] Pushed STAC item [{item_id}] to [{stac_host}] ({r.status_code})"
+        )
+        return True
+    elif r.status_code == 409:
+        print(
+            f"[INFO] STAC item [{item_id}] already exists on [{stac_host}] ({r.status_code}), updating.."
+        )
+        r = requests.put(
+            os.path.join(stac_host, "collections", collection_id, "items", item_id),
+            json=data,
+            verify=False,
+        )
+        r.raise_for_status()
+        return True
+    else:
+        r.raise_for_status()
+        return False

@@ -97,24 +97,24 @@ class THREDDSLoader(GenericLoader):
             "coordinates": [
                 [
                     [
-                        attrs["geospatial_lon_min"],
-                        attrs["geospatial_lat_min"],
+                        float(attrs["geospatial_lon_min"][0]),
+                        float(attrs["geospatial_lat_min"][0]),
                     ],
                     [
-                        attrs["geospatial_lon_min"],
-                        attrs["geospatial_lat_max"],
+                        float(attrs["geospatial_lon_min"][0]),
+                        float(attrs["geospatial_lat_max"][0]),
                     ],
                     [
-                        attrs["geospatial_lon_max"],
-                        attrs["geospatial_lat_max"],
+                        float(attrs["geospatial_lon_max"][0]),
+                        float(attrs["geospatial_lat_max"][0]),
                     ],
                     [
-                        attrs["geospatial_lon_max"],
-                        attrs["geospatial_lat_min"],
+                        float(attrs["geospatial_lon_max"][0]),
+                        float(attrs["geospatial_lat_min"][0]),
                     ],
                     [
-                        attrs["geospatial_lon_min"],
-                        attrs["geospatial_lat_min"],
+                        float(attrs["geospatial_lon_min"][0]),
+                        float(attrs["geospatial_lat_min"][0]),
                     ],
                 ]
             ],
@@ -124,10 +124,10 @@ class THREDDSLoader(GenericLoader):
     def ncattrs_to_bbox(attrs: MutableMapping[str, Any]) -> list:
         """Create BBOX from CFMetadata."""
         return [
-            attrs["geospatial_lon_min"],
-            attrs["geospatial_lat_min"],
-            attrs["geospatial_lon_max"],
-            attrs["geospatial_lat_max"],
+            float(attrs["geospatial_lon_min"][0]),
+            float(attrs["geospatial_lat_min"][0]),
+            float(attrs["geospatial_lon_max"][0]),
+            float(attrs["geospatial_lat_max"][0]),
         ]
 
 

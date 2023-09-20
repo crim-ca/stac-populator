@@ -2,6 +2,7 @@ import argparse
 import logging
 from typing import Any, MutableMapping, Literal, List
 import datetime as dt
+import hashlib
 
 from colorlog import ColoredFormatter
 import pystac
@@ -90,7 +91,8 @@ class STACItem(BaseModel):
 def make_cmip6_id(attrs: MutableMapping[str, Any]) -> str:
     """Return unique ID for CMIP6 data collection (multiple variables)."""
     keys = ["activity_id", "institution_id", "source_id", "experiment_id", "variant_label", "table_id", "grid_label",]
-    return "_".join(attrs[k] for k in keys)
+    item_name = "_".join(attrs[k] for k in keys)
+    return hashlib.md5(item_name.encode("utf-8")).hexdigest()
 
 
 class CMIP6populator(STACpopulatorBase):
@@ -128,6 +130,7 @@ class CMIP6populator(STACpopulatorBase):
         attrs = item_data["attributes"]
         meta = item_data["groups"]["CFMetadata"]["attributes"]
 
+        # uuid
         # Create STAC item geometry from CFMetadata
         item = dict(
             id=make_cmip6_id(attrs),
@@ -139,8 +142,8 @@ class CMIP6populator(STACpopulatorBase):
 
         item.update(STACItem(start_datetime=meta["time_coverage_start"],
             end_datetime=meta["time_coverage_end"],).model_dump())
-        
-        return pystac.Item(**item)
+
+        return pystac.Item(**item).to_dict()
 
     def validate_stac_item_cv(self, data: MutableMapping[str, Any]) -> bool:
         # Validation is done at the item creating stage, using the Properties class.
