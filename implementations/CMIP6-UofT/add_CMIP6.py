@@ -6,26 +6,12 @@ import hashlib
 
 from colorlog import ColoredFormatter
 import pystac
+
 from pydantic import BaseModel, Field, FieldValidationInfo, field_validator, ValidationError
 from STACpopulator import STACpopulatorBase
 from STACpopulator.input import THREDDSLoader
-from STACpopulator.stac_utils import collection2literal
+from STACpopulator.stac_utils import collection2literal, CFJsonDatacube, CFJsonItem
 import pyessv
-
-
-media_types = {"httpserver_service": "application/x-netcdf",
-               "opendap_service": pystac.MediaType.HTML,
-               "wcs_service": pystac.MediaType.XML,
-               "wms_service": pystac.MediaType.XML,
-               "nccs_service": "application/x-netcdf",
-               "HTTPServer": "application/x-netcdf",
-               "OPENDAP": pystac.MediaType.HTML,
-               "NCML": pystac.MediaType.XML,
-               "WCS": pystac.MediaType.XML,
-               "ISO": pystac.MediaType.XML,
-               "WMS": pystac.MediaType.XML,
-               "NetcdfSubset": "application/x-netcdf",
-               }
 
 LOGGER = logging.getLogger(__name__)
 LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
@@ -97,9 +83,6 @@ class Properties(BaseModel):
         return v.split(" ")
 
 
-class STACItem(BaseModel):
-    start_datetime: dt.datetime
-    end_datetime: dt.datetime
 
 
 def make_cmip6_id(attrs: MutableMapping[str, Any]) -> str:
@@ -140,31 +123,16 @@ class CMIP6populator(STACpopulatorBase):
         pass
 
     def create_stac_item(self, item_name: str, item_data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
-        # TODO: next step is to implement this
-        attrs = item_data["attributes"]
-        meta = item_data["groups"]["CFMetadata"]["attributes"]
+        # TODO: This is agnostic to the data collection, should not be in CMIP6 specific class.
+        iid = make_cmip6_id(item_data["attributes"])
+        m = CFJsonDatacube(iid, item_data, Properties)
+        try:
+            m = CFJsonDatacube(iid, item_data, Properties)
+        except:
+            LOGGER.warning(f"Failed to add Datacube extention to item {item_name}")
+            m = CFJsonItem(iid, item_data, Properties)
 
-        # uuid
-        # Create STAC item geometry from CFMetadata
-        item = dict(
-            id=make_cmip6_id(attrs),
-            geometry=THREDDSLoader.ncattrs_to_geometry(meta),
-            bbox=THREDDSLoader.ncattrs_to_bbox(meta),
-            properties=Properties(**attrs).model_dump(),
-            datetime=None,
-        )
-
-        item.update(STACItem(start_datetime=meta["time_coverage_start"],
-            end_datetime=meta["time_coverage_end"],).model_dump())
-
-        stac_item = pystac.Item(**item)
-
-        # Add assets
-        for name, url in item_data["access_urls"].items():
-            asset = pystac.Asset(href=url, media_type=media_types.get(name, None))
-            stac_item.add_asset(name, asset)
-
-        return stac_item.to_dict()
+        return m.item.to_dict()
 
     def validate_stac_item_cv(self, data: MutableMapping[str, Any]) -> bool:
         # Validation is done at the item creating stage, using the Properties class.

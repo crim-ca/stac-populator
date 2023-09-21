@@ -37,6 +37,10 @@ class GenericLoader(ABC):
         pass
 
 
+
+
+
+
 class THREDDSLoader(GenericLoader):
     def __init__(self, thredds_catalog_url: str, depth: Optional[int] = None) -> None:
         """Constructor
@@ -89,46 +93,6 @@ class THREDDSLoader(GenericLoader):
 
         return attrs
 
-    @staticmethod
-    def ncattrs_to_geometry(attrs: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
-        """Create Polygon geometry from CFMetadata."""
-        return {
-            "type": "Polygon",
-            "coordinates": [
-                [
-                    [
-                        float(attrs["geospatial_lon_min"][0]),
-                        float(attrs["geospatial_lat_min"][0]),
-                    ],
-                    [
-                        float(attrs["geospatial_lon_min"][0]),
-                        float(attrs["geospatial_lat_max"][0]),
-                    ],
-                    [
-                        float(attrs["geospatial_lon_max"][0]),
-                        float(attrs["geospatial_lat_max"][0]),
-                    ],
-                    [
-                        float(attrs["geospatial_lon_max"][0]),
-                        float(attrs["geospatial_lat_min"][0]),
-                    ],
-                    [
-                        float(attrs["geospatial_lon_min"][0]),
-                        float(attrs["geospatial_lat_min"][0]),
-                    ],
-                ]
-            ],
-        }
-
-    @staticmethod
-    def ncattrs_to_bbox(attrs: MutableMapping[str, Any]) -> list:
-        """Create BBOX from CFMetadata."""
-        return [
-            float(attrs["geospatial_lon_min"][0]),
-            float(attrs["geospatial_lat_min"][0]),
-            float(attrs["geospatial_lon_max"][0]),
-            float(attrs["geospatial_lat_max"][0]),
-        ]
 
 
 class STACLoader(GenericLoader):
