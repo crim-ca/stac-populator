@@ -25,8 +25,6 @@ LOGGER.propagate = False
 # CMIP6 controlled vocabulary (CV)
 CV = pyessv.WCRP.CMIP6
 
-
-
 # Enum classes built from the pyessv' CV
 Activity = collection2literal(CV.activity_id)
 Experiment = collection2literal(CV.experiment_id)
@@ -83,8 +81,6 @@ class Properties(BaseModel):
         return v.split(" ")
 
 
-
-
 def make_cmip6_id(attrs: MutableMapping[str, Any]) -> str:
     """Return unique ID for CMIP6 data collection (multiple variables)."""
     keys = ["activity_id", "institution_id", "source_id", "experiment_id", "variant_label", "table_id", "grid_label",]
@@ -98,7 +94,6 @@ class CMIP6populator(STACpopulatorBase):
             stac_host: str,
             thredds_catalog_url: str,
             config_filename: str,
-            validator: callable = None
     ) -> None:
         """Constructor
 
@@ -112,11 +107,7 @@ class CMIP6populator(STACpopulatorBase):
         """
 
         data_loader = THREDDSLoader(thredds_catalog_url)
-        self.validator = validator
-
-        for name, item in data_loader:
-            # self.create_stac_item(name, item)
-            print(name)
+        self.props_model = Properties
         super().__init__(stac_host, data_loader, config_filename)
 
     def handle_ingestion_error(self, error: str, item_name: str, item_data: MutableMapping[str, Any]):
@@ -126,12 +117,12 @@ class CMIP6populator(STACpopulatorBase):
         # TODO: This is agnostic to the data collection, should not be in CMIP6 specific class.
         iid = make_cmip6_id(item_data["attributes"])
 
-        obj = CFJsonItem(iid, item_data, Properties)
+        obj = CFJsonItem(iid, item_data, self.props_model)
 
         try:
             DatacubeExt(obj)
         except:
-            LOGGER.warning(f"Failed to add Datacube extention to item {item_name}")
+            LOGGER.warning(f"Failed to add Datacube extension to item {item_name}")
 
         return obj.item.to_dict()
 

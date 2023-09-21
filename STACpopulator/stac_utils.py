@@ -89,9 +89,14 @@ class CFJsonItem:
         item = pystac.Item(**itemd)
 
         # Add assets
-        for name, url in attrs["access_urls"].items():
-            asset = pystac.Asset(href=url, media_type=media_types.get(name, None))
-            item.add_asset(name, asset)
+        if "access_urls" in attrs:
+            for name, url in attrs["access_urls"].items():
+                asset = pystac.Asset(href=url, media_type=media_types.get(name, None))
+                item.add_asset(name, asset)
+        elif 'THREDDSMetadata' in attrs["groups"]:
+            for name, url in attrs["groups"]['THREDDSMetadata']['groups']['services']['attributes'].items():
+                asset = pystac.Asset(href=url, media_type=media_types.get(name, None))
+                item.add_asset(name, asset)
 
         self.item = item
 
@@ -153,34 +158,34 @@ class DatacubeExt:
 
         dims = {}
         for name, length in self.attrs["dimensions"].items():
-            v = self.attrs["variables"][name]
-            bbox = self.obj.ncattrs_to_bbox()
+            v = self.attrs["variables"].get(name)
+            if v:
+                bbox = self.obj.ncattrs_to_bbox()
+                for key, criteria in coordinate_criteria.items():
+                    for criterion, expected in criteria.items():
+                        if v['attributes'].get(criterion, None) in expected:
+                            axis = self.axis[key]
+                            type_ = DimensionType.SPATIAL if axis in ['x', 'y', 'z'] else DimensionType.TEMPORAL
 
-            for key, criteria in coordinate_criteria.items():
-                for criterion, expected in criteria.items():
-                    if v['attributes'].get(criterion, None) in expected:
-                        axis = self.axis[key]
-                        type_ = DimensionType.SPATIAL if axis in ['x', 'y', 'z'] else DimensionType.TEMPORAL
+                            if v['type'] == 'int':
+                                extent = [0, int(length)]
+                            else:  # Not clear the logic is sound
+                                if key == 'X':
+                                    extent = bbox[0], bbox[2]
+                                elif key == "Y":
+                                    extent = bbox[1], bbox[3]
+                                else:
+                                    extent = None
 
-                        if v['type'] == 'int':
-                            extent = [0, int(length)]
-                        else:  # Not clear the logic is sound
-                            if key == 'X':
-                                extent = bbox[0], bbox[2]
-                            elif key == "Y":
-                                extent = bbox[1], bbox[3]
-                            else:
-                                extent = None
-
-                        dims[name] = Dimension(properties=dict(
-                            axis = axis,
-                            type = type_,
-                            extent = extent,
-                            description=v.get("description", v.get("long_name", criteria["standard_name"]))
+                            dims[name] = Dimension(properties=dict(
+                                axis = axis,
+                                type = type_,
+                                extent = extent,
+                                description=v.get("description", v.get("long_name", criteria["standard_name"]))
+                                )
                             )
-                        )
 
-            return dims
+        return dims
 
     def is_coordinate(self, attrs: dict)-> bool:
         """Return whether variable is a coordinate."""
@@ -194,14 +199,16 @@ class DatacubeExt:
         """Return Variable objects"""
         variables = {}
 
-        for name, attrs in self.attrs["variables"].items():
+        for name, meta in self.attrs["variables"].items():
             if name in self.attrs["dimensions"]:
                 continue
-
+            
+            attrs = meta['attributes']
             variables[name] = Variable(properties=dict(
-                    dimensions=attrs["shape"],
-                    type = VariableType.AUXILIARY.value if self.is_coordinate(attrs) else VariableType.DATA.value,
-                    description=attrs.get("description", attrs.get("long_name", None)),
+                    dimensions=meta["shape"],
+                    type = VariableType.AUXILIARY.value if self.is_coordinate(attrs) else
+                    VariableType.DATA.value,
+                    description=attrs.get("description", attrs.get("long_name")),
                     unit=attrs.get("units", None)
                 ))
         return variables
