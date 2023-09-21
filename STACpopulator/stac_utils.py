@@ -62,6 +62,18 @@ class STACItem(BaseModel):
 class CFJsonItem:
     """Return STAC Item from CF JSON metadata, as provided by `xncml.Dataset.to_cf_dict`."""
     def __init__(self, iid: str, attrs: dict, datamodel=None):
+        """
+        Create STAC Item from CF JSON metadata.
+
+        Parameters
+        ----------
+        iid : str
+            Unique item ID.
+        attrs: dict
+            CF JSON metadata returned by `xncml.Dataset.to_cf_dict`.
+        datamodel : pydantic.BaseModel, optional
+            Data model for validating global attributes.
+        """
         self.attrs = attrs
 
         # Global attributes
@@ -147,6 +159,14 @@ class DatacubeExt:
     axis = {"X": "x", "Y": "y", "Z": "z", "T": "t", "longitude": "x", "latitude": "y", "vertical": "z", "time": "t"}
 
     def __init__(self, obj: CFJsonItem):
+        """
+        Add Datacube extension to STAC Item.
+
+        Parameters
+        ----------
+        obj : CFJsonItem
+            STAC Item created from CF JSON metadata.
+        """
         self.obj = obj
         self.attrs = obj.attrs
 
@@ -187,14 +207,6 @@ class DatacubeExt:
 
         return dims
 
-    def is_coordinate(self, attrs: dict)-> bool:
-        """Return whether variable is a coordinate."""
-        for key, criteria in coordinate_criteria.items():
-            for criterion, expected in criteria.items():
-                if attrs.get(criterion, None) in expected:
-                    return True
-        return False
-
     def variables(self)->dict:
         """Return Variable objects"""
         variables = {}
@@ -202,7 +214,7 @@ class DatacubeExt:
         for name, meta in self.attrs["variables"].items():
             if name in self.attrs["dimensions"]:
                 continue
-            
+
             attrs = meta['attributes']
             variables[name] = Variable(properties=dict(
                     dimensions=meta["shape"],
@@ -213,6 +225,13 @@ class DatacubeExt:
                 ))
         return variables
 
+    def is_coordinate(self, attrs: dict)-> bool:
+        """Return whether variable is a coordinate."""
+        for key, criteria in coordinate_criteria.items():
+            for criterion, expected in criteria.items():
+                if attrs.get(criterion, None) in expected:
+                    return True
+        return False
 
 
 # From CF-Xarray
