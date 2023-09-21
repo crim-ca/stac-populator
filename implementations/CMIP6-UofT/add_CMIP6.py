@@ -10,7 +10,7 @@ import pystac
 from pydantic import BaseModel, Field, FieldValidationInfo, field_validator, ValidationError
 from STACpopulator import STACpopulatorBase
 from STACpopulator.input import THREDDSLoader
-from STACpopulator.stac_utils import collection2literal, CFJsonDatacube, CFJsonItem
+from STACpopulator.stac_utils import collection2literal, DatacubeExt, CFJsonItem
 import pyessv
 
 LOGGER = logging.getLogger(__name__)
@@ -125,14 +125,15 @@ class CMIP6populator(STACpopulatorBase):
     def create_stac_item(self, item_name: str, item_data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
         # TODO: This is agnostic to the data collection, should not be in CMIP6 specific class.
         iid = make_cmip6_id(item_data["attributes"])
-        m = CFJsonDatacube(iid, item_data, Properties)
+
+        obj = CFJsonItem(iid, item_data, Properties)
+
         try:
-            m = CFJsonDatacube(iid, item_data, Properties)
+            DatacubeExt(obj)
         except:
             LOGGER.warning(f"Failed to add Datacube extention to item {item_name}")
-            m = CFJsonItem(iid, item_data, Properties)
 
-        return m.item.to_dict()
+        return obj.item.to_dict()
 
     def validate_stac_item_cv(self, data: MutableMapping[str, Any]) -> bool:
         # Validation is done at the item creating stage, using the Properties class.

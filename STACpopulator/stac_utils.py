@@ -73,7 +73,6 @@ class CFJsonItem:
         else:
             props = gattrs
 
-
         # Create STAC item
         itemd = dict(
             id=iid,
@@ -138,14 +137,15 @@ class CFJsonItem:
         ]
 
 
-class CFJsonDatacube(CFJsonItem):
-    """Return STAC Item with Datacube extension from CF JSON metadata, as provided by `xncml.Dataset.to_cf_dict`."""
+class DatacubeExt:
+    """Extend STAC Item with Datacube properties."""
     axis = {"X": "x", "Y": "y", "Z": "z", "T": "t", "longitude": "x", "latitude": "y", "vertical": "z", "time": "t"}
 
-    def __init__(self, *args, **kwds):
-        super().__init__(*args, **kwds)
+    def __init__(self, obj: CFJsonItem):
+        self.obj = obj
+        self.attrs = obj.attrs
 
-        self.ext = DatacubeExtension.ext(self.item, add_if_missing=True)
+        self.ext = DatacubeExtension.ext(self.obj.item, add_if_missing=True)
         self.ext.apply(dimensions=self.dimensions(), variables=self.variables())
 
     def dimensions(self) -> dict:
@@ -154,7 +154,7 @@ class CFJsonDatacube(CFJsonItem):
         dims = {}
         for name, length in self.attrs["dimensions"].items():
             v = self.attrs["variables"][name]
-            bbox = self.ncattrs_to_bbox()
+            bbox = self.obj.ncattrs_to_bbox()
 
             for key, criteria in coordinate_criteria.items():
                 for criterion, expected in criteria.items():
@@ -180,12 +180,10 @@ class CFJsonDatacube(CFJsonItem):
                             )
                         )
 
-
             return dims
 
-
     def is_coordinate(self, attrs: dict)-> bool:
-        """Return whether or not variable is a coordinate."""
+        """Return whether variable is a coordinate."""
         for key, criteria in coordinate_criteria.items():
             for criterion, expected in criteria.items():
                 if attrs.get(criterion, None) in expected:
@@ -207,7 +205,6 @@ class CFJsonDatacube(CFJsonItem):
                     unit=attrs.get("units", None)
                 ))
         return variables
-
 
 
 
