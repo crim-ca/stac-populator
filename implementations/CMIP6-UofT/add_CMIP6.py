@@ -1,17 +1,18 @@
-import argparse
 import logging
-from typing import Any, MutableMapping, Literal, List
-import datetime as dt
 import hashlib
-
+from datetime import datetime
+from typing import Any, Dict, List, Literal, MutableMapping
 from colorlog import ColoredFormatter
-import pystac
+import argparse
+import pyessv
+from pydantic import AnyHttpUrl, BaseModel, Field, FieldValidationInfo, field_validator
 
-from pydantic import BaseModel, Field, FieldValidationInfo, field_validator, ValidationError
+
 from STACpopulator import STACpopulatorBase
 from STACpopulator.input import THREDDSLoader
+from STACpopulator.stac_utils import ItemProperties
 from STACpopulator.stac_utils import collection2literal, DatacubeExt, CFJsonItem
-import pyessv
+
 
 LOGGER = logging.getLogger(__name__)
 LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
@@ -26,46 +27,55 @@ LOGGER.propagate = False
 CV = pyessv.WCRP.CMIP6
 
 # Enum classes built from the pyessv' CV
-Activity = collection2literal(CV.activity_id)
-Experiment = collection2literal(CV.experiment_id)
+ActivityID = collection2literal(CV.activity_id)
+ExperimentID = collection2literal(CV.experiment_id)
 Frequency = collection2literal(CV.frequency)
 GridLabel = collection2literal(CV.grid_label)
-Institution = collection2literal(CV.institution_id)
+InstitutionID = collection2literal(CV.institution_id)
 # Member = collection2literal(CV.member_id)  # This is empty
-Resolution = collection2literal(CV.nominal_resolution)
+NominalResolution = collection2literal(CV.nominal_resolution)
 Realm = collection2literal(CV.realm)
-Source = collection2literal(CV.source_id)
+SourceID = collection2literal(CV.source_id)
 SourceType = collection2literal(CV.source_type)
-SubExperiment = collection2literal(CV.sub_experiment_id)
-Table = collection2literal(CV.table_id)
+SubExperimentID = collection2literal(CV.sub_experiment_id)
+TableID = collection2literal(CV.table_id)
 # Variable = collection2literal(CV.variable_id)  # This is empty
 
 
-class Properties(BaseModel):
-    """Data model for CMIP6 Controlled Vocabulary.
-    """
-    activity: Activity = Field(..., alias="activity_id")
-    experiment: Experiment = Field(..., alias="experiment_id")
-    frequency: Frequency
-    grid_label: GridLabel
-    institution: Institution = Field(..., alias="institution_id")
-    resolution: Resolution = Field(..., alias="nominal_resolution")
-    realm: List[Realm] = Field(..., alias="realm")
-    source: Source = Field(..., alias="source_id")
-    source_type: List[SourceType] = Field(..., alias="source_type")
-    sub_experiment: SubExperiment | Literal['none'] = Field(..., alias="sub_experiment_id")
-    table: Table = Field(..., alias="table_id")
-    # variable: str  # Field(..., alias="variable_id")
-    variant_label: str
-    initialization_index: int
-    physics_index: int
-    realization_index: int
-    forcing_index: int
-    variant_label: str
-    tracking_id: str
-    version: str = None
-    license: str = None
-    grid: str = None
+class Properties(ItemProperties, validate_assignment=True):
+    """Data model for CMIP6 Controlled Vocabulary."""
+
+    Conventions: str = Field(..., serialization_alias="cmip6:Conventions")
+    activity_id: ActivityID = Field(..., serialization_alias="cmip6:activity_id")
+    creation_date: datetime = Field(..., serialization_alias="cmip6:creation_date")
+    data_specs_version: str = Field(..., serialization_alias="cmip6:data_specs_version")
+    experiment: str = Field(..., serialization_alias="cmip6:experiment")
+    experiment_id: ExperimentID = Field(..., serialization_alias="cmip6:experiment_id")
+    frequency: Frequency = Field(..., serialization_alias="cmip6:frequency")
+    further_info_url: AnyHttpUrl = Field(..., serialization_alias="cmip6:further_info_url")
+    grid_label: GridLabel = Field(..., serialization_alias="cmip6:grid_label")
+    institution: str = Field(..., serialization_alias="cmip6:institution")
+    institution_id: InstitutionID = Field(..., serialization_alias="cmip6:institution_id")
+    nominal_resolution: NominalResolution = Field(..., serialization_alias="cmip6:nominal_resolution")
+    realm: List[Realm] = Field(..., serialization_alias="cmip6:realm")
+    source: str = Field(..., serialization_alias="cmip6:source")
+    source_id: SourceID = Field(..., serialization_alias="cmip6:source_id")
+    source_type: List[SourceType] = Field(..., serialization_alias="cmip6:source_type")
+    sub_experiment: str | Literal["none"] = Field(..., serialization_alias="cmip6:sub_experiment")
+    sub_experiment_id: SubExperimentID | Literal["none"] = Field(..., serialization_alias="cmip6:sub_experiment_id")
+    table_id: TableID = Field(..., serialization_alias="cmip6:table_id")
+    variable_id: str = Field(..., serialization_alias="cmip6:variable_id")
+    variant_label: str = Field(..., serialization_alias="cmip6:variant_label")
+    initialization_index: int = Field(..., serialization_alias="cmip6:initialization_index")
+    physics_index: int = Field(..., serialization_alias="cmip6:physics_index")
+    realization_index: int = Field(..., serialization_alias="cmip6:realization_index")
+    forcing_index: int = Field(..., serialization_alias="cmip6:forcing_index")
+    tracking_id: str = Field(..., serialization_alias="cmip6:tracking_id")
+    version: str = Field("", serialization_alias="cmip6:version")
+    product: str = Field(..., serialization_alias="cmip6:product")
+    license: str = Field(..., serialization_alias="cmip6:license")
+    grid: str = Field(..., serialization_alias="cmip6:grid")
+    mip_era: str = Field(..., serialization_alias="cmip6:mip_era")
 
     @field_validator("initialization_index", "physics_index", "realization_index", "forcing_index", mode="before")
     @classmethod
@@ -80,21 +90,33 @@ class Properties(BaseModel):
         """Split string into list."""
         return v.split(" ")
 
+    @field_validator("version")
+    @classmethod
+    def validate_version(cls, v: str, info: FieldValidationInfo):
+        assert v[0] == "v", "Version string should begin with a lower case 'v'"
+        assert v[1:].isdigit(), "All characters in version string, except first, should be digits"
+        return v
 
-def make_cmip6_id(attrs: MutableMapping[str, Any]) -> str:
-    """Return unique ID for CMIP6 data collection (multiple variables)."""
-    keys = ["activity_id", "institution_id", "source_id", "experiment_id", "variant_label", "table_id", "grid_label",]
-    item_name = "_".join(attrs[k] for k in keys)
-    return hashlib.md5(item_name.encode("utf-8")).hexdigest()
+
+def make_cmip6_item_id(attrs: MutableMapping[str, Any]) -> str:
+    """Return a unique ID for CMIP6 data item."""
+    keys = [
+        "activity_id",
+        "institution_id",
+        "source_id",
+        "experiment_id",
+        "variant_label",
+        "table_id",
+        "variable_id",
+        "grid_label",
+    ]
+    name = "_".join(attrs[k] for k in keys)
+    return name
+    return hashlib.md5(name.encode("utf-8")).hexdigest()
 
 
 class CMIP6populator(STACpopulatorBase):
-    def __init__(
-            self,
-            stac_host: str,
-            thredds_catalog_url: str,
-            config_filename: str,
-    ) -> None:
+    def __init__(self, stac_host: str, thredds_catalog_url: str, config_filename: str) -> None:
         """Constructor
 
         :param stac_host: URL to the STAC API
@@ -103,7 +125,6 @@ class CMIP6populator(STACpopulatorBase):
         :type thredds_catalog_url: str
         :param config_filename: Yaml file containing the information about the collection to populate
         :type config_filename: str
-        :param: validator: a function that validates and returns a dictionary of attributes.
         """
 
         data_loader = THREDDSLoader(thredds_catalog_url)
@@ -114,8 +135,16 @@ class CMIP6populator(STACpopulatorBase):
         pass
 
     def create_stac_item(self, item_name: str, item_data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
-        # TODO: This is agnostic to the data collection, should not be in CMIP6 specific class.
-        iid = make_cmip6_id(item_data["attributes"])
+        """Creates the STAC item.
+
+        :param item_name: name of the STAC item. Interpretation of name is left to the input loader implementation
+        :type item_name: str
+        :param item_data: dictionary like representation of all information on the item
+        :type item_data: MutableMapping[str, Any]
+        :return: _description_
+        :rtype: MutableMapping[str, Any]
+        """
+        iid = make_cmip6_item_id(item_data["attributes"])
 
         obj = CFJsonItem(iid, item_data, self.props_model)
 

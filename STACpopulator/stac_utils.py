@@ -1,11 +1,27 @@
 import re
+import json
 import datetime as dt
-from enum import Enum
-from typing import Any, Iterator, MutableMapping, Optional, Tuple
+from enum import Enum, auto
+from typing import Any, Iterator, MutableMapping, Optional, Tuple, Union
+from typing import Any, Dict, List, Literal, MutableMapping
+from typing_extensions import TypedDict
 import pystac
 from pystac.extensions.datacube import Dimension, DimensionType, VariableType, Variable, DatacubeExtension
-from pydantic import BaseModel
+from pydantic import AnyHttpUrl, BaseModel, field_validator, Field, ConfigDict, RootModel, AnyUrl
+from urllib.parse import urljoin
 
+
+import pyessv
+
+
+try:
+    from enum import EnumType as enumtype
+except ImportError:
+    # < Python 3.11
+    from enum import EnumMeta as enumtype
+
+
+STAC_VERSION = "1.0.0"
 
 def url_validate(target: str) -> bool:
     """Validate whether a supplied URL is reliably written.
@@ -31,7 +47,7 @@ def url_validate(target: str) -> bool:
     return True if re.match(url_regex, target) else False
 
 
-def collection2enum(collection):
+def collection2enum(collection: pyessv.model.collection.Collection) -> enumtype:
     """Create Enum based on terms from pyessv collection.
 
     Parameters
@@ -54,9 +70,100 @@ def collection2literal(collection):
     return typing.Literal[terms]
 
 
-class STACItem(BaseModel):
-    start_datetime: dt.datetime
-    end_datetime: dt.datetime
+class AutoValueEnum(Enum):
+    def _generate_next_value_(  # type: ignore
+        name: str, start: int, count: int, last_values: List[Any]
+    ) -> Any:
+        return name
+
+
+# DH: There is a question here whether we want to use pystac.Item or not.
+# pystac.Item takes datetime, start_datetime and end_datetime as optional parameters, and then copies them into
+# properties.
+# If we use pystac.Item, we don't have to put start_datetime and end_datetime into Properties, we can let pystac do
+# that.
+class ItemProperties(BaseModel):
+    start_datetime: Optional[dt.datetime] = None
+    end_datetime: Optional[dt.datetime] = None
+    datetime: Optional[dt.datetime] = None
+
+    @field_validator("datetime", mode="before")
+    def validate_datetime(cls, v: Union[dt.datetime, str], values: Dict[str, Any]) -> dt:
+        if v == "null":
+            if not values["start_datetime"] and not values["end_datetime"]:
+                raise ValueError(
+                    "start_datetime and end_datetime must be specified when datetime is null"
+                )
+
+
+class Geometry(TypedDict):
+    type: str
+    coordinates: List[List[List[float]]]
+
+class Asset(BaseModel):
+    href: AnyHttpUrl
+    media_type: Optional[str] = None
+    title: Optional[str] = None
+    description: Optional[str] = None
+    roles: Optional[List[str]] = None
+
+class Link(BaseModel):
+    """
+    https://github.com/radiantearth/stac-spec/blob/v1.0.0/collection-spec/collection-spec.md#link-object
+    """
+
+    href: str = Field(..., alias="href", min_length=1)
+    rel: str = Field(..., alias="rel", min_length=1)
+    type: Optional[str] = None
+    title: Optional[str] = None
+    # Label extension
+    label: Optional[str] = Field(None, alias="label:assets")
+    model_config = ConfigDict(use_enum_values=True)
+
+    def resolve(self, base_url: str) -> None:
+        """resolve a link to the given base URL"""
+        self.href = urljoin(base_url, self.href)
+
+class PaginationMethods(str, AutoValueEnum):
+    """
+    https://github.com/radiantearth/stac-api-spec/blob/master/api-spec.md#paging-extension
+    """
+
+    GET = auto()
+    POST = auto()
+
+
+class PaginationRelations(str, AutoValueEnum):
+    """
+    https://github.com/radiantearth/stac-api-spec/blob/master/api-spec.md#paging-extension
+    """
+
+    next = auto()
+    previous = auto()
+
+class PaginationLink(Link):
+    """
+    https://github.com/radiantearth/stac-api-spec/blob/master/api-spec.md#paging-extension
+    """
+
+    rel: PaginationRelations
+    method: PaginationMethods
+    body: Optional[Dict[Any, Any]] = None
+    merge: bool = False
+
+Links = RootModel[List[Union[PaginationLink, Link]]]
+
+
+class Item(BaseModel):
+    id: str = Field(..., alias="id", min_length=1)
+    geometry: Optional[Geometry] = None
+    bbox: Optional[List[float]] = None
+    properties: ItemProperties
+    assets: Dict[str, Asset] = None
+    stac_extensions: Optional[List[AnyUrl]] = []
+    collection: Optional[str] = None
+    datetime: Optional[dt.datetime] = None  # Not in the spec, but needed by pystac.Item.
+
 
 
 class CFJsonItem:
@@ -75,42 +182,46 @@ class CFJsonItem:
             Data model for validating global attributes.
         """
         self.attrs = attrs
+        cfmeta = attrs["groups"]["CFMetadata"]["attributes"]
 
         # Global attributes
-        gattrs = attrs["attributes"]
+        gattrs = {**attrs["attributes"],
+                  "start_datetime": cfmeta["time_coverage_start"],
+                  "end_datetime": cfmeta["time_coverage_end"]}
 
         # Validate using pydantic data model if given
-        if datamodel:
-            props = datamodel(**gattrs).model_dump()
-        else:
-            props = gattrs
+        datamodel = datamodel or dict
+
+        class MySTACItem(Item):
+            properties: datamodel
 
         # Create STAC item
-        itemd = dict(
+        item = MySTACItem(
             id=iid,
             geometry=self.ncattrs_to_geometry(),
             bbox=self.ncattrs_to_bbox(),
-            properties=props,
+            properties=gattrs,
             datetime=None,
         )
 
-        cfmeta = attrs["groups"]["CFMetadata"]["attributes"]
-        itemd.update(STACItem(start_datetime=cfmeta["time_coverage_start"],
-            end_datetime=cfmeta["time_coverage_end"],).model_dump())
-
-        item = pystac.Item(**itemd)
+        item = pystac.Item(**json.loads(item.model_dump_json(by_alias=True)))
 
         # Add assets
         if "access_urls" in attrs:
-            for name, url in attrs["access_urls"].items():
-                asset = pystac.Asset(href=url, media_type=media_types.get(name, None))
-                item.add_asset(name, asset)
+            root = attrs["access_urls"]
         elif 'THREDDSMetadata' in attrs["groups"]:
-            for name, url in attrs["groups"]['THREDDSMetadata']['groups']['services']['attributes'].items():
-                asset = pystac.Asset(href=url, media_type=media_types.get(name, None))
-                item.add_asset(name, asset)
+            root = attrs["groups"]['THREDDSMetadata']['groups']['services']['attributes']
+        else:
+            root = {}
+
+        for name, url in root.items():
+            asset = pystac.Asset(href=url, media_type=media_types.get(name), roles=asset_roles.get(name))
+            item.add_asset(name, asset)
 
         self.item = item
+
+    def to_json(self) -> str:
+        self.item.model_dump_json()
 
     def ncattrs_to_geometry(self) -> MutableMapping[str, Any]:
         """Create Polygon geometry from CFMetadata."""
@@ -348,3 +459,16 @@ media_types = {"httpserver_service": "application/x-netcdf",
                "WMS": pystac.MediaType.XML,
                "NetcdfSubset": "application/x-netcdf",
                }
+
+asset_roles = {"httpserver_service": ["data"],
+               "opendap_service": ["data"],
+               "wcs_service": ["data"],
+               "wms_service": ["visual"],
+               "nccs_service": ["data"],
+               "HTTPServer": ["data"],
+               "OPENDAP": ["data"],
+               "NCML": ["metadata"],
+               "WCS": ["data"],
+               "ISO": ["metadata"],
+               "WMS": ["visual"],
+               "NetcdfSubset": ["data"],}

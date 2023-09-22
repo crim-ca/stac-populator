@@ -107,22 +107,19 @@ class STACpopulatorBase(ABC):
             self._collection_info["summaries"] = pystac.Summaries({"needs_summaries_update": ["true"]})
 
             collection = pystac.Collection(id=self.collection_id, **self._collection_info)
-            LOGGER.info("Collection successfully created")
             post_stac_collection(self.stac_host, collection.to_dict())
 
     def ingest(self) -> None:
+        LOGGER.info("Data ingestion")
         for item_name, item_data in self._ingest_pipeline:
             LOGGER.info(f"Creating STAC representation for {item_name}")
             stac_item = self.create_stac_item(item_name, item_data)
-            if self.validate_stac_item_cv(stac_item):
-                if post_stac_item(self.stac_host, self.collection_id, stac_item):
-                    LOGGER.info(f"{item_name} successfully posted")
-                else:
-                    LOGGER.error(f"Posting {item_name} failed")
-                    self.handle_ingestion_error("Posting Error", item_name, item_data)
-            else:
-                LOGGER.error(f"Validation failed for item {item_name}")
-                self.handle_ingestion_error("Validation Error", item_name, item_data)
+            post_stac_item(self.stac_host, self.collection_id, item_name, stac_item)
+            try:
+                pass
+            except Exception:
+                LOGGER.error(f"Failed adding STAC item {item_name}")
+                self.handle_ingestion_error("Posting Error", item_name, item_data)
 
     @abstractmethod
     def handle_ingestion_error(self, error: str, item_name: str, item_data: MutableMapping[str, Any]):

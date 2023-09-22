@@ -94,7 +94,6 @@ class THREDDSLoader(GenericLoader):
         return attrs
 
 
-
 class STACLoader(GenericLoader):
     def __init__(self) -> None:
         super().__init__()
