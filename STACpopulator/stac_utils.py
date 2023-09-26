@@ -124,30 +124,14 @@ class Link(BaseModel):
         """resolve a link to the given base URL"""
         self.href = urljoin(base_url, self.href)
 
-class PaginationMethods(str, AutoValueEnum):
-    """
-    https://github.com/radiantearth/stac-api-spec/blob/master/api-spec.md#paging-extension
-    """
-
-    GET = auto()
-    POST = auto()
-
-
-class PaginationRelations(str, AutoValueEnum):
-    """
-    https://github.com/radiantearth/stac-api-spec/blob/master/api-spec.md#paging-extension
-    """
-
-    next = auto()
-    previous = auto()
 
 class PaginationLink(Link):
     """
     https://github.com/radiantearth/stac-api-spec/blob/master/api-spec.md#paging-extension
     """
 
-    rel: PaginationRelations
-    method: PaginationMethods
+    rel: Literal["next", "previous"]
+    method: Literal["GET", "POST"]
     body: Optional[Dict[Any, Any]] = None
     merge: bool = False
 
@@ -158,7 +142,7 @@ class Item(BaseModel):
     id: str = Field(..., alias="id", min_length=1)
     geometry: Optional[Geometry] = None
     bbox: Optional[List[float]] = None
-    properties: ItemProperties
+    properties: Optional[ItemProperties] = None
     assets: Dict[str, Asset] = None
     stac_extensions: Optional[List[AnyUrl]] = []
     collection: Optional[str] = None

@@ -58,7 +58,8 @@ class STACpopulatorBase(ABC):
         self._ingest_pipeline = data_loader
         self._stac_host = self.validate_host(stac_host)
 
-        self._collection_id = hashlib.md5(self.collection_name.encode("utf-8")).hexdigest()
+        #self._collection_id = hashlib.md5(self.collection_name.encode("utf-8")).hexdigest()
+        self._collection_id = self.collection_name
         LOGGER.info("Initialization complete")
         LOGGER.info(f"Collection {self.collection_name} is assigned id {self._collection_id}")
         self.create_stac_collection()
