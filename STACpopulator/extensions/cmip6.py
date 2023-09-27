@@ -1,16 +1,22 @@
 """CMIP6 extension based on https://stac-extensions.github.io/cmip6/v1.0.0/schema.json"""
 
-from typing import Generic, TypeVar, Dict, Any, cast
+import json
+from typing import Generic, TypeVar, Union, cast
 
 import pystac
 from pystac.extensions.base import ExtensionManagementMixin, PropertiesExtension
 from pystac.extensions.hooks import ExtensionHooks
 
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any, Dict, List, Literal
 import pyessv
-from pydantic import (AnyHttpUrl, BaseModel, Field, FieldValidationInfo, field_validator, model_serializer,
-                      FieldSerializationInfo)
+from pydantic import (
+    AnyHttpUrl,
+    FieldValidationInfo,
+    field_validator,
+    model_serializer,
+)
+from pydantic.networks import Url
 
 
 from STACpopulator.stac_utils import ItemProperties
@@ -59,8 +65,8 @@ class Properties(ItemProperties, validate_assignment=True):
     source: str
     source_id: SourceID
     source_type: List[SourceType]
-    sub_experiment: str | Literal["none"]
-    sub_experiment_id: SubExperimentID | Literal["none"]
+    sub_experiment: Union[str, Literal["none"]]
+    sub_experiment_id: Union[SubExperimentID, Literal["none"]]
     table_id: TableID
     variable_id: str
     variant_label: str
@@ -75,10 +81,19 @@ class Properties(ItemProperties, validate_assignment=True):
     grid: str
     mip_era: str
 
-    @model_serializer
-    def serialize_extension(self):
+    #@model_serializer
+    def serialize_extension(self) -> str:
         """Add prefix to all fields."""
-        return {prefix + k: v for k, v in self.model_dump_json()}
+
+        def json_encode(obj):
+            if isinstance(obj, Url):
+                return str(obj)
+            if isinstance(obj, (datetime, date)):
+                return obj.isoformat()
+            raise TypeError(f"Type {type(obj)} not serializable")
+
+        data = {prefix + k: v for k, v in self.model_dump().items()}
+        return json.dumps(data, default=json_encode)
 
     @field_validator("initialization_index", "physics_index", "realization_index", "forcing_index", mode="before")
     @classmethod
@@ -101,7 +116,6 @@ class Properties(ItemProperties, validate_assignment=True):
         return v
 
 
-
 class CMIP6Extension(Generic[T], ExtensionManagementMixin[pystac.Item], PropertiesExtension):
     """An abstract class that can be used to extend the properties of a
     :class:`~pystac.Item` with properties from the :stac-ext:`CMIP6 Extension <cmip6>`.
@@ -118,7 +132,7 @@ class CMIP6Extension(Generic[T], ExtensionManagementMixin[pystac.Item], Properti
             variables : Dictionary mapping variable name to a :class:`Variable`
                 object.
         """
-        self.properties.update(**Properties(**attrs).model_dump_json())
+        self.properties.update(**Properties(**attrs).model_dump())
 
     @classmethod
     def get_schema_uri(cls) -> str:
@@ -138,6 +152,7 @@ class CMIP6Extension(Generic[T], ExtensionManagementMixin[pystac.Item], Properti
             return cast(CMIP6Extension[T], ItemCMIP6Extension(obj))
         else:
             raise pystac.ExtensionTypeError(cls._ext_error_message(obj))
+
 
 class ItemCMIP6Extension(CMIP6Extension[pystac.Item]):
     """A concrete implementation of :class:`DatacubeExtension` on an
@@ -163,5 +178,6 @@ class CMIP6ExtensionHooks(ExtensionHooks):
     schema_uri: str = SCHEMA_URI
     prev_extension_ids = {"cmip6"}
     stac_object_types = {pystac.STACObjectType.ITEM}
+
 
 CMIP6_EXTENSION_HOOKS: ExtensionHooks = CMIP6ExtensionHooks()
