@@ -190,6 +190,9 @@ class CFJsonItem:
         )
 
         item = pystac.Item(**json.loads(item.model_dump_json(by_alias=True)))
+        link = pystac.Link(rel="source", target=attrs["catalog_url"], media_type="text/html", title="thredds:" + attrs[
+            "id"])
+        item.add_link(link)
 
         # Add assets
         if "access_urls" in attrs:

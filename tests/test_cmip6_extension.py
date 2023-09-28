@@ -39,3 +39,9 @@ def test_ingestion():
             assert link["href"] == thredds_catalog_URL
             break
 
+    r = requests.get(stac_host + 'collections/CMIP6/items').json()
+    for link in r["features"][0]["links"]:
+        if link["rel"] == "source":
+            assert "thredds:" in link["title"]
+            break
+

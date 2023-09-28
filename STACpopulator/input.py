@@ -95,7 +95,8 @@ class THREDDSLoader(GenericLoader):
         attrs = xncml.Dataset.from_text(r.content).to_cf_dict()
 
         attrs["access_urls"] = ds.access_urls
-
+        attrs["catalog_url"] = self.catalog_head.catalog_url
+        attrs["id"] = ds.id
         return attrs
 
 
