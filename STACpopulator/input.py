@@ -8,6 +8,7 @@ import xncml
 from colorlog import ColoredFormatter
 from numpy import extract
 from siphon.catalog import TDSCatalog
+from pystac import Link
 
 LOGGER = logging.getLogger(__name__)
 LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
@@ -20,8 +21,10 @@ LOGGER.propagate = False
 
 
 class GenericLoader(ABC):
+    links: [Link]
+
     def __init__(self) -> None:
-        pass
+        self.links = []
 
     @abstractmethod
     def __iter__(self):
@@ -61,6 +64,8 @@ class THREDDSLoader(GenericLoader):
         self.thredds_catalog_URL = thredds_catalog_url
         self.catalog = TDSCatalog(self.thredds_catalog_URL)
         self.catalog_head = self.catalog
+        self.links.append(Link(rel="source", target=thredds_catalog_url, media_type="text/xml",
+                               title="THREDDS catalog"))
 
     def reset(self):
         """Reset the generator."""

@@ -18,3 +18,24 @@ def test_extension():
     assert "cmip6:realm" in item.properties
 
 
+def test_ingestion():
+    import requests
+    import site
+    site.addsitedir(".")
+
+    import add_CMIP6
+
+    stac_host = 'http://localhost:8880/stac/'
+    thredds_catalog_URL = ('https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim'
+                           '/cmip6/catalog.xml')
+    config_file = 'CMIP6.yml'
+    c = add_CMIP6.CMIP6populator(stac_host, thredds_catalog_URL, config_file)
+    c.ingest()
+
+    r = requests.get(stac_host + 'collections/CMIP6').json()
+    assert r['id'] == 'CMIP6'
+    for link in r["links"]:
+        if link["rel"] == "source":
+            assert link["href"] == thredds_catalog_URL
+            break
+
