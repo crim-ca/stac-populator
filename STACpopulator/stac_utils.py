@@ -169,9 +169,10 @@ class CFJsonItem:
         cfmeta = attrs["groups"]["CFMetadata"]["attributes"]
 
         # Global attributes
-        gattrs = {**attrs["attributes"],
-                  "start_datetime": cfmeta["time_coverage_start"],
-                  "end_datetime": cfmeta["time_coverage_end"]}
+        gattrs = {"start_datetime": cfmeta["time_coverage_start"],
+                  "end_datetime": cfmeta["time_coverage_end"],
+                  **attrs["attributes"],
+                  }
 
         # Validate using pydantic data model if given
         datamodel = datamodel or dict

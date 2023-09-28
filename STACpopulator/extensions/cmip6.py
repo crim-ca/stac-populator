@@ -20,8 +20,6 @@ T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset)
 
 SCHEMA_URI = "https://stac-extensions.github.io/cmip6/v1.0.0/schema.json"
 
-prefix: str = "cmip6:"
-
 
 # CMIP6 controlled vocabulary (CV)
 CV = pyessv.WCRP.CMIP6
@@ -75,11 +73,6 @@ class Properties(ItemProperties, validate_assignment=True):
     grid: str
     mip_era: str
 
-    @model_serializer
-    def serialize_extension(self):
-        """Add prefix to all fields."""
-        return {prefix + k: v for k, v in self.model_dump_json()}
-
     @field_validator("initialization_index", "physics_index", "realization_index", "forcing_index", mode="before")
     @classmethod
     def first_item(cls, v: list, info: FieldValidationInfo):
@@ -108,6 +101,8 @@ class CMIP6Extension(Generic[T], ExtensionManagementMixin[pystac.Item], Properti
 
     To create an instance of :class:`CMIP6Extension`, use the :meth:`CMIP6Extension.ext` method.
     """
+    prefix: str = "cmip6:"
+
     def apply(self, attrs: Dict[str, Any]) -> None:
         """Applies Datacube Extension properties to the extended
         :class:`~pystac.Collection`, :class:`~pystac.Item` or :class:`~pystac.Asset`.
@@ -118,11 +113,20 @@ class CMIP6Extension(Generic[T], ExtensionManagementMixin[pystac.Item], Properti
             variables : Dictionary mapping variable name to a :class:`Variable`
                 object.
         """
-        self.properties.update(**Properties(**attrs).model_dump_json())
+        import json
+
+        p = Properties(**attrs)
+
+        # Add prefix
+        objs = {self.prefix + k: v for (k, v) in json.loads(p.model_dump_json()).items()}
+
+        # Update item properties
+        self.properties.update(**objs)
 
     @classmethod
     def get_schema_uri(cls) -> str:
         return SCHEMA_URI
+
     @classmethod
     def ext(cls, obj: T, add_if_missing: bool = False):
         """Extends the given STAC Object with properties from the :stac-ext:`CMIP6
