@@ -1,16 +1,22 @@
 """CMIP6 extension based on https://stac-extensions.github.io/cmip6/v1.0.0/schema.json"""
 
-from typing import Generic, TypeVar, Dict, Any, cast
+import json
+from typing import Generic, TypeVar, Union, cast
 
 import pystac
 from pystac.extensions.base import ExtensionManagementMixin, PropertiesExtension
 from pystac.extensions.hooks import ExtensionHooks
 
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any, Dict, List, Literal
 import pyessv
-from pydantic import (AnyHttpUrl, BaseModel, Field, FieldValidationInfo, field_validator, model_serializer,
-                      FieldSerializationInfo)
+from pydantic import (
+    AnyHttpUrl,
+    FieldValidationInfo,
+    field_validator,
+    model_serializer,
+)
+from pydantic.networks import Url
 
 
 from STACpopulator.stac_utils import ItemProperties
@@ -57,8 +63,8 @@ class Properties(ItemProperties, validate_assignment=True):
     source: str
     source_id: SourceID
     source_type: List[SourceType]
-    sub_experiment: str | Literal["none"]
-    sub_experiment_id: SubExperimentID | Literal["none"]
+    sub_experiment: Union[str, Literal["none"]]
+    sub_experiment_id: Union[SubExperimentID, Literal["none"]]
     table_id: TableID
     variable_id: str
     variant_label: str
@@ -72,6 +78,7 @@ class Properties(ItemProperties, validate_assignment=True):
     license: str
     grid: str
     mip_era: str
+
 
     @field_validator("initialization_index", "physics_index", "realization_index", "forcing_index", mode="before")
     @classmethod
@@ -92,7 +99,6 @@ class Properties(ItemProperties, validate_assignment=True):
         assert v[0] == "v", "Version string should begin with a lower case 'v'"
         assert v[1:].isdigit(), "All characters in version string, except first, should be digits"
         return v
-
 
 
 class CMIP6Extension(Generic[T], ExtensionManagementMixin[pystac.Item], PropertiesExtension):
@@ -143,6 +149,7 @@ class CMIP6Extension(Generic[T], ExtensionManagementMixin[pystac.Item], Properti
         else:
             raise pystac.ExtensionTypeError(cls._ext_error_message(obj))
 
+
 class ItemCMIP6Extension(CMIP6Extension[pystac.Item]):
     """A concrete implementation of :class:`DatacubeExtension` on an
     :class:`~pystac.Item` that extends the properties of the Item to include properties
@@ -167,5 +174,6 @@ class CMIP6ExtensionHooks(ExtensionHooks):
     schema_uri: str = SCHEMA_URI
     prev_extension_ids = {"cmip6"}
     stac_object_types = {pystac.STACObjectType.ITEM}
+
 
 CMIP6_EXTENSION_HOOKS: ExtensionHooks = CMIP6ExtensionHooks()

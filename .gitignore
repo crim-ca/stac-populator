@@ -3,3 +3,5 @@ STACpopulator.egg-info/
 .vscode/
 .venv/
 jupyter/
+.idea
+.vscode
