@@ -190,9 +190,7 @@ class CFJsonItem:
         )
 
         item = pystac.Item(**json.loads(item.model_dump_json(by_alias=True)))
-        link = pystac.Link(rel="source", target=attrs["catalog_url"], media_type="text/html", title="thredds:" + attrs[
-            "id"])
-        item.add_link(link)
+        item.add_link(self.item_link())
 
         # Add assets
         if "access_urls" in attrs:
@@ -207,6 +205,18 @@ class CFJsonItem:
             item.add_asset(name, asset)
 
         self.item = item
+
+    def item_link(self) -> pystac.Link:
+        """Return STAC Link to the catalog entry for the dataset."""
+        url = self.attrs["catalog_url"]
+        parts = url.split("/")
+        service = parts[parts.index("catalog") - 1]
+
+        link = pystac.Link(rel="source",
+                           target=url,
+                           media_type="text/html",
+                           title=f"{service}:{self.attrs['id']}")
+        return link
 
     def to_json(self) -> str:
         self.item.model_dump_json()
@@ -460,3 +470,4 @@ asset_roles = {"httpserver_service": ["data"],
                "ISO": ["metadata"],
                "WMS": ["visual"],
                "NetcdfSubset": ["data"],}
+
