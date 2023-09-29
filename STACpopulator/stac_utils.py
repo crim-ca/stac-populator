@@ -152,6 +152,8 @@ class Item(BaseModel):
 
 class CFJsonItem:
     """Return STAC Item from CF JSON metadata, as provided by `xncml.Dataset.to_cf_dict`."""
+    axis = {"X": "x", "Y": "y", "Z": "z", "T": "t", "longitude": "x", "latitude": "y", "vertical": "z", "time": "t"}
+
     def __init__(self, iid: str, attrs: dict, datamodel=None):
         """
         Create STAC Item from CF JSON metadata.
@@ -249,28 +251,8 @@ class CFJsonItem:
             float(attrs["geospatial_lat_max"][0]),
         ]
 
-
-class DatacubeExt:
-    """Extend STAC Item with Datacube properties."""
-    axis = {"X": "x", "Y": "y", "Z": "z", "T": "t", "longitude": "x", "latitude": "y", "vertical": "z", "time": "t"}
-
-    def __init__(self, obj: CFJsonItem):
-        """
-        Add Datacube extension to STAC Item.
-
-        Parameters
-        ----------
-        obj : CFJsonItem
-            STAC Item created from CF JSON metadata.
-        """
-        self.obj = obj
-        self.attrs = obj.attrs
-
-        self.ext = DatacubeExtension.ext(self.obj.item, add_if_missing=True)
-        self.ext.apply(dimensions=self.dimensions(), variables=self.variables())
-
     def dimensions(self) -> dict:
-        """Return Dimension objects."""
+        """Return Dimension objects required for Datacube extension."""
 
         dims = {}
         for name, length in self.attrs["dimensions"].items():
@@ -304,7 +286,7 @@ class DatacubeExt:
         return dims
 
     def variables(self)->dict:
-        """Return Variable objects"""
+        """Return Variable objects required for Datacube extension."""
         variables = {}
 
         for name, meta in self.attrs["variables"].items():

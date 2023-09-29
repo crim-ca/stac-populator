@@ -6,12 +6,13 @@ from colorlog import ColoredFormatter
 import argparse
 import pyessv
 from pydantic import AnyHttpUrl, BaseModel, Field, FieldValidationInfo, field_validator
-
+from pystac.extensions.datacube import DatacubeExtension
 
 from STACpopulator import STACpopulatorBase
+from STACpopulator.extensions import cmip6
 from STACpopulator.input import THREDDSLoader
 from STACpopulator.stac_utils import ItemProperties
-from STACpopulator.stac_utils import collection2literal, DatacubeExt, CFJsonItem
+from STACpopulator.stac_utils import collection2literal, CFJsonItem
 
 
 LOGGER = logging.getLogger(__name__)
@@ -148,8 +149,17 @@ class CMIP6populator(STACpopulatorBase):
 
         obj = CFJsonItem(iid, item_data, self.props_model)
 
+        # Add CMIP6 extension
         try:
-            DatacubeExt(obj)
+            cmip6_ext = cmip6.CMIP6Extension.ext(obj.item, add_if_missing=True)
+            cmip6_ext.apply(item_data["attributes"])
+        except:
+            LOGGER.warning(f"Failed to add CMIP6 extension to item {item_name}")
+
+        # Add datacube extension
+        try:
+            dc_ext = DatacubeExtension.ext(obj.item, add_if_missing=True)
+            dc_ext.apply(dimensions=obj.dimensions(), variables=obj.variables())
         except:
             LOGGER.warning(f"Failed to add Datacube extension to item {item_name}")
 
