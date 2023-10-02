@@ -19,6 +19,7 @@ def test_extension():
 
 
 def test_ingestion():
+    """Test STAC item creation and ingestion using the CMIP6 extension."""
     import requests
     import site
     site.addsitedir(".")
@@ -37,11 +38,16 @@ def test_ingestion():
     for link in r["links"]:
         if link["rel"] == "source":
             assert link["href"] == thredds_catalog_URL
+            assert "thredds:" in link["title"]
             break
+    else:
+        assert False, "No source link found"
 
     r = requests.get(stac_host + 'collections/CMIP6/items').json()
     for link in r["features"][0]["links"]:
         if link["rel"] == "source":
             assert "thredds:" in link["title"]
             break
+    else:
+        assert False, "No source link found"
 

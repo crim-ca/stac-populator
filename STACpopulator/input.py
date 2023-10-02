@@ -64,8 +64,17 @@ class THREDDSLoader(GenericLoader):
         self.thredds_catalog_URL = thredds_catalog_url
         self.catalog = TDSCatalog(self.thredds_catalog_URL)
         self.catalog_head = self.catalog
-        self.links.append(Link(rel="source", target=thredds_catalog_url, media_type="text/xml",
-                               title="THREDDS catalog"))
+        self.links.append(self.collection_link())
+
+
+    def collection_link(self):
+        """Return Link to THREDDS catalog."""
+        url = self.thredds_catalog_URL
+        parts = url.split("/")
+        i = parts.index("catalog")
+        service = parts[i - 1]
+        path = "/".join(parts[i + 1:-1])
+        return Link(rel="source", target=url, media_type="text/xml", title=f"{service}:{path}")
 
     def reset(self):
         """Reset the generator."""
