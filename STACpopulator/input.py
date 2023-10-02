@@ -98,12 +98,14 @@ class THREDDSLoader(GenericLoader):
         url = ds.access_urls["NCML"]
 
         LOGGER.info("Requesting NcML dataset description")
-        r = requests.get(url)
+
+        r = requests.get(url, params={"catalog": self.catalog_head, "dataset": ds})
+
 
         # Convert NcML to CF-compliant dictionary
         attrs = xncml.Dataset.from_text(r.content).to_cf_dict()
 
-        attrs["access_urls"] = ds.access_urls
+        # attrs["access_urls"] = ds.access_urls
         attrs["catalog_url"] = self.catalog_head.catalog_url
         attrs["id"] = ds.id
         return attrs

@@ -193,9 +193,9 @@ class CFJsonItem:
         item.add_link(self.item_link())
 
         # Add assets
-        if "access_urls" in attrs:
-            root = attrs["access_urls"]
-        elif 'THREDDSMetadata' in attrs["groups"]:
+        #if "access_urls" in attrs:
+        #    root = attrs["access_urls"]
+        if 'THREDDSMetadata' in attrs["groups"]:
             root = attrs["groups"]['THREDDSMetadata']['groups']['services']['attributes']
         else:
             root = {}
