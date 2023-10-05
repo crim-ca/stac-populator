@@ -2,6 +2,7 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Any, Iterator, MutableMapping, Optional, Tuple
 
+import numpy as np
 import requests
 import siphon
 import xncml
@@ -35,10 +36,6 @@ class GenericLoader(ABC):
     def reset(self):
         """Reset the internal state of the generator."""
         pass
-
-
-
-
 
 
 class THREDDSLoader(GenericLoader):
@@ -88,6 +85,21 @@ class THREDDSLoader(GenericLoader):
 
         # Convert NcML to CF-compliant dictionary
         attrs = xncml.Dataset.from_text(r.content).to_cf_dict()
+
+        # Converting numpy datatypes to python standard datatypes
+        for key, value in attrs["attributes"].items():
+            if isinstance(value, list):
+                newlist = []
+                for item in value:
+                    if issubclass(type(item), np.integer):
+                        newlist.append(int(item))
+                    elif issubclass(type(item), np.floating):
+                        newlist.append(float(item))
+                    else:
+                        newlist.append(item)
+                attrs["attributes"][key] = newlist
+            elif isinstance(type(value), np.integer):
+                attrs["attributes"][key] = int(value)
 
         attrs["access_urls"] = ds.access_urls
 
