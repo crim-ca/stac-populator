@@ -47,23 +47,6 @@ def url_validate(target: str) -> bool:
     return True if re.match(url_regex, target) else False
 
 
-def collection2enum(collection: pyessv.model.collection.Collection) -> enumtype:
-    """Create Enum based on terms from pyessv collection.
-
-    Parameters
-    ----------
-    collection : pyessv.model.collection.Collection
-      pyessv collection of terms.
-
-    Returns
-    -------
-    Enum
-      Enum storing terms and their labels from collection.
-    """
-    mp = {term.name: term.label for term in collection}
-    return Enum(collection.raw_name.capitalize(), mp, module="base")
-
-
 def collection2literal(collection):
     import typing
     terms = tuple(term.label for term in collection)
