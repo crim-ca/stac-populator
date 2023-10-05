@@ -9,7 +9,6 @@ from colorlog import ColoredFormatter
 from pydantic import AnyHttpUrl, Field, FieldValidationInfo, field_validator
 
 from STACpopulator import STACpopulatorBase
-from STACpopulator.extensions import cmip6
 from STACpopulator.input import THREDDSLoader
 from STACpopulator.models import STACItemProperties
 from STACpopulator.stac_utils import CFJsonItem, collection2literal
