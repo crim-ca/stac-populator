@@ -1,19 +1,18 @@
-import logging
+import argparse
 import hashlib
+import logging
 from datetime import datetime
 from typing import Any, Dict, List, Literal, MutableMapping
-from colorlog import ColoredFormatter
-import argparse
+
 import pyessv
-from pydantic import AnyHttpUrl, BaseModel, Field, FieldValidationInfo, field_validator
-from pystac.extensions.datacube import DatacubeExtension
+from colorlog import ColoredFormatter
+from pydantic import AnyHttpUrl, Field, FieldValidationInfo, field_validator
 
 from STACpopulator import STACpopulatorBase
 from STACpopulator.extensions import cmip6
 from STACpopulator.input import THREDDSLoader
-from STACpopulator.stac_utils import ItemProperties
-from STACpopulator.stac_utils import collection2literal, CFJsonItem
-
+from STACpopulator.models import STACItemProperties
+from STACpopulator.stac_utils import CFJsonItem, collection2literal
 
 LOGGER = logging.getLogger(__name__)
 LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
@@ -33,17 +32,15 @@ ExperimentID = collection2literal(CV.experiment_id)
 Frequency = collection2literal(CV.frequency)
 GridLabel = collection2literal(CV.grid_label)
 InstitutionID = collection2literal(CV.institution_id)
-# Member = collection2literal(CV.member_id)  # This is empty
 NominalResolution = collection2literal(CV.nominal_resolution)
 Realm = collection2literal(CV.realm)
 SourceID = collection2literal(CV.source_id)
 SourceType = collection2literal(CV.source_type)
 SubExperimentID = collection2literal(CV.sub_experiment_id)
 TableID = collection2literal(CV.table_id)
-# Variable = collection2literal(CV.variable_id)  # This is empty
 
 
-class Properties(ItemProperties, validate_assignment=True):
+class CMIP6ItemProperties(STACItemProperties, validate_assignment=True):
     """Data model for CMIP6 Controlled Vocabulary."""
 
     Conventions: str = Field(..., serialization_alias="cmip6:Conventions")
@@ -129,7 +126,7 @@ class CMIP6populator(STACpopulatorBase):
         """
 
         data_loader = THREDDSLoader(thredds_catalog_url)
-        self.props_model = Properties
+        self.item_properties_model = CMIP6ItemProperties
         super().__init__(stac_host, data_loader, config_filename)
 
     def handle_ingestion_error(self, error: str, item_name: str, item_data: MutableMapping[str, Any]):
@@ -147,22 +144,16 @@ class CMIP6populator(STACpopulatorBase):
         """
         iid = make_cmip6_item_id(item_data["attributes"])
 
-        obj = CFJsonItem(iid, item_data, self.props_model)
+        obj = CFJsonItem(iid, item_data, self.item_properties_model)
 
-        # Add CMIP6 extension
-        try:
-            cmip6_ext = cmip6.CMIP6Extension.ext(obj.item, add_if_missing=True)
-            cmip6_ext.apply(item_data["attributes"])
-        except:
-            LOGGER.warning(f"Failed to add CMIP6 extension to item {item_name}")
+        # # Add datacube extension
+        # try:
+        #     dc_ext = DatacubeExtension.ext(obj.item, add_if_missing=True)
+        #     dc_ext.apply(dimensions=obj.dimensions(), variables=obj.variables())
+        # except:
+        #     LOGGER.warning(f"Failed to add Datacube extension to item {item_name}")
 
-        # Add datacube extension
-        try:
-            dc_ext = DatacubeExtension.ext(obj.item, add_if_missing=True)
-            dc_ext.apply(dimensions=obj.dimensions(), variables=obj.variables())
-        except:
-            LOGGER.warning(f"Failed to add Datacube extension to item {item_name}")
-
+        print(obj.item.to_dict())
         return obj.item.to_dict()
 
     def validate_stac_item_cv(self, data: MutableMapping[str, Any]) -> bool:
