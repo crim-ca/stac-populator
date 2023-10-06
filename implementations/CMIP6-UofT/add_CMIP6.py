@@ -11,7 +11,11 @@ from pydantic import AnyHttpUrl, Field, FieldValidationInfo, field_validator
 from STACpopulator import STACpopulatorBase
 from STACpopulator.input import THREDDSLoader
 from STACpopulator.models import STACItemProperties
-from STACpopulator.stac_utils import CFJsonItem, collection2literal
+from STACpopulator.stac_utils import (
+    CFJsonItem,
+    STAC_item_from_metadata,
+    collection2literal,
+)
 
 LOGGER = logging.getLogger(__name__)
 LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
@@ -109,10 +113,11 @@ def make_cmip6_item_id(attrs: MutableMapping[str, Any]) -> str:
     ]
     name = "_".join(attrs[k] for k in keys)
     return name
-    return hashlib.md5(name.encode("utf-8")).hexdigest()
 
 
 class CMIP6populator(STACpopulatorBase):
+    item_properties_model = CMIP6ItemProperties
+
     def __init__(self, stac_host: str, thredds_catalog_url: str, config_filename: str) -> None:
         """Constructor
 
@@ -125,7 +130,6 @@ class CMIP6populator(STACpopulatorBase):
         """
 
         data_loader = THREDDSLoader(thredds_catalog_url)
-        self.item_properties_model = CMIP6ItemProperties
         super().__init__(stac_host, data_loader, config_filename)
 
     def handle_ingestion_error(self, error: str, item_name: str, item_data: MutableMapping[str, Any]):
@@ -143,17 +147,18 @@ class CMIP6populator(STACpopulatorBase):
         """
         iid = make_cmip6_item_id(item_data["attributes"])
 
-        obj = CFJsonItem(iid, item_data, self.item_properties_model)
+        item = STAC_item_from_metadata(iid, item_data, self.item_properties_model)
 
-        # # Add datacube extension
+        # Add datacube extension
         # try:
         #     dc_ext = DatacubeExtension.ext(obj.item, add_if_missing=True)
         #     dc_ext.apply(dimensions=obj.dimensions(), variables=obj.variables())
         # except:
         #     LOGGER.warning(f"Failed to add Datacube extension to item {item_name}")
 
-        print(obj.item.to_dict())
-        return obj.item.to_dict()
+        # print(obj.item.to_dict())
+        # return obj.item.to_dict()
+        print(item.to_dict())
 
     def validate_stac_item_cv(self, data: MutableMapping[str, Any]) -> bool:
         # Validation is done at the item creating stage, using the Properties class.

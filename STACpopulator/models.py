@@ -1,7 +1,14 @@
 import datetime as dt
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import AnyHttpUrl, AnyUrl, BaseModel, Field, field_validator
+from pydantic import (
+    AnyHttpUrl,
+    AnyUrl,
+    BaseModel,
+    Field,
+    SerializeAsAny,
+    field_validator,
+)
 from typing_extensions import TypedDict
 
 
@@ -19,6 +26,10 @@ class Asset(BaseModel):
 
 
 class STACItemProperties(BaseModel):
+    """Base STAC Item properties data model. In concrete implementations, users would want to define a new
+    data model that inherits from this base model and extends it with properties tailored to the data they are
+    ingesting."""
+
     start_datetime: Optional[dt.datetime] = None
     end_datetime: Optional[dt.datetime] = None
     datetime: Optional[dt.datetime] = None
@@ -64,10 +75,12 @@ class STACItemProperties(BaseModel):
 
 
 class STACItem(BaseModel):
+    """STAC Item data model."""
+
     id: str = Field(..., alias="id", min_length=1)
     geometry: Optional[Geometry] = None
     bbox: Optional[List[float]] = None
-    properties: Optional[STACItemProperties] = None
+    properties: Optional[SerializeAsAny[STACItemProperties]] = None
     assets: Dict[str, Asset] = None
     stac_extensions: Optional[List[AnyUrl]] = []
     collection: Optional[str] = None

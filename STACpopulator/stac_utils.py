@@ -37,6 +37,96 @@ def collection2literal(collection):
     return Literal[terms]
 
 
+def ncattrs_to_geometry(attrs: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
+    """Create Polygon geometry from CFMetadata."""
+    attrs = attrs["groups"]["CFMetadata"]["attributes"]
+    return {
+        "type": "Polygon",
+        "coordinates": [
+            [
+                [
+                    float(attrs["geospatial_lon_min"][0]),
+                    float(attrs["geospatial_lat_min"][0]),
+                ],
+                [
+                    float(attrs["geospatial_lon_min"][0]),
+                    float(attrs["geospatial_lat_max"][0]),
+                ],
+                [
+                    float(attrs["geospatial_lon_max"][0]),
+                    float(attrs["geospatial_lat_max"][0]),
+                ],
+                [
+                    float(attrs["geospatial_lon_max"][0]),
+                    float(attrs["geospatial_lat_min"][0]),
+                ],
+                [
+                    float(attrs["geospatial_lon_min"][0]),
+                    float(attrs["geospatial_lat_min"][0]),
+                ],
+            ]
+        ],
+    }
+
+
+def ncattrs_to_bbox(attrs: MutableMapping[str, Any]) -> list:
+    """Create BBOX from CFMetadata."""
+    attrs = attrs["groups"]["CFMetadata"]["attributes"]
+    return [
+        float(attrs["geospatial_lon_min"][0]),
+        float(attrs["geospatial_lat_min"][0]),
+        float(attrs["geospatial_lon_max"][0]),
+        float(attrs["geospatial_lat_max"][0]),
+    ]
+
+
+def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_props_datamodel):
+    """
+    Create STAC Item from CF JSON metadata.
+
+    Parameters
+    ----------
+    iid : str
+        Unique item ID.
+    attrs: dict
+        CF JSON metadata returned by `xncml.Dataset.to_cf_dict`.
+    datamodel : pydantic.BaseModel, optional
+        Data model for validating global attributes.
+    """
+
+    cfmeta = attrs["groups"]["CFMetadata"]["attributes"]
+
+    # Create pydantic STAC item
+    item = STACItem(
+        id=iid,
+        geometry=ncattrs_to_geometry(attrs),
+        bbox=ncattrs_to_bbox(attrs),
+        properties=item_props_datamodel(
+            start_datetime=cfmeta["time_coverage_start"],
+            end_datetime=cfmeta["time_coverage_end"],
+            **attrs["attributes"],
+        ),
+        datetime=None,
+    )
+
+    # Convert pydantic STAC item to a PySTAC Item
+    item = pystac.Item(**json.loads(item.model_dump_json(by_alias=True)))
+
+    # Add assets
+    if "access_urls" in attrs:
+        root = attrs["access_urls"]
+    elif "THREDDSMetadata" in attrs["groups"]:
+        root = attrs["groups"]["THREDDSMetadata"]["groups"]["services"]["attributes"]
+    else:
+        root = {}
+
+    for name, url in root.items():
+        asset = pystac.Asset(href=url, media_type=media_types.get(name), roles=asset_roles.get(name))
+        item.add_asset(name, asset)
+
+    return item
+
+
 class CFJsonItem:
     """Return STAC Item from CF JSON metadata, as provided by `xncml.Dataset.to_cf_dict`."""
 

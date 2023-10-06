@@ -58,7 +58,7 @@ class STACpopulatorBase(ABC):
         self._ingest_pipeline = data_loader
         self._stac_host = self.validate_host(stac_host)
 
-        #self._collection_id = hashlib.md5(self.collection_name.encode("utf-8")).hexdigest()
+        # self._collection_id = hashlib.md5(self.collection_name.encode("utf-8")).hexdigest()
         self._collection_id = self.collection_name
         LOGGER.info("Initialization complete")
         LOGGER.info(f"Collection {self.collection_name} is assigned id {self._collection_id}")
@@ -75,6 +75,13 @@ class STACpopulatorBase(ABC):
     @property
     def collection_id(self) -> str:
         return self._collection_id
+
+    @property
+    @abstractmethod
+    def item_properties_model(self):
+        """In derived classes, this property should be defined as a pydantic data model that derives from
+        models.STACItemProperties."""
+        pass
 
     def validate_host(self, stac_host: str) -> str:
         if not url_validate(stac_host):
@@ -115,12 +122,12 @@ class STACpopulatorBase(ABC):
         for item_name, item_data in self._ingest_pipeline:
             LOGGER.info(f"Creating STAC representation for {item_name}")
             stac_item = self.create_stac_item(item_name, item_data)
-            post_stac_item(self.stac_host, self.collection_id, item_name, stac_item)
-            try:
-                pass
-            except Exception:
-                LOGGER.error(f"Failed adding STAC item {item_name}")
-                self.handle_ingestion_error("Posting Error", item_name, item_data)
+            # post_stac_item(self.stac_host, self.collection_id, item_name, stac_item)
+            # try:
+            #     pass
+            # except Exception:
+            #     LOGGER.error(f"Failed adding STAC item {item_name}")
+            #     self.handle_ingestion_error("Posting Error", item_name, item_data)
 
     @abstractmethod
     def handle_ingestion_error(self, error: str, item_name: str, item_data: MutableMapping[str, Any]):
