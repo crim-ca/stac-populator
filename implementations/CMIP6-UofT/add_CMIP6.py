@@ -1,21 +1,17 @@
 import argparse
-import hashlib
 import logging
 from datetime import datetime
 from typing import Any, Dict, List, Literal, MutableMapping
 
 import pyessv
 from colorlog import ColoredFormatter
+from extensions import DataCubeHelper
 from pydantic import AnyHttpUrl, Field, FieldValidationInfo, field_validator
 
 from STACpopulator import STACpopulatorBase
 from STACpopulator.input import THREDDSLoader
 from STACpopulator.models import STACItemProperties
-from STACpopulator.stac_utils import (
-    CFJsonItem,
-    STAC_item_from_metadata,
-    collection2literal,
-)
+from STACpopulator.stac_utils import STAC_item_from_metadata, collection2literal
 
 LOGGER = logging.getLogger(__name__)
 LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
@@ -150,11 +146,12 @@ class CMIP6populator(STACpopulatorBase):
         item = STAC_item_from_metadata(iid, item_data, self.item_properties_model)
 
         # Add datacube extension
-        # try:
-        #     dc_ext = DatacubeExtension.ext(obj.item, add_if_missing=True)
-        #     dc_ext.apply(dimensions=obj.dimensions(), variables=obj.variables())
-        # except:
-        #     LOGGER.warning(f"Failed to add Datacube extension to item {item_name}")
+        try:
+            dchelper = DataCubeHelper(item_data)
+            dc_ext = DatacubeExtension.ext(item, add_if_missing=True)
+            dc_ext.apply(dimensions=dchelper.dimensions(), variables=dchelper.variables())
+        except:
+            LOGGER.warning(f"Failed to add Datacube extension to item {item_name}")
 
         # print(obj.item.to_dict())
         # return obj.item.to_dict()
