@@ -10,7 +10,7 @@ from pydantic import AnyHttpUrl, Field, FieldValidationInfo, field_validator
 
 from STACpopulator import STACpopulatorBase
 from STACpopulator.input import THREDDSLoader
-from STACpopulator.models import STACItemProperties
+from STACpopulator.models import GeoJSONPolygon, STACItemProperties
 from STACpopulator.stac_utils import STAC_item_from_metadata, collection2literal
 
 LOGGER = logging.getLogger(__name__)
@@ -113,6 +113,7 @@ def make_cmip6_item_id(attrs: MutableMapping[str, Any]) -> str:
 
 class CMIP6populator(STACpopulatorBase):
     item_properties_model = CMIP6ItemProperties
+    item_geometry_model = GeoJSONPolygon
 
     def __init__(self, stac_host: str, thredds_catalog_url: str, config_filename: str) -> None:
         """Constructor
@@ -143,7 +144,7 @@ class CMIP6populator(STACpopulatorBase):
         """
         iid = make_cmip6_item_id(item_data["attributes"])
 
-        item = STAC_item_from_metadata(iid, item_data, self.item_properties_model)
+        item = STAC_item_from_metadata(iid, item_data, self.item_properties_model, self.item_geometry_model)
 
         # Add datacube extension
         try:

@@ -79,7 +79,7 @@ def ncattrs_to_bbox(attrs: MutableMapping[str, Any]) -> list:
     ]
 
 
-def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_props_datamodel):
+def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_props_datamodel, item_geometry_model):
     """
     Create STAC Item from CF JSON metadata.
 
@@ -89,8 +89,10 @@ def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_prop
         Unique item ID.
     attrs: dict
         CF JSON metadata returned by `xncml.Dataset.to_cf_dict`.
-    datamodel : pydantic.BaseModel, optional
-        Data model for validating global attributes.
+    item_props_datamodel : pydantic.BaseModel
+        Data model describing the properties of the STAC item.
+    item_geometry_model : pydantic.BaseModel
+        Data model describing the geometry of the STAC item.
     """
 
     cfmeta = attrs["groups"]["CFMetadata"]["attributes"]
@@ -98,7 +100,7 @@ def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_prop
     # Create pydantic STAC item
     item = STACItem(
         id=iid,
-        geometry=ncattrs_to_geometry(attrs),
+        geometry=item_geometry_model(**ncattrs_to_geometry(attrs)),
         bbox=ncattrs_to_bbox(attrs),
         properties=item_props_datamodel(
             start_datetime=cfmeta["time_coverage_start"],

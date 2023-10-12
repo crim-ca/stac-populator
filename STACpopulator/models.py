@@ -1,6 +1,7 @@
 import datetime as dt
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Literal, Optional, Union
 
+from annotated_types import Ge
 from pydantic import (
     AnyHttpUrl,
     AnyUrl,
@@ -9,12 +10,32 @@ from pydantic import (
     SerializeAsAny,
     field_validator,
 )
-from typing_extensions import TypedDict
+from xarray import Coordinates
 
 
-class Geometry(TypedDict):
+class Geometry(BaseModel):
     type: str
+    coordinates: List
+
+
+class GeoJSONPoint(Geometry):
+    type: Literal["Point"]
+    coordinates: List[float]
+
+
+class GeoJSONMultiPoint(Geometry):
+    type: Literal["MultiPoint"]
+    coordinates: List[List[float]]
+
+
+class GeoJSONPolygon(Geometry):
+    type: Literal["Polygon"]
     coordinates: List[List[List[float]]]
+
+
+class GeoJSONMultiPolygon(Geometry):
+    type: Literal["MultiPolygon"]
+    coordinates: List[List[List[List[float]]]]
 
 
 class Asset(BaseModel):
@@ -78,7 +99,7 @@ class STACItem(BaseModel):
     """STAC Item data model."""
 
     id: str = Field(..., alias="id", min_length=1)
-    geometry: Optional[Geometry] = None
+    geometry: Optional[SerializeAsAny[Geometry]] = None
     bbox: Optional[List[float]] = None
     properties: Optional[SerializeAsAny[STACItemProperties]] = None
     assets: Dict[str, Asset] = None
