@@ -2,13 +2,13 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Any, Iterator, MutableMapping, Optional, Tuple
 
-import numpy as np
 import requests
 import siphon
 import xncml
 from colorlog import ColoredFormatter
-from numpy import extract
 from siphon.catalog import TDSCatalog
+
+from STACpopulator.stac_utils import numpy_to_python_datatypes
 
 LOGGER = logging.getLogger(__name__)
 LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
@@ -86,20 +86,7 @@ class THREDDSLoader(GenericLoader):
         # Convert NcML to CF-compliant dictionary
         attrs = xncml.Dataset.from_text(r.content).to_cf_dict()
 
-        # Converting numpy datatypes to python standard datatypes
-        for key, value in attrs["attributes"].items():
-            if isinstance(value, list):
-                newlist = []
-                for item in value:
-                    if issubclass(type(item), np.integer):
-                        newlist.append(int(item))
-                    elif issubclass(type(item), np.floating):
-                        newlist.append(float(item))
-                    else:
-                        newlist.append(item)
-                attrs["attributes"][key] = newlist
-            elif isinstance(type(value), np.integer):
-                attrs["attributes"][key] = int(value)
+        attrs["attributes"] = numpy_to_python_datatypes(attrs["attributes"])
 
         attrs["access_urls"] = ds.access_urls
 

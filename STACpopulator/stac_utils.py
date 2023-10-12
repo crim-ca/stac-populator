@@ -2,6 +2,7 @@ import json
 import re
 from typing import Any, Literal, MutableMapping
 
+import numpy as np
 import pystac
 
 from STACpopulator.models import STACItem
@@ -77,6 +78,25 @@ def ncattrs_to_bbox(attrs: MutableMapping[str, Any]) -> list:
         float(attrs["geospatial_lon_max"][0]),
         float(attrs["geospatial_lat_max"][0]),
     ]
+
+
+def numpy_to_python_datatypes(data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
+    # Converting numpy datatypes to python standard datatypes
+    for key, value in data.items():
+        if isinstance(value, list):
+            newlist = []
+            for item in value:
+                if issubclass(type(item), np.integer):
+                    newlist.append(int(item))
+                elif issubclass(type(item), np.floating):
+                    newlist.append(float(item))
+                else:
+                    newlist.append(item)
+            data[key] = newlist
+        elif isinstance(type(value), np.integer):
+            data[key] = int(value)
+
+    return data
 
 
 def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_props_datamodel, item_geometry_model):
