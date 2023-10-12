@@ -1,7 +1,6 @@
 import datetime as dt
 from typing import Any, Dict, List, Literal, Optional, Union
 
-from annotated_types import Ge
 from pydantic import (
     AnyHttpUrl,
     AnyUrl,
@@ -10,7 +9,6 @@ from pydantic import (
     SerializeAsAny,
     field_validator,
 )
-from xarray import Coordinates
 
 
 class Geometry(BaseModel):
