@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Literal, MutableMapping
 import pyessv
 from colorlog import ColoredFormatter
 from extensions import DataCubeHelper
-from pydantic import AnyHttpUrl, Field, FieldValidationInfo, field_validator
+from pydantic import AnyHttpUrl, ConfigDict, Field, FieldValidationInfo, field_validator
 
 from STACpopulator import STACpopulatorBase
 from STACpopulator.input import THREDDSLoader
@@ -39,40 +39,46 @@ SubExperimentID = collection2literal(CV.sub_experiment_id)
 TableID = collection2literal(CV.table_id)
 
 
+def add_cmip6_prefix(name: str) -> str:
+    return "cmip6:" + name if "datetime" not in name else name
+
+
 class CMIP6ItemProperties(STACItemProperties, validate_assignment=True):
     """Data model for CMIP6 Controlled Vocabulary."""
 
-    Conventions: str = Field(..., serialization_alias="cmip6:Conventions")
-    activity_id: ActivityID = Field(..., serialization_alias="cmip6:activity_id")
-    creation_date: datetime = Field(..., serialization_alias="cmip6:creation_date")
-    data_specs_version: str = Field(..., serialization_alias="cmip6:data_specs_version")
-    experiment: str = Field(..., serialization_alias="cmip6:experiment")
-    experiment_id: ExperimentID = Field(..., serialization_alias="cmip6:experiment_id")
-    frequency: Frequency = Field(..., serialization_alias="cmip6:frequency")
-    further_info_url: AnyHttpUrl = Field(..., serialization_alias="cmip6:further_info_url")
-    grid_label: GridLabel = Field(..., serialization_alias="cmip6:grid_label")
-    institution: str = Field(..., serialization_alias="cmip6:institution")
-    institution_id: InstitutionID = Field(..., serialization_alias="cmip6:institution_id")
-    nominal_resolution: NominalResolution = Field(..., serialization_alias="cmip6:nominal_resolution")
-    realm: List[Realm] = Field(..., serialization_alias="cmip6:realm")
-    source: str = Field(..., serialization_alias="cmip6:source")
-    source_id: SourceID = Field(..., serialization_alias="cmip6:source_id")
-    source_type: List[SourceType] = Field(..., serialization_alias="cmip6:source_type")
-    sub_experiment: str | Literal["none"] = Field(..., serialization_alias="cmip6:sub_experiment")
-    sub_experiment_id: SubExperimentID | Literal["none"] = Field(..., serialization_alias="cmip6:sub_experiment_id")
-    table_id: TableID = Field(..., serialization_alias="cmip6:table_id")
-    variable_id: str = Field(..., serialization_alias="cmip6:variable_id")
-    variant_label: str = Field(..., serialization_alias="cmip6:variant_label")
-    initialization_index: int = Field(..., serialization_alias="cmip6:initialization_index")
-    physics_index: int = Field(..., serialization_alias="cmip6:physics_index")
-    realization_index: int = Field(..., serialization_alias="cmip6:realization_index")
-    forcing_index: int = Field(..., serialization_alias="cmip6:forcing_index")
-    tracking_id: str = Field(..., serialization_alias="cmip6:tracking_id")
-    version: str = Field("", serialization_alias="cmip6:version")
-    product: str = Field(..., serialization_alias="cmip6:product")
-    license: str = Field(..., serialization_alias="cmip6:license")
-    grid: str = Field(..., serialization_alias="cmip6:grid")
-    mip_era: str = Field(..., serialization_alias="cmip6:mip_era")
+    Conventions: str
+    activity_id: ActivityID
+    creation_date: datetime
+    data_specs_version: str
+    experiment: str
+    experiment_id: ExperimentID
+    frequency: Frequency
+    further_info_url: AnyHttpUrl
+    grid_label: GridLabel
+    institution: str
+    institution_id: InstitutionID
+    nominal_resolution: NominalResolution
+    realm: List[Realm]
+    source: str
+    source_id: SourceID
+    source_type: List[SourceType]
+    sub_experiment: str | Literal["none"]
+    sub_experiment_id: SubExperimentID | Literal["none"]
+    table_id: TableID
+    variable_id: str
+    variant_label: str
+    initialization_index: int
+    physics_index: int
+    realization_index: int
+    forcing_index: int
+    tracking_id: str
+    version: str = Field("")
+    product: str
+    license: str
+    grid: str
+    mip_era: str
+
+    model_config = ConfigDict(alias_generator=add_cmip6_prefix, populate_by_name=True)
 
     @field_validator("initialization_index", "physics_index", "realization_index", "forcing_index", mode="before")
     @classmethod
