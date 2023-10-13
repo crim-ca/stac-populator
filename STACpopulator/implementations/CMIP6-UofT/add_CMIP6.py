@@ -82,7 +82,7 @@ class CMIP6ItemProperties(STACItemProperties, validate_assignment=True):
 
     @field_validator("initialization_index", "physics_index", "realization_index", "forcing_index", mode="before")
     @classmethod
-    def first_item(cls, v: list, info: FieldValidationInfo):
+    def only_item(cls, v: list[int], info: FieldValidationInfo):
         """Pick single item from list."""
         assert len(v) == 1, f"{info.field_name} must have one item only."
         return v[0]

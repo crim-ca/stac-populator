@@ -1,4 +1,4 @@
-IMP_DIR = /Users/dchandan/DACCS/Codes/stac-populator/implementations
+IMP_DIR = STACpopulator/implementations
 STAC_HOST = http://localhost:8880/stac
 
 testcmip6:

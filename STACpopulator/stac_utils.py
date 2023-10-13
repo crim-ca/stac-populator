@@ -69,7 +69,7 @@ def ncattrs_to_geometry(attrs: MutableMapping[str, Any]) -> MutableMapping[str, 
     }
 
 
-def ncattrs_to_bbox(attrs: MutableMapping[str, Any]) -> list:
+def ncattrs_to_bbox(attrs: MutableMapping[str, Any]) -> list[float]:
     """Create BBOX from CFMetadata."""
     attrs = attrs["groups"]["CFMetadata"]["attributes"]
     return [
