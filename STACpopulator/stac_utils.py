@@ -99,6 +99,22 @@ def numpy_to_python_datatypes(data: MutableMapping[str, Any]) -> MutableMapping[
     return data
 
 
+def magpie_resource_link(url: str) -> pystac.Link:
+    """Creates a link that will be used by Cowbird to create a resource in Magpie
+    associated with the STAC item.
+
+    :param url: HTTPServer access URL for a STAC item
+    :type url: str
+    :return: A PySTAC Link
+    :rtype: pystac.Link
+    """
+    url_ = url.replace("fileServer", "*")
+    i = url_.find("*")
+    title = url_[i + 2 :]
+    link = pystac.Link(rel="source", title=title, target=url, media_type="application/x-netcdf")
+    return link
+
+
 def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_props_datamodel, item_geometry_model):
     """
     Create STAC Item from CF JSON metadata.
@@ -145,6 +161,9 @@ def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_prop
         name = str(name)  # converting name from siphon.catalog.CaseInsensitiveStr to str
         asset = pystac.Asset(href=url, media_type=media_types.get(name), roles=asset_roles.get(name))
         item.add_asset(name, asset)
+
+    if root:
+        item.add_link(magpie_resource_link(root["HTTPServer"]))
 
     return item
 
