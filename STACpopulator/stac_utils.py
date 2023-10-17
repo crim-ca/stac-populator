@@ -142,6 +142,7 @@ def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_prop
         root = {}
 
     for name, url in root.items():
+        name = str(name)  # converting name from siphon.catalog.CaseInsensitiveStr to str
         asset = pystac.Asset(href=url, media_type=media_types.get(name), roles=asset_roles.get(name))
         item.add_asset(name, asset)
 

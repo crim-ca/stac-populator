@@ -1,4 +1,5 @@
 import argparse
+import json
 import logging
 from datetime import datetime
 from typing import Any, Dict, List, Literal, MutableMapping
@@ -160,9 +161,8 @@ class CMIP6populator(STACpopulatorBase):
         except:
             LOGGER.warning(f"Failed to add Datacube extension to item {item_name}")
 
-        # print(obj.item.to_dict())
-        # return obj.item.to_dict()
-        print(item.to_dict())
+        # return json.dumps(item.to_dict())
+        print(json.dumps(item.to_dict()))
 
     def validate_stac_item_cv(self, data: MutableMapping[str, Any]) -> bool:
         # Validation is done at the item creating stage, using the Properties class.
