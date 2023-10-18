@@ -2,6 +2,7 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Any, Iterator, MutableMapping, Optional, Tuple
 
+import pystac
 import requests
 import siphon
 import xncml
@@ -22,7 +23,7 @@ LOGGER.propagate = False
 
 class GenericLoader(ABC):
     def __init__(self) -> None:
-        pass
+        self.links = []
 
     @abstractmethod
     def __iter__(self):
@@ -58,6 +59,16 @@ class THREDDSLoader(GenericLoader):
         self.thredds_catalog_URL = thredds_catalog_url
         self.catalog = TDSCatalog(self.thredds_catalog_URL)
         self.catalog_head = self.catalog
+        self.links.append(self.magpie_collection_link())
+
+    def magpie_collection_link(self):
+        """Return Link to THREDDS catalog."""
+        url = self.thredds_catalog_URL
+        parts = url.split("/")
+        i = parts.index("catalog")
+        service = parts[i - 1]
+        path = "/".join(parts[i + 1 : -1])
+        return pystac.Link(rel="source", target=url, media_type="text/xml", title=f"{service}:{path}")
 
     def reset(self):
         """Reset the generator."""
@@ -81,7 +92,8 @@ class THREDDSLoader(GenericLoader):
         url = ds.access_urls["NCML"]
 
         LOGGER.info("Requesting NcML dataset description")
-        r = requests.get(url)
+        # r = requests.get(url)
+        r = requests.get(url, params={"catalog": self.catalog_head, "dataset": ds})
 
         # Convert NcML to CF-compliant dictionary
         attrs = xncml.Dataset.from_text(r.content).to_cf_dict()

@@ -114,6 +114,9 @@ class STACpopulatorBase(ABC):
             self._collection_info["summaries"] = pystac.Summaries({"needs_summaries_update": ["true"]})
 
             collection = pystac.Collection(id=self.collection_id, **self._collection_info)
+
+            collection.add_links(self._ingest_pipeline.links)
+
             post_stac_collection(self.stac_host, collection.to_dict())
 
     def ingest(self) -> None:
