@@ -6,10 +6,10 @@ from typing import Any, List, Literal, MutableMapping, Optional
 
 import pyessv
 from colorlog import ColoredFormatter
-from extensions import DataCubeHelper
 from pydantic import AnyHttpUrl, ConfigDict, Field, FieldValidationInfo, field_validator
 
 from STACpopulator import STACpopulatorBase
+from STACpopulator.implementations.CMIP6_UofT.extensions import DataCubeHelper
 from STACpopulator.input import THREDDSLoader
 from STACpopulator.models import GeoJSONPolygon, STACItemProperties
 from STACpopulator.stac_utils import STAC_item_from_metadata, collection2literal
