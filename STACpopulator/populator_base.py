@@ -12,7 +12,6 @@ from colorlog import ColoredFormatter
 from STACpopulator.api_requests import (
     post_stac_collection,
     post_stac_item,
-    stac_collection_exists,
     stac_host_reachable,
 )
 from STACpopulator.input import GenericLoader
@@ -64,7 +63,6 @@ class STACpopulatorBase(ABC):
         self._stac_host = self.validate_host(stac_host)
         self.update = update
 
-        # self._collection_id = hashlib.md5(self.collection_name.encode("utf-8")).hexdigest()
         self._collection_id = self.collection_name
         LOGGER.info("Initialization complete")
         LOGGER.info(f"Collection {self.collection_name} is assigned id {self._collection_id}")

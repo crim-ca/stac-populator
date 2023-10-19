@@ -1,7 +1,6 @@
 import logging
 import os
 from typing import Any, Optional
-from urllib.parse import urljoin
 
 import requests
 from colorlog import ColoredFormatter
