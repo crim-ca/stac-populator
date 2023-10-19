@@ -2,6 +2,7 @@ import logging
 import os
 from typing import Any, Optional
 from urllib.parse import urljoin
+
 import requests
 from colorlog import ColoredFormatter
 
@@ -79,17 +80,16 @@ def post_stac_item(
     """
     item_id = json_data["id"]
 
-    r = requests.post(urljoin(stac_host, f"collections/{collection_id}/items"), json=json_data)
+    r = requests.post(os.path.join(stac_host, f"collections/{collection_id}/items"), json=json_data)
 
     if r.status_code == 200:
         LOGGER.info(f"Item {item_name} successfully added")
     elif r.status_code == 409:
         if update:
             LOGGER.info(f"Item {item_id} already exists. Updating.")
-            r = requests.put(urljoin(stac_host, f"collections/{collection_id}/items/{item_id}"), json=json_data)
+            r = requests.put(os.path.join(stac_host, f"collections/{collection_id}/items/{item_id}"), json=json_data)
             r.raise_for_status()
         else:
             LOGGER.info(f"Item {item_id} already exists.")
     else:
         r.raise_for_status()
-

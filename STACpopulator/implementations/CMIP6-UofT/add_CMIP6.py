@@ -161,8 +161,8 @@ class CMIP6populator(STACpopulatorBase):
         except:
             LOGGER.warning(f"Failed to add Datacube extension to item {item_name}")
 
-        # return json.dumps(item.to_dict())
-        print(json.dumps(item.to_dict()))
+        # print(json.dumps(item.to_dict()))
+        return json.loads(json.dumps(item.to_dict()))
 
     def validate_stac_item_cv(self, data: MutableMapping[str, Any]) -> bool:
         # Validation is done at the item creating stage, using the Properties class.
