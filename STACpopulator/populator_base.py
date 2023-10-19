@@ -138,7 +138,3 @@ class STACpopulatorBase(ABC):
     @abstractmethod
     def create_stac_item(self, item_name: str, item_data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
         pass
-
-    @abstractmethod
-    def validate_stac_item_cv(self, data: MutableMapping[str, Any]) -> bool:
-        pass

@@ -164,10 +164,6 @@ class CMIP6populator(STACpopulatorBase):
         # print(json.dumps(item.to_dict()))
         return json.loads(json.dumps(item.to_dict()))
 
-    def validate_stac_item_cv(self, data: MutableMapping[str, Any]) -> bool:
-        # Validation is done at the item creating stage, using the Properties class.
-        return True
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="CMIP6 STAC populator")
