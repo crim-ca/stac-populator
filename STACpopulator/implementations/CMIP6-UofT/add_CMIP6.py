@@ -122,22 +122,17 @@ class CMIP6populator(STACpopulatorBase):
     item_properties_model = CMIP6ItemProperties
     item_geometry_model = GeoJSONPolygon
 
-    def __init__(
-        self, stac_host: str, thredds_catalog_url: str, config_filename: str, update: Optional[bool] = False
-    ) -> None:
+    def __init__(self, stac_host: str, thredds_catalog_url: str, update: Optional[bool] = False) -> None:
         """Constructor
 
         :param stac_host: URL to the STAC API
         :type stac_host: str
         :param thredds_catalog_url: the URL to the THREDDS catalog to ingest
         :type thredds_catalog_url: str
-        :param config_filename: Yaml file containing the information about the collection to populate
-        :type config_filename: str
         """
-
         data_loader = THREDDSLoader(thredds_catalog_url)
 
-        super().__init__(stac_host, data_loader, config_filename, update)
+        super().__init__(stac_host, data_loader, update)
 
     def handle_ingestion_error(self, error: str, item_name: str, item_data: MutableMapping[str, Any]):
         pass
@@ -172,10 +167,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="CMIP6 STAC populator")
     parser.add_argument("stac_host", type=str, help="STAC API address")
     parser.add_argument("thredds_catalog_URL", type=str, help="URL to the CMIP6 THREDDS catalog")
-    parser.add_argument("config_file", type=str, help="Name of the configuration file")
     parser.add_argument("--update", action="store_true", help="Update collection and its items")
 
     args = parser.parse_args()
+
     LOGGER.info(f"Arguments to call: {args}")
-    c = CMIP6populator(args.stac_host, args.thredds_catalog_URL, args.config_file, args.update)
+    c = CMIP6populator(args.stac_host, args.thredds_catalog_URL, args.update)
     c.ingest()

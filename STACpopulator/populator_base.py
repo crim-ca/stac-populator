@@ -1,4 +1,6 @@
 import logging
+import os
+import sys
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any, MutableMapping, Optional
@@ -31,7 +33,6 @@ class STACpopulatorBase(ABC):
         self,
         stac_host: str,
         data_loader: GenericLoader,
-        collection_info_filename: str,
         update: Optional[bool] = False,
     ) -> None:
         """Constructor
@@ -40,13 +41,17 @@ class STACpopulatorBase(ABC):
         :type stac_host: str
         :param data_loader: A concrete implementation of the GenericLoader abstract base class
         :type data_loader: GenericLoader
-        :param collection_info_filename: Yaml file containing the information about the collection to populate
-        :type collection_info_filename: str
         :raises RuntimeError: Raised if one of the required definitions is not found in the collection info filename
         """
 
         super().__init__()
-        with open(collection_info_filename) as f:
+        self._collection_info_filename = "collection_config.yml"
+        self._app_directory = os.path.dirname(sys.argv[0])
+
+        if not os.path.exists(os.path.join(self._app_directory, self._collection_info_filename)):
+            raise RuntimeError(f"Missing {self._collection_info_filename} file for this implementation")
+
+        with open(os.path.join(self._app_directory, self._collection_info_filename)) as f:
             self._collection_info = yaml.load(f, yaml.Loader)
 
         req_definitions = ["title", "description", "keywords", "license"]
