@@ -10,7 +10,7 @@ from pydantic import AnyHttpUrl, ConfigDict, Field, FieldValidationInfo, field_v
 
 from STACpopulator import STACpopulatorBase
 from STACpopulator.implementations.CMIP6_UofT.extensions import DataCubeHelper
-from STACpopulator.input import THREDDSLoader
+from STACpopulator.input import GenericLoader, THREDDSLoader
 from STACpopulator.models import GeoJSONPolygon, STACItemProperties
 from STACpopulator.stac_utils import STAC_item_from_metadata, collection2literal
 
@@ -122,7 +122,7 @@ class CMIP6populator(STACpopulatorBase):
     item_properties_model = CMIP6ItemProperties
     item_geometry_model = GeoJSONPolygon
 
-    def __init__(self, stac_host: str, thredds_catalog_url: str, update: Optional[bool] = False) -> None:
+    def __init__(self, stac_host: str, data_loader: GenericLoader, update: Optional[bool] = False) -> None:
         """Constructor
 
         :param stac_host: URL to the STAC API
@@ -130,12 +130,7 @@ class CMIP6populator(STACpopulatorBase):
         :param thredds_catalog_url: the URL to the THREDDS catalog to ingest
         :type thredds_catalog_url: str
         """
-        data_loader = THREDDSLoader(thredds_catalog_url)
-
         super().__init__(stac_host, data_loader, update)
-
-    def handle_ingestion_error(self, error: str, item_name: str, item_data: MutableMapping[str, Any]):
-        pass
 
     def create_stac_item(self, item_name: str, item_data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
         """Creates the STAC item.
@@ -172,5 +167,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     LOGGER.info(f"Arguments to call: {args}")
-    c = CMIP6populator(args.stac_host, args.thredds_catalog_URL, args.update)
+
+    mode = "full"
+
+    if mode == "full":
+        data_loader = THREDDSLoader(args.thredds_catalog_URL)
+    else:
+        # To be implemented
+        data_loader = ErrorLoader(args.error_file)
+
+    c = CMIP6populator(args.stac_host, data_loader, args.update)
     c.ingest()

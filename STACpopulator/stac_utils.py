@@ -1,11 +1,26 @@
+import datetime
 import json
+import logging
+import os
 import re
+import sys
 from typing import Any, Literal, MutableMapping
 
 import numpy as np
 import pystac
+import yaml
+from colorlog import ColoredFormatter
 
 from STACpopulator.models import STACItem
+
+LOGGER = logging.getLogger(__name__)
+LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
+formatter = ColoredFormatter(LOGFORMAT)
+stream = logging.StreamHandler()
+stream.setFormatter(formatter)
+LOGGER.addHandler(stream)
+LOGGER.setLevel(logging.INFO)
+LOGGER.propagate = False
 
 
 def url_validate(target: str) -> bool:
@@ -30,6 +45,33 @@ def url_validate(target: str) -> bool:
         re.IGNORECASE,
     )
     return True if re.match(url_regex, target) else False
+
+
+def load_collection_configuration() -> MutableMapping[str, Any]:
+    """Reads details of the STAC Collection to be created from a configuration file. the
+    code expects a "collection_config.yml" file to be present in the app directory.
+
+    :raises RuntimeError: If the configuration file is not present
+    :raises RuntimeError: If required values are not present in the configuration file
+    :return: A python dictionary describing the details of the Collection
+    :rtype: MutableMapping[str, Any]
+    """
+    collection_info_filename = "collection_config.yml"
+    app_directory = os.path.dirname(sys.argv[0])
+
+    if not os.path.exists(os.path.join(app_directory, collection_info_filename)):
+        raise RuntimeError(f"Missing {collection_info_filename} file for this implementation")
+
+    with open(os.path.join(app_directory, collection_info_filename)) as f:
+        collection_info = yaml.load(f, yaml.Loader)
+
+    req_definitions = ["title", "id", "description", "keywords", "license"]
+    for req in req_definitions:
+        if req not in collection_info.keys():
+            LOGGER.error(f"'{req}' is required in the configuration file")
+            raise RuntimeError(f"'{req}' is required in the configuration file")
+
+    return collection_info
 
 
 def collection2literal(collection):
@@ -149,26 +191,27 @@ def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_prop
     # Convert pydantic STAC item to a PySTAC Item
     item = pystac.Item(**json.loads(item.model_dump_json(by_alias=True)))
 
-    # Add assets
-    if "access_urls" in attrs:
-        print("access_urls")
-        root = attrs["access_urls"]
-    elif "THREDDSMetadata" in attrs["groups"]:
-        print("THREDDSMetadata")
-        root = attrs["groups"]["THREDDSMetadata"]["groups"]["services"]["attributes"]
-    else:
-        root = {}
+    root = attrs["groups"]["THREDDSMetadata"]["groups"]["services"]["attributes"]
 
     for name, url in root.items():
         name = str(name)  # converting name from siphon.catalog.CaseInsensitiveStr to str
         asset = pystac.Asset(href=url, media_type=media_types.get(name), roles=asset_roles.get(name))
+
+        name = asset_name_remaps[name] if name in asset_name_remaps.keys() else name
         item.add_asset(name, asset)
 
-    # if root:
-    #     item.add_link(magpie_resource_link(root["HTTPServer"]))
+    item.add_link(magpie_resource_link(root["httpserver_service"]))
 
     return item
 
+
+asset_name_remaps = {
+    "httpserver_service": "HTTPServer",
+    "opendap_service": "OPENDAP",
+    "wcs_service": "WCS",
+    "wms_service": "WMS",
+    "nccs_service": "NetcdfSubset",
+}
 
 media_types = {
     "httpserver_service": "application/x-netcdf",
@@ -176,13 +219,6 @@ media_types = {
     "wcs_service": pystac.MediaType.XML,
     "wms_service": pystac.MediaType.XML,
     "nccs_service": "application/x-netcdf",
-    "HTTPServer": "application/x-netcdf",
-    "OPENDAP": pystac.MediaType.HTML,
-    "NCML": pystac.MediaType.XML,
-    "WCS": pystac.MediaType.XML,
-    "ISO": pystac.MediaType.XML,
-    "WMS": pystac.MediaType.XML,
-    "NetcdfSubset": "application/x-netcdf",
 }
 
 asset_roles = {
@@ -191,11 +227,4 @@ asset_roles = {
     "wcs_service": ["data"],
     "wms_service": ["visual"],
     "nccs_service": ["data"],
-    "HTTPServer": ["data"],
-    "OPENDAP": ["data"],
-    "NCML": ["metadata"],
-    "WCS": ["data"],
-    "ISO": ["metadata"],
-    "WMS": ["visual"],
-    "NetcdfSubset": ["data"],
 }

@@ -4,12 +4,11 @@ from typing import Any, Iterator, MutableMapping, Optional, Tuple
 
 import pystac
 import requests
-import siphon
 import xncml
 from colorlog import ColoredFormatter
 from siphon.catalog import TDSCatalog
 
-from STACpopulator.stac_utils import numpy_to_python_datatypes
+from STACpopulator.stac_utils import numpy_to_python_datatypes, url_validate
 
 LOGGER = logging.getLogger(__name__)
 LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
@@ -52,23 +51,41 @@ class THREDDSLoader(GenericLoader):
         super().__init__()
         self._depth = depth if depth is not None else 1000
 
-        if thredds_catalog_url.endswith(".html"):
-            thredds_catalog_url = thredds_catalog_url.replace(".html", ".xml")
-            LOGGER.info("Converting catalog URL from html to xml")
+        self.thredds_catalog_URL = self.validate_catalog_url(thredds_catalog_url)
 
-        self.thredds_catalog_URL = thredds_catalog_url
         self.catalog = TDSCatalog(self.thredds_catalog_URL)
         self.catalog_head = self.catalog
         self.links.append(self.magpie_collection_link())
 
-    def magpie_collection_link(self):
-        """Return Link to THREDDS catalog."""
+    def validate_catalog_url(self, url: str) -> str:
+        """Validate the user-provided catalog URL.
+
+        :param url: URL to the THREDDS catalog
+        :type url: str
+        :raises RuntimeError: if URL is invalid or contains query parameters.
+        :return: a valid URL
+        :rtype: str
+        """
+        if url_validate(url):
+            if "?" in url:
+                raise RuntimeError("THREDDS catalog URL should not contain query parameter")
+        else:
+            raise RuntimeError("Invalid URL")
+
+        return url.replace(".html", ".xml") if url.endswith(".html") else url
+
+    def magpie_collection_link(self) -> pystac.Link:
+        """Creates a PySTAC Link for the collection that is used by Cowbird and Magpie.
+
+        :return: A PySTAC Link
+        :rtype: pystac.Link
+        """
         url = self.thredds_catalog_URL
         parts = url.split("/")
         i = parts.index("catalog")
-        service = parts[i - 1]
+        # service = parts[i - 1]
         path = "/".join(parts[i + 1 : -1])
-        return pystac.Link(rel="source", target=url, media_type="text/xml", title=f"{service}:{path}")
+        return pystac.Link(rel="source", target=url, media_type="text/xml", title=path)
 
     def reset(self):
         """Reset the generator."""
@@ -76,40 +93,23 @@ class THREDDSLoader(GenericLoader):
 
     def __iter__(self) -> Iterator[Tuple[str, MutableMapping[str, Any]]]:
         """Return a generator walking a THREDDS data catalog for datasets."""
-        # print(f"At START catalog head is: {self.catalog_head}")
-        print(self.catalog_head.__dict__)
         if self.catalog_head.datasets.items():
             for item_name, ds in self.catalog_head.datasets.items():
-                attrs = self.extract_metadata(ds)
+                attrs = self.extract_metadata(ds.access_urls["NCML"], self.catalog_head.catalog_url, ds.url_path)
                 yield item_name, attrs
 
         if self._depth > 0:
             for name, ref in self.catalog_head.catalog_refs.items():
                 self.catalog_head = ref.follow()
-                print(f"catalog head is: {self.catalog_head}")
                 self._depth -= 1
                 yield from self
 
-    def extract_metadata(self, ds: siphon.catalog.Dataset) -> MutableMapping[str, Any]:
-        # Get URL for NCML service
-        url = ds.access_urls["NCML"]
-
-        print(url)
-        # print(self.catalog_head)
-        print(f"ds = {ds}")
-        print(ds.__dict__)
-        print(self.catalog_head.catalog_url)
+    def extract_metadata(self, ncml_url: str, catalog_url: str, dataset_path: str) -> MutableMapping[str, Any]:
         LOGGER.info("Requesting NcML dataset description")
-        # r = requests.get(url)
-        r = requests.get(url, params={"catalog": self.catalog_head, "dataset": ds})
-
+        r = requests.get(ncml_url, params={"catalog": catalog_url, "dataset": dataset_path})
         # Convert NcML to CF-compliant dictionary
         attrs = xncml.Dataset.from_text(r.content).to_cf_dict()
-
         attrs["attributes"] = numpy_to_python_datatypes(attrs["attributes"])
-
-        attrs["access_urls"] = ds.access_urls
-
         return attrs
 
 
