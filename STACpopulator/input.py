@@ -76,6 +76,8 @@ class THREDDSLoader(GenericLoader):
 
     def __iter__(self) -> Iterator[Tuple[str, MutableMapping[str, Any]]]:
         """Return a generator walking a THREDDS data catalog for datasets."""
+        # print(f"At START catalog head is: {self.catalog_head}")
+        print(self.catalog_head.__dict__)
         if self.catalog_head.datasets.items():
             for item_name, ds in self.catalog_head.datasets.items():
                 attrs = self.extract_metadata(ds)
@@ -84,6 +86,7 @@ class THREDDSLoader(GenericLoader):
         if self._depth > 0:
             for name, ref in self.catalog_head.catalog_refs.items():
                 self.catalog_head = ref.follow()
+                print(f"catalog head is: {self.catalog_head}")
                 self._depth -= 1
                 yield from self
 
@@ -91,6 +94,11 @@ class THREDDSLoader(GenericLoader):
         # Get URL for NCML service
         url = ds.access_urls["NCML"]
 
+        print(url)
+        # print(self.catalog_head)
+        print(f"ds = {ds}")
+        print(ds.__dict__)
+        print(self.catalog_head.catalog_url)
         LOGGER.info("Requesting NcML dataset description")
         # r = requests.get(url)
         r = requests.get(url, params={"catalog": self.catalog_head, "dataset": ds})

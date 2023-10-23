@@ -151,8 +151,10 @@ def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_prop
 
     # Add assets
     if "access_urls" in attrs:
+        print("access_urls")
         root = attrs["access_urls"]
     elif "THREDDSMetadata" in attrs["groups"]:
+        print("THREDDSMetadata")
         root = attrs["groups"]["THREDDSMetadata"]["groups"]["services"]["attributes"]
     else:
         root = {}
@@ -162,8 +164,8 @@ def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_prop
         asset = pystac.Asset(href=url, media_type=media_types.get(name), roles=asset_roles.get(name))
         item.add_asset(name, asset)
 
-    if root:
-        item.add_link(magpie_resource_link(root["HTTPServer"]))
+    # if root:
+    #     item.add_link(magpie_resource_link(root["HTTPServer"]))
 
     return item
 
