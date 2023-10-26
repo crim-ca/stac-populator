@@ -2,6 +2,8 @@ import functools
 
 from pystac.extensions.datacube import Dimension, DimensionType, Variable, VariableType
 
+from STACpopulator.stac_utils import ncattrs_to_bbox
+
 
 class DataCubeHelper:
     """Return STAC Item from CF JSON metadata, as provided by `xncml.Dataset.to_cf_dict`."""
@@ -147,7 +149,7 @@ class DataCubeHelper:
         for name, length in self.attrs["dimensions"].items():
             v = self.attrs["variables"].get(name)
             if v:
-                bbox = self.obj.ncattrs_to_bbox()
+                bbox = ncattrs_to_bbox(self.attrs)
                 for key, criteria in self.coordinate_criteria.items():
                     for criterion, expected in criteria.items():
                         if v["attributes"].get(criterion, None) in expected:
@@ -196,8 +198,8 @@ class DataCubeHelper:
             )
         return variables
 
-    @property
-    @functools.cache
+    # @property
+    # @functools.cache
     def is_coordinate(self, attrs: dict) -> bool:
         """Return whether variable is a coordinate."""
         for key, criteria in self.coordinate_criteria.items():

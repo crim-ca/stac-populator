@@ -7,6 +7,7 @@ from typing import Any, List, Literal, MutableMapping, Optional
 import pyessv
 from colorlog import ColoredFormatter
 from pydantic import AnyHttpUrl, ConfigDict, Field, FieldValidationInfo, field_validator
+from pystac.extensions.datacube import DatacubeExtension
 
 from STACpopulator import STACpopulatorBase
 from STACpopulator.implementations.CMIP6_UofT.extensions import DataCubeHelper
@@ -150,7 +151,7 @@ class CMIP6populator(STACpopulatorBase):
         try:
             dchelper = DataCubeHelper(item_data)
             dc_ext = DatacubeExtension.ext(item, add_if_missing=True)
-            dc_ext.apply(dimensions=dchelper.dimensions(), variables=dchelper.variables())
+            dc_ext.apply(dimensions=dchelper.dimensions, variables=dchelper.variables)
         except:
             LOGGER.warning(f"Failed to add Datacube extension to item {item_name}")
 
