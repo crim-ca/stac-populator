@@ -69,18 +69,18 @@ class STACpopulatorBase(ABC):
     def item_properties_model(self):
         """In derived classes, this property should be defined as a pydantic data model that derives from
         models.STACItemProperties."""
-        pass
+        raise NotImplementedError
 
     @property
     @abstractmethod
     def item_geometry_model(self):
         """In derived classes, this property should be defined as a pydantic data model that derives from
         models.STACItemProperties."""
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def create_stac_item(self, item_name: str, item_data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
-        pass
+        raise NotImplementedError
 
     def validate_host(self, stac_host: str) -> str:
         if not url_validate(stac_host):

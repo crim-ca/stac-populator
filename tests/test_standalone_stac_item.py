@@ -24,7 +24,7 @@ def test_standalone_stac_item():
     stac_item_id = make_cmip6_item_id(attrs["attributes"])
     stac_item = STAC_item_from_metadata(stac_item_id, attrs, CMIP6ItemProperties, GeoJSONPolygon)
 
-    with open("tests/ref.txt", "r") as ff:
+    with open("tests/ref.json", "r") as ff:
         reference = json.load(ff)
 
     assert stac_item.to_dict() == reference
