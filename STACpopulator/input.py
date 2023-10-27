@@ -4,6 +4,7 @@ from typing import Any, Iterator, MutableMapping, Optional, Tuple
 
 import pystac
 import requests
+import siphon
 import xncml
 from colorlog import ColoredFormatter
 from siphon.catalog import TDSCatalog
@@ -95,7 +96,7 @@ class THREDDSLoader(GenericLoader):
         """Return a generator walking a THREDDS data catalog for datasets."""
         if self.catalog_head.datasets.items():
             for item_name, ds in self.catalog_head.datasets.items():
-                attrs = self.extract_metadata(ds.access_urls["NCML"], self.catalog_head.catalog_url, ds.url_path)
+                attrs = self.extract_metadata(ds)
                 yield item_name, attrs
 
         if self._depth > 0:
@@ -104,12 +105,14 @@ class THREDDSLoader(GenericLoader):
                 self._depth -= 1
                 yield from self
 
-    def extract_metadata(self, ncml_url: str, catalog_url: str, dataset_path: str) -> MutableMapping[str, Any]:
+    def extract_metadata(self, ds: siphon.catalog.Dataset) -> MutableMapping[str, Any]:
         LOGGER.info("Requesting NcML dataset description")
-        r = requests.get(ncml_url, params={"catalog": catalog_url, "dataset": dataset_path})
+        url = ds.access_urls["NCML"]
+        r = requests.get(url)
         # Convert NcML to CF-compliant dictionary
         attrs = xncml.Dataset.from_text(r.content).to_cf_dict()
         attrs["attributes"] = numpy_to_python_datatypes(attrs["attributes"])
+        attrs["access_urls"] = ds.access_urls
         return attrs
 
 

@@ -191,16 +191,15 @@ def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_prop
     # Convert pydantic STAC item to a PySTAC Item
     item = pystac.Item(**json.loads(item.model_dump_json(by_alias=True)))
 
-    root = attrs["groups"]["THREDDSMetadata"]["groups"]["services"]["attributes"]
+    root = attrs["access_urls"]
 
     for name, url in root.items():
         name = str(name)  # converting name from siphon.catalog.CaseInsensitiveStr to str
         asset = pystac.Asset(href=url, media_type=media_types.get(name), roles=asset_roles.get(name))
 
-        name = asset_name_remaps[name] if name in asset_name_remaps.keys() else name
         item.add_asset(name, asset)
 
-    item.add_link(magpie_resource_link(root["httpserver_service"]))
+    item.add_link(magpie_resource_link(root["HTTPServer"]))
 
     return item
 
@@ -214,17 +213,17 @@ asset_name_remaps = {
 }
 
 media_types = {
-    "httpserver_service": "application/x-netcdf",
-    "opendap_service": pystac.MediaType.HTML,
-    "wcs_service": pystac.MediaType.XML,
-    "wms_service": pystac.MediaType.XML,
-    "nccs_service": "application/x-netcdf",
+    "HTTPServer": "application/x-netcdf",
+    "OPENDAP": pystac.MediaType.HTML,
+    "WCS": pystac.MediaType.XML,
+    "WMS": pystac.MediaType.XML,
+    "NetcdfSubset": "application/x-netcdf",
 }
 
 asset_roles = {
-    "httpserver_service": ["data"],
-    "opendap_service": ["data"],
-    "wcs_service": ["data"],
-    "wms_service": ["visual"],
-    "nccs_service": ["data"],
+    "HTTPServer": ["data"],
+    "OPENDAP": ["data"],
+    "WCS": ["data"],
+    "WMS": ["visual"],
+    "NetcdfSubset": ["data"],
 }
