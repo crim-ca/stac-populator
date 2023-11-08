@@ -105,6 +105,9 @@ class THREDDSLoader(GenericLoader):
                 self._depth -= 1
                 yield from self
 
+    def __getitem__(self, dataset):
+        return self.catalog.datasets[dataset]
+
     def extract_metadata(self, ds: siphon.catalog.Dataset) -> MutableMapping[str, Any]:
         LOGGER.info("Requesting NcML dataset description")
         url = ds.access_urls["NCML"]
