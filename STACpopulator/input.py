@@ -2,12 +2,14 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Any, Iterator, MutableMapping, Optional, Tuple
 
+import pystac
 import requests
 import siphon
 import xncml
 from colorlog import ColoredFormatter
-from numpy import extract
 from siphon.catalog import TDSCatalog
+
+from STACpopulator.stac_utils import numpy_to_python_datatypes, url_validate
 
 LOGGER = logging.getLogger(__name__)
 LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
@@ -21,7 +23,7 @@ LOGGER.propagate = False
 
 class GenericLoader(ABC):
     def __init__(self) -> None:
-        pass
+        self.links = []
 
     @abstractmethod
     def __iter__(self):
@@ -37,10 +39,6 @@ class GenericLoader(ABC):
         pass
 
 
-
-
-
-
 class THREDDSLoader(GenericLoader):
     def __init__(self, thredds_catalog_url: str, depth: Optional[int] = None) -> None:
         """Constructor
@@ -54,13 +52,41 @@ class THREDDSLoader(GenericLoader):
         super().__init__()
         self._depth = depth if depth is not None else 1000
 
-        if thredds_catalog_url.endswith(".html"):
-            thredds_catalog_url = thredds_catalog_url.replace(".html", ".xml")
-            LOGGER.info("Converting catalog URL from html to xml")
+        self.thredds_catalog_URL = self.validate_catalog_url(thredds_catalog_url)
 
-        self.thredds_catalog_URL = thredds_catalog_url
         self.catalog = TDSCatalog(self.thredds_catalog_URL)
         self.catalog_head = self.catalog
+        self.links.append(self.magpie_collection_link())
+
+    def validate_catalog_url(self, url: str) -> str:
+        """Validate the user-provided catalog URL.
+
+        :param url: URL to the THREDDS catalog
+        :type url: str
+        :raises RuntimeError: if URL is invalid or contains query parameters.
+        :return: a valid URL
+        :rtype: str
+        """
+        if url_validate(url):
+            if "?" in url:
+                raise RuntimeError("THREDDS catalog URL should not contain query parameter")
+        else:
+            raise RuntimeError("Invalid URL")
+
+        return url.replace(".html", ".xml") if url.endswith(".html") else url
+
+    def magpie_collection_link(self) -> pystac.Link:
+        """Creates a PySTAC Link for the collection that is used by Cowbird and Magpie.
+
+        :return: A PySTAC Link
+        :rtype: pystac.Link
+        """
+        url = self.thredds_catalog_URL
+        parts = url.split("/")
+        i = parts.index("catalog")
+        # service = parts[i - 1]
+        path = "/".join(parts[i + 1 : -1])
+        return pystac.Link(rel="source", target=url, media_type="text/xml", title=path)
 
     def reset(self):
         """Reset the generator."""
@@ -79,18 +105,17 @@ class THREDDSLoader(GenericLoader):
                 self._depth -= 1
                 yield from self
 
+    def __getitem__(self, dataset):
+        return self.catalog.datasets[dataset]
+
     def extract_metadata(self, ds: siphon.catalog.Dataset) -> MutableMapping[str, Any]:
-        # Get URL for NCML service
-        url = ds.access_urls["NCML"]
-
         LOGGER.info("Requesting NcML dataset description")
+        url = ds.access_urls["NCML"]
         r = requests.get(url)
-
         # Convert NcML to CF-compliant dictionary
         attrs = xncml.Dataset.from_text(r.content).to_cf_dict()
-
+        attrs["attributes"] = numpy_to_python_datatypes(attrs["attributes"])
         attrs["access_urls"] = ds.access_urls
-
         return attrs
 
 
