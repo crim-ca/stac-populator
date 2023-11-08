@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ncml:netcdf xmlns:ncml="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2" location="https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/dodsC/birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc">
+  <ncml:attribute name="CCCma_model_hash" value="fc4bb7db954c862d023b546e19aec6c588bc0552" />
+  <ncml:attribute name="CCCma_parent_runid" value="p2-his13" />
+  <ncml:attribute name="CCCma_pycmor_hash" value="26c970628162d607fffd14254956ebc6dd3b6f49" />
+  <ncml:attribute name="CCCma_runid" value="p2-s4513" />
+  <ncml:attribute name="Conventions" value="CF-1.7 CMIP-6.2" />
+  <ncml:attribute name="YMDH_branch_time_in_child" value="2015:01:01:00" />
+  <ncml:attribute name="YMDH_branch_time_in_parent" value="2015:01:01:00" />
+  <ncml:attribute name="activity_id" value="ScenarioMIP" />
+  <ncml:attribute name="branch_method" value="Spin-up documentation" />
+  <ncml:attribute name="branch_time_in_child" type="double" value="60225.0" />
+  <ncml:attribute name="branch_time_in_parent" type="double" value="60225.0" />
+  <ncml:attribute name="contact" value="ec.cccma.info-info.ccmac.ec@canada.ca" />
+  <ncml:attribute name="creation_date" value="2019-09-25T23:01:33Z" />
+  <ncml:attribute name="data_specs_version" value="01.00.30" />
+  <ncml:attribute name="experiment" value="update of RCP4.5 based on SSP2" />
+  <ncml:attribute name="experiment_id" value="ssp245" />
+  <ncml:attribute name="external_variables" value="areacello" />
+  <ncml:attribute name="forcing_index" type="int" value="1" />
+  <ncml:attribute name="frequency" value="mon" />
+  <ncml:attribute name="further_info_url" value="https://furtherinfo.es-doc.org/CMIP6.CCCma.CanESM5.ssp245.none.r13i1p2f1" />
+  <ncml:attribute name="grid" value="ORCA1 tripolar grid, 1 deg with refinement to 1/3 deg within 20 degrees of the equator; 361 x 290 longitude/latitude; 45 vertical levels; top grid cell 0-6.19 m" />
+  <ncml:attribute name="grid_label" value="gn" />
+  <ncml:attribute name="history" value="2019-09-25T23:01:33Z ;rewrote data to be consistent with ScenarioMIP for variable siconc found in table SImon." />
+  <ncml:attribute name="initialization_index" type="int" value="1" />
+  <ncml:attribute name="institution" value="Canadian Centre for Climate Modelling and Analysis, Environment and Climate Change Canada, Victoria, BC V8P 5C2, Canada" />
+  <ncml:attribute name="institution_id" value="CCCma" />
+  <ncml:attribute name="mip_era" value="CMIP6" />
+  <ncml:attribute name="nominal_resolution" value="100 km" />
+  <ncml:attribute name="parent_activity_id" value="CMIP" />
+  <ncml:attribute name="parent_experiment_id" value="historical" />
+  <ncml:attribute name="parent_mip_era" value="CMIP6" />
+  <ncml:attribute name="parent_source_id" value="CanESM5" />
+  <ncml:attribute name="parent_time_units" value="days since 1850-01-01 0:0:0.0" />
+  <ncml:attribute name="parent_variant_label" value="r13i1p2f1" />
+  <ncml:attribute name="physics_index" type="int" value="2" />
+  <ncml:attribute name="product" value="model-output" />
+  <ncml:attribute name="realization_index" type="int" value="13" />
+  <ncml:attribute name="realm" value="seaIce" />
+  <ncml:attribute name="references" value="Geophysical Model Development Special issue on CanESM5 (https://www.geosci-model-dev.net/special_issue989.html)" />
+  <ncml:attribute name="source" value="CanESM5 (2019): &#xA;aerosol: interactive&#xA;atmos: CanAM5 (T63L49 native atmosphere, T63 Linear Gaussian Grid; 128 x 64 longitude/latitude; 49 levels; top level 1 hPa)&#xA;atmosChem: specified oxidants for aerosols&#xA;land: CLASS3.6/CTEM1.2&#xA;landIce: specified ice sheets&#xA;ocean: NEMO3.4.1 (ORCA1 tripolar grid, 1 deg with refinement to 1/3 deg within 20 degrees of the equator; 361 x 290 longitude/latitude; 45 vertical levels; top grid cell 0-6.19 m)&#xA;ocnBgchem: Canadian Model of Ocean Carbon (CMOC); NPZD ecosystem with OMIP prescribed carbonate chemistry&#xA;seaIce: LIM2" />
+  <ncml:attribute name="source_id" value="CanESM5" />
+  <ncml:attribute name="source_type" value="AOGCM" />
+  <ncml:attribute name="sub_experiment" value="none" />
+  <ncml:attribute name="sub_experiment_id" value="none" />
+  <ncml:attribute name="table_id" value="SImon" />
+  <ncml:attribute name="table_info" value="Creation Date:(09 May 2019) MD5:38ea1fbdf3f31659e83c719fb4c48428" />
+  <ncml:attribute name="title" value="CanESM5 output prepared for CMIP6" />
+  <ncml:attribute name="variable_id" value="siconc" />
+  <ncml:attribute name="variant_label" value="r13i1p2f1" />
+  <ncml:attribute name="version" value="v20190429" />
+  <ncml:attribute name="license" value="CMIP6 model data produced by The Government of Canada (Canadian Centre for Climate Modelling and Analysis, Environment and Climate Change Canada) is licensed under a Creative Commons Attribution ShareAlike 4.0 International License (https://creativecommons.org/licenses). Consult https://pcmdi.llnl.gov/CMIP6/TermsOfUse for terms of use governing CMIP6 output, including citation requirements and proper acknowledgment. Further information about this data, including some limitations, can be found via the further_info_url (recorded as a global attribute in this file) and at https:///pcmdi.llnl.gov/. The data producers and data providers make no warranty, either express or implied, including, but not limited to, warranties of merchantability and fitness for a particular purpose. All liabilities arising from the supply of the information (including any liability arising in negligence) are excluded to the fullest extent permitted by law." />
+  <ncml:attribute name="cmor_version" value="3.5.0" />
+  <ncml:attribute name="tracking_id" value="hdl:21.14100/9e4f804b-c161-44fa-acd1-c2e94e220c95" />
+  <ncml:attribute name="DODS.strlen" type="int" value="7" />
+  <ncml:attribute name="DODS.dimName" value="strlen" />
+  <ncml:attribute name="DODS_EXTRA.Unlimited_Dimension" value="time" />
+  <ncml:attribute name="_CoordSysBuilder" value="ucar.nc2.dataset.conv.CF1Convention" />
+  <ncml:dimension name="time" length="12" isUnlimited="true" />
+  <ncml:dimension name="bnds" length="2" />
+  <ncml:dimension name="vertices" length="4" />
+  <ncml:dimension name="maxStrlen64" length="64" />
+  <ncml:dimension name="j" length="291" />
+  <ncml:dimension name="i" length="360" />
+  <group xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2" name="CFMetadata">
+    <attribute name="geospatial_lon_min" value=".0498" type="float" />
+    <attribute name="geospatial_lat_min" value="-78.3935" type="float" />
+    <attribute name="geospatial_lon_max" value="359.99493" type="float" />
+    <attribute name="geospatial_lat_max" value="89.74177" type="float" />
+    <attribute name="geospatial_lon_units" value="degrees_east" />
+    <attribute name="geospatial_lat_units" value="degrees_north" />
+    <attribute name="geospatial_lon_resolution" value="0.0034359351726440477" />
+    <attribute name="geospatial_lat_resolution" value="0.0016049720708009724" />
+    <attribute name="time_coverage_start" value="2019-12-06T12:00:00Z" />
+    <attribute name="time_coverage_end" value="2020-11-04T12:00:00Z" />
+    <attribute name="time_coverage_units" value="seconds" />
+    <attribute name="time_coverage_resolution" value="2623418.0" />
+    <attribute name="time_coverage_duration" value="P0Y0M334DT0H0M0.000S" />
+  </group>
+  <group xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2" name="NCISOMetadata">
+    <attribute name="metadata_creation" value="2023-09-22" />
+    <attribute name="nciso_version" value="2.2.3" />
+  </group>
+  <group xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2" name="THREDDSMetadata">
+    <attribute name="id" value="birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc" />
+    <attribute name="full_name" value="cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc" />
+    <group name="services">
+      <attribute name="httpserver_service" value="https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/fileServer/birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc" />
+      <attribute name="opendap_service" value="https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/dodsC/birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc" />
+      <attribute name="wcs_service" value="https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/wcs/birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc?service=WCS&amp;version=1.0.0&amp;request=GetCapabilities" />
+      <attribute name="wms_service" value="https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/wms/birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc?service=WMS&amp;version=1.3.0&amp;request=GetCapabilities" />
+      <attribute name="nccs_service" value="https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/ncss/birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc/dataset.html" />
+    </group>
+    <group name="dates">
+      <attribute name="date" value="2021-02-15T14:37:21.508Z" type="modified" />
+    </group>
+  </group>
+  <ncml:variable name="time_bnds" shape="time bnds" type="double">
+    <ncml:attribute name="_FillValue" type="double" value="NaN" />
+    <ncml:attribute name="_ChunkSizes" type="int" value="1 2" />
+    <ncml:attribute name="coordinates" value="type" />
+  </ncml:variable>
+  <ncml:variable name="vertices_latitude" shape="j i vertices" type="double">
+    <ncml:attribute name="_FillValue" type="double" value="NaN" />
+    <ncml:attribute name="_ChunkSizes" type="int" value="291 360 4" />
+    <ncml:attribute name="coordinates" value="longitude latitude type" />
+  </ncml:variable>
+  <ncml:variable name="vertices_longitude" shape="j i vertices" type="double">
+    <ncml:attribute name="_FillValue" type="double" value="NaN" />
+    <ncml:attribute name="_ChunkSizes" type="int" value="291 360 4" />
+    <ncml:attribute name="coordinates" value="longitude latitude type" />
+  </ncml:variable>
+  <ncml:variable name="siconc" shape="time j i" type="float">
+    <ncml:attribute name="_FillValue" type="float" value="NaN" />
+    <ncml:attribute name="standard_name" value="sea_ice_area_fraction" />
+    <ncml:attribute name="long_name" value="Sea-Ice Area Percentage (Ocean Grid)" />
+    <ncml:attribute name="comment" value="Percentage of grid cell covered by sea ice" />
+    <ncml:attribute name="units" value="%" />
+    <ncml:attribute name="original_name" value="soicecov" />
+    <ncml:attribute name="history" value="mltby100_ocn 2019-09-25T23:01:33Z altered by CMOR: Treated scalar dimension: 'type'." />
+    <ncml:attribute name="cell_methods" value="area: mean where sea time: mean" />
+    <ncml:attribute name="cell_measures" value="area: areacello" />
+    <ncml:attribute name="_ChunkSizes" type="int" value="1 291 360" />
+    <ncml:attribute name="coordinates" value="type latitude longitude" />
+  </ncml:variable>
+  <ncml:variable name="areacello" shape="j i" type="float">
+    <ncml:attribute name="_FillValue" type="float" value="1.0E20" />
+    <ncml:attribute name="standard_name" value="cell_area" />
+    <ncml:attribute name="long_name" value="Grid-Cell Area for Ocean Variables" />
+    <ncml:attribute name="comment" value="Horizontal area of ocean grid cells" />
+    <ncml:attribute name="units" value="m2" />
+    <ncml:attribute name="original_name" value="areacello" />
+    <ncml:attribute name="cell_methods" value="area: sum" />
+    <ncml:attribute name="_ChunkSizes" type="int" value="291 360" />
+    <ncml:attribute name="coordinates" value="latitude longitude" />
+    <ncml:attribute name="missing_value" type="float" value="1.0E20" />
+  </ncml:variable>
+  <ncml:variable name="time" shape="time" type="double">
+    <ncml:attribute name="_FillValue" type="double" value="NaN" />
+    <ncml:attribute name="bounds" value="time_bnds" />
+    <ncml:attribute name="axis" value="T" />
+    <ncml:attribute name="long_name" value="time" />
+    <ncml:attribute name="standard_name" value="time" />
+    <ncml:attribute name="_ChunkSizes" type="int" value="512" />
+    <ncml:attribute name="units" value="days since 1850-01-01" />
+    <ncml:attribute name="calendar" value="365_day" />
+    <ncml:attribute name="_CoordinateAxisType" value="Time" />
+  </ncml:variable>
+  <ncml:variable name="j" shape="j" type="int">
+    <ncml:attribute name="units" value="1" />
+    <ncml:attribute name="long_name" value="cell index along second dimension" />
+  </ncml:variable>
+  <ncml:variable name="i" shape="i" type="int">
+    <ncml:attribute name="units" value="1" />
+    <ncml:attribute name="long_name" value="cell index along first dimension" />
+  </ncml:variable>
+  <ncml:variable name="type" shape="maxStrlen64" type="char">
+    <ncml:attribute name="long_name" value="Sea Ice area type" />
+    <ncml:attribute name="standard_name" value="area_type" />
+  </ncml:variable>
+  <ncml:variable name="latitude" shape="j i" type="double">
+    <ncml:attribute name="_FillValue" type="double" value="1.0E20" />
+    <ncml:attribute name="standard_name" value="latitude" />
+    <ncml:attribute name="long_name" value="latitude" />
+    <ncml:attribute name="units" value="degrees_north" />
+    <ncml:attribute name="bounds" value="vertices_latitude" />
+    <ncml:attribute name="_ChunkSizes" type="int" value="291 360" />
+    <ncml:attribute name="missing_value" type="double" value="1.0E20" />
+    <ncml:attribute name="_CoordinateAxisType" value="Lat" />
+  </ncml:variable>
+  <ncml:variable name="longitude" shape="j i" type="double">
+    <ncml:attribute name="_FillValue" type="double" value="1.0E20" />
+    <ncml:attribute name="standard_name" value="longitude" />
+    <ncml:attribute name="long_name" value="longitude" />
+    <ncml:attribute name="units" value="degrees_east" />
+    <ncml:attribute name="bounds" value="vertices_longitude" />
+    <ncml:attribute name="_ChunkSizes" type="int" value="291 360" />
+    <ncml:attribute name="missing_value" type="double" value="1.0E20" />
+    <ncml:attribute name="_CoordinateAxisType" value="Lon" />
+  </ncml:variable>
+</ncml:netcdf>
+

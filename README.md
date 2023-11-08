@@ -16,6 +16,6 @@ Currently, one implementation of `STACpopulatorBase` is provided in [add_CMIP6.p
 The provided `docker-compose` file can be used to launch a test STAC server. The `add_CMIP6.py` script can be run as:
 
 ```
-python implementations/add_CMIP6.py http://localhost:8880/stac/ https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/datasets/simulations/bias_adjusted/catalog.html implementations/CMIP6.yml
+python implementations/CMIP6-UofT/add_CMIP6.py http://localhost:8880/stac/ https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.html implementations/CMIP6-UofT/CMIP6.yml
 ```
 Note: in the script above, I am currently using a sample THREDDS catalog URL and not one relevant to the global scale CMIP6 data.

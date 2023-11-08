@@ -1,3 +1,5 @@
+version: "3.4"
+
 x-logging: &default-logging
   driver: "json-file"
   options:
@@ -13,7 +15,7 @@ services:
     ports:
       - "8880:8000"
     environment:
-      - POSTGRES_USER=dchandan
+      - POSTGRES_USER=testuser
       - POSTGRES_PASS=password
       - POSTGRES_DBNAME=postgis
       - POSTGRES_HOST_READER=stac-db
@@ -30,7 +32,7 @@ services:
       - POSTGRES_USER=testuser
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=postgis
-      - PGUSER=dchandan
+      - PGUSER=testuser
       - PGPASSWORD=password
       - PGHOST=localhost
       - PGDATABASE=postgis

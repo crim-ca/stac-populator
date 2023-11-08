@@ -1,10 +1,26 @@
+import datetime
+import json
+import logging
 import os
 import re
-from datetime import datetime
-from typing import Any
+import sys
+from typing import Any, Literal, MutableMapping
 
+import numpy as np
 import pystac
-import requests
+import yaml
+from colorlog import ColoredFormatter
+
+from STACpopulator.models import STACItem
+
+LOGGER = logging.getLogger(__name__)
+LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
+formatter = ColoredFormatter(LOGFORMAT)
+stream = logging.StreamHandler()
+stream.setFormatter(formatter)
+LOGGER.addHandler(stream)
+LOGGER.setLevel(logging.INFO)
+LOGGER.propagate = False
 
 
 def url_validate(target: str) -> bool:
@@ -31,69 +47,183 @@ def url_validate(target: str) -> bool:
     return True if re.match(url_regex, target) else False
 
 
-def stac_host_reachable(url: str) -> bool:
-    try:
-        registry = requests.get(url)
-        registry.raise_for_status()
-        return True
-    except (requests.exceptions.RequestException, requests.exceptions.ConnectionError):
-        return False
+def load_collection_configuration() -> MutableMapping[str, Any]:
+    """Reads details of the STAC Collection to be created from a configuration file. the
+    code expects a "collection_config.yml" file to be present in the app directory.
 
-
-def stac_collection_exists(stac_host: str, collection_id: str) -> bool:
+    :raises RuntimeError: If the configuration file is not present
+    :raises RuntimeError: If required values are not present in the configuration file
+    :return: A python dictionary describing the details of the Collection
+    :rtype: MutableMapping[str, Any]
     """
-    Get a STAC collection
+    collection_info_filename = "collection_config.yml"
+    app_directory = os.path.dirname(sys.argv[0])
 
-    Returns the collection JSON.
-    """
-    r = requests.get(os.path.join(stac_host, "collections", collection_id), verify=False)
+    if not os.path.exists(os.path.join(app_directory, collection_info_filename)):
+        raise RuntimeError(f"Missing {collection_info_filename} file for this implementation")
 
-    return r.status_code == 200
+    with open(os.path.join(app_directory, collection_info_filename)) as f:
+        collection_info = yaml.load(f, yaml.Loader)
+
+    req_definitions = ["title", "id", "description", "keywords", "license"]
+    for req in req_definitions:
+        if req not in collection_info.keys():
+            LOGGER.error(f"'{req}' is required in the configuration file")
+            raise RuntimeError(f"'{req}' is required in the configuration file")
+
+    return collection_info
 
 
-def create_stac_collection(collection_id: str, collection_info: dict[str, Any]) -> dict[str, Any]:
-    """
-    Create a basic STAC collection.
+def collection2literal(collection):
+    terms = tuple(term.label for term in collection)
+    return Literal[terms]
 
-    Returns the collection.
-    """
 
-    sp_extent = pystac.SpatialExtent([collection_info.pop("spatialextent")])
-    tmp = collection_info.pop("temporalextent")
-    tmp_extent = pystac.TemporalExtent(
-        [
+def ncattrs_to_geometry(attrs: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
+    """Create Polygon geometry from CFMetadata."""
+    attrs = attrs["groups"]["CFMetadata"]["attributes"]
+    return {
+        "type": "Polygon",
+        "coordinates": [
             [
-                datetime.strptime(tmp[0], "%Y-%m-%d") if tmp[0] is not None else None,
-                datetime.strptime(tmp[1], "%Y-%m-%d") if tmp[1] is not None else None,
+                [
+                    float(attrs["geospatial_lon_min"][0]),
+                    float(attrs["geospatial_lat_min"][0]),
+                ],
+                [
+                    float(attrs["geospatial_lon_min"][0]),
+                    float(attrs["geospatial_lat_max"][0]),
+                ],
+                [
+                    float(attrs["geospatial_lon_max"][0]),
+                    float(attrs["geospatial_lat_max"][0]),
+                ],
+                [
+                    float(attrs["geospatial_lon_max"][0]),
+                    float(attrs["geospatial_lat_min"][0]),
+                ],
+                [
+                    float(attrs["geospatial_lon_min"][0]),
+                    float(attrs["geospatial_lat_min"][0]),
+                ],
             ]
-        ]
+        ],
+    }
+
+
+def ncattrs_to_bbox(attrs: MutableMapping[str, Any]) -> list[float]:
+    """Create BBOX from CFMetadata."""
+    attrs = attrs["groups"]["CFMetadata"]["attributes"]
+    return [
+        float(attrs["geospatial_lon_min"][0]),
+        float(attrs["geospatial_lat_min"][0]),
+        float(attrs["geospatial_lon_max"][0]),
+        float(attrs["geospatial_lat_max"][0]),
+    ]
+
+
+def numpy_to_python_datatypes(data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
+    # Converting numpy datatypes to python standard datatypes
+    for key, value in data.items():
+        if isinstance(value, list):
+            newlist = []
+            for item in value:
+                if issubclass(type(item), np.integer):
+                    newlist.append(int(item))
+                elif issubclass(type(item), np.floating):
+                    newlist.append(float(item))
+                else:
+                    newlist.append(item)
+            data[key] = newlist
+        elif isinstance(type(value), np.integer):
+            data[key] = int(value)
+
+    return data
+
+
+def magpie_resource_link(url: str) -> pystac.Link:
+    """Creates a link that will be used by Cowbird to create a resource in Magpie
+    associated with the STAC item.
+
+    :param url: HTTPServer access URL for a STAC item
+    :type url: str
+    :return: A PySTAC Link
+    :rtype: pystac.Link
+    """
+    url_ = url.replace("fileServer", "*")
+    i = url_.find("*")
+    title = url_[i + 2 :]
+    link = pystac.Link(rel="source", title=title, target=url, media_type="application/x-netcdf")
+    return link
+
+
+def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_props_datamodel, item_geometry_model):
+    """
+    Create STAC Item from CF JSON metadata.
+
+    Parameters
+    ----------
+    iid : str
+        Unique item ID.
+    attrs: dict
+        CF JSON metadata returned by `xncml.Dataset.to_cf_dict`.
+    item_props_datamodel : pydantic.BaseModel
+        Data model describing the properties of the STAC item.
+    item_geometry_model : pydantic.BaseModel
+        Data model describing the geometry of the STAC item.
+    """
+
+    cfmeta = attrs["groups"]["CFMetadata"]["attributes"]
+
+    # Create pydantic STAC item
+    item = STACItem(
+        id=iid,
+        geometry=item_geometry_model(**ncattrs_to_geometry(attrs)),
+        bbox=ncattrs_to_bbox(attrs),
+        properties=item_props_datamodel(
+            start_datetime=cfmeta["time_coverage_start"],
+            end_datetime=cfmeta["time_coverage_end"],
+            **attrs["attributes"],
+        ),
+        datetime=None,
     )
-    collection_info["extent"] = pystac.Extent(sp_extent, tmp_extent)
-    collection_info["summaries"] = pystac.Summaries({"needs_summaries_update": ["true"]})
 
-    collection = pystac.Collection(id=collection_id, **collection_info)
+    # Convert pydantic STAC item to a PySTAC Item
+    item = pystac.Item(**json.loads(item.model_dump_json(by_alias=True)))
 
-    return collection.to_dict()
+    root = attrs["access_urls"]
+
+    for name, url in root.items():
+        name = str(name)  # converting name from siphon.catalog.CaseInsensitiveStr to str
+        asset = pystac.Asset(href=url, media_type=media_types.get(name), roles=asset_roles.get(name))
+
+        item.add_asset(name, asset)
+
+    item.add_link(magpie_resource_link(root["HTTPServer"]))
+
+    return item
 
 
-def post_collection(stac_host: str, json_data: dict[str, Any]) -> None:
-    """
-    Post a STAC collection.
+asset_name_remaps = {
+    "httpserver_service": "HTTPServer",
+    "opendap_service": "OPENDAP",
+    "wcs_service": "WCS",
+    "wms_service": "WMS",
+    "nccs_service": "NetcdfSubset",
+}
 
-    Returns the collection id.
-    """
-    collection_id = json_data["id"]
-    r = requests.post(os.path.join(stac_host, "collections"), json=json_data, verify=False)
+media_types = {
+    "HTTPServer": "application/x-netcdf",
+    "OPENDAP": pystac.MediaType.HTML,
+    "WCS": pystac.MediaType.XML,
+    "WMS": pystac.MediaType.XML,
+    "NetcdfSubset": "application/x-netcdf",
+}
 
-    if r.status_code == 200:
-        print(
-            f"{bcolors.OKGREEN}[INFO] Pushed STAC collection [{collection_id}] to [{stac_host}] ({r.status_code}){bcolors.ENDC}"
-        )
-    elif r.status_code == 409:
-        print(
-            f"{bcolors.WARNING}[INFO] STAC collection [{collection_id}] already exists on [{stac_host}] ({r.status_code}), updating..{bcolors.ENDC}"
-        )
-        r = requests.put(os.path.join(stac_host, "collections"), json=json_data, verify=False)
-        r.raise_for_status()
-    else:
-        r.raise_for_status()
+asset_roles = {
+    "HTTPServer": ["data"],
+    "OPENDAP": ["data"],
+    "WCS": ["data"],
+    "WMS": ["visual"],
+    "NetcdfSubset": ["data"],
+}
