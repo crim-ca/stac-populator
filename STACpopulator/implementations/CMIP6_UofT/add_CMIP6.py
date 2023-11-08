@@ -161,7 +161,12 @@ class CMIP6populator(STACpopulatorBase):
         """
         iid = self.make_cmip6_item_id(item_data["attributes"])
 
-        item = STAC_item_from_metadata(iid, item_data, self.item_properties_model, self.item_geometry_model)
+        try:
+            item = STAC_item_from_metadata(iid, item_data, self.item_properties_model, self.item_geometry_model)
+        except pydantic_core._pydantic_core.ValidationError:
+            print(f"ERROR: ValidationError for {iid}")
+            return -1
+
 
         # Add datacube extension
         try:
