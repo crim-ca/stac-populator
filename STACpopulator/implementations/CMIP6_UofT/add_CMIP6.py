@@ -103,22 +103,6 @@ class CMIP6ItemProperties(STACItemProperties, validate_assignment=True):
         return v
 
 
-def make_cmip6_item_id(attrs: MutableMapping[str, Any]) -> str:
-    """Return a unique ID for CMIP6 data item."""
-    keys = [
-        "activity_id",
-        "institution_id",
-        "source_id",
-        "experiment_id",
-        "variant_label",
-        "table_id",
-        "variable_id",
-        "grid_label",
-    ]
-    name = "_".join(attrs[k] for k in keys)
-    return name
-
-
 class CMIP6populator(STACpopulatorBase):
     item_properties_model = CMIP6ItemProperties
     item_geometry_model = GeoJSONPolygon
