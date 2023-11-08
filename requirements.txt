@@ -1,6 +1,0 @@
-colorlog
-requests
-pystac
-pyyaml
-siphon
-lxml
