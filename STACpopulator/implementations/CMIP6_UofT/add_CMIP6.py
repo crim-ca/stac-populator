@@ -4,6 +4,7 @@ import logging
 from datetime import datetime
 from typing import Any, List, Literal, MutableMapping, Optional
 
+import pydantic_core
 import pyessv
 from colorlog import ColoredFormatter
 from pydantic import AnyHttpUrl, ConfigDict, Field, FieldValidationInfo, field_validator
@@ -151,6 +152,10 @@ class CMIP6populator(STACpopulatorBase):
             print(f"ERROR: ValidationError for {iid}")
             return -1
 
+        # Add the CMIP6 STAC extension
+        item.stac_extensions.append(
+            "https://raw.githubusercontent.com/TomAugspurger/cmip6/main/json-schema/schema.json"
+        )
 
         # Add datacube extension
         try:
