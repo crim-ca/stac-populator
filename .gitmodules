@@ -1,0 +1,3 @@
+[submodule "pyessv-archive"]
+	path = pyessv-archive
+	url = https://github.com/dchandan/pyessv-archive
