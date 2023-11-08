@@ -133,6 +133,22 @@ class CMIP6populator(STACpopulatorBase):
         """
         super().__init__(stac_host, data_loader, update)
 
+    @staticmethod
+    def make_cmip6_item_id(attrs: MutableMapping[str, Any]) -> str:
+        """Return a unique ID for CMIP6 data item."""
+        keys = [
+            "activity_id",
+            "institution_id",
+            "source_id",
+            "experiment_id",
+            "variant_label",
+            "table_id",
+            "variable_id",
+            "grid_label",
+        ]
+        name = "_".join(attrs[k] for k in keys)
+        return name
+
     def create_stac_item(self, item_name: str, item_data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
         """Creates the STAC item.
 
@@ -143,7 +159,7 @@ class CMIP6populator(STACpopulatorBase):
         :return: _description_
         :rtype: MutableMapping[str, Any]
         """
-        iid = make_cmip6_item_id(item_data["attributes"])
+        iid = self.make_cmip6_item_id(item_data["attributes"])
 
         item = STAC_item_from_metadata(iid, item_data, self.item_properties_model, self.item_geometry_model)
 
