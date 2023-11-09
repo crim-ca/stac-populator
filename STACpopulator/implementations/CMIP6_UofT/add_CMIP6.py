@@ -74,7 +74,7 @@ class CMIP6ItemProperties(STACItemProperties, validate_assignment=True):
     physics_index: int
     realization_index: int
     forcing_index: int
-    tracking_id: str = ""
+    tracking_id: str = Field("")
     version: str = Field("")
     product: str
     license: str
