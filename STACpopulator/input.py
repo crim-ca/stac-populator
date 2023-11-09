@@ -31,12 +31,23 @@ class GenericLoader(ABC):
         A generator that returns an item from the input. The item could be anything
         depending on the specific concrete implementation of this abstract class.
         """
-        pass
+        raise NotImplementedError
 
     @abstractmethod
     def reset(self):
         """Reset the internal state of the generator."""
-        pass
+        raise NotImplementedError
+
+
+class ErrorLoader(GenericLoader):
+    def __init__(self):  # noqa
+        raise NotImplementedError
+
+    def __iter__(self):
+        raise NotImplementedError
+
+    def reset(self):
+        raise NotImplementedError
 
 
 class THREDDSLoader(GenericLoader):
@@ -84,9 +95,10 @@ class THREDDSLoader(GenericLoader):
         url = self.thredds_catalog_URL
         parts = url.split("/")
         i = parts.index("catalog")
-        # service = parts[i - 1]
+        service = parts[i - 1]
         path = "/".join(parts[i + 1 : -1])
-        return pystac.Link(rel="source", target=url, media_type="text/xml", title=path)
+        title = f"{service}:{path}"
+        return pystac.Link(rel="source", target=url, media_type="text/xml", title=title)
 
     def reset(self):
         """Reset the generator."""

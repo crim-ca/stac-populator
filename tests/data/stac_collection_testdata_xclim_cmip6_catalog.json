@@ -1,0 +1,30 @@
+{
+  "type": "Collection",
+  "id": "test",
+  "title": "test",
+  "stac_version": "1.0.0",
+  "description": "test",
+  "summaries": {"needs_summaries_update": ["true"]},
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [-180, -90, 180, 90]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        ["1850-01-01T00:00:00Z", null]
+      ]
+    }
+  },
+  "license": "MIT",
+  "keywords": ["test"],
+  "links": [
+    {
+      "href": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml",
+      "rel": "source",
+      "title": "thredds:birdhouse/testdata/xclim/cmip6",
+      "type": "text/xml"
+    }
+  ]
+}

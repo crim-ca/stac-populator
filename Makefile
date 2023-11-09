@@ -11,6 +11,9 @@ STAC_HOST ?= http://localhost:8880/stac
 
 ## -- Testing targets -------------------------------------------------------------------------------------------- ##
 
+setup-pyessv-archive:
+	git clone "https://github.com/ES-DOC/pyessv-archive" ~/.esdoc/pyessv-archive
+
 test-cmip6:
 	python $(IMP_DIR)/CMIP6_UofT/add_CMIP6.py $(STAC_HOST) https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.html
 
@@ -39,6 +42,9 @@ install-dev:
 
 test-unit:
 	pytest "$(APP_ROOT)"
+
+test-cov:
+	pytest "$(APP_ROOT)" --cov --cov-report=term --cov-report=html
 
 ## -- Versioning targets -------------------------------------------------------------------------------------------- ##
 

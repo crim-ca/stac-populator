@@ -2,6 +2,18 @@
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+include = ["STACpopulator*"]
+exclude = [
+    ".deprecated",
+    ".pytest_cache",
+    "__pycache__",
+    "__pycache__.*",
+    "__pycache__*",
+    "STACpopulator.__pycache__*",
+    "tests*",
+]
+
 [project]
 name = "STACpopulator"
 version = "0.1.0"
@@ -60,9 +72,6 @@ keywords = [
 Repository = "https://github.com/crim-ca/stac-populator"
 Changelog = "https://github.com/crim-ca/stac-populator/blob/master/CHANGES.md"
 
-[tool.setuptools]
-py-modules = ["STACpopulator"]
-
 [project.optional-dependencies]
 dev = [
     "pytest",
@@ -83,10 +92,15 @@ norecursedirs = [
     "lib",
 ]
 python_files = "test*.py"
-addopts = [
-    "--cov",
-    "--cov-report=term",
-    "--cov-report=html",
+# these break debugger breakpoints
+# add them manually with 'make test-cov'
+#addopts = [
+#    "--cov",
+#    "--cov-report=term",
+#    "--cov-report=html",
+#]
+markers = [
+    "online"
 ]
 
 [tool.coverage.html]
@@ -124,7 +138,7 @@ replace = "APP_VERSION ?= {new_version}"
 filename = "CHANGES.md"
 search = "## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)"
 replace = """
-## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)"
+## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
 <!-- insert list items of new changes here -->
 
