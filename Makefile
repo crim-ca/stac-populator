@@ -8,6 +8,10 @@ APP_VERSION ?= 0.1.0
 
 IMP_DIR := STACpopulator/implementations
 STAC_HOST ?= http://localhost:8880/stac
+# CATALOG = https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.html
+CATALOG = https://daccs.cs.toronto.edu/twitcher/ows/proxy/thredds/catalog/datasets/CMIP6/catalog.html
+# CATALOG = https://daccs.cs.toronto.edu/twitcher/ows/proxy/thredds/catalog/datasets/CMIP6/CMIP/NOAA-GFDL/catalog.html
+# CATALOG = https://daccs.cs.toronto.edu/twitcher/ows/proxy/thredds/catalog/datasets/CMIP6/CMIP/AS-RCEC/catalog.html
 
 ## -- Testing targets -------------------------------------------------------------------------------------------- ##
 
@@ -15,7 +19,7 @@ setup-pyessv-archive:
 	git clone "https://github.com/ES-DOC/pyessv-archive" ~/.esdoc/pyessv-archive
 
 test-cmip6:
-	python $(IMP_DIR)/CMIP6_UofT/add_CMIP6.py $(STAC_HOST) https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.html
+	python $(IMP_DIR)/CMIP6_UofT/add_CMIP6.py $(STAC_HOST) $(CATALOG)
 
 del-cmip6:
 	curl --location --request DELETE '$(STAC_HOST)/collections/CMIP6_UofT'

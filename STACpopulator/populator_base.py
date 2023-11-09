@@ -133,4 +133,5 @@ class STACpopulatorBase(ABC):
         for item_name, item_data in self._ingest_pipeline:
             LOGGER.info(f"Creating STAC representation for {item_name}")
             stac_item = self.create_stac_item(item_name, item_data)
-            post_stac_item(self.stac_host, self.collection_id, item_name, stac_item, self.update)
+            if stac_item != -1:
+                post_stac_item(self.stac_host, self.collection_id, item_name, stac_item, self.update)
