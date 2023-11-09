@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "STACpopulator"
-version = "0.0.1"
+version = "0.1.0"
 description = "Utility for populating the STAC Catalog, Collections and Items from various dataset/catalog sources."
 requires-python = ">=3.10"
 dependencies = [
@@ -130,3 +130,10 @@ replace = """
 
 ## [{new_version}](https://github.com/crim-ca/stac-populator/tree/{new_version}) ({now:%Y-%m-%d})
 """
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+# ensure the regex does not match another version by mistake using the package name as guide
+regex = true
+search = "^name = \"STACpopulator\"\nversion = \"{current_version}\"$"
+replace = "name = \"STACpopulator\"\nversion = \"{new_version}\""
