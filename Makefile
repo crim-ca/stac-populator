@@ -2,11 +2,11 @@ MAKEFILE_NAME := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 # Include custom config if it is available
 -include Makefile.config
 APP_ROOT    := $(abspath $(lastword $(MAKEFILE_NAME))/..)
-APP_NAME    := $(shell basename $(APP_ROOT))
+APP_NAME    := STACpopulator
 APP_VERSION ?= 0.1.0
 
 
-IMP_DIR := STACpopulator/implementations
+IMP_DIR := $(APP_NAME)/implementations
 STAC_HOST ?= http://localhost:8880/stac
 # CATALOG = https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.html
 CATALOG = https://daccs.cs.toronto.edu/twitcher/ows/proxy/thredds/catalog/datasets/CMIP6/catalog.html
@@ -48,7 +48,7 @@ test-unit:
 	pytest "$(APP_ROOT)"
 
 test-cov:
-	pytest "$(APP_ROOT)" --cov --cov-report=term --cov-report=html
+	pytest "$(APP_ROOT)" --cov="$(APP_NAME)" --cov-report=term --cov-report=html
 
 ## -- Versioning targets -------------------------------------------------------------------------------------------- ##
 
