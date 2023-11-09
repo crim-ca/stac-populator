@@ -6,7 +6,7 @@ CATALOG = https://daccs.cs.toronto.edu/twitcher/ows/proxy/thredds/catalog/datase
 # CATALOG = https://daccs.cs.toronto.edu/twitcher/ows/proxy/thredds/catalog/datasets/CMIP6/CMIP/AS-RCEC/catalog.html
 
 testcmip6:
-	python $(IMP_DIR)/CMIP6_UofT/add_CMIP6.py $(STAC_HOST) $(CATALOG)
+	python $(IMP_DIR)/CMIP6_UofT/add_CMIP6.py $(STAC_HOST) $(CATALOG) PAVICS
 
 delcmip6:
 	curl --location --request DELETE '$(STAC_HOST)/collections/CMIP6_UofT'

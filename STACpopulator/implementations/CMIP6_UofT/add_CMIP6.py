@@ -80,6 +80,8 @@ class CMIP6ItemProperties(STACItemProperties, validate_assignment=True):
     license: str
     grid: str
     mip_era: str
+    is_replica: bool = Field(..., serialization_alias="mrbl:is_replica")
+    host_node: str = Field(..., serialization_alias="mrbl:host_node")
 
     model_config = ConfigDict(alias_generator=add_cmip6_prefix, populate_by_name=True)
 
@@ -108,7 +110,9 @@ class CMIP6populator(STACpopulatorBase):
     item_properties_model = CMIP6ItemProperties
     item_geometry_model = GeoJSONPolygon
 
-    def __init__(self, stac_host: str, data_loader: GenericLoader, update: Optional[bool] = False) -> None:
+    def __init__(
+        self, stac_host: str, data_loader: GenericLoader, host_node: str, update: Optional[bool] = False
+    ) -> None:
         """Constructor
 
         :param stac_host: URL to the STAC API
@@ -117,6 +121,7 @@ class CMIP6populator(STACpopulatorBase):
         :type thredds_catalog_url: str
         """
         super().__init__(stac_host, data_loader, update)
+        self.host_node = host_node
 
     @staticmethod
     def make_cmip6_item_id(attrs: MutableMapping[str, Any]) -> str:
@@ -146,11 +151,20 @@ class CMIP6populator(STACpopulatorBase):
         """
         iid = self.make_cmip6_item_id(item_data["attributes"])
 
-        try:
-            item = STAC_item_from_metadata(iid, item_data, self.item_properties_model, self.item_geometry_model)
-        except pydantic_core._pydantic_core.ValidationError:
-            print(f"ERROR: ValidationError for {iid}")
-            return -1
+        # Adding some Marble network related data to the item properties.
+        # is_replica is always False when using this app since this app is only used to populate the hostnode
+        # with the data residing on that node. Replica STAC items on other nodes in the Marble network will be
+        # populated using a different app, and there the is_replica flag will be True.
+        item_data["attributes"]["is_replica"] = False
+        item_data["attributes"]["host_node"] = self.host_node
+
+        item = STAC_item_from_metadata(iid, item_data, self.item_properties_model, self.item_geometry_model)
+        # try:
+        #     item = STAC_item_from_metadata(iid, item_data, self.item_properties_model, self.item_geometry_model)
+        # except pydantic_core._pydantic_core.ValidationError as e:
+        #     print(f"ERROR: ValidationError for {iid}")
+        #     # e.errors()
+        #     return -1
 
         # Add the CMIP6 STAC extension
         item.stac_extensions.append(
@@ -173,6 +187,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="CMIP6 STAC populator")
     parser.add_argument("stac_host", type=str, help="STAC API address")
     parser.add_argument("thredds_catalog_URL", type=str, help="URL to the CMIP6 THREDDS catalog")
+    parser.add_argument("host_node", type=str, help="Name of the Marble node on which the data resides")
     parser.add_argument("--update", action="store_true", help="Update collection and its items")
 
     args = parser.parse_args()
@@ -187,5 +202,5 @@ if __name__ == "__main__":
         # To be implemented
         data_loader = ErrorLoader(args.error_file)
 
-    c = CMIP6populator(args.stac_host, data_loader, args.update)
+    c = CMIP6populator(args.stac_host, data_loader, args.host_node, args.update)
     c.ingest()
