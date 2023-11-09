@@ -8,6 +8,7 @@
 * Adjust `README.md` with updated references and release version indicators.
 * Add `CHANGES.md` to record version updates.
 * Add `dev` dependencies to `pyproject.toml` for testing the package (install with `pip install ".[dev]"`).
+* Add GitHub CI tests.
 * Remove `requirements.txt` in favor of all dependencies combined in `pyproject.toml`.
 * Refactor of `CMIP6_UofT` with more robust parsing strategies and STAC Item generation from THREDDS NCML metadata.
 

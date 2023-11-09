@@ -1,0 +1,155 @@
+# run test suites
+
+name: Tests
+on:
+  - pull_request
+  - push
+  - release
+  - workflow_dispatch
+
+# cancel the current workflow if another commit was pushed on the same PR or reference
+# uses the GitHub workflow name to avoid collision with other workflows running on the same PR/reference
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # see: https://github.com/fkirc/skip-duplicate-actions
+  skip_duplicate:
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip && ! contains(github.ref, 'refs/tags') }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@master
+        with:
+          concurrent_skipping: "same_content"
+          skip_after_successful_duplicate: "true"
+          do_not_skip: '["pull_request", "workflow_dispatch", "schedule", "release"]'
+
+  # see: https://github.com/actions/setup-python
+  tests:
+    needs: skip_duplicate
+    if: ${{ needs.skip_duplicate.outputs.should_skip != 'true' }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.allow-failure }}
+    env:
+      # override make command to install directly in active python
+      CONDA_CMD: ""
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.10", "3.11", "3.12"]
+        allow-failure: [false]
+        test-case: [test-unit]
+#        include:
+#          # experimental python
+#          - os: ubuntu-latest
+#            python-version: "3.13"
+#            allow-failure: true
+#            test-case: test-unit-only
+#          - os: ubuntu-latest
+#            python-version: "3.13"
+#            allow-failure: true
+#            test-case: test-func-only
+#          # linter tests
+#          - os: ubuntu-latest
+#            python-version: "3.10"
+#            allow-failure: false
+#            test-case: check-all
+#          # documentation build
+#          - os: ubuntu-latest
+#            python-version: "3.10"
+#            allow-failure: false
+#            test-case: docs
+#          # coverage test
+#          - os: ubuntu-latest
+#            python-version: "3.10"
+#            allow-failure: false
+#            test-case: test-coverage-only
+#          # smoke test of Docker image
+#          - os: ubuntu-latest
+#            python-version: "3.10"  # doesn't matter which one (in docker), but match default of repo
+#            allow-failure: false
+#            test-case: test-docker
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: "0"
+      - name: Setup Python
+        # skip python setup if running with docker
+        if: ${{ matrix.test-case != 'test-docker' }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: "${{ matrix.python-version }}"
+      - name: Parse Python Version
+        id: python-semver
+        run: |
+          echo "::set-output name=major:$(echo ${{ matrix.python-version }} | cut -d '.' -f 1)"
+          echo "::set-output name=minor:$(echo ${{ matrix.python-version }} | cut -d '.' -f 2)"
+      - uses: actions/cache@v3
+        name: Check Proj Lib Pre-Built in Cache
+        id: cache-proj
+        with:
+          # note: '22' is v8, '21' is v7
+          path: /tmp/proj-8.2.1/install
+          key: ${{ runner.os }}-python${{ matrix.python-version }}-proj
+      - name: Install Dependencies
+        # skip python setup if running with docker
+        if: ${{ matrix.test-case != 'test-docker' }}
+        # install package and dependencies directly,
+        # skip sys/conda setup to use active python
+        run: make install-sys install-pkg install-pip install-raw install-dev version
+      - name: Display Packages
+        # skip python setup if running with docker
+        if: ${{ matrix.test-case != 'test-docker' }}
+        run: pip freeze
+      #- name: Setup Environment Variables
+      #  uses: c-py/action-dotenv-to-setenv@v2
+      #  with:
+      #    env-file: ./ci/weaver.env
+      - name: Display Environment Variables
+        run: |
+          hash -r
+          env | sort
+      - name: Run Tests
+        run: make ${{ matrix.test-case }}
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v2
+        if: ${{ success() && matrix.test-case == 'test-coverage-only' }}
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./reports/coverage.xml
+          fail_ci_if_error: true
+          verbose: true
+
+#  deploy-docker:
+#    needs: tests
+#    if: ${{ success() && (contains(github.ref, 'refs/tags') || github.ref == 'refs/heads/master') }}
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#        with:
+#          fetch-depth: "0"
+#      - name: Get Tag Version
+#        id: version
+#        shell: bash
+#        run: |
+#          if [[ "${GITHUB_REF}" == "refs/heads/master" ]]; then
+#            echo "::set-output name=TAG_VERSION::latest"
+#          else
+#            echo "::set-output name=TAG_VERSION::${GITHUB_REF##*/}"
+#          fi
+#      - name: Build Docker
+#        run: |
+#          make DOCKER_REPO=pavics/weaver APP_VERSION=${{ steps.version.outputs.TAG_VERSION }} docker-info docker-build
+#      - name: Login to DockerHub
+#        uses: docker/login-action@v1
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#      - name: Push to DockerHub
+#        run: |
+#          make DOCKER_REPO=pavics/weaver APP_VERSION=${{ steps.version.outputs.TAG_VERSION }} docker-push

@@ -18,9 +18,6 @@ dependencies = [
     "requests",
     "lxml",
 ]
-urls = [
-    "https://github.com/crim-ca/stac-populator"
-]
 readme = "README.md"
 license = { file = "LICENSE" }
 classifiers = [
@@ -58,6 +55,10 @@ keywords = [
     "THREDDS",
     "CMIP6"
 ]
+
+[project.urls]
+Repository = "https://github.com/crim-ca/stac-populator"
+Changelog = "https://github.com/crim-ca/stac-populator/blob/master/CHANGES.md"
 
 [tool.setuptools]
 py-modules = ["STACpopulator"]
