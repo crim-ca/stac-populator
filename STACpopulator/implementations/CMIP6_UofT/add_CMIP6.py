@@ -162,7 +162,7 @@ class CMIP6populator(STACpopulatorBase):
             dchelper = DataCubeHelper(item_data)
             dc_ext = DatacubeExtension.ext(item, add_if_missing=True)
             dc_ext.apply(dimensions=dchelper.dimensions, variables=dchelper.variables)
-        except:
+        except Exception:
             LOGGER.warning(f"Failed to add Datacube extension to item {item_name}")
 
         # print(json.dumps(item.to_dict()))
