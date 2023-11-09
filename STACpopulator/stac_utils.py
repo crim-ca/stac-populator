@@ -74,8 +74,8 @@ def load_collection_configuration() -> MutableMapping[str, Any]:
     return collection_info
 
 
-def collection2literal(collection):
-    terms = tuple(term.label for term in collection)
+def collection2literal(collection, property="label"):
+    terms = tuple(getattr(term, property) for term in collection)
     return Literal[terms]
 
 

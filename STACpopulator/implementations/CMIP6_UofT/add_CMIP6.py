@@ -36,7 +36,7 @@ GridLabel = collection2literal(CV.grid_label)
 InstitutionID = collection2literal(CV.institution_id)
 NominalResolution = collection2literal(CV.nominal_resolution)
 Realm = collection2literal(CV.realm)
-SourceID = collection2literal(CV.source_id)
+SourceID = collection2literal(CV.source_id, "source_id")
 SourceType = collection2literal(CV.source_type)
 SubExperimentID = collection2literal(CV.sub_experiment_id)
 TableID = collection2literal(CV.table_id)
@@ -74,7 +74,7 @@ class CMIP6ItemProperties(STACItemProperties, validate_assignment=True):
     physics_index: int
     realization_index: int
     forcing_index: int
-    tracking_id: str = ""
+    tracking_id: str = Field("")
     version: str = Field("")
     product: str
     license: str
@@ -162,7 +162,7 @@ class CMIP6populator(STACpopulatorBase):
             dchelper = DataCubeHelper(item_data)
             dc_ext = DatacubeExtension.ext(item, add_if_missing=True)
             dc_ext.apply(dimensions=dchelper.dimensions, variables=dchelper.variables)
-        except:
+        except Exception:
             LOGGER.warning(f"Failed to add Datacube extension to item {item_name}")
 
         # print(json.dumps(item.to_dict()))
