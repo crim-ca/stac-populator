@@ -1,7 +1,7 @@
 # STAC Catalog Populator
 
-![Latest Version](https://img.shields.io/badge/latest%20version-0.0.1-blue?logo=github)
-![Commits Since Latest](https://img.shields.io/github/commits-since/crim-ca/stac-populator/0.0.1.svg?logo=github)
+![Latest Version](https://img.shields.io/badge/latest%20version-0.1.0-blue?logo=github)
+![Commits Since Latest](https://img.shields.io/github/commits-since/crim-ca/stac-populator/0.1.0.svg?logo=github)
 
 This repository contains a framework [STACpopulator](STACpopulator)
 that can be used to implement concrete populators (see [implementations](STACpopulator/implementations))

@@ -3,7 +3,7 @@ MAKEFILE_NAME := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 -include Makefile.config
 APP_ROOT    := $(abspath $(lastword $(MAKEFILE_NAME))/..)
 APP_NAME    := $(shell basename $(APP_ROOT))
-APP_VERSION ?= 0.0.1
+APP_VERSION ?= 0.1.0
 
 
 IMP_DIR := STACpopulator/implementations
