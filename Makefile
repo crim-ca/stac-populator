@@ -5,6 +5,8 @@ APP_ROOT    := $(abspath $(lastword $(MAKEFILE_NAME))/..)
 APP_NAME    := STACpopulator
 APP_VERSION ?= 0.1.0
 
+DOCKER_COMPOSE_FILES := -f "$(APP_ROOT)/docker/docker-compose.yml"
+DOCKER_TAG := ghcr.io/crim-ca/stac-populator:$(APP_VERSION)
 
 IMP_DIR := $(APP_NAME)/implementations
 STAC_HOST ?= http://localhost:8880/stac
@@ -26,12 +28,15 @@ del-cmip6:
 	@echo ""
 
 docker-start:
-	docker compose up
+	docker compose $(DOCKER_COMPOSE_FILES) up
 starthost: docker-start
 
 docker-stop:
-	docker compose down
+	docker compose $(DOCKER_COMPOSE_FILES) down
 stophost: docker-stop
+
+docker-build:
+	docker build "$(APP_ROOT)" -f "$(APP_ROOT)/docker/Dockerfile" -t "$(DOCKER_TAG)"
 
 del_docker_volume: stophost
 	docker volume rm stac-populator_stac-db

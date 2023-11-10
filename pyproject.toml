@@ -17,7 +17,7 @@ exclude = [
 [project]
 name = "STACpopulator"
 version = "0.1.0"
-description = "Utility for populating the STAC Catalog, Collections and Items from various dataset/catalog sources."
+description = "Utility to populate STAC Catalog, Collections and Items from various dataset/catalog sources."
 requires-python = ">=3.10"
 dependencies = [
     "colorlog",
@@ -133,6 +133,11 @@ filename = "README.md"
 filename = "Makefile"
 search = "APP_VERSION ?= {current_version}"
 replace = "APP_VERSION ?= {new_version}"
+
+[[tool.bumpversion.files]]
+filename = "docker/Dockerfile"
+search = "LABEL version=\"{current_version}\""
+replace = "LABEL version=\"{new_version}\""
 
 [[tool.bumpversion.files]]
 filename = "CHANGES.md"
