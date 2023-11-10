@@ -16,15 +16,15 @@ exclude = [
 
 [project]
 name = "STACpopulator"
-version = "0.1.0"
-description = "Utility for populating the STAC Catalog, Collections and Items from various dataset/catalog sources."
+version = "0.2.0"
+description = "Utility to populate STAC Catalog, Collections and Items from various dataset/catalog sources."
 requires-python = ">=3.10"
 dependencies = [
     "colorlog",
     "pyyaml",
     "siphon",
     "pystac",
-    "xncml",
+    "xncml>=0.3.1",  # python 3.12 support
     "pydantic",
     "pyessv",
     "requests",
@@ -113,7 +113,7 @@ directory = "reports/coverage/html"
 output = "reports/coverage.xml"
 
 [tool.bumpversion]
-current_version = "0.1.0"
+current_version = "0.2.0"
 commit = true
 commit_args = "--no-verify"
 tag = true
@@ -136,6 +136,11 @@ filename = "README.md"
 filename = "Makefile"
 search = "APP_VERSION ?= {current_version}"
 replace = "APP_VERSION ?= {new_version}"
+
+[[tool.bumpversion.files]]
+filename = "docker/Dockerfile"
+search = "LABEL version=\"{current_version}\""
+replace = "LABEL version=\"{new_version}\""
 
 [[tool.bumpversion.files]]
 filename = "CHANGES.md"

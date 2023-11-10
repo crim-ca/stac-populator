@@ -15,6 +15,7 @@ jobs:
   release:
     name: release
     runs-on: ubuntu-latest
+    if: ${{ success() && (contains(github.ref, 'refs/tags') || github.ref == 'refs/heads/master') }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -47,5 +48,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          file: docker/Dockerfile
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.extract_branch.outputs.branch }}

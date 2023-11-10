@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Any, MutableMapping, Optional
+from typing import Any, Optional
 
 import requests
 from colorlog import ColoredFormatter
@@ -35,7 +35,7 @@ def stac_collection_exists(stac_host: str, collection_id: str) -> bool:
     return r.status_code == 200
 
 
-def post_stac_collection(stac_host: str, json_data: MutableMapping[str, Any], update: Optional[bool] = True) -> None:
+def post_stac_collection(stac_host: str, json_data: dict[str, Any], update: Optional[bool] = True) -> None:
     """Post/create a collection on the STAC host
 
     :param stac_host: address of the STAC host
@@ -65,7 +65,7 @@ def post_stac_item(
     stac_host: str,
     collection_id: str,
     item_name: str,
-    json_data: MutableMapping[str, dict],
+    json_data: dict[str, dict],
     update: Optional[bool] = True,
 ) -> None:
     """Post a STAC item to the host server.

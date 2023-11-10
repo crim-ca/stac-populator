@@ -2,6 +2,13 @@
 .idea/
 .vscode/
 
+## SCM
+.git*
+
+## Configurations
+.*
+*.rc
+
 ## Environment
 .conda/
 .env*

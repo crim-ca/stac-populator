@@ -1,0 +1,32 @@
+FROM python:3.10-slim
+LABEL description.short="STAC Populator"
+LABEL description.long="Utility to populate STAC Catalog, Collections and Items from various dataset/catalog sources."
+LABEL maintainer="Francis Charette-Migneault <francis.charette-migneault@crim.ca>"
+LABEL vendor="CRIM"
+LABEL version="0.2.0"
+
+# setup paths
+ENV APP_DIR=/opt/local/src/stac-populator
+WORKDIR ${APP_DIR}
+
+# obtain source files
+COPY STACpopulator/ ${APP_DIR}/STACpopulator/
+COPY README.md LICENSE pyproject.toml ${APP_DIR}/
+
+# install runtime/package dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        netbase \
+        git \
+    && mkdir -p /home/stac/.esdoc/ \
+    && git clone "https://github.com/ES-DOC/pyessv-archive" /home/stac/.esdoc/pyessv-archive/ \
+    && pip install --no-cache-dir ${APP_DIR} \
+    && apt-get remove -y \
+        git \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN groupadd -r stac && useradd -r -g stac stac
+USER stac
+
+# FIXME: use common CLI
+CMD ["bash"]

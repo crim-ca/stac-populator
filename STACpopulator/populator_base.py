@@ -2,7 +2,7 @@ import functools
 import logging
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, MutableMapping, Optional
+from typing import Any, Optional
 
 import pystac
 from colorlog import ColoredFormatter
@@ -84,7 +84,7 @@ class STACpopulatorBase(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def create_stac_item(self, item_name: str, item_data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
+    def create_stac_item(self, item_name: str, item_data: dict[str, Any]) -> dict[str, Any]:
         raise NotImplementedError
 
     def validate_host(self, stac_host: str) -> str:
@@ -99,7 +99,7 @@ class STACpopulatorBase(ABC):
     #   STAC collections are supposed to include 'summaries' with
     #   an aggregation of all supported 'properties' by its child items
     @functools.cache
-    def create_stac_collection(self) -> MutableMapping[str, Any]:
+    def create_stac_collection(self) -> dict[str, Any]:
         """
         Create a basic STAC collection.
 
@@ -125,7 +125,7 @@ class STACpopulatorBase(ABC):
         self.publish_stac_collection(collection_data)
         return collection_data
 
-    def publish_stac_collection(self, collection_data: MutableMapping[str, Any]) -> None:
+    def publish_stac_collection(self, collection_data: dict[str, Any]) -> None:
         post_stac_collection(self.stac_host, collection_data, self.update)
 
     def ingest(self) -> None:

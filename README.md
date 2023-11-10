@@ -1,7 +1,7 @@
 # STAC Catalog Populator
 
-![Latest Version](https://img.shields.io/badge/latest%20version-0.1.0-blue?logo=github)
-![Commits Since Latest](https://img.shields.io/github/commits-since/crim-ca/stac-populator/0.1.0.svg?logo=github)
+![Latest Version](https://img.shields.io/badge/latest%20version-0.2.0-blue?logo=github)
+![Commits Since Latest](https://img.shields.io/github/commits-since/crim-ca/stac-populator/0.2.0.svg?logo=github)
 
 This repository contains a framework [STACpopulator](STACpopulator)
 that can be used to implement concrete populators (see [implementations](STACpopulator/implementations))
@@ -22,9 +22,33 @@ Provided implementations of `STACpopulatorBase`:
 
 [CMIP6_UofT]: STACpopulator/implementations/CMIP6_UofT/add_CMIP6.py
 
+## Installation and Execution
+
+Either with Python directly (in an environment of your choosing):
+
+```shell
+pip install .
+# OR
+make install
+```
+
+With development packages:
+
+```shell
+pip install .[dev]
+# OR
+make install-dev
+```
+
+You can also employ the pre-built Docker:
+
+```shell
+docker run -ti ghcr.io/crim-ca/stac-populator:0.2.0 [command]
+```
+
 ## Testing
 
-The provided [`docker-compose`](docker-compose.yml) configuration file can be used to launch a test STAC server.
+The provided [`docker-compose`](docker/docker-compose.yml) configuration file can be used to launch a test STAC server.
 For example, the [CMIP6_UofT][CMIP6_UofT] script can be run as:
 
 ```shell
