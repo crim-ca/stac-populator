@@ -10,10 +10,10 @@ from colorlog import ColoredFormatter
 from pydantic import AnyHttpUrl, ConfigDict, Field, FieldValidationInfo, field_validator
 from pystac.extensions.datacube import DatacubeExtension
 
-from STACpopulator import STACpopulatorBase
 from STACpopulator.implementations.CMIP6_UofT.extensions import DataCubeHelper
-from STACpopulator.input import GenericLoader, THREDDSLoader
+from STACpopulator.input import GenericLoader, ErrorLoader, THREDDSLoader
 from STACpopulator.models import GeoJSONPolygon, STACItemProperties
+from STACpopulator.populator_base import STACpopulatorBase
 from STACpopulator.stac_utils import STAC_item_from_metadata, collection2literal
 
 LOGGER = logging.getLogger(__name__)

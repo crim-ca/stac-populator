@@ -2,21 +2,157 @@
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.packages.find]
+include = ["STACpopulator*"]
+exclude = [
+    ".deprecated",
+    ".pytest_cache",
+    "__pycache__",
+    "__pycache__.*",
+    "__pycache__*",
+    "STACpopulator.__pycache__*",
+    "tests*",
+]
+
 [project]
 name = "STACpopulator"
-version = "0.0.1"
+version = "0.1.0"
+description = "Utility to populate STAC Catalog, Collections and Items from various dataset/catalog sources."
 requires-python = ">=3.10"
 dependencies = [
     "colorlog",
     "pyyaml",
     "siphon",
     "pystac",
-    "xncml",
+    "xncml>=0.3.1",  # python 3.12 support
     "pydantic",
-    "pyessv"
+    "pyessv",
+    "requests",
+    "lxml",
+]
+readme = "README.md"
+license = { file = "LICENSE" }
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT",
+    "Natural Language :: English",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "Topic :: Database :: Database Engines/Servers",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: Interface Engine/Protocol Translator",
+    "Topic :: Utilities",
+]
+authors = [
+    { name = "Francis Charette-Migneault", email = "francis.charette-migneault@crim.ca" },
+    { name = "Deepak Chandan", email = "dchandan@cs.toronto.edu" },
+    { name = "David Huard", email = "huard.david@ouranos.ca" },
+]
+maintainers = [
+    { name = "Francis Charette-Migneault", email = "francis.charette-migneault@crim.ca" },
+    { name = "Deepak Chandan", email = "dchandan@cs.toronto.edu" },
+    { name = "David Huard", email = "huard.david@ouranos.ca" },
+]
+keywords = [
+    "STAC",
+    "SpatioTemporal Asset Catalog",
+    "Data Ingestion",
+    "THREDDS",
+    "CMIP6"
 ]
 
-[tool.setuptools]
-py-modules = ["STACpopulator"]
+[project.urls]
+Repository = "https://github.com/crim-ca/stac-populator"
+Changelog = "https://github.com/crim-ca/stac-populator/blob/master/CHANGES.md"
 
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "coverage",
+    "bump-my-version",
+]
 
+[tool.pytest.ini_options]
+norecursedirs = [
+    ".*",
+    "build",
+    "dist",
+    "{arch}",
+    "*.egg",
+    "venv",
+    "requirements*",
+    "lib",
+]
+python_files = "test*.py"
+# these break debugger breakpoints
+# add them manually with 'make test-cov'
+#addopts = [
+#    "--cov",
+#    "--cov-report=term",
+#    "--cov-report=html",
+#]
+markers = [
+    "online"
+]
+
+[tool.coverage.html]
+directory = "reports/coverage/html"
+
+[tool.coverage.xml]
+output = "reports/coverage.xml"
+
+[tool.bumpversion]
+current_version = "0.1.0"
+commit = true
+commit_args = "--no-verify"
+tag = true
+tag_name = "{new_version}"
+allow_dirty = true
+parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)(\\.dev\\d+)?"
+serialize = [
+    "{major}.{minor}.{patch}.dev{distance_to_latest_tag}",
+    "{major}.{minor}.{patch}"
+]
+message = "Version updated from {current_version} to {new_version}"
+
+[[tool.bumpversion.files]]
+filename = "STACpopulator/__init__.py"
+
+[[tool.bumpversion.files]]
+filename = "README.md"
+
+[[tool.bumpversion.files]]
+filename = "Makefile"
+search = "APP_VERSION ?= {current_version}"
+replace = "APP_VERSION ?= {new_version}"
+
+[[tool.bumpversion.files]]
+filename = "docker/Dockerfile"
+search = "LABEL version=\"{current_version}\""
+replace = "LABEL version=\"{new_version}\""
+
+[[tool.bumpversion.files]]
+filename = "CHANGES.md"
+search = "## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)"
+replace = """
+## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
+
+<!-- insert list items of new changes here -->
+
+## [{new_version}](https://github.com/crim-ca/stac-populator/tree/{new_version}) ({now:%Y-%m-%d})
+"""
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+# ensure the regex does not match another version by mistake using the package name as guide
+regex = true
+search = "^name = \"STACpopulator\"\nversion = \"{current_version}\"$"
+replace = "name = \"STACpopulator\"\nversion = \"{new_version}\""

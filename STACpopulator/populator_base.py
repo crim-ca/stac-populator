@@ -1,7 +1,8 @@
+import functools
 import logging
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, MutableMapping, Optional
+from typing import Any, Optional
 
 import pystac
 from colorlog import ColoredFormatter
@@ -41,7 +42,8 @@ class STACpopulatorBase(ABC):
         """
 
         super().__init__()
-        self._collection_info = load_collection_configuration()
+        self._collection_info = None
+        self.load_config()
 
         self._ingest_pipeline = data_loader
         self._stac_host = self.validate_host(stac_host)
@@ -51,6 +53,9 @@ class STACpopulatorBase(ABC):
         LOGGER.info("Initialization complete")
         LOGGER.info(f"Collection {self.collection_name} is assigned id {self._collection_id}")
         self.create_stac_collection()
+
+    def load_config(self):
+        self._collection_info = load_collection_configuration()
 
     @property
     def collection_name(self) -> str:
@@ -79,7 +84,7 @@ class STACpopulatorBase(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def create_stac_item(self, item_name: str, item_data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
+    def create_stac_item(self, item_name: str, item_data: dict[str, Any]) -> dict[str, Any]:
         raise NotImplementedError
 
     def validate_host(self, stac_host: str) -> str:
@@ -90,7 +95,11 @@ class STACpopulatorBase(ABC):
 
         return stac_host
 
-    def create_stac_collection(self) -> None:
+    # FIXME: should provide a way to update after item generation
+    #   STAC collections are supposed to include 'summaries' with
+    #   an aggregation of all supported 'properties' by its child items
+    @functools.cache
+    def create_stac_collection(self) -> dict[str, Any]:
         """
         Create a basic STAC collection.
 
@@ -112,8 +121,12 @@ class STACpopulatorBase(ABC):
         collection = pystac.Collection(**self._collection_info)
 
         collection.add_links(self._ingest_pipeline.links)
+        collection_data = collection.to_dict()
+        self.publish_stac_collection(collection_data)
+        return collection_data
 
-        post_stac_collection(self.stac_host, collection.to_dict(), self.update)
+    def publish_stac_collection(self, collection_data: dict[str, Any]) -> None:
+        post_stac_collection(self.stac_host, collection_data, self.update)
 
     def ingest(self) -> None:
         LOGGER.info("Data ingestion")

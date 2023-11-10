@@ -62,7 +62,11 @@ def post_stac_collection(stac_host: str, json_data: dict[str, Any], update: Opti
 
 
 def post_stac_item(
-    stac_host: str, collection_id: str, item_name: str, json_data: dict[str, dict], update: Optional[bool] = True
+    stac_host: str,
+    collection_id: str,
+    item_name: str,
+    json_data: dict[str, dict],
+    update: Optional[bool] = True,
 ) -> None:
     """Post a STAC item to the host server.
 
