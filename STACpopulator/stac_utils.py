@@ -1,9 +1,9 @@
-import datetime
 import json
 import logging
 import os
 import re
 import sys
+from dateutil import parser as dt_parser
 from typing import Any, Literal, MutableMapping
 
 import numpy as np
@@ -11,7 +11,7 @@ import pystac
 import yaml
 from colorlog import ColoredFormatter
 
-from STACpopulator.models import STACItem
+from STACpopulator.models import Geometry, STACItemProperties
 
 LOGGER = logging.getLogger(__name__)
 LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
@@ -76,7 +76,7 @@ def load_collection_configuration() -> MutableMapping[str, Any]:
 
 def collection2literal(collection, property="label"):
     terms = tuple(getattr(term, property) for term in collection)
-    return Literal[terms]
+    return Literal[terms]  # type: ignore
 
 
 def ncattrs_to_geometry(attrs: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
@@ -157,7 +157,12 @@ def magpie_resource_link(url: str) -> pystac.Link:
     return link
 
 
-def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_props_datamodel, item_geometry_model):
+def STAC_item_from_metadata(
+    iid: str,
+    attrs: MutableMapping[str, Any],
+    item_props_data_model: STACItemProperties,
+    item_geometry_model: Geometry,
+):
     """
     Create STAC Item from CF JSON metadata.
 
@@ -167,7 +172,7 @@ def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_prop
         Unique item ID.
     attrs: dict
         CF JSON metadata returned by `xncml.Dataset.to_cf_dict`.
-    item_props_datamodel : pydantic.BaseModel
+    item_props_data_model : pydantic.BaseModel
         Data model describing the properties of the STAC item.
     item_geometry_model : pydantic.BaseModel
         Data model describing the geometry of the STAC item.
@@ -176,16 +181,16 @@ def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_prop
     cfmeta = attrs["groups"]["CFMetadata"]["attributes"]
 
     # Create pydantic STAC item
-    item = STACItem(
+    item = pystac.Item(
         id=iid,
         geometry=item_geometry_model(**ncattrs_to_geometry(attrs)),
         bbox=ncattrs_to_bbox(attrs),
-        properties=item_props_datamodel(
-            start_datetime=cfmeta["time_coverage_start"],
-            end_datetime=cfmeta["time_coverage_end"],
+        properties=item_props_data_model(
             **attrs["attributes"],
         ),
         datetime=None,
+        start_datetime=dt_parser.parse(cfmeta["time_coverage_start"]),
+        end_datetime=dt_parser.parse(cfmeta["time_coverage_end"]),
     )
 
     # Convert pydantic STAC item to a PySTAC Item

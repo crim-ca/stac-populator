@@ -46,7 +46,7 @@ def add_cmip6_prefix(name: str) -> str:
     return "cmip6:" + name if "datetime" not in name else name
 
 
-class CMIP6ItemProperties(STACItemProperties, validate_assignment=True):
+class CMIP6ItemProperties(STACItemProperties, validate_assignment=True, extra="ignore"):
     """Data model for CMIP6 Controlled Vocabulary."""
 
     Conventions: str
