@@ -2,6 +2,11 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
+<!-- insert list items of new changes here -->
+
+## [0.2.0](https://github.com/crim-ca/stac-populator/tree/0.2.0) (2023-11-10)
+
+
 * Add `LICENSE` file.
 * Add `bump-my-version` with `make version` and `make VERSION=<...> bump` utilities to self-update release versions.
 * Add more metadata to `pyproject.toml`.
