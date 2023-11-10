@@ -125,7 +125,7 @@ class THREDDSLoader(GenericLoader):
         url = ds.access_urls["NCML"]
         r = requests.get(url)
         # Convert NcML to CF-compliant dictionary
-        attrs = xncml.Dataset.from_text(r.content).to_cf_dict()
+        attrs = xncml.Dataset.from_text(r.text).to_cf_dict()
         attrs["attributes"] = numpy_to_python_datatypes(attrs["attributes"])
         attrs["access_urls"] = ds.access_urls
         return attrs
