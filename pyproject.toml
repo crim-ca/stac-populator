@@ -24,7 +24,7 @@ dependencies = [
     "pyyaml",
     "siphon",
     "pystac",
-    "xncml",
+    "xncml>=0.3.1",  # python 3.12 support
     "pydantic",
     "pyessv",
     "requests",
