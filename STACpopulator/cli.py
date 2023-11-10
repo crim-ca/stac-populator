@@ -16,7 +16,7 @@ def make_main_parser() -> argparse.ArgumentParser:
                         help="prints the version of the library and exits")
     commands = parser.add_subparsers(title="command", dest="command", description="STAC populator command to execute.")
 
-    run_cmd_parser = make_run_command_parser()
+    run_cmd_parser = make_run_command_parser(parser.prog)
     commands.add_parser(
         "run",
         prog=f"{parser.prog} {run_cmd_parser.prog}", parents=[run_cmd_parser],
@@ -29,7 +29,7 @@ def make_main_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def make_run_command_parser() -> argparse.ArgumentParser:
+def make_run_command_parser(parent) -> argparse.ArgumentParser:
     """
     Groups all sub-populator CLI listed in :py:mod:`STACpopulator.implementations` as a common ``stac-populator`` CLI.
 
@@ -41,7 +41,7 @@ def make_run_command_parser() -> argparse.ArgumentParser:
     An optional ``runner`` can also be defined in each populator module. If provided, the namespace arguments that have
     already been parsed to resolve the populator to run will be used directly, avoiding parsing arguments twice.
     """
-    parser = argparse.ArgumentParser(prog="command", description="STACpopulator implementation runner.")
+    parser = argparse.ArgumentParser(prog="run", description="STACpopulator implementation runner.")
     subparsers = parser.add_subparsers(title="populator", dest="populator", description="Implementation to run.")
     populators_impl = "implementations"
     populators_dir = os.path.join(os.path.dirname(__file__), populators_impl)
@@ -58,7 +58,7 @@ def make_run_command_parser() -> argparse.ArgumentParser:
         populator_caller = getattr(populator_module, "main", None)
         if callable(parser_maker) and callable(populator_caller):
             populator_parser = parser_maker()
-            populator_prog = f"{parser.prog} {populator_name}"
+            populator_prog = f"{parent} {parser.prog} {populator_name}"
             subparsers.add_parser(
                 populator_name,
                 prog=populator_prog, parents=[populator_parser], formatter_class=populator_parser.formatter_class,
