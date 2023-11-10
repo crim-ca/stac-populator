@@ -68,6 +68,9 @@ keywords = [
     "CMIP6"
 ]
 
+[project.scripts]
+stac-populator = "STACpopulator.cli:main"
+
 [project.urls]
 Repository = "https://github.com/crim-ca/stac-populator"
 Changelog = "https://github.com/crim-ca/stac-populator/blob/master/CHANGES.md"

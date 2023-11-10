@@ -2,11 +2,10 @@ import argparse
 import json
 import logging
 from datetime import datetime
-from typing import Any, List, Literal, MutableMapping, Optional
+from typing import Any, List, Literal, MutableMapping, NoReturn, Optional
 
 import pydantic_core
 import pyessv
-from colorlog import ColoredFormatter
 from pydantic import AnyHttpUrl, ConfigDict, Field, FieldValidationInfo, field_validator
 from pystac.extensions.datacube import DatacubeExtension
 
@@ -14,16 +13,7 @@ from STACpopulator.implementations.CMIP6_UofT.extensions import DataCubeHelper
 from STACpopulator.input import GenericLoader, ErrorLoader, THREDDSLoader
 from STACpopulator.models import GeoJSONPolygon, STACItemProperties
 from STACpopulator.populator_base import STACpopulatorBase
-from STACpopulator.stac_utils import STAC_item_from_metadata, collection2literal
-
-LOGGER = logging.getLogger(__name__)
-LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
-formatter = ColoredFormatter(LOGFORMAT)
-stream = logging.StreamHandler()
-stream.setFormatter(formatter)
-LOGGER.addHandler(stream)
-LOGGER.setLevel(logging.INFO)
-LOGGER.propagate = False
+from STACpopulator.stac_utils import LOGGER, STAC_item_from_metadata, collection2literal
 
 # CMIP6 controlled vocabulary (CV)
 CV = pyessv.WCRP.CMIP6
@@ -169,23 +159,34 @@ class CMIP6populator(STACpopulatorBase):
         return json.loads(json.dumps(item.to_dict()))
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(prog="CMIP6 STAC populator")
+def make_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="CMIP6 STAC populator")
     parser.add_argument("stac_host", type=str, help="STAC API address")
     parser.add_argument("thredds_catalog_URL", type=str, help="URL to the CMIP6 THREDDS catalog")
     parser.add_argument("--update", action="store_true", help="Update collection and its items")
+    parser.add_argument("--mode", choices=["full", "single"],
+                        help="Operation mode, processing the full dataset or only the single reference.")
+    return parser
 
-    args = parser.parse_args()
 
-    LOGGER.info(f"Arguments to call: {args}")
+def runner(ns: argparse.Namespace) -> Optional[int] | NoReturn:
+    LOGGER.info(f"Arguments to call: {vars(ns)}")
 
-    mode = "full"
-
-    if mode == "full":
-        data_loader = THREDDSLoader(args.thredds_catalog_URL)
+    if ns.mode == "full":
+        data_loader = THREDDSLoader(ns.thredds_catalog_URL)
     else:
         # To be implemented
-        data_loader = ErrorLoader(args.error_file)
+        data_loader = ErrorLoader()
 
-    c = CMIP6populator(args.stac_host, data_loader, args.update)
+    c = CMIP6populator(ns.stac_host, data_loader, ns.update)
     c.ingest()
+
+
+def main(*args: str) -> Optional[int]:
+    parser = make_parser()
+    ns = parser.parse_args(args)
+    return runner(ns)
+
+
+if __name__ == "__main__":
+    main()

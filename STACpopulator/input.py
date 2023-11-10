@@ -1,6 +1,8 @@
+import json
 import logging
+import os
 from abc import ABC, abstractmethod
-from typing import Any, Iterator, MutableMapping, Optional, Tuple
+from typing import Any, Iterator, Literal, MutableMapping, Optional, Tuple, Union
 
 import pystac
 import requests
@@ -129,6 +131,65 @@ class THREDDSLoader(GenericLoader):
         attrs["attributes"] = numpy_to_python_datatypes(attrs["attributes"])
         attrs["access_urls"] = ds.access_urls
         return attrs
+
+
+class STACDirectoryLoader(GenericLoader):
+    """
+    Iterates through a directory structure looking for STAC Collections or Items.
+
+    For each directory that gets crawled, if a file is named ``collection.json``, it assumed to be a STAC Collection.
+    All other ``.json`` files under the directory where ``collection.json`` was found are assumed to be STAC Items.
+    These JSON STAC Items can be either at the same directory level as the STAC Collection, or under nested directories.
+
+    Using the mode option, yielded results will be either the STAC Collections or the STAC Items.
+    This allows this class to be used in conjunction (2 nested loops) to find collections and their underlying items.
+
+    .. code-block:: python
+
+        for collection_path, collection_json in STACDirectoryLoader(dir_path, mode="collection"):
+            for item_path, item_json in STACDirectoryLoader(collection_path, mode="item"):
+                ...  # do stuff
+
+    For convenience, option ``prune`` can be used to stop crawling deeper once a STAC Collection is found.
+    Any collection files found further down the directory were a top-most match was found will not be yielded.
+    This can be useful to limit search, or to ignore nested directories using subsets of STAC Collections.
+    """
+
+    def __init__(self, path: str, mode: Literal["collection", "item"], prune: bool = False) -> None:
+        super().__init__()
+        self.path = path
+        self.iter = None
+        self.prune = prune
+        self.reset()
+        self._collection_mode = mode == "collection"
+        self._collection_name = "collection.json"
+
+    def __iter__(self) -> Iterator[Tuple[str, MutableMapping[str, Any]]]:
+        for root, dirs, files in self.iter:
+            if self.prune and self._collection_mode and self._collection_name in files:
+                del dirs[:]
+            for name in files:
+                if self._collection_mode and self._is_collection(name):
+                    col_path = os.path.join(root, name)
+                    yield col_path, self._load_json(col_path)
+                elif not self._collection_mode and self._is_item(name):
+                    item_path = os.path.join(root, name)
+                    yield item_path, self._load_json(item_path)
+
+    def _is_collection(self, path: Union[os.PathLike[str], str]) -> bool:
+        name = os.path.split(path)[-1]
+        return name == self._collection_name
+
+    def _is_item(self, path: Union[os.PathLike[str], str]) -> bool:
+        name = os.path.split(path)[-1]
+        return name != self._collection_name and os.path.splitext(name)[-1] in [".json", ".geojson"]
+
+    def _load_json(self, path: Union[os.PathLike[str], str]) -> MutableMapping[str, Any]:
+        with open(path, mode="r", encoding="utf-8") as file:
+            return json.load(file)
+
+    def reset(self):
+        self.iter = os.walk(self.path)
 
 
 class STACLoader(GenericLoader):
