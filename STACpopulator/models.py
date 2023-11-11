@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime as datetime_type
 from typing import List, Literal, Optional
 
 from pydantic import BaseModel, Field
@@ -36,9 +36,9 @@ class STACItemProperties(BaseModel):
     In concrete implementations, users would want to define a new data model that inherits from this base model
     and extends it with properties tailored to the data they are ingesting.
     """
-    start_datetime: Optional[datetime.datetime] = None
-    end_datetime: Optional[datetime.datetime] = None
-    datetime_: Optional[datetime.datetime] = Field(None, alias="datetime")
+    start_datetime: Optional[datetime_type] = None
+    end_datetime: Optional[datetime_type] = None
+    datetime: Optional[datetime_type] = None
 
     def __setitem__(self, key, value):
         setattr(self, key, value)
@@ -48,3 +48,6 @@ class STACItemProperties(BaseModel):
 
     def __delitem__(self, item):
         return delattr(self, item)
+
+    def __contains__(self, item):
+        return hasattr(self, item)

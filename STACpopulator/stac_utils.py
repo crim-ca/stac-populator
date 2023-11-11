@@ -10,6 +10,7 @@ import numpy as np
 import pystac
 import yaml
 from colorlog import ColoredFormatter
+from pystac.validation import validate as pystac_validate
 
 from STACpopulator.models import Geometry, STACItemProperties
 
@@ -181,20 +182,17 @@ def STAC_item_from_metadata(
     cfmeta = attrs["groups"]["CFMetadata"]["attributes"]
 
     # Create pydantic STAC item
+    props = item_props_data_model(**attrs["attributes"])
+    geom = item_geometry_model(**ncattrs_to_geometry(attrs))
     item = pystac.Item(
         id=iid,
-        geometry=item_geometry_model(**ncattrs_to_geometry(attrs)),
+        geometry=json.loads(geom.model_dump_json(by_alias=True)),
         bbox=ncattrs_to_bbox(attrs),
-        properties=item_props_data_model(
-            **attrs["attributes"],
-        ),
+        properties=json.loads(props.model_dump_json(by_alias=True)),
         datetime=None,
         start_datetime=dt_parser.parse(cfmeta["time_coverage_start"]),
         end_datetime=dt_parser.parse(cfmeta["time_coverage_end"]),
     )
-
-    # Convert pydantic STAC item to a PySTAC Item
-    item = pystac.Item(**json.loads(item.model_dump_json(by_alias=True)))
 
     root = attrs["access_urls"]
 
@@ -205,7 +203,7 @@ def STAC_item_from_metadata(
         item.add_asset(name, asset)
 
     item.add_link(magpie_resource_link(root["HTTPServer"]))
-
+    item.validate()
     return item
 
 
