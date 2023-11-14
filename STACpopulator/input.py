@@ -147,7 +147,7 @@ class STACDirectoryLoader(GenericLoader):
     .. code-block:: python
 
         for collection_path, collection_json in STACDirectoryLoader(dir_path, mode="collection"):
-            for item_path, item_json in STACDirectoryLoader(collection_path, mode="item"):
+            for item_path, item_json in STACDirectoryLoader(os.path.dirname(collection_path), mode="item"):
                 ...  # do stuff
 
     For convenience, option ``prune`` can be used to stop crawling deeper once a STAC Collection is found.
@@ -166,19 +166,17 @@ class STACDirectoryLoader(GenericLoader):
 
     def __iter__(self) -> Iterator[Tuple[str, MutableMapping[str, Any]]]:
         for root, dirs, files in self.iter:
-            if self.prune and self._collection_mode and self._collection_name in files:
-                del dirs[:]
+            # since there can ever be only one 'collection' file name in a same directory
+            # directly retrieve it instead of looping through all other files
+            if self._collection_mode and self._collection_name in files:
+                if self.prune:  # stop recursive search if requested
+                    del dirs[:]
+                col_path = os.path.join(root, self._collection_name)
+                yield col_path, self._load_json(col_path)
             for name in files:
-                if self._collection_mode and self._is_collection(name):
-                    col_path = os.path.join(root, name)
-                    yield col_path, self._load_json(col_path)
-                elif not self._collection_mode and self._is_item(name):
+                if not self._collection_mode and self._is_item(name):
                     item_path = os.path.join(root, name)
                     yield item_path, self._load_json(item_path)
-
-    def _is_collection(self, path: Union[os.PathLike[str], str]) -> bool:
-        name = os.path.split(path)[-1]
-        return name == self._collection_name
 
     def _is_item(self, path: Union[os.PathLike[str], str]) -> bool:
         name = os.path.split(path)[-1]

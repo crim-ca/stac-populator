@@ -1,11 +1,11 @@
 import argparse
 import json
-import logging
 from datetime import datetime
 from typing import Any, List, Literal, MutableMapping, NoReturn, Optional
 
 import pydantic_core
 import pyessv
+from requests.sessions import Session
 from pydantic import AnyHttpUrl, ConfigDict, Field, FieldValidationInfo, field_validator
 from pystac.extensions.datacube import DatacubeExtension
 
@@ -98,7 +98,13 @@ class CMIP6populator(STACpopulatorBase):
     item_properties_model = CMIP6ItemProperties
     item_geometry_model = GeoJSONPolygon
 
-    def __init__(self, stac_host: str, data_loader: GenericLoader, update: Optional[bool] = False) -> None:
+    def __init__(
+        self,
+        stac_host: str,
+        data_loader: GenericLoader,
+        update: Optional[bool] = False,
+        session: Optional[Session] = None,
+    ) -> None:
         """Constructor
 
         :param stac_host: URL to the STAC API
@@ -106,7 +112,7 @@ class CMIP6populator(STACpopulatorBase):
         :param thredds_catalog_url: the URL to the THREDDS catalog to ingest
         :type thredds_catalog_url: str
         """
-        super().__init__(stac_host, data_loader, update)
+        super().__init__(stac_host, data_loader, update=update, session=session)
 
     @staticmethod
     def make_cmip6_item_id(attrs: MutableMapping[str, Any]) -> str:
@@ -184,7 +190,7 @@ def runner(ns: argparse.Namespace) -> Optional[int] | NoReturn:
 
 def main(*args: str) -> Optional[int]:
     parser = make_parser()
-    ns = parser.parse_args(args)
+    ns = parser.parse_args(args or None)
     return runner(ns)
 
 
