@@ -24,23 +24,29 @@ class HTTPBearerTokenAuth(AuthBase):
         return r
 
 
-class HTTPCookieAuth(AuthBase):
+class HTTPCookieAuth(cookiejar.MozillaCookieJar):
     """
     Employ a cookie-jar file for authorization.
 
-    Useful command:
+    Examples of useful command:
 
     .. code-block:: shell
 
         curl --cookie-jar /path/to/cookie-jar.txt [authorization-provider-arguments]
 
-    """
-    def __init__(self, cookie_jar: str) -> None:
-        self._cookie_jar = cookie_jar
+        curl \
+            -k \
+            -X POST \
+            --cookie-jar /tmp/magpie-cookie.txt \
+            -d '{"user_name":"...","password":"..."}' \
+            -H 'Accept:application/json' \
+            -H 'Content-Type:application/json' \
+            'https://{hostname}/magpie/signin'
 
-    def __call__(self, r: requests.PreparedRequest) -> requests.PreparedRequest:
-        r.prepare_cookies(cookiejar.FileCookieJar(self._cookie_jar))
-        return r
+    .. note::
+        Due to implementation details with :mod:`requests`, this must be passed directly to the ``cookies``
+        attribute rather than ``auth`` as in the case for other authorization handlers.
+    """
 
 
 def add_request_options(parser: argparse.ArgumentParser) -> None:
@@ -81,7 +87,8 @@ def apply_request_options(session: Session, namespace: argparse.Namespace) -> No
     elif namespace.auth_handler == "bearer":
         session.auth = HTTPBearerTokenAuth(namespace.auth_identity)
     elif namespace.auth_handler == "cookie":
-        session.auth = HTTPCookieAuth(namespace.auth_identity)
+        session.cookies = HTTPCookieAuth(namespace.auth_identity)
+        session.cookies.load(namespace.auth_identity)
 
 
 def make_main_parser() -> argparse.ArgumentParser:

@@ -58,7 +58,8 @@ def post_stac_collection(
     """
     session = session or requests
     collection_id = json_data["id"]
-    r = session.post(os.path.join(stac_host, "collections"), json=json_data)
+    collection_url = os.path.join(stac_host, "collections")
+    r = session.post(collection_url, json=json_data)
 
     if r.status_code == 200:
         LOGGER.info(f"Collection {collection_id} successfully created")
@@ -95,9 +96,10 @@ def post_stac_item(
     :type update: Optional[bool], optional
     :param session: Session with additional configuration to perform requests.
     """
-    item_id = json_data["id"]
     session = session or requests
-    r = session.post(os.path.join(stac_host, f"collections/{collection_id}/items"), json=json_data)
+    item_id = json_data["id"]
+    item_url = os.path.join(stac_host, f"collections/{collection_id}/items")
+    r = session.post(item_url, json=json_data)
 
     if r.status_code == 200:
         LOGGER.info(f"Item {item_name} successfully added")
