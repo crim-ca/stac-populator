@@ -9,7 +9,8 @@ import requests
 import siphon
 import xncml
 from colorlog import ColoredFormatter
-from siphon.catalog import TDSCatalog
+from requests.sessions import Session
+from siphon.catalog import TDSCatalog, session_manager
 
 from STACpopulator.stac_utils import numpy_to_python_datatypes, url_validate
 
@@ -52,8 +53,35 @@ class ErrorLoader(GenericLoader):
         raise NotImplementedError
 
 
+class THREDDSCatalog(TDSCatalog):
+    """
+    Patch to apply a custom request session.
+
+    Because of how :class:`TDSCatalog` automatically loads and parses right away from ``__init__`` call,
+    we need to hack around how the ``session`` attribute gets defined.
+    """
+    def __init__(self, catalog_url: str, session: Optional[Session] = None) -> None:
+        self._session = session
+        super().__init__(catalog_url)
+
+    @property
+    def session(self) -> Session:
+        if self._session is None:
+            self._session = session_manager.create_session()
+        return self._session
+
+    @session.setter
+    def session(self, session: Session) -> None:
+        pass  # ignore to bypass TDSCatalog.__init__ enforcing create_session !
+
+
 class THREDDSLoader(GenericLoader):
-    def __init__(self, thredds_catalog_url: str, depth: Optional[int] = None) -> None:
+    def __init__(
+        self,
+        thredds_catalog_url: str,
+        depth: Optional[int] = None,
+        session: Optional[Session] = None,
+    ) -> None:
         """Constructor
 
         :param thredds_catalog_url: the URL to the THREDDS catalog to ingest

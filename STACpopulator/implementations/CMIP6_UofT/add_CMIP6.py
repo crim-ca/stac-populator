@@ -9,6 +9,7 @@ from requests.sessions import Session
 from pydantic import AnyHttpUrl, ConfigDict, Field, FieldValidationInfo, field_validator
 from pystac.extensions.datacube import DatacubeExtension
 
+from STACpopulator.cli import add_request_options, apply_request_options
 from STACpopulator.implementations.CMIP6_UofT.extensions import DataCubeHelper
 from STACpopulator.input import GenericLoader, ErrorLoader, THREDDSLoader
 from STACpopulator.models import GeoJSONPolygon, STACItemProperties
@@ -155,9 +156,9 @@ class CMIP6populator(STACpopulatorBase):
 
         # Add datacube extension
         try:
-            dchelper = DataCubeHelper(item_data)
+            dc_helper = DataCubeHelper(item_data)
             dc_ext = DatacubeExtension.ext(item, add_if_missing=True)
-            dc_ext.apply(dimensions=dchelper.dimensions, variables=dchelper.variables)
+            dc_ext.apply(dimensions=dc_helper.dimensions, variables=dc_helper.variables)
         except Exception:
             LOGGER.warning(f"Failed to add Datacube extension to item {item_name}")
 
@@ -178,14 +179,16 @@ def make_parser() -> argparse.ArgumentParser:
 def runner(ns: argparse.Namespace) -> Optional[int] | NoReturn:
     LOGGER.info(f"Arguments to call: {vars(ns)}")
 
-    if ns.mode == "full":
-        data_loader = THREDDSLoader(ns.thredds_catalog_URL)
-    else:
-        # To be implemented
-        data_loader = ErrorLoader()
+    with Session() as session:
+        apply_request_options(session, ns)
+        if ns.mode == "full":
+            data_loader = THREDDSLoader(ns.thredds_catalog_URL, session=session)
+        else:
+            # To be implemented
+            data_loader = ErrorLoader()
 
-    c = CMIP6populator(ns.stac_host, data_loader, ns.update)
-    c.ingest()
+        c = CMIP6populator(ns.stac_host, data_loader, update=ns.update, session=session)
+        c.ingest()
 
 
 def main(*args: str) -> Optional[int]:
