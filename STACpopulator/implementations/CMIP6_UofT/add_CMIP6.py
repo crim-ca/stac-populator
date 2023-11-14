@@ -173,6 +173,7 @@ def make_parser() -> argparse.ArgumentParser:
     parser.add_argument("--update", action="store_true", help="Update collection and its items")
     parser.add_argument("--mode", choices=["full", "single"],
                         help="Operation mode, processing the full dataset or only the single reference.")
+    add_request_options(parser)
     return parser
 
 
