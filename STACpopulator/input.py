@@ -193,6 +193,7 @@ class STACDirectoryLoader(GenericLoader):
         self._collection_name = "collection.json"
 
     def __iter__(self) -> Iterator[Tuple[str, MutableMapping[str, Any]]]:
+        is_root = True
         for root, dirs, files in self.iter:
             # since there can ever be only one 'collection' file name in a same directory
             # directly retrieve it instead of looping through all other files
@@ -201,6 +202,12 @@ class STACDirectoryLoader(GenericLoader):
                     del dirs[:]
                 col_path = os.path.join(root, self._collection_name)
                 yield col_path, self._load_json(col_path)
+            # if a collection is found deeper when not expected for items parsing
+            # drop the nested directories to avoid over-crawling nested collections
+            elif not self._collection_mode and not is_root and self._collection_name in files:
+                del dirs[:]
+                continue
+            is_root = False  # for next loop
             for name in files:
                 if not self._collection_mode and self._is_item(name):
                     item_path = os.path.join(root, name)

@@ -80,6 +80,7 @@ dev = [
     "pytest",
     "pytest-cov",
     "coverage",
+    "responses",
     "bump-my-version",
 ]
 
