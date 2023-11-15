@@ -170,7 +170,7 @@ class DataCubeHelper:
                                     extent = ["", ""]
 
                             properties = dict(
-                                type=type_,
+                                type=type_.value,
                                 extent=extent,
                                 description=v.get("description", v.get("long_name", criteria["standard_name"][0])) or "",
                             )

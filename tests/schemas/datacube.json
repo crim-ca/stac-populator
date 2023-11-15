@@ -1,44 +1,67 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://stac-extensions.github.io/datacube/v2.0.0/schema.json",
+  "$id": "https://stac-extensions.github.io/datacube/v2.2.0/schema.json",
   "title": "Datacube Extension",
-  "description": "Datacube Extension for STAC Items and STAC Collections.",
+  "description": "STAC Datacube Extension for STAC Items and STAC Collections.",
   "oneOf": [
     {
-      "$comment": "This is the schema for STAC Items. Remove this object if this extension only applies to Collections.",
+      "$comment": "This is the schema for STAC Items.",
       "allOf": [
-        {
-          "$ref": "#/definitions/stac_extensions"
-        },
         {
           "type": "object",
           "required": [
-            "type",
-            "properties",
-            "assets"
+            "type"
           ],
           "properties": {
             "type": {
               "const": "Feature"
-            },
+            }
+          }
+        },
+        {
+          "$ref": "#/definitions/stac_extensions"
+        }
+      ],
+      "anyOf": [
+        {
+          "type": "object",
+          "required": [
+            "properties"
+          ],
+          "properties": {
             "properties": {
               "allOf": [
                 {
-                  "$comment": "Require fields here for Item Properties.",
-                  "required": [
-                    "cube:dimensions"
-                  ]
+                  "$ref": "#/definitions/require_field"
                 },
                 {
                   "$ref": "#/definitions/fields"
                 }
               ]
-            },
+            }
+          }
+        },
+        {
+          "$comment": "This validates the fields in Item Assets.",
+          "required": [
+            "assets"
+          ],
+          "properties": {
             "assets": {
-              "$comment": "This validates the fields in Item Assets, but does not require them.",
               "type": "object",
-              "additionalProperties": {
-                "$ref": "#/definitions/fields"
+              "not": {
+                "additionalProperties": {
+                  "not": {
+                    "allOf": [
+                      {
+                        "$ref": "#/definitions/require_field"
+                      },
+                      {
+                        "$ref": "#/definitions/fields"
+                      }
+                    ]
+                  }
+                }
               }
             }
           }
@@ -65,13 +88,10 @@
       ],
       "anyOf": [
         {
-          "$comment": "This is the schema for the top-level fields in a Collection. Remove this if this extension does not define top-level fields for Collections.",
+          "$comment": "This is the schema for the top-level fields in a Collection.",
           "allOf": [
             {
-              "$comment": "Require fields here for Collections (top-level).",
-              "required": [
-                "cube:dimensions"
-              ]
+              "$ref": "#/definitions/require_field"
             },
             {
               "$ref": "#/definitions/fields"
@@ -79,7 +99,7 @@
           ]
         },
         {
-          "$comment": "This validates the fields in Collection Assets, but does not require them.",
+          "$comment": "This validates the fields in Collection Assets.",
           "required": [
             "assets"
           ],
@@ -91,7 +111,7 @@
                   "not": {
                     "allOf": [
                       {
-                        "$ref": "#/definitions/require_any_field"
+                        "$ref": "#/definitions/require_field"
                       },
                       {
                         "$ref": "#/definitions/fields"
@@ -104,7 +124,7 @@
           }
         },
         {
-          "$comment": "This is the schema for the fields in Item Asset Definitions. It doesn't require any fields.",
+          "$comment": "This is the schema for the fields in Item Asset Definitions.",
           "required": [
             "item_assets"
           ],
@@ -152,7 +172,7 @@
         "stac_extensions": {
           "type": "array",
           "contains": {
-            "const": "https://stac-extensions.github.io/datacube/v2.0.0/schema.json"
+            "const": "https://stac-extensions.github.io/datacube/v2.2.0/schema.json"
           }
         }
       }
@@ -162,6 +182,11 @@
       "anyOf": [
         {"required": ["cube:dimensions"]},
         {"required": ["cube:variables"]}
+      ]
+    },
+    "require_field": {
+      "required": [
+        "cube:dimensions"
       ]
     },
     "fields": {
@@ -185,7 +210,7 @@
       "additionalProperties": {
         "anyOf": [
           {
-            "$ref": "#/definitions/additional_dimension"
+            "$ref": "#/definitions/vector_dimension"
           },
           {
             "$ref": "#/definitions/horizontal_spatial_dimension"
@@ -195,6 +220,9 @@
           },
           {
             "$ref": "#/definitions/temporal_dimension"
+          },
+          {
+            "$ref": "#/definitions/additional_dimension"
           }
         ]
       }
@@ -229,17 +257,13 @@
       },
       "properties": {
         "type": {
-          "allOf": [
-            {
-              "type": "string"
-            },
-            {
-              "not": {
-                "type": "string",
-                "const": "spatial"
-              }
-            }
-          ]
+          "type": "string",
+          "not": {
+            "enum": [
+              "spatial",
+              "geometry"
+            ]
+          }
         },
         "description": {
           "$ref": "#/definitions/description"
@@ -270,7 +294,7 @@
       }
     },
     "horizontal_spatial_dimension": {
-      "title": "Horizontal Spatial Dimension Object",
+      "title": "Horizontal Spatial Raster Dimension Object",
       "type": "object",
       "required": [
         "type",
@@ -341,6 +365,79 @@
         },
         "unit": {
           "$ref": "#/definitions/unit"
+        },
+        "reference_system": {
+          "$ref": "#/definitions/reference_system_spatial"
+        }
+      }
+    },
+    "vector_dimension": {
+      "title": "Spatial Vector Dimension Object",
+      "type": "object",
+      "required": [
+        "type",
+        "bbox"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "geometry"
+        },
+        "axes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "x",
+              "y",
+              "z"
+            ]
+          }
+        },
+        "description": {
+          "$ref": "#/definitions/description"
+        },
+        "bbox": {
+          "title": "Spatial extent",
+          "type": "array",
+          "oneOf": [
+            {
+              "minItems":4,
+              "maxItems":4
+            },
+            {
+              "minItems":6,
+              "maxItems":6
+            }
+          ],
+          "items": {
+            "type": "number"
+          }
+        },
+        "values": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "description": "WKT or Identifier",
+            "type": "string"
+          }
+        },
+        "geometry_types":  {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "Point",
+              "MultiPoint",
+              "LineString",
+              "MultiLineString",
+              "Polygon",
+              "MultiPolygon",
+              "GeometryCollection"
+            ]
+          }
         },
         "reference_system": {
           "$ref": "#/definitions/reference_system_spatial"
@@ -502,10 +599,19 @@
       "type": "string"
     },
     "reference_system_spatial": {
-      "type": [
-        "string",
-        "number",
-        "object"
+      "oneOf": [
+        {
+          "description": "WKT2",
+          "type": "string"
+        },
+        {
+          "description": "EPSG code",
+          "type": "integer",
+          "minimum": 0
+        },
+        {
+          "$ref": "https://proj.org/schemas/v0.4/projjson.schema.json"
+        }
       ],
       "default": 4326
     },

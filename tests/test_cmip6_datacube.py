@@ -5,7 +5,6 @@ from pystac.extensions.datacube import DatacubeExtension
 from STACpopulator.stac_utils import STAC_item_from_metadata
 from STACpopulator.implementations.CMIP6_UofT.add_CMIP6 import CMIP6ItemProperties
 from STACpopulator.models import GeoJSONPolygon
-import json
 from pystac import Item
 from pystac.validation.stac_validator import JsonSchemaSTACValidator
 
@@ -27,7 +26,9 @@ def test_datacube_helper():
     # Validate
     schema_uri = DIR / "schemas" / "datacube.json"
     val = JsonSchemaSTACValidator()
+
     val.validate_extension(stac_dict=item.to_dict(),
                            stac_object_type=Item,
                            stac_version="1.0",
                            extension_id=schema_uri)
+
