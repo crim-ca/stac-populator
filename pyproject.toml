@@ -78,6 +78,7 @@ dev = [
     "pytest-cov",
     "coverage",
     "bump-my-version",
+    "jsonschema",
 ]
 
 [tool.pytest.ini_options]
