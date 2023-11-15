@@ -22,8 +22,8 @@ def stac_host_reachable(url: str, session: Optional[Session] = None) -> bool:
         response = session.get(url, headers={"Accept": "application/json"})
         response.raise_for_status()
         body = response.json()
-        if body["type"] == "Catalog" and "stac_version" in body:
-            return True
+        return body["type"] == "Catalog" and "stac_version" in body
+
     except (requests.exceptions.RequestException, requests.exceptions.ConnectionError) as exc:
         LOGGER.error("Could not validate STAC host. Not reachable [%s] due to [%s]", url, exc, exc_info=exc)
     return False
