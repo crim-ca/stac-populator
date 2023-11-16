@@ -23,10 +23,16 @@ def test_datacube_helper():
     dc_ext = DatacubeExtension.ext(item, add_if_missing=True)
     dc_ext.apply(dimensions=dc.dimensions, variables=dc.variables)
 
-    # Validate
-    schema_uri = DIR / "schemas" / "datacube.json"
-    val = JsonSchemaSTACValidator()
+    # Get schema for version of datacube extension used
+    ext_version = item.stac_extensions[0].split("/")[-2]
 
+    # Try to find the schema locally, otherwise it will be fetched from the net.
+    schema_uri = DIR / "schemas" / "datacube" / f"{ext_version}.json"
+    if not schema_uri.exists():
+        schema_uri = item.stac_extensions[0]
+
+    # Validate
+    val = JsonSchemaSTACValidator()
     val.validate_extension(stac_dict=item.to_dict(),
                            stac_object_type=Item,
                            stac_version="1.0",
