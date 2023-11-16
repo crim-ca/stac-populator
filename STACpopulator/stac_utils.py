@@ -79,6 +79,56 @@ def collection2literal(collection, property="label"):
     return Literal[terms]
 
 
+def thredds_catalog_attrs(url: str) -> dict:
+    """Return attributes from the catalog.xml THREDDS server response."""
+    import xmltodict
+    import requests
+
+    xml = requests.get(url).text
+
+    raw = xmltodict.parse(
+        xml,
+        process_namespaces=True,
+        namespaces={
+            "http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0": None,
+            "https://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0": None,
+        },
+    )
+    return raw
+
+
+def ncattrs(url: str) -> dict:
+    """Return attributes from a THREDDS netCDF dataset."""
+    import requests
+    import xncml
+    import urllib
+
+    pr = urllib.parse.urlparse(url)
+
+    parts = url.split("/")
+    nc = parts[-1]
+
+    # Get catalog information about available services
+    catalog = "/".join(parts[:-1]) + "/catalog.xml"
+    cattrs = thredds_catalog_attrs(catalog)["catalog"]
+
+    cid = cattrs["dataset"]["@ID"]
+
+    # Get service URLs for the dataset
+    access_urls = {}
+    for service in cattrs["service"]["service"]:
+        access_urls[service["@serviceType"]] = f'{pr.scheme}://{pr.netloc}{service["@base"]}{cid}/{nc}'
+
+    # Get dataset attributes
+    r = requests.get(access_urls["NCML"])
+    attrs = xncml.Dataset.from_text(r.text).to_cf_dict()
+    attrs["attributes"] = numpy_to_python_datatypes(attrs["attributes"])
+
+    # Include service attributes
+    attrs["access_urls"] = access_urls
+    return attrs
+
+
 def ncattrs_to_geometry(attrs: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
     """Create Polygon geometry from CFMetadata."""
     attrs = attrs["groups"]["CFMetadata"]["attributes"]
