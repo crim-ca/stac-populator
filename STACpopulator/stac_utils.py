@@ -18,8 +18,8 @@ from colorlog import ColoredFormatter
 from STACpopulator.models import STACItem
 
 LOGGER = logging.getLogger(__name__)
-LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
-formatter = ColoredFormatter(LOGFORMAT)
+LOG_FORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
+formatter = ColoredFormatter(LOG_FORMAT)
 stream = logging.StreamHandler()
 stream.setFormatter(formatter)
 LOGGER.addHandler(stream)

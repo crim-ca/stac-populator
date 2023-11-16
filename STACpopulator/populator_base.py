@@ -6,6 +6,7 @@ from typing import Any, Optional
 
 import pystac
 from colorlog import ColoredFormatter
+from requests.sessions import Session
 
 from STACpopulator.api_requests import (
     post_stac_collection,
@@ -31,6 +32,7 @@ class STACpopulatorBase(ABC):
         stac_host: str,
         data_loader: GenericLoader,
         update: Optional[bool] = False,
+        session: Optional[Session] = None,
     ) -> None:
         """Constructor
 
@@ -43,15 +45,15 @@ class STACpopulatorBase(ABC):
 
         super().__init__()
         self._collection_info = None
+        self._session = session
         self.load_config()
 
         self._ingest_pipeline = data_loader
         self._stac_host = self.validate_host(stac_host)
         self.update = update
 
-        self._collection_id = self.collection_name
         LOGGER.info("Initialization complete")
-        LOGGER.info(f"Collection {self.collection_name} is assigned id {self._collection_id}")
+        LOGGER.info(f"Collection {self.collection_name} is assigned ID {self.collection_id}")
         self.create_stac_collection()
 
     def load_config(self):
@@ -90,7 +92,7 @@ class STACpopulatorBase(ABC):
     def validate_host(self, stac_host: str) -> str:
         if not url_validate(stac_host):
             raise ValueError("stac_host URL is not appropriately formatted")
-        if not stac_host_reachable(stac_host):
+        if not stac_host_reachable(stac_host, session=self._session):
             raise RuntimeError("stac_host is not reachable")
 
         return stac_host
@@ -126,7 +128,7 @@ class STACpopulatorBase(ABC):
         return collection_data
 
     def publish_stac_collection(self, collection_data: dict[str, Any]) -> None:
-        post_stac_collection(self.stac_host, collection_data, self.update)
+        post_stac_collection(self.stac_host, collection_data, self.update, session=self._session)
 
     def ingest(self) -> None:
         LOGGER.info("Data ingestion")
@@ -134,4 +136,11 @@ class STACpopulatorBase(ABC):
             LOGGER.info(f"Creating STAC representation for {item_name}")
             stac_item = self.create_stac_item(item_name, item_data)
             if stac_item != -1:
-                post_stac_item(self.stac_host, self.collection_id, item_name, stac_item, self.update)
+                post_stac_item(
+                    self.stac_host,
+                    self.collection_id,
+                    item_name,
+                    stac_item,
+                    update=self.update,
+                    session=self._session,
+                )
