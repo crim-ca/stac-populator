@@ -5,6 +5,19 @@
 <!-- insert list items of new changes here -->
 * Fix datacube extension creation to match schema. 
 
+## [0.3.0](https://github.com/crim-ca/stac-populator/tree/0.3.0) (2023-11-16)
+
+
+* Add request ``session`` keyword to all request-related functions and populator methods to allow sharing a common set
+  of settings (`auth`, SSL `verify`, `cert`) across requests toward the STAC Catalog.
+* Add `DirectoryLoader` that allows populating a STAC Catalog with Collections and Items loaded from a crawled directory
+  hierarchy that contains `collection.json` files and other `.json`/`.geojson` items.
+* Add a generic CLI `stac-populator` that can be called to run populator implementations directly
+  using command `stac-populator run <implementation> [impl-args]`.
+* Remove hardcoded `verify=False` to requests calls.
+  If needed for testing purposes, users should use a custom `requests.sessions.Session` with `verify=False` passed to
+  the populator, or alternatively, employ the CLI argument `--no-verify` that will accomplish the same behavior.
+
 ## [0.2.0](https://github.com/crim-ca/stac-populator/tree/0.2.0) (2023-11-10)
 
 

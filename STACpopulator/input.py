@@ -1,13 +1,16 @@
+import json
 import logging
+import os
 from abc import ABC, abstractmethod
-from typing import Any, Iterator, MutableMapping, Optional, Tuple
+from typing import Any, Iterator, Literal, MutableMapping, Optional, Tuple, Union
 
 import pystac
 import requests
 import siphon
 import xncml
 from colorlog import ColoredFormatter
-from siphon.catalog import TDSCatalog
+from requests.sessions import Session
+from siphon.catalog import TDSCatalog, session_manager
 
 from STACpopulator.stac_utils import numpy_to_python_datatypes, url_validate
 
@@ -50,8 +53,35 @@ class ErrorLoader(GenericLoader):
         raise NotImplementedError
 
 
+class THREDDSCatalog(TDSCatalog):
+    """
+    Patch to apply a custom request session.
+
+    Because of how :class:`TDSCatalog` automatically loads and parses right away from ``__init__`` call,
+    we need to hack around how the ``session`` attribute gets defined.
+    """
+    def __init__(self, catalog_url: str, session: Optional[Session] = None) -> None:
+        self._session = session
+        super().__init__(catalog_url)
+
+    @property
+    def session(self) -> Session:
+        if self._session is None:
+            self._session = session_manager.create_session()
+        return self._session
+
+    @session.setter
+    def session(self, session: Session) -> None:
+        pass  # ignore to bypass TDSCatalog.__init__ enforcing create_session !
+
+
 class THREDDSLoader(GenericLoader):
-    def __init__(self, thredds_catalog_url: str, depth: Optional[int] = None) -> None:
+    def __init__(
+        self,
+        thredds_catalog_url: str,
+        depth: Optional[int] = None,
+        session: Optional[Session] = None,
+    ) -> None:
         """Constructor
 
         :param thredds_catalog_url: the URL to the THREDDS catalog to ingest
@@ -129,6 +159,70 @@ class THREDDSLoader(GenericLoader):
         attrs["attributes"] = numpy_to_python_datatypes(attrs["attributes"])
         attrs["access_urls"] = ds.access_urls
         return attrs
+
+
+class STACDirectoryLoader(GenericLoader):
+    """
+    Iterates through a directory structure looking for STAC Collections or Items.
+
+    For each directory that gets crawled, if a file is named ``collection.json``, it assumed to be a STAC Collection.
+    All other ``.json`` files under the directory where ``collection.json`` was found are assumed to be STAC Items.
+    These JSON STAC Items can be either at the same directory level as the STAC Collection, or under nested directories.
+
+    Using the mode option, yielded results will be either the STAC Collections or the STAC Items.
+    This allows this class to be used in conjunction (2 nested loops) to find collections and their underlying items.
+
+    .. code-block:: python
+
+        for collection_path, collection_json in STACDirectoryLoader(dir_path, mode="collection"):
+            for item_path, item_json in STACDirectoryLoader(os.path.dirname(collection_path), mode="item"):
+                ...  # do stuff
+
+    For convenience, option ``prune`` can be used to stop crawling deeper once a STAC Collection is found.
+    Any collection files found further down the directory were a top-most match was found will not be yielded.
+    This can be useful to limit search, or to ignore nested directories using subsets of STAC Collections.
+    """
+
+    def __init__(self, path: str, mode: Literal["collection", "item"], prune: bool = False) -> None:
+        super().__init__()
+        self.path = path
+        self.iter = None
+        self.prune = prune
+        self.reset()
+        self._collection_mode = mode == "collection"
+        self._collection_name = "collection.json"
+
+    def __iter__(self) -> Iterator[Tuple[str, MutableMapping[str, Any]]]:
+        is_root = True
+        for root, dirs, files in self.iter:
+            # since there can ever be only one 'collection' file name in a same directory
+            # directly retrieve it instead of looping through all other files
+            if self._collection_mode and self._collection_name in files:
+                if self.prune:  # stop recursive search if requested
+                    del dirs[:]
+                col_path = os.path.join(root, self._collection_name)
+                yield col_path, self._load_json(col_path)
+            # if a collection is found deeper when not expected for items parsing
+            # drop the nested directories to avoid over-crawling nested collections
+            elif not self._collection_mode and not is_root and self._collection_name in files:
+                del dirs[:]
+                continue
+            is_root = False  # for next loop
+            for name in files:
+                if not self._collection_mode and self._is_item(name):
+                    item_path = os.path.join(root, name)
+                    yield item_path, self._load_json(item_path)
+
+    def _is_item(self, path: Union[os.PathLike[str], str]) -> bool:
+        name = os.path.split(path)[-1]
+        return name != self._collection_name and os.path.splitext(name)[-1] in [".json", ".geojson"]
+
+    def _load_json(self, path: Union[os.PathLike[str], str]) -> MutableMapping[str, Any]:
+        with open(path, mode="r", encoding="utf-8") as file:
+            return json.load(file)
+
+    def reset(self):
+        self.iter = os.walk(self.path)
 
 
 class STACLoader(GenericLoader):
