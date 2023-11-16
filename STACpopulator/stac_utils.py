@@ -5,6 +5,10 @@ import os
 import re
 import sys
 from typing import Any, Literal, MutableMapping
+import requests
+import xncml
+import xmltodict
+import urllib
 
 import numpy as np
 import pystac
@@ -81,9 +85,6 @@ def collection2literal(collection, property="label"):
 
 def thredds_catalog_attrs(url: str) -> dict:
     """Return attributes from the catalog.xml THREDDS server response."""
-    import xmltodict
-    import requests
-
     xml = requests.get(url).text
 
     raw = xmltodict.parse(
@@ -99,9 +100,6 @@ def thredds_catalog_attrs(url: str) -> dict:
 
 def ncattrs(url: str) -> dict:
     """Return attributes from a THREDDS netCDF dataset."""
-    import requests
-    import xncml
-    import urllib
 
     pr = urllib.parse.urlparse(url)
 

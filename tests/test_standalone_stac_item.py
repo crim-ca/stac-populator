@@ -18,13 +18,16 @@ def quote_none_safe(url):
     return quote(url, safe="")
 
 
+@pytest.mark.parametrize("url", ["https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/birdhouse/testdata/xclim/cmip6"
+                            "/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc"])
 @pytest.mark.online
-def test_standalone_stac_item_thredds_ncml():
-    url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc"
+def test_standalone_stac_item_thredds_ncml(url):
     attrs = ncattrs(url)
     stac_item_id = CMIP6populator.make_cmip6_item_id(attrs["attributes"])
     stac_item = STAC_item_from_metadata(stac_item_id, attrs, CMIP6ItemProperties, GeoJSONPolygon)
-    assert stac_item.validate()
+    schemas_validated = stac_item.validate()
+    assert len(schemas_validated) >= 1
+    assert "item.json" in schemas_validated[0]
 
 
 class MockedNoSTACUpload(CMIP6populator):
