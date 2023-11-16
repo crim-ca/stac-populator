@@ -15,10 +15,15 @@ CATALOG = https://daccs.cs.toronto.edu/twitcher/ows/proxy/thredds/catalog/datase
 # CATALOG = https://daccs.cs.toronto.edu/twitcher/ows/proxy/thredds/catalog/datasets/CMIP6/CMIP/NOAA-GFDL/catalog.html
 # CATALOG = https://daccs.cs.toronto.edu/twitcher/ows/proxy/thredds/catalog/datasets/CMIP6/CMIP/AS-RCEC/catalog.html
 
+PYESSV_ARCHIVE_DIR ?= ~/.esdoc/pyessv-archive
+PYESSV_ARCHIVE_REF ?= https://github.com/ES-DOC/pyessv-archive
+
 ## -- Testing targets -------------------------------------------------------------------------------------------- ##
 
 setup-pyessv-archive:
-	git clone "https://github.com/ES-DOC/pyessv-archive" ~/.esdoc/pyessv-archive
+	@echo "Updating pyessv archive [$(shell realpath $(PYESSV_ARCHIVE_DIR))]..."
+	@[ -d $(PYESSV_ARCHIVE_DIR) ] || git clone "$(PYESSV_ARCHIVE_REF)" $(PYESSV_ARCHIVE_DIR)
+	@cd $(PYESSV_ARCHIVE_DIR) && git pull
 
 test-cmip6:
 	python $(IMP_DIR)/CMIP6_UofT/add_CMIP6.py $(STAC_HOST) $(CATALOG)
