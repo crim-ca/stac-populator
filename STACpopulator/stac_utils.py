@@ -102,20 +102,31 @@ def ncattrs(url: str) -> dict:
     """Return attributes from a THREDDS netCDF dataset."""
 
     pr = urllib.parse.urlparse(url)
+    scheme, netloc, path, params, query, frag = pr
 
-    parts = url.split("/")
-    nc = parts[-1]
+    # URL is a reference to a catalog item
+    if query:
+        q = urllib.parse.parse_qs(query)
+        nc = q["dataset"][0].split("/")[-1]
+
+        if path.endswith("catalog.html"):
+            path = path.replace("catalog.html", "catalog.xml")
+    else:
+        nc = path.split("/")[-1]
+        path = path.replace(nc, "catalog.xml")
 
     # Get catalog information about available services
-    catalog = "/".join(parts[:-1]) + "/catalog.xml"
+    catalog = urllib.parse.urlunparse((scheme, netloc, path, "", query, ""))
     cattrs = thredds_catalog_attrs(catalog)["catalog"]
-
     cid = cattrs["dataset"]["@ID"]
+
+    if not query:
+        cid += f"/{nc}"
 
     # Get service URLs for the dataset
     access_urls = {}
     for service in cattrs["service"]["service"]:
-        access_urls[service["@serviceType"]] = f'{pr.scheme}://{pr.netloc}{service["@base"]}{cid}/{nc}'
+        access_urls[service["@serviceType"]] = f'{scheme}://{netloc}{service["@base"]}{cid}'
 
     # Get dataset attributes
     r = requests.get(access_urls["NCML"])
@@ -263,9 +274,12 @@ asset_name_remaps = {
 media_types = {
     "HTTPServer": "application/x-netcdf",
     "OPENDAP": pystac.MediaType.HTML,
+    "NCML": pystac.MediaType.XML,
     "WCS": pystac.MediaType.XML,
     "WMS": pystac.MediaType.XML,
     "NetcdfSubset": "application/x-netcdf",
+    "ISO": pystac.MediaType.XML,
+    "UDDC": pystac.MediaType.HTML
 }
 
 asset_roles = {
@@ -274,4 +288,7 @@ asset_roles = {
     "WCS": ["data"],
     "WMS": ["visual"],
     "NetcdfSubset": ["data"],
+    "NCML": ["metadata"],
+    "ISO": ["metadata"],
+    "UDDC": ["metadata"]
 }

@@ -12,14 +12,16 @@ from pystac.validation import JsonSchemaSTACValidator
 from pystac import STACObjectType
 
 CUR_DIR = os.path.dirname(__file__)
+TEST_NC_URLS = ["https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/birdhouse/testdata/xclim/cmip6"
+                            "/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc",
+                ]
 
 
 def quote_none_safe(url):
     return quote(url, safe="")
 
 
-@pytest.mark.parametrize("url", ["https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/birdhouse/testdata/xclim/cmip6"
-                            "/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc"])
+@pytest.mark.parametrize("url", TEST_NC_URLS)
 @pytest.mark.online
 def test_standalone_stac_item_thredds_ncml(url):
     attrs = ncattrs(url)
