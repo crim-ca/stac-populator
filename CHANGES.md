@@ -2,6 +2,11 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
+<!-- insert list items of new changes here -->
+
+## [0.3.0](https://github.com/crim-ca/stac-populator/tree/0.3.0) (2023-11-16)
+
+
 * Add request ``session`` keyword to all request-related functions and populator methods to allow sharing a common set
   of settings (`auth`, SSL `verify`, `cert`) across requests toward the STAC Catalog.
 * Add `DirectoryLoader` that allows populating a STAC Catalog with Collections and Items loaded from a crawled directory
