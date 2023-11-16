@@ -5,8 +5,6 @@ from pystac.extensions.datacube import DatacubeExtension
 from STACpopulator.stac_utils import STAC_item_from_metadata
 from STACpopulator.implementations.CMIP6_UofT.add_CMIP6 import CMIP6ItemProperties
 from STACpopulator.models import GeoJSONPolygon
-from pystac import Item
-from pystac.validation.stac_validator import JsonSchemaSTACValidator
 
 DIR = Path(__file__).parent
 
@@ -23,18 +21,7 @@ def test_datacube_helper():
     dc_ext = DatacubeExtension.ext(item, add_if_missing=True)
     dc_ext.apply(dimensions=dc.dimensions, variables=dc.variables)
 
-    # Get schema for version of datacube extension used
-    ext_version = item.stac_extensions[0].split("/")[-2]
-
-    # Try to find the schema locally, otherwise it will be fetched from the net.
-    schema_uri = DIR / "schemas" / "datacube" / f"{ext_version}.json"
-    if not schema_uri.exists():
-        schema_uri = item.stac_extensions[0]
-
-    # Validate
-    val = JsonSchemaSTACValidator()
-    val.validate_extension(stac_dict=item.to_dict(),
-                           stac_object_type=Item,
-                           stac_version="1.0",
-                           extension_id=schema_uri)
-
+    schemas = item.validate()
+    assert len(schemas) >= 2
+    assert "item.json" in schemas[0]
+    assert "datacube" in schemas[1]
