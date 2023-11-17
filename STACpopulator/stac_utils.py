@@ -8,13 +8,13 @@ from typing import Any, Literal, MutableMapping
 import requests
 import xncml
 import xmltodict
-import urllib
-
+import urllib.parse
+from pathlib import Path
 import numpy as np
 import pystac
 import yaml
 from colorlog import ColoredFormatter
-
+from enum import Enum
 from STACpopulator.models import STACItem
 
 LOGGER = logging.getLogger(__name__)
@@ -84,7 +84,13 @@ def collection2literal(collection, property="label"):
 
 
 def thredds_catalog_attrs(url: str) -> dict:
-    """Return attributes from the catalog.xml THREDDS server response."""
+    """Return attributes from the catalog.xml THREDDS server response.
+
+    Parameters
+    ----------
+    url : str
+      Link to the THREDDS catalog URL.
+    """
     xml = requests.get(url).text
 
     raw = xmltodict.parse(
@@ -98,8 +104,8 @@ def thredds_catalog_attrs(url: str) -> dict:
     return raw
 
 
-def ncattrs(url: str) -> dict:
-    """Return attributes from a THREDDS netCDF dataset."""
+def catalog_url(url: str) -> (str, str):
+    """Given a THREDDS link to a netCDF file, return a link to its catalog and the file name."""
 
     pr = urllib.parse.urlparse(url)
     scheme, netloc, path, params, query, frag = pr
@@ -111,30 +117,76 @@ def ncattrs(url: str) -> dict:
 
         if path.endswith("catalog.html"):
             path = path.replace("catalog.html", "catalog.xml")
+
+        # Ideally we would create targeted queries for one dataset, but we're missing the dataset name.
+        # query = ""
     else:
         nc = path.split("/")[-1]
         path = path.replace(nc, "catalog.xml")
 
     # Get catalog information about available services
     catalog = urllib.parse.urlunparse((scheme, netloc, path, "", query, ""))
-    cattrs = thredds_catalog_attrs(catalog)["catalog"]
-    cid = cattrs["dataset"]["@ID"]
 
-    if not query:
-        cid += f"/{nc}"
+    return catalog, nc
+
+
+def access_urls(catalog_url: str, ds: str) -> dict:
+    """Return THREDDS endpoints for the catalog and dataset.
+
+    Parameters
+    ----------
+    catalog_url : str
+      URI to the THREDDS catalog.
+    ds : str
+      Dataset path relative to the catalog.
+    """
+    # Get catalog information about available services
+    cattrs = thredds_catalog_attrs(catalog_url)["catalog"]
+
+    pr = urllib.parse.urlparse(str(catalog_url))
+
+    cid = cattrs["dataset"]["@ID"]
+    if not pr.query:
+        cid += f"/{ds}"
 
     # Get service URLs for the dataset
     access_urls = {}
     for service in cattrs["service"]["service"]:
-        access_urls[service["@serviceType"]] = f'{scheme}://{netloc}{service["@base"]}{cid}'
+        type = ServiceType.from_value(service["@serviceType"]).value
+        access_urls[type] = f'{pr.scheme}://{pr.netloc}{service["@base"]}{cid}'
+
+    return access_urls
+
+
+def ncml_attrs(ncml_url: str) -> dict:
+    """Return attributes from the NcML response of a THREDDS dataset.
+
+    Parameters
+    ----------
+    ncml_url : str
+      URI to the NcML dataset description, either a remote server URL or path to a local xml file.
+    """
+    xml = requests.get(ncml_url).text
 
     # Get dataset attributes
-    r = requests.get(access_urls["NCML"])
-    attrs = xncml.Dataset.from_text(r.text).to_cf_dict()
+    attrs = xncml.Dataset.from_text(xml).to_cf_dict()
     attrs["attributes"] = numpy_to_python_datatypes(attrs["attributes"])
+    return attrs
+
+
+def ds_attrs(url: str) -> dict:
+    """Return attributes from the NcML response of a THREDDS dataset and access URLs from the THREDDS server.
+
+    Parameters
+    ----------
+    url : str
+      URL to the THREDDS netCDF file
+    """
+    urls = access_urls(*catalog_url(url))
+    attrs = ncml_attrs(urls["NcML"])
 
     # Include service attributes
-    attrs["access_urls"] = access_urls
+    attrs["access_urls"] = urls
     return attrs
 
 
@@ -263,18 +315,10 @@ def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_prop
     return item
 
 
-asset_name_remaps = {
-    "httpserver_service": "HTTPServer",
-    "opendap_service": "OPENDAP",
-    "wcs_service": "WCS",
-    "wms_service": "WMS",
-    "nccs_service": "NetcdfSubset",
-}
-
 media_types = {
     "HTTPServer": "application/x-netcdf",
-    "OPENDAP": pystac.MediaType.HTML,
-    "NCML": pystac.MediaType.XML,
+    "OpenDAP": pystac.MediaType.HTML,
+    "NcML": pystac.MediaType.XML,
     "WCS": pystac.MediaType.XML,
     "WMS": pystac.MediaType.XML,
     "NetcdfSubset": "application/x-netcdf",
@@ -284,11 +328,46 @@ media_types = {
 
 asset_roles = {
     "HTTPServer": ["data"],
-    "OPENDAP": ["data"],
+    "OpenDAP": ["data"],
     "WCS": ["data"],
     "WMS": ["visual"],
     "NetcdfSubset": ["data"],
-    "NCML": ["metadata"],
+    "NcML": ["metadata"],
     "ISO": ["metadata"],
     "UDDC": ["metadata"]
 }
+
+
+class ServiceType(Enum):
+    adde = "ADDE"
+    dap4 = "DAP4"
+    dods = "DODS"  # same as OpenDAP
+    opendap = "OpenDAP"
+    opendapg = "OpenDAPG"
+    netcdfsubset = "NetcdfSubset"
+    cdmremote = "CdmRemote"
+    cdmfeature = "CdmFeature"
+    ncjson = "ncJSON"
+    h5service = "H5Service"
+    httpserver = "HTTPServer"
+    ftp = "FTP"
+    gridftp = "GridFTP"
+    file = "File"
+    iso = "ISO"
+    las = "LAS"
+    ncml = "NcML"
+    uddc = "UDDC"
+    wcs = "WCS"
+    wms = "WMS"
+    wsdl = "WSDL"
+    webform = "WebForm"
+    catalog = "Catalog"
+    compound = "Compound"
+    resolver = "Resolver"
+    thredds = "THREDDS"
+
+    @classmethod
+    def from_value(cls, value):
+        """Return value irrespective of case."""
+        return cls[value.lower()]
+

@@ -1,0 +1,379 @@
+responses:
+- response:
+    auto_calculate_content_length: false
+    body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<catalog xmlns=\"http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0\"\
+      \ xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.0.1\">\r\n  <service\
+      \ name=\"all\" serviceType=\"Compound\" base=\"\">\r\n    <service name=\"http\"\
+      \ serviceType=\"HTTPServer\" base=\"/twitcher/ows/proxy/thredds/fileServer/\"\
+      \ />\r\n    <service name=\"odap\" serviceType=\"OPENDAP\" base=\"/twitcher/ows/proxy/thredds/dodsC/\"\
+      \ />\r\n    <service name=\"ncml\" serviceType=\"NCML\" base=\"/twitcher/ows/proxy/thredds/ncml/\"\
+      \ />\r\n    <service name=\"uddc\" serviceType=\"UDDC\" base=\"/twitcher/ows/proxy/thredds/uddc/\"\
+      \ />\r\n    <service name=\"iso\" serviceType=\"ISO\" base=\"/twitcher/ows/proxy/thredds/iso/\"\
+      \ />\r\n    <service name=\"wcs\" serviceType=\"WCS\" base=\"/twitcher/ows/proxy/thredds/wcs/\"\
+      \ />\r\n    <service name=\"wms\" serviceType=\"WMS\" base=\"/twitcher/ows/proxy/thredds/wms/\"\
+      \ />\r\n    <service name=\"subsetServer\" serviceType=\"NetcdfSubset\" base=\"\
+      /twitcher/ows/proxy/thredds/ncss/\" />\r\n  </service>\r\n  <dataset name=\"\
+      cmip6\" ID=\"birdhouse/testdata/xclim/cmip6\">\r\n    <metadata inherited=\"\
+      true\">\r\n      <serviceName>all</serviceName>\r\n    </metadata>\r\n    <dataset\
+      \ name=\"sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc\" ID=\"birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc\"\
+      \ urlPath=\"birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc\"\
+      >\r\n      <dataSize units=\"Mbytes\">3.583</dataSize>\r\n      <date type=\"\
+      modified\">2021-02-15T14:37:21.508Z</date>\r\n    </dataset>\r\n    <dataset\
+      \ name=\"o3_Amon_GFDL-ESM4_historical_r1i1p1f1_gr1_185001-194912.nc\" ID=\"\
+      birdhouse/testdata/xclim/cmip6/o3_Amon_GFDL-ESM4_historical_r1i1p1f1_gr1_185001-194912.nc\"\
+      \ urlPath=\"birdhouse/testdata/xclim/cmip6/o3_Amon_GFDL-ESM4_historical_r1i1p1f1_gr1_185001-194912.nc\"\
+      >\r\n      <dataSize units=\"Kbytes\">865.3</dataSize>\r\n      <date type=\"\
+      modified\">2021-02-15T14:37:21.496Z</date>\r\n    </dataset>\r\n  </dataset>\r\
+      \n</catalog>\r\n"
+    content_type: text/plain
+    method: GET
+    status: 200
+    url: https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/birdhouse/testdata/xclim/cmip6/catalog.xml
+- response:
+    auto_calculate_content_length: false
+    body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<catalog xmlns=\"http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0\"\
+      \ xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.0.1\">\r\n  <service\
+      \ name=\"all\" serviceType=\"Compound\" base=\"\">\r\n    <service name=\"http\"\
+      \ serviceType=\"HTTPServer\" base=\"/twitcher/ows/proxy/thredds/fileServer/\"\
+      \ />\r\n    <service name=\"odap\" serviceType=\"OPENDAP\" base=\"/twitcher/ows/proxy/thredds/dodsC/\"\
+      \ />\r\n    <service name=\"ncml\" serviceType=\"NCML\" base=\"/twitcher/ows/proxy/thredds/ncml/\"\
+      \ />\r\n    <service name=\"uddc\" serviceType=\"UDDC\" base=\"/twitcher/ows/proxy/thredds/uddc/\"\
+      \ />\r\n    <service name=\"iso\" serviceType=\"ISO\" base=\"/twitcher/ows/proxy/thredds/iso/\"\
+      \ />\r\n    <service name=\"wcs\" serviceType=\"WCS\" base=\"/twitcher/ows/proxy/thredds/wcs/\"\
+      \ />\r\n    <service name=\"wms\" serviceType=\"WMS\" base=\"/twitcher/ows/proxy/thredds/wms/\"\
+      \ />\r\n    <service name=\"subsetServer\" serviceType=\"NetcdfSubset\" base=\"\
+      /twitcher/ows/proxy/thredds/ncss/\" />\r\n  </service>\r\n  <dataset name=\"\
+      cmip6\" ID=\"birdhouse/testdata/xclim/cmip6\">\r\n    <metadata inherited=\"\
+      true\">\r\n      <serviceName>all</serviceName>\r\n    </metadata>\r\n    <dataset\
+      \ name=\"sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc\" ID=\"birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc\"\
+      \ urlPath=\"birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc\"\
+      >\r\n      <dataSize units=\"Mbytes\">3.583</dataSize>\r\n      <date type=\"\
+      modified\">2021-02-15T14:37:21.508Z</date>\r\n    </dataset>\r\n    <dataset\
+      \ name=\"o3_Amon_GFDL-ESM4_historical_r1i1p1f1_gr1_185001-194912.nc\" ID=\"\
+      birdhouse/testdata/xclim/cmip6/o3_Amon_GFDL-ESM4_historical_r1i1p1f1_gr1_185001-194912.nc\"\
+      \ urlPath=\"birdhouse/testdata/xclim/cmip6/o3_Amon_GFDL-ESM4_historical_r1i1p1f1_gr1_185001-194912.nc\"\
+      >\r\n      <dataSize units=\"Kbytes\">865.3</dataSize>\r\n      <date type=\"\
+      modified\">2021-02-15T14:37:21.496Z</date>\r\n    </dataset>\r\n  </dataset>\r\
+      \n</catalog>\r\n"
+    content_type: text/plain
+    method: GET
+    status: 200
+    url: https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/birdhouse/testdata/xclim/cmip6/catalog.xml
+- response:
+    auto_calculate_content_length: false
+    body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<ncml:netcdf xmlns:ncml=\"\
+      http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2\" location=\"Not provided\
+      \ because of security concerns.\">\r\n  <ncml:attribute name=\"CCCma_model_hash\"\
+      \ value=\"fc4bb7db954c862d023b546e19aec6c588bc0552\" />\r\n  <ncml:attribute\
+      \ name=\"CCCma_parent_runid\" value=\"p2-his13\" />\r\n  <ncml:attribute name=\"\
+      CCCma_pycmor_hash\" value=\"26c970628162d607fffd14254956ebc6dd3b6f49\" />\r\n\
+      \  <ncml:attribute name=\"CCCma_runid\" value=\"p2-s4513\" />\r\n  <ncml:attribute\
+      \ name=\"Conventions\" value=\"CF-1.7 CMIP-6.2\" />\r\n  <ncml:attribute name=\"\
+      YMDH_branch_time_in_child\" value=\"2015:01:01:00\" />\r\n  <ncml:attribute\
+      \ name=\"YMDH_branch_time_in_parent\" value=\"2015:01:01:00\" />\r\n  <ncml:attribute\
+      \ name=\"activity_id\" value=\"ScenarioMIP\" />\r\n  <ncml:attribute name=\"\
+      branch_method\" value=\"Spin-up documentation\" />\r\n  <ncml:attribute name=\"\
+      branch_time_in_child\" type=\"double\" value=\"60225.0\" />\r\n  <ncml:attribute\
+      \ name=\"branch_time_in_parent\" type=\"double\" value=\"60225.0\" />\r\n  <ncml:attribute\
+      \ name=\"contact\" value=\"ec.cccma.info-info.ccmac.ec@canada.ca\" />\r\n  <ncml:attribute\
+      \ name=\"creation_date\" value=\"2019-09-25T23:01:33Z\" />\r\n  <ncml:attribute\
+      \ name=\"data_specs_version\" value=\"01.00.30\" />\r\n  <ncml:attribute name=\"\
+      experiment\" value=\"update of RCP4.5 based on SSP2\" />\r\n  <ncml:attribute\
+      \ name=\"experiment_id\" value=\"ssp245\" />\r\n  <ncml:attribute name=\"external_variables\"\
+      \ value=\"areacello\" />\r\n  <ncml:attribute name=\"forcing_index\" type=\"\
+      int\" value=\"1\" />\r\n  <ncml:attribute name=\"frequency\" value=\"mon\" />\r\
+      \n  <ncml:attribute name=\"further_info_url\" value=\"https://furtherinfo.es-doc.org/CMIP6.CCCma.CanESM5.ssp245.none.r13i1p2f1\"\
+      \ />\r\n  <ncml:attribute name=\"grid\" value=\"ORCA1 tripolar grid, 1 deg with\
+      \ refinement to 1/3 deg within 20 degrees of the equator; 361 x 290 longitude/latitude;\
+      \ 45 vertical levels; top grid cell 0-6.19 m\" />\r\n  <ncml:attribute name=\"\
+      grid_label\" value=\"gn\" />\r\n  <ncml:attribute name=\"history\" value=\"\
+      2019-09-25T23:01:33Z ;rewrote data to be consistent with ScenarioMIP for variable\
+      \ siconc found in table SImon.\" />\r\n  <ncml:attribute name=\"initialization_index\"\
+      \ type=\"int\" value=\"1\" />\r\n  <ncml:attribute name=\"institution\" value=\"\
+      Canadian Centre for Climate Modelling and Analysis, Environment and Climate\
+      \ Change Canada, Victoria, BC V8P 5C2, Canada\" />\r\n  <ncml:attribute name=\"\
+      institution_id\" value=\"CCCma\" />\r\n  <ncml:attribute name=\"mip_era\" value=\"\
+      CMIP6\" />\r\n  <ncml:attribute name=\"nominal_resolution\" value=\"100 km\"\
+      \ />\r\n  <ncml:attribute name=\"parent_activity_id\" value=\"CMIP\" />\r\n\
+      \  <ncml:attribute name=\"parent_experiment_id\" value=\"historical\" />\r\n\
+      \  <ncml:attribute name=\"parent_mip_era\" value=\"CMIP6\" />\r\n  <ncml:attribute\
+      \ name=\"parent_source_id\" value=\"CanESM5\" />\r\n  <ncml:attribute name=\"\
+      parent_time_units\" value=\"days since 1850-01-01 0:0:0.0\" />\r\n  <ncml:attribute\
+      \ name=\"parent_variant_label\" value=\"r13i1p2f1\" />\r\n  <ncml:attribute\
+      \ name=\"physics_index\" type=\"int\" value=\"2\" />\r\n  <ncml:attribute name=\"\
+      product\" value=\"model-output\" />\r\n  <ncml:attribute name=\"realization_index\"\
+      \ type=\"int\" value=\"13\" />\r\n  <ncml:attribute name=\"realm\" value=\"\
+      seaIce\" />\r\n  <ncml:attribute name=\"references\" value=\"Geophysical Model\
+      \ Development Special issue on CanESM5 (https://www.geosci-model-dev.net/special_issue989.html)\"\
+      \ />\r\n  <ncml:attribute name=\"source\" value=\"CanESM5 (2019): &#xA;aerosol:\
+      \ interactive&#xA;atmos: CanAM5 (T63L49 native atmosphere, T63 Linear Gaussian\
+      \ Grid; 128 x 64 longitude/latitude; 49 levels; top level 1 hPa)&#xA;atmosChem:\
+      \ specified oxidants for aerosols&#xA;land: CLASS3.6/CTEM1.2&#xA;landIce: specified\
+      \ ice sheets&#xA;ocean: NEMO3.4.1 (ORCA1 tripolar grid, 1 deg with refinement\
+      \ to 1/3 deg within 20 degrees of the equator; 361 x 290 longitude/latitude;\
+      \ 45 vertical levels; top grid cell 0-6.19 m)&#xA;ocnBgchem: Canadian Model\
+      \ of Ocean Carbon (CMOC); NPZD ecosystem with OMIP prescribed carbonate chemistry&#xA;seaIce:\
+      \ LIM2\" />\r\n  <ncml:attribute name=\"source_id\" value=\"CanESM5\" />\r\n\
+      \  <ncml:attribute name=\"source_type\" value=\"AOGCM\" />\r\n  <ncml:attribute\
+      \ name=\"sub_experiment\" value=\"none\" />\r\n  <ncml:attribute name=\"sub_experiment_id\"\
+      \ value=\"none\" />\r\n  <ncml:attribute name=\"table_id\" value=\"SImon\" />\r\
+      \n  <ncml:attribute name=\"table_info\" value=\"Creation Date:(09 May 2019)\
+      \ MD5:38ea1fbdf3f31659e83c719fb4c48428\" />\r\n  <ncml:attribute name=\"title\"\
+      \ value=\"CanESM5 output prepared for CMIP6\" />\r\n  <ncml:attribute name=\"\
+      variable_id\" value=\"siconc\" />\r\n  <ncml:attribute name=\"variant_label\"\
+      \ value=\"r13i1p2f1\" />\r\n  <ncml:attribute name=\"version\" value=\"v20190429\"\
+      \ />\r\n  <ncml:attribute name=\"license\" value=\"CMIP6 model data produced\
+      \ by The Government of Canada (Canadian Centre for Climate Modelling and Analysis,\
+      \ Environment and Climate Change Canada) is licensed under a Creative Commons\
+      \ Attribution ShareAlike 4.0 International License (https://creativecommons.org/licenses).\
+      \ Consult https://pcmdi.llnl.gov/CMIP6/TermsOfUse for terms of use governing\
+      \ CMIP6 output, including citation requirements and proper acknowledgment. Further\
+      \ information about this data, including some limitations, can be found via\
+      \ the further_info_url (recorded as a global attribute in this file) and at\
+      \ https:///pcmdi.llnl.gov/. The data producers and data providers make no warranty,\
+      \ either express or implied, including, but not limited to, warranties of merchantability\
+      \ and fitness for a particular purpose. All liabilities arising from the supply\
+      \ of the information (including any liability arising in negligence) are excluded\
+      \ to the fullest extent permitted by law.\" />\r\n  <ncml:attribute name=\"\
+      cmor_version\" value=\"3.5.0\" />\r\n  <ncml:attribute name=\"tracking_id\"\
+      \ value=\"hdl:21.14100/9e4f804b-c161-44fa-acd1-c2e94e220c95\" />\r\n  <ncml:attribute\
+      \ name=\"DODS.strlen\" type=\"int\" value=\"7\" />\r\n  <ncml:attribute name=\"\
+      DODS.dimName\" value=\"strlen\" />\r\n  <ncml:attribute name=\"DODS_EXTRA.Unlimited_Dimension\"\
+      \ value=\"time\" />\r\n  <ncml:attribute name=\"_CoordSysBuilder\" value=\"\
+      ucar.nc2.dataset.conv.CF1Convention\" />\r\n  <ncml:dimension name=\"time\"\
+      \ length=\"12\" isUnlimited=\"true\" />\r\n  <ncml:dimension name=\"bnds\" length=\"\
+      2\" />\r\n  <ncml:dimension name=\"vertices\" length=\"4\" />\r\n  <ncml:dimension\
+      \ name=\"maxStrlen64\" length=\"64\" />\r\n  <ncml:dimension name=\"j\" length=\"\
+      291\" />\r\n  <ncml:dimension name=\"i\" length=\"360\" />\r\n  <group xmlns=\"\
+      http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2\" name=\"CFMetadata\"\
+      >\r\n    <attribute name=\"geospatial_lon_min\" value=\".0498\" type=\"float\"\
+      \ />\r\n    <attribute name=\"geospatial_lat_min\" value=\"-78.3935\" type=\"\
+      float\" />\r\n    <attribute name=\"geospatial_lon_max\" value=\"359.99493\"\
+      \ type=\"float\" />\r\n    <attribute name=\"geospatial_lat_max\" value=\"89.74177\"\
+      \ type=\"float\" />\r\n    <attribute name=\"geospatial_lon_units\" value=\"\
+      degrees_east\" />\r\n    <attribute name=\"geospatial_lat_units\" value=\"degrees_north\"\
+      \ />\r\n    <attribute name=\"geospatial_lon_resolution\" value=\"0.0034359351726440477\"\
+      \ />\r\n    <attribute name=\"geospatial_lat_resolution\" value=\"0.0016049720708009724\"\
+      \ />\r\n    <attribute name=\"time_coverage_start\" value=\"2019-12-06T12:00:00Z\"\
+      \ />\r\n    <attribute name=\"time_coverage_end\" value=\"2020-11-04T12:00:00Z\"\
+      \ />\r\n    <attribute name=\"time_coverage_units\" value=\"seconds\" />\r\n\
+      \    <attribute name=\"time_coverage_resolution\" value=\"2623418.0\" />\r\n\
+      \    <attribute name=\"time_coverage_duration\" value=\"P0Y0M334DT0H0M0.000S\"\
+      \ />\r\n  </group>\r\n  <group xmlns=\"http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2\"\
+      \ name=\"NCISOMetadata\">\r\n    <attribute name=\"metadata_creation\" value=\"\
+      2023-11-17\" />\r\n    <attribute name=\"nciso_version\" value=\"2.2.3\" />\r\
+      \n  </group>\r\n  <ncml:variable name=\"time_bnds\" shape=\"time bnds\" type=\"\
+      double\">\r\n    <ncml:attribute name=\"_FillValue\" type=\"double\" value=\"\
+      NaN\" />\r\n    <ncml:attribute name=\"_ChunkSizes\" type=\"int\" value=\"1\
+      \ 2\" />\r\n    <ncml:attribute name=\"coordinates\" value=\"type\" />\r\n \
+      \ </ncml:variable>\r\n  <ncml:variable name=\"vertices_latitude\" shape=\"j\
+      \ i vertices\" type=\"double\">\r\n    <ncml:attribute name=\"_FillValue\" type=\"\
+      double\" value=\"NaN\" />\r\n    <ncml:attribute name=\"_ChunkSizes\" type=\"\
+      int\" value=\"291 360 4\" />\r\n    <ncml:attribute name=\"coordinates\" value=\"\
+      longitude latitude type\" />\r\n  </ncml:variable>\r\n  <ncml:variable name=\"\
+      vertices_longitude\" shape=\"j i vertices\" type=\"double\">\r\n    <ncml:attribute\
+      \ name=\"_FillValue\" type=\"double\" value=\"NaN\" />\r\n    <ncml:attribute\
+      \ name=\"_ChunkSizes\" type=\"int\" value=\"291 360 4\" />\r\n    <ncml:attribute\
+      \ name=\"coordinates\" value=\"longitude latitude type\" />\r\n  </ncml:variable>\r\
+      \n  <ncml:variable name=\"siconc\" shape=\"time j i\" type=\"float\">\r\n  \
+      \  <ncml:attribute name=\"_FillValue\" type=\"float\" value=\"NaN\" />\r\n \
+      \   <ncml:attribute name=\"standard_name\" value=\"sea_ice_area_fraction\" />\r\
+      \n    <ncml:attribute name=\"long_name\" value=\"Sea-Ice Area Percentage (Ocean\
+      \ Grid)\" />\r\n    <ncml:attribute name=\"comment\" value=\"Percentage of grid\
+      \ cell covered by sea ice\" />\r\n    <ncml:attribute name=\"units\" value=\"\
+      %\" />\r\n    <ncml:attribute name=\"original_name\" value=\"soicecov\" />\r\
+      \n    <ncml:attribute name=\"history\" value=\"mltby100_ocn 2019-09-25T23:01:33Z\
+      \ altered by CMOR: Treated scalar dimension: 'type'.\" />\r\n    <ncml:attribute\
+      \ name=\"cell_methods\" value=\"area: mean where sea time: mean\" />\r\n   \
+      \ <ncml:attribute name=\"cell_measures\" value=\"area: areacello\" />\r\n  \
+      \  <ncml:attribute name=\"_ChunkSizes\" type=\"int\" value=\"1 291 360\" />\r\
+      \n    <ncml:attribute name=\"coordinates\" value=\"type latitude longitude\"\
+      \ />\r\n  </ncml:variable>\r\n  <ncml:variable name=\"areacello\" shape=\"j\
+      \ i\" type=\"float\">\r\n    <ncml:attribute name=\"_FillValue\" type=\"float\"\
+      \ value=\"1.0E20\" />\r\n    <ncml:attribute name=\"standard_name\" value=\"\
+      cell_area\" />\r\n    <ncml:attribute name=\"long_name\" value=\"Grid-Cell Area\
+      \ for Ocean Variables\" />\r\n    <ncml:attribute name=\"comment\" value=\"\
+      Horizontal area of ocean grid cells\" />\r\n    <ncml:attribute name=\"units\"\
+      \ value=\"m2\" />\r\n    <ncml:attribute name=\"original_name\" value=\"areacello\"\
+      \ />\r\n    <ncml:attribute name=\"cell_methods\" value=\"area: sum\" />\r\n\
+      \    <ncml:attribute name=\"_ChunkSizes\" type=\"int\" value=\"291 360\" />\r\
+      \n    <ncml:attribute name=\"coordinates\" value=\"latitude longitude\" />\r\
+      \n    <ncml:attribute name=\"missing_value\" type=\"float\" value=\"1.0E20\"\
+      \ />\r\n  </ncml:variable>\r\n  <ncml:variable name=\"time\" shape=\"time\"\
+      \ type=\"double\">\r\n    <ncml:attribute name=\"_FillValue\" type=\"double\"\
+      \ value=\"NaN\" />\r\n    <ncml:attribute name=\"bounds\" value=\"time_bnds\"\
+      \ />\r\n    <ncml:attribute name=\"axis\" value=\"T\" />\r\n    <ncml:attribute\
+      \ name=\"long_name\" value=\"time\" />\r\n    <ncml:attribute name=\"standard_name\"\
+      \ value=\"time\" />\r\n    <ncml:attribute name=\"_ChunkSizes\" type=\"int\"\
+      \ value=\"512\" />\r\n    <ncml:attribute name=\"units\" value=\"days since\
+      \ 1850-01-01\" />\r\n    <ncml:attribute name=\"calendar\" value=\"365_day\"\
+      \ />\r\n    <ncml:attribute name=\"_CoordinateAxisType\" value=\"Time\" />\r\
+      \n  </ncml:variable>\r\n  <ncml:variable name=\"j\" shape=\"j\" type=\"int\"\
+      >\r\n    <ncml:attribute name=\"units\" value=\"1\" />\r\n    <ncml:attribute\
+      \ name=\"long_name\" value=\"cell index along second dimension\" />\r\n  </ncml:variable>\r\
+      \n  <ncml:variable name=\"i\" shape=\"i\" type=\"int\">\r\n    <ncml:attribute\
+      \ name=\"units\" value=\"1\" />\r\n    <ncml:attribute name=\"long_name\" value=\"\
+      cell index along first dimension\" />\r\n  </ncml:variable>\r\n  <ncml:variable\
+      \ name=\"type\" shape=\"maxStrlen64\" type=\"char\">\r\n    <ncml:attribute\
+      \ name=\"long_name\" value=\"Sea Ice area type\" />\r\n    <ncml:attribute name=\"\
+      standard_name\" value=\"area_type\" />\r\n  </ncml:variable>\r\n  <ncml:variable\
+      \ name=\"latitude\" shape=\"j i\" type=\"double\">\r\n    <ncml:attribute name=\"\
+      _FillValue\" type=\"double\" value=\"1.0E20\" />\r\n    <ncml:attribute name=\"\
+      standard_name\" value=\"latitude\" />\r\n    <ncml:attribute name=\"long_name\"\
+      \ value=\"latitude\" />\r\n    <ncml:attribute name=\"units\" value=\"degrees_north\"\
+      \ />\r\n    <ncml:attribute name=\"bounds\" value=\"vertices_latitude\" />\r\
+      \n    <ncml:attribute name=\"_ChunkSizes\" type=\"int\" value=\"291 360\" />\r\
+      \n    <ncml:attribute name=\"missing_value\" type=\"double\" value=\"1.0E20\"\
+      \ />\r\n    <ncml:attribute name=\"_CoordinateAxisType\" value=\"Lat\" />\r\n\
+      \  </ncml:variable>\r\n  <ncml:variable name=\"longitude\" shape=\"j i\" type=\"\
+      double\">\r\n    <ncml:attribute name=\"_FillValue\" type=\"double\" value=\"\
+      1.0E20\" />\r\n    <ncml:attribute name=\"standard_name\" value=\"longitude\"\
+      \ />\r\n    <ncml:attribute name=\"long_name\" value=\"longitude\" />\r\n  \
+      \  <ncml:attribute name=\"units\" value=\"degrees_east\" />\r\n    <ncml:attribute\
+      \ name=\"bounds\" value=\"vertices_longitude\" />\r\n    <ncml:attribute name=\"\
+      _ChunkSizes\" type=\"int\" value=\"291 360\" />\r\n    <ncml:attribute name=\"\
+      missing_value\" type=\"double\" value=\"1.0E20\" />\r\n    <ncml:attribute name=\"\
+      _CoordinateAxisType\" value=\"Lon\" />\r\n  </ncml:variable>\r\n</ncml:netcdf>\r\
+      \n\r\n"
+    content_type: text/plain
+    method: GET
+    status: 200
+    url: https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/ncml/birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc
+- response:
+    auto_calculate_content_length: false
+    body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<catalog xmlns=\"http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0\"\
+      \ xmlns:xlink=\"http://www.w3.org/1999/xlink\" name=\"air.2m.mon.mean.nc\" version=\"\
+      1.2\">\r\n  <service name=\"all\" serviceType=\"Compound\" base=\"\">\r\n  \
+      \  <service name=\"odap\" serviceType=\"OpenDAP\" base=\"/thredds/dodsC/\" />\r\
+      \n    <service name=\"http\" serviceType=\"HTTPServer\" base=\"/thredds/fileServer/\"\
+      \ />\r\n    <service name=\"wcs\" serviceType=\"WCS\" base=\"/thredds/wcs/\"\
+      \ />\r\n    <service name=\"wms\" serviceType=\"WMS\" base=\"/thredds/wms/\"\
+      \ />\r\n    <service name=\"ncssGrid\" serviceType=\"NetcdfSubset\" base=\"\
+      /thredds/ncss/grid/\" />\r\n    <service name=\"iso\" serviceType=\"ISO\" base=\"\
+      /thredds/iso/\" />\r\n    <service name=\"ncml\" serviceType=\"NCML\" base=\"\
+      /thredds/ncml/\" />\r\n    <service name=\"uddc\" serviceType=\"UDDC\" base=\"\
+      /thredds/uddc/\" />\r\n  </service>\r\n  <dataset name=\"air.2m.mon.mean.nc\"\
+      \ ID=\"Datasets/20thC_ReanV2/Monthlies/gaussian/monolevel/air.2m.mon.mean.nc\"\
+      \ urlPath=\"Datasets/20thC_ReanV2/Monthlies/gaussian/monolevel/air.2m.mon.mean.nc\"\
+      >\r\n    <dataSize units=\"Mbytes\">62.12</dataSize>\r\n    <date type=\"modified\"\
+      >2020-04-13T15:46:10.168Z</date>\r\n    <metadata inherited=\"true\">\r\n  \
+      \    <serviceName>all</serviceName>\r\n      <dataType>Grid</dataType>\r\n \
+      \   </metadata>\r\n  </dataset>\r\n</catalog>\r\n"
+    content_type: text/plain
+    method: GET
+    status: 200
+    url: https://psl.noaa.gov/thredds/catalog/Datasets/20thC_ReanV2/Monthlies/gaussian/monolevel/catalog.xml?dataset=Datasets/20thC_ReanV2/Monthlies/gaussian/monolevel/air.2m.mon.mean.nc
+- response:
+    auto_calculate_content_length: false
+    body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<catalog xmlns=\"http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0\"\
+      \ xmlns:xlink=\"http://www.w3.org/1999/xlink\" name=\"air.2m.mon.mean.nc\" version=\"\
+      1.2\">\r\n  <service name=\"all\" serviceType=\"Compound\" base=\"\">\r\n  \
+      \  <service name=\"odap\" serviceType=\"OpenDAP\" base=\"/thredds/dodsC/\" />\r\
+      \n    <service name=\"http\" serviceType=\"HTTPServer\" base=\"/thredds/fileServer/\"\
+      \ />\r\n    <service name=\"wcs\" serviceType=\"WCS\" base=\"/thredds/wcs/\"\
+      \ />\r\n    <service name=\"wms\" serviceType=\"WMS\" base=\"/thredds/wms/\"\
+      \ />\r\n    <service name=\"ncssGrid\" serviceType=\"NetcdfSubset\" base=\"\
+      /thredds/ncss/grid/\" />\r\n    <service name=\"iso\" serviceType=\"ISO\" base=\"\
+      /thredds/iso/\" />\r\n    <service name=\"ncml\" serviceType=\"NCML\" base=\"\
+      /thredds/ncml/\" />\r\n    <service name=\"uddc\" serviceType=\"UDDC\" base=\"\
+      /thredds/uddc/\" />\r\n  </service>\r\n  <dataset name=\"air.2m.mon.mean.nc\"\
+      \ ID=\"Datasets/20thC_ReanV2/Monthlies/gaussian/monolevel/air.2m.mon.mean.nc\"\
+      \ urlPath=\"Datasets/20thC_ReanV2/Monthlies/gaussian/monolevel/air.2m.mon.mean.nc\"\
+      >\r\n    <dataSize units=\"Mbytes\">62.12</dataSize>\r\n    <date type=\"modified\"\
+      >2020-04-13T15:46:10.168Z</date>\r\n    <metadata inherited=\"true\">\r\n  \
+      \    <serviceName>all</serviceName>\r\n      <dataType>Grid</dataType>\r\n \
+      \   </metadata>\r\n  </dataset>\r\n</catalog>\r\n"
+    content_type: text/plain
+    method: GET
+    status: 200
+    url: https://psl.noaa.gov/thredds/catalog/Datasets/20thC_ReanV2/Monthlies/gaussian/monolevel/catalog.xml?dataset=Datasets/20thC_ReanV2/Monthlies/gaussian/monolevel/air.2m.mon.mean.nc
+- response:
+    auto_calculate_content_length: false
+    body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<netcdf xmlns=\"http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2\"\
+      \ location=\"Not provided because of security concerns.\">\r\n  <attribute name=\"\
+      Conventions\" value=\"CF-1.2\" />\r\n  <attribute name=\"title\" value=\"Monthly\
+      \ NOAA-CIRES 20th Century Reanalysis V2\" />\r\n  <attribute name=\"comments\"\
+      \ value=\"Data is from &#xA;NOAA-CIRES 20th Century Reanalysis version 2&#xA;(8x/day).\
+      \  It consists of most variables interpolated to&#xA;pressure surfaces from\
+      \ model (sigma) surfaces.\" />\r\n  <attribute name=\"institution\" value=\"\
+      NOAA ESRL/PSD\" />\r\n  <attribute name=\"version\" value=\"2.0\" />\r\n  <attribute\
+      \ name=\"history\" value=\"created by NOAA/ESRL/PSD web&amp;data&#xA;Converted\
+      \ to chunked, deflated non-packed NetCDF4 2014/05\" />\r\n  <attribute name=\"\
+      dataset_title\" value=\"NOAA-CIRES 20th Century Reanalysis (V2)\" />\r\n  <attribute\
+      \ name=\"citation\" value=\"Compo,G.P. &lt;https://www.esrl.noaa.gov/psd/people/gilbert.p.compo&gt;,\
+      \ &#xA;J.S. Whitaker &lt;https://www.esrl.noaa.gov/psd/people/jeffrey.s.whitaker&gt;,&#xA;\
+      \ and P.D. Sardeshmukh, 2006: Feasibility of a 100 year reanalysis using&#xA;only\
+      \ surface pressure data.&#xA;  &lt;https://www.esrl.noaa.gov/psd/people/gilbert.p.compo/Compoetal2006.pdf&gt;&#xA;/Bull.\
+      \ Amer. Met. Soc./, 87, 175-190.\" />\r\n  <attribute name=\"References\" value=\"\
+      https://www.psl.noaa.gov/data/gridded/data.20thC_ReanV2.html\" />\r\n  <attribute\
+      \ name=\"_NCProperties\" value=\"version=2,netcdf=4.6.3,hdf5=1.10.5\" />\r\n\
+      \  <attribute name=\"_CoordSysBuilder\" value=\"ucar.nc2.internal.dataset.conv.CF1Convention\"\
+      \ />\r\n  <dimension name=\"lat\" length=\"94\" />\r\n  <dimension name=\"lon\"\
+      \ length=\"192\" />\r\n  <dimension name=\"time\" length=\"1704\" isUnlimited=\"\
+      true\" />\r\n  <dimension name=\"nbnds\" length=\"2\" />\r\n  <group name=\"\
+      CFMetadata\">\r\n    <attribute name=\"geospatial_lon_min\" value=\".0\" type=\"\
+      float\" />\r\n    <attribute name=\"geospatial_lat_min\" value=\"-88.542\" type=\"\
+      float\" />\r\n    <attribute name=\"geospatial_lon_max\" value=\"358.125\" type=\"\
+      float\" />\r\n    <attribute name=\"geospatial_lat_max\" value=\"88.542\" type=\"\
+      float\" />\r\n    <attribute name=\"geospatial_lon_units\" value=\"degrees_east\"\
+      \ />\r\n    <attribute name=\"geospatial_lat_units\" value=\"degrees_north\"\
+      \ />\r\n    <attribute name=\"geospatial_lon_resolution\" value=\"1.875\" />\r\
+      \n    <attribute name=\"geospatial_lat_resolution\" value=\"1.9041290283203125\"\
+      \ />\r\n    <attribute name=\"time_coverage_start\" value=\"1871-01-01T00:00:00Z\"\
+      \ />\r\n    <attribute name=\"time_coverage_end\" value=\"2012-12-01T00:00:00Z\"\
+      \ />\r\n    <attribute name=\"time_coverage_units\" value=\"seconds\" />\r\n\
+      \    <attribute name=\"time_coverage_resolution\" value=\"2629746.0\" />\r\n\
+      \    <attribute name=\"time_coverage_duration\" value=\"P0Y0M51834DT0H0M0.000S\"\
+      \ />\r\n  </group>\r\n  <group name=\"NCISOMetadata\">\r\n    <attribute name=\"\
+      metadata_creation\" value=\"2023-11-17\" />\r\n    <attribute name=\"nciso_version\"\
+      \ value=\"2.2.3\" />\r\n  </group>\r\n  <variable name=\"time_bnds\" shape=\"\
+      time nbnds\" type=\"double\">\r\n    <attribute name=\"long_name\" value=\"\
+      Time Boundaries\" />\r\n    <attribute name=\"_ChunkSizes\" type=\"uint\" value=\"\
+      1 2\" />\r\n  </variable>\r\n  <variable name=\"air\" shape=\"time lat lon\"\
+      \ type=\"float\">\r\n    <attribute name=\"long_name\" value=\"Monthly Air Temperature\
+      \ at 2 m\" />\r\n    <attribute name=\"cell_methods\" value=\"time: mean (monthly\
+      \ from 3-hourly values)\" />\r\n    <attribute name=\"units\" value=\"Kelvins\"\
+      \ />\r\n    <attribute name=\"precision\" type=\"short\" value=\"2\" />\r\n\
+      \    <attribute name=\"GRIB_id\" type=\"short\" value=\"11\" />\r\n    <attribute\
+      \ name=\"GRIB_name\" value=\"TMP2mFcst\" />\r\n    <attribute name=\"var_desc\"\
+      \ value=\"Air Temperature\" />\r\n    <attribute name=\"dataset\" value=\"NOAA-CIRES\
+      \ 20th Century Reanalysis version 2 Monthly Averages\" />\r\n    <attribute\
+      \ name=\"level_desc\" value=\"2 m\" />\r\n    <attribute name=\"statistic\"\
+      \ value=\"Ensemble Mean\" />\r\n    <attribute name=\"parent_stat\" value=\"\
+      Individual Obs\" />\r\n    <attribute name=\"standard_name\" value=\"air_temperature\"\
+      \ />\r\n    <attribute name=\"missing_value\" type=\"float\" value=\"-9.96921E36\"\
+      \ />\r\n    <attribute name=\"valid_range\" type=\"float\" value=\"100.0 500.0\"\
+      \ />\r\n    <attribute name=\"actual_range\" type=\"float\" value=\"208.25002\
+      \ 317.15002\" />\r\n    <attribute name=\"statistic_method\" value=\"Ensemble\
+      \ mean is calculated by averaging over all 56 ensemble members at each time\
+      \ step and then averaging mean over all time steps in a month\" />\r\n    <attribute\
+      \ name=\"_ChunkSizes\" type=\"uint\" value=\"1 94 192\" />\r\n  </variable>\r\
+      \n  <variable name=\"lat\" shape=\"lat\" type=\"float\">\r\n    <attribute name=\"\
+      units\" value=\"degrees_north\" />\r\n    <attribute name=\"actual_range\" type=\"\
+      float\" value=\"88.542 -88.542\" />\r\n    <attribute name=\"long_name\" value=\"\
+      Latitude\" />\r\n    <attribute name=\"standard_name\" value=\"latitude\" />\r\
+      \n    <attribute name=\"axis\" value=\"Y\" />\r\n    <attribute name=\"coordinate_defines\"\
+      \ value=\"point\" />\r\n    <attribute name=\"_CoordinateAxisType\" value=\"\
+      Lat\" />\r\n  </variable>\r\n  <variable name=\"lon\" shape=\"lon\" type=\"\
+      float\">\r\n    <attribute name=\"units\" value=\"degrees_east\" />\r\n    <attribute\
+      \ name=\"long_name\" value=\"Longitude\" />\r\n    <attribute name=\"actual_range\"\
+      \ type=\"float\" value=\"0.0 358.125\" />\r\n    <attribute name=\"standard_name\"\
+      \ value=\"longitude\" />\r\n    <attribute name=\"axis\" value=\"X\" />\r\n\
+      \    <attribute name=\"coordinate_defines\" value=\"point\" />\r\n    <attribute\
+      \ name=\"_CoordinateAxisType\" value=\"Lon\" />\r\n  </variable>\r\n  <variable\
+      \ name=\"time\" shape=\"time\" type=\"double\">\r\n    <attribute name=\"units\"\
+      \ value=\"hours since 1800-1-1 00:00:0.0\" />\r\n    <attribute name=\"avg_period\"\
+      \ value=\"0000-01-00 00:00:00\" />\r\n    <attribute name=\"prev_avg_period\"\
+      \ value=\"0000-00-01 00:00:00\" />\r\n    <attribute name=\"long_name\" value=\"\
+      Time\" />\r\n    <attribute name=\"delta_t\" value=\"0000-01-00 00:00:00\" />\r\
+      \n    <attribute name=\"standard_name\" value=\"time\" />\r\n    <attribute\
+      \ name=\"axis\" value=\"T\" />\r\n    <attribute name=\"coordinate_defines\"\
+      \ value=\"start\" />\r\n    <attribute name=\"actual_range\" type=\"double\"\
+      \ value=\"622368.0 1866384.0\" />\r\n    <attribute name=\"_ChunkSizes\" type=\"\
+      uint\" value=\"1\" />\r\n    <attribute name=\"_CoordinateAxisType\" value=\"\
+      Time\" />\r\n    <attribute name=\"calendar\" value=\"gregorian\" />\r\n  </variable>\r\
+      \n</netcdf>\r\n"
+    content_type: text/plain
+    method: GET
+    status: 200
+    url: https://psl.noaa.gov/thredds/ncml/Datasets/20thC_ReanV2/Monthlies/gaussian/monolevel/air.2m.mon.mean.nc
