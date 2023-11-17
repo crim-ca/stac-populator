@@ -16,7 +16,7 @@ exclude = [
 
 [project]
 name = "STACpopulator"
-version = "0.2.0"
+version = "0.3.0"
 description = "Utility to populate STAC Catalog, Collections and Items from various dataset/catalog sources."
 requires-python = ">=3.10"
 dependencies = [
@@ -25,7 +25,7 @@ dependencies = [
     "siphon",
     "pystac",
     "xncml>=0.3.1",  # python 3.12 support
-    "pydantic",
+    "pydantic>=2",
     "pyessv",
     "requests",
     "lxml",
@@ -68,6 +68,9 @@ keywords = [
     "CMIP6"
 ]
 
+[project.scripts]
+stac-populator = "STACpopulator.cli:main"
+
 [project.urls]
 Repository = "https://github.com/crim-ca/stac-populator"
 Changelog = "https://github.com/crim-ca/stac-populator/blob/master/CHANGES.md"
@@ -77,6 +80,7 @@ dev = [
     "pytest",
     "pytest-cov",
     "coverage",
+    "responses",
     "bump-my-version",
 ]
 
@@ -110,7 +114,7 @@ directory = "reports/coverage/html"
 output = "reports/coverage.xml"
 
 [tool.bumpversion]
-current_version = "0.2.0"
+current_version = "0.3.0"
 commit = true
 commit_args = "--no-verify"
 tag = true

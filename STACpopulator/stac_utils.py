@@ -15,8 +15,8 @@ from pystac.validation import validate as pystac_validate
 from STACpopulator.models import Geometry, STACItemProperties
 
 LOGGER = logging.getLogger(__name__)
-LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
-formatter = ColoredFormatter(LOGFORMAT)
+LOG_FORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
+formatter = ColoredFormatter(LOG_FORMAT)
 stream = logging.StreamHandler()
 stream.setFormatter(formatter)
 LOGGER.addHandler(stream)
