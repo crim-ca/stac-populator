@@ -1,4 +1,5 @@
 import functools
+from typing import Any, MutableMapping, MutableSequence
 
 from pystac.extensions.datacube import Dimension, DimensionType, Variable, VariableType
 
@@ -10,18 +11,14 @@ class DataCubeHelper:
 
     axis = {"X": "x", "Y": "y", "Z": "z", "T": None, "longitude": "x", "latitude": "y", "vertical": "z", "time": "t"}
 
-    def __init__(self, attrs: dict):
+    def __init__(self, attrs: MutableMapping[str, Any]):
         """
         Create STAC Item from CF JSON metadata.
 
         Parameters
         ----------
-        iid : str
-            Unique item ID.
         attrs: dict
             CF JSON metadata returned by `xncml.Dataset.to_cf_dict`.
-        datamodel : pydantic.BaseModel, optional
-            Data model for validating global attributes.
         """
         self.attrs = attrs
 
@@ -142,10 +139,10 @@ class DataCubeHelper:
 
     @property
     @functools.cache
-    def dimensions(self) -> dict:
-        """Return Dimension objects required for Datacube extension."""
-
-
+    def dimensions(self) -> dict[str, Dimension]:
+        """
+        Return Dimension objects required for Datacube extension.
+        """
         dims = {}
         for name, length in self.attrs["dimensions"].items():
             v = self.attrs["variables"].get(name)
@@ -172,7 +169,10 @@ class DataCubeHelper:
                             properties = dict(
                                 type=type_.value,
                                 extent=extent,
-                                description=v.get("description", v.get("long_name", criteria["standard_name"][0])) or "",
+                                description=v.get(
+                                    "description",
+                                    v.get("long_name", criteria["standard_name"][0])
+                                ) or "",
                             )
                             if type_ == DimensionType.SPATIAL:
                                 properties["axis"] = axis
@@ -183,7 +183,7 @@ class DataCubeHelper:
 
     @property
     @functools.cache
-    def variables(self) -> dict:
+    def variables(self) -> dict[str, Variable]:
         """Return Variable objects required for Datacube extension."""
         variables = {}
 
@@ -202,9 +202,7 @@ class DataCubeHelper:
             )
         return variables
 
-    # @property
-    # @functools.cache
-    def is_coordinate(self, attrs: dict) -> bool:
+    def is_coordinate(self, attrs: MutableMapping[str, Any]) -> bool:
         """Return whether variable is a coordinate."""
         for key, criteria in self.coordinate_criteria.items():
             for criterion, expected in criteria.items():
@@ -212,7 +210,7 @@ class DataCubeHelper:
                     return True
         return False
 
-    def temporal_extent(self):
+    def temporal_extent(self) -> MutableSequence[str]:
         cfmeta = self.attrs["groups"]["CFMetadata"]["attributes"]
         start_datetime = cfmeta["time_coverage_start"]
         end_datetime = cfmeta["time_coverage_end"]

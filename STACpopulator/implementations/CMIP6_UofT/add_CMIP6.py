@@ -1,102 +1,22 @@
 import argparse
 import json
-from datetime import datetime
-from typing import Any, List, Literal, MutableMapping, NoReturn, Optional
+from typing import Any, MutableMapping, NoReturn, Optional
 
-import pydantic_core
-import pyessv
 from requests.sessions import Session
-from pydantic import AnyHttpUrl, ConfigDict, Field, FieldValidationInfo, field_validator
 from pystac.extensions.datacube import DatacubeExtension
 
 from STACpopulator.cli import add_request_options, apply_request_options
-from STACpopulator.implementations.CMIP6_UofT.extensions import DataCubeHelper
+from STACpopulator.extensions.cmip6 import CMIP6Properties, CMIP6Helper
+from STACpopulator.extensions.datacube import DataCubeHelper
+from STACpopulator.extensions.thredds import THREDDSHelper, THREDDSExtension
 from STACpopulator.input import GenericLoader, ErrorLoader, THREDDSLoader
-from STACpopulator.models import GeoJSONPolygon, STACItemProperties
+from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
-from STACpopulator.stac_utils import LOGGER, STAC_item_from_metadata, collection2literal
-
-# CMIP6 controlled vocabulary (CV)
-CV = pyessv.WCRP.CMIP6
-
-# Enum classes built from the pyessv' CV
-ActivityID = collection2literal(CV.activity_id)
-ExperimentID = collection2literal(CV.experiment_id)
-Frequency = collection2literal(CV.frequency)
-GridLabel = collection2literal(CV.grid_label)
-InstitutionID = collection2literal(CV.institution_id)
-NominalResolution = collection2literal(CV.nominal_resolution)
-Realm = collection2literal(CV.realm)
-SourceID = collection2literal(CV.source_id, "source_id")
-SourceType = collection2literal(CV.source_type)
-SubExperimentID = collection2literal(CV.sub_experiment_id)
-TableID = collection2literal(CV.table_id)
-
-
-def add_cmip6_prefix(name: str) -> str:
-    return "cmip6:" + name if "datetime" not in name else name
-
-
-class CMIP6ItemProperties(STACItemProperties, validate_assignment=True):
-    """Data model for CMIP6 Controlled Vocabulary."""
-
-    Conventions: str
-    activity_id: ActivityID
-    creation_date: datetime
-    data_specs_version: str
-    experiment: str
-    experiment_id: ExperimentID
-    frequency: Frequency
-    further_info_url: AnyHttpUrl
-    grid_label: GridLabel
-    institution: str
-    institution_id: InstitutionID
-    nominal_resolution: NominalResolution
-    realm: List[Realm]
-    source: str
-    source_id: SourceID
-    source_type: List[SourceType]
-    sub_experiment: str | Literal["none"]
-    sub_experiment_id: SubExperimentID | Literal["none"]
-    table_id: TableID
-    variable_id: str
-    variant_label: str
-    initialization_index: int
-    physics_index: int
-    realization_index: int
-    forcing_index: int
-    tracking_id: str = Field("")
-    version: str = Field("")
-    product: str
-    license: str
-    grid: str
-    mip_era: str
-
-    model_config = ConfigDict(alias_generator=add_cmip6_prefix, populate_by_name=True)
-
-    @field_validator("initialization_index", "physics_index", "realization_index", "forcing_index", mode="before")
-    @classmethod
-    def only_item(cls, v: list[int], info: FieldValidationInfo):
-        """Pick single item from list."""
-        assert len(v) == 1, f"{info.field_name} must have one item only."
-        return v[0]
-
-    @field_validator("realm", "source_type", mode="before")
-    @classmethod
-    def split(cls, v: str, info: FieldValidationInfo):
-        """Split string into list."""
-        return v.split(" ")
-
-    @field_validator("version")
-    @classmethod
-    def validate_version(cls, v: str, info: FieldValidationInfo):
-        assert v[0] == "v", "Version string should begin with a lower case 'v'"
-        assert v[1:].isdigit(), "All characters in version string, except first, should be digits"
-        return v
+from STACpopulator.stac_utils import LOGGER
 
 
 class CMIP6populator(STACpopulatorBase):
-    item_properties_model = CMIP6ItemProperties
+    item_properties_model = CMIP6Properties
     item_geometry_model = GeoJSONPolygon
 
     def __init__(
@@ -110,26 +30,8 @@ class CMIP6populator(STACpopulatorBase):
 
         :param stac_host: URL to the STAC API
         :type stac_host: str
-        :param thredds_catalog_url: the URL to the THREDDS catalog to ingest
-        :type thredds_catalog_url: str
         """
         super().__init__(stac_host, data_loader, update=update, session=session)
-
-    @staticmethod
-    def make_cmip6_item_id(attrs: MutableMapping[str, Any]) -> str:
-        """Return a unique ID for CMIP6 data item."""
-        keys = [
-            "activity_id",
-            "institution_id",
-            "source_id",
-            "experiment_id",
-            "variant_label",
-            "table_id",
-            "variable_id",
-            "grid_label",
-        ]
-        name = "_".join(attrs[k] for k in keys)
-        return name
 
     def create_stac_item(self, item_name: str, item_data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
         """Creates the STAC item.
@@ -141,18 +43,13 @@ class CMIP6populator(STACpopulatorBase):
         :return: _description_
         :rtype: MutableMapping[str, Any]
         """
-        iid = self.make_cmip6_item_id(item_data["attributes"])
-
+        # Add CMIP6 extension
         try:
-            item = STAC_item_from_metadata(iid, item_data, self.item_properties_model, self.item_geometry_model)
-        except pydantic_core._pydantic_core.ValidationError:
-            print(f"ERROR: ValidationError for {iid}")
-            return -1
-
-        # Add the CMIP6 STAC extension
-        item.stac_extensions.append(
-            "https://raw.githubusercontent.com/TomAugspurger/cmip6/main/json-schema/schema.json"
-        )
+            cmip_helper = CMIP6Helper(item_data, self.item_geometry_model)
+            item = cmip_helper.stac_item()
+        except Exception:
+            LOGGER.error("Failed to add CMIP6 extension to item %s", item_name)
+            raise
 
         # Add datacube extension
         try:
@@ -160,16 +57,25 @@ class CMIP6populator(STACpopulatorBase):
             dc_ext = DatacubeExtension.ext(item, add_if_missing=True)
             dc_ext.apply(dimensions=dc_helper.dimensions, variables=dc_helper.variables)
         except Exception:
-            LOGGER.warning(f"Failed to add Datacube extension to item {item_name}")
+            LOGGER.error("Failed to add Datacube extension to item %s", item_name)
+            raise
+
+        try:
+            thredds_helper = THREDDSHelper(item_data["access_urls"])
+            thredds_ext = THREDDSExtension.ext(item)
+            thredds_ext.apply(thredds_helper.services, thredds_helper.links)
+        except Exception:
+            LOGGER.error("Failed to add THREDDS references to item %s", item_name)
+            raise
 
         # print(json.dumps(item.to_dict()))
         return json.loads(json.dumps(item.to_dict()))
 
 
 def make_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="CMIP6 STAC populator")
+    parser = argparse.ArgumentParser(description="CMIP6 STAC populator from a THREDDS catalog or NCML XML.")
     parser.add_argument("stac_host", type=str, help="STAC API address")
-    parser.add_argument("thredds_catalog_URL", type=str, help="URL to the CMIP6 THREDDS catalog")
+    parser.add_argument("href", type=str, help="URL to a THREDDS catalog or a NCML XML with CMIP6 metadata.")
     parser.add_argument("--update", action="store_true", help="Update collection and its items")
     parser.add_argument("--mode", choices=["full", "single"],
                         help="Operation mode, processing the full dataset or only the single reference.")
@@ -183,7 +89,7 @@ def runner(ns: argparse.Namespace) -> Optional[int] | NoReturn:
     with Session() as session:
         apply_request_options(session, ns)
         if ns.mode == "full":
-            data_loader = THREDDSLoader(ns.thredds_catalog_URL, session=session)
+            data_loader = THREDDSLoader(ns.href, session=session)
         else:
             # To be implemented
             data_loader = ErrorLoader()

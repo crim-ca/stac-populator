@@ -6,13 +6,12 @@ from requests.sessions import Session
 
 from STACpopulator.cli import add_request_options, apply_request_options
 from STACpopulator.input import STACDirectoryLoader
-from STACpopulator.models import GeoJSONPolygon, STACItemProperties
+from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
 from STACpopulator.stac_utils import LOGGER
 
 
 class DirectoryPopulator(STACpopulatorBase):
-    item_properties_model = STACItemProperties
     item_geometry_model = GeoJSONPolygon
 
     def __init__(
