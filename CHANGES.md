@@ -3,6 +3,7 @@
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
 <!-- insert list items of new changes here -->
+* Fix datacube extension creation to match schema. 
 
 ## [0.3.0](https://github.com/crim-ca/stac-populator/tree/0.3.0) (2023-11-16)
 
