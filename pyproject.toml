@@ -83,7 +83,7 @@ dev = [
     "responses",
     "bump-my-version",
     "jsonschema",
-    "pystac[validation]"
+    "pystac[validation]>=1.9.0"
 ]
 
 [tool.pytest.ini_options]
