@@ -1,10 +1,8 @@
-import datetime
 import json
 import logging
 import os
 import re
-import sys
-from typing import Any, Literal, MutableMapping
+from typing import Any, Literal, MutableMapping, Union
 
 import numpy as np
 import pystac
@@ -13,14 +11,22 @@ from colorlog import ColoredFormatter
 
 from STACpopulator.models import STACItem
 
-LOGGER = logging.getLogger(__name__)
-LOG_FORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
-formatter = ColoredFormatter(LOG_FORMAT)
-stream = logging.StreamHandler()
-stream.setFormatter(formatter)
-LOGGER.addHandler(stream)
-LOGGER.setLevel(logging.INFO)
-LOGGER.propagate = False
+
+def get_logger(
+    name: str,
+    log_fmt: str = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s",
+) -> logging.Logger:
+    logger = logging.getLogger(name)
+    formatter = ColoredFormatter(log_fmt)
+    stream = logging.StreamHandler()
+    stream.setFormatter(formatter)
+    logger.addHandler(stream)
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+    return logger
+
+
+LOGGER = get_logger(__name__)
 
 
 def url_validate(target: str) -> bool:
@@ -47,31 +53,25 @@ def url_validate(target: str) -> bool:
     return True if re.match(url_regex, target) else False
 
 
-def load_collection_configuration() -> MutableMapping[str, Any]:
-    """Reads details of the STAC Collection to be created from a configuration file. the
-    code expects a "collection_config.yml" file to be present in the app directory.
+def load_config(
+    config_file: Union[os.PathLike[str], str],
+) -> MutableMapping[str, Any]:
+    """Reads a generic YAML or JSON configuration file.
 
-    :raises RuntimeError: If the configuration file is not present
-    :raises RuntimeError: If required values are not present in the configuration file
-    :return: A python dictionary describing the details of the Collection
+    :raises OSError: If the configuration file is not present
+    :raises ValueError: If the configuration file is not correctly formatted.
+    :return: A python dictionary describing a generic configuration.
     :rtype: MutableMapping[str, Any]
     """
-    collection_info_filename = "collection_config.yml"
-    app_directory = os.path.dirname(sys.argv[0])
+    if not os.path.isfile(config_file):
+        raise OSError(f"Missing configuration file does not exist: [{config_file}]")
 
-    if not os.path.exists(os.path.join(app_directory, collection_info_filename)):
-        raise RuntimeError(f"Missing {collection_info_filename} file for this implementation")
+    with open(config_file) as f:
+        config_info = yaml.load(f, yaml.Loader)
 
-    with open(os.path.join(app_directory, collection_info_filename)) as f:
-        collection_info = yaml.load(f, yaml.Loader)
-
-    req_definitions = ["title", "id", "description", "keywords", "license"]
-    for req in req_definitions:
-        if req not in collection_info.keys():
-            LOGGER.error(f"'{req}' is required in the configuration file")
-            raise RuntimeError(f"'{req}' is required in the configuration file")
-
-    return collection_info
+    if not isinstance(config_info, dict) or not config_info:
+        raise ValueError(f"Invalid configuration file does not define a mapping: [{config_file}]")
+    return config_info
 
 
 def collection2literal(collection, property="label"):

@@ -28,5 +28,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN groupadd -r stac && useradd -r -g stac stac
 USER stac
 
-# FIXME: use common CLI
-CMD ["bash"]
+ENTRYPOINT ["stac-populator"]
