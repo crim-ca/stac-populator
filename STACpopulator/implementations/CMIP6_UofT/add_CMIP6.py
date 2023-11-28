@@ -2,7 +2,7 @@ import argparse
 import json
 import os
 from datetime import datetime
-from typing import Any, List, Literal, MutableMapping, NoReturn, Optional
+from typing import Any, List, Literal, MutableMapping, NoReturn, Optional, Union
 
 import pydantic_core
 import pyessv
@@ -108,7 +108,7 @@ class CMIP6populator(STACpopulatorBase):
         data_loader: GenericLoader,
         update: Optional[bool] = False,
         session: Optional[Session] = None,
-        config_file: Optional[os.PathLike[str]] = None,
+        config_file: Optional[Union[os.PathLike[str], str]] = None,
     ) -> None:
         """Constructor
 

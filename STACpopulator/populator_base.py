@@ -3,7 +3,7 @@ import inspect
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Optional, MutableMapping
+from typing import Any, MutableMapping, Optional, Union
 
 import pystac
 from requests.sessions import Session
@@ -27,7 +27,7 @@ class STACpopulatorBase(ABC):
         data_loader: GenericLoader,
         update: Optional[bool] = False,
         session: Optional[Session] = None,
-        config_file: Optional[os.PathLike[str]] = "collection_config.yml",
+        config_file: Optional[Union[os.PathLike[str], str]] = "collection_config.yml",
     ) -> None:
         """Constructor
 
