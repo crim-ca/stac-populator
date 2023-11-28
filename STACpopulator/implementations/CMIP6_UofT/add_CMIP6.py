@@ -1,7 +1,8 @@
 import argparse
 import json
+import os
 from datetime import datetime
-from typing import Any, List, Literal, MutableMapping, NoReturn, Optional
+from typing import Any, List, Literal, MutableMapping, NoReturn, Optional, Union
 
 import pydantic_core
 import pyessv
@@ -14,7 +15,9 @@ from STACpopulator.implementations.CMIP6_UofT.extensions import DataCubeHelper
 from STACpopulator.input import GenericLoader, ErrorLoader, THREDDSLoader
 from STACpopulator.models import GeoJSONPolygon, STACItemProperties
 from STACpopulator.populator_base import STACpopulatorBase
-from STACpopulator.stac_utils import LOGGER, STAC_item_from_metadata, collection2literal
+from STACpopulator.stac_utils import get_logger, STAC_item_from_metadata, collection2literal
+
+LOGGER = get_logger(__name__)
 
 # CMIP6 controlled vocabulary (CV)
 CV = pyessv.WCRP.CMIP6
@@ -105,15 +108,20 @@ class CMIP6populator(STACpopulatorBase):
         data_loader: GenericLoader,
         update: Optional[bool] = False,
         session: Optional[Session] = None,
+        config_file: Optional[Union[os.PathLike[str], str]] = None,
     ) -> None:
         """Constructor
 
         :param stac_host: URL to the STAC API
-        :type stac_host: str
-        :param thredds_catalog_url: the URL to the THREDDS catalog to ingest
-        :type thredds_catalog_url: str
+        :param data_loader: loader to iterate over ingestion data.
         """
-        super().__init__(stac_host, data_loader, update=update, session=session)
+        super().__init__(
+            stac_host,
+            data_loader,
+            update=update,
+            session=session,
+            config_file=config_file,
+        )
 
     @staticmethod
     def make_cmip6_item_id(attrs: MutableMapping[str, Any]) -> str:
@@ -171,8 +179,14 @@ def make_parser() -> argparse.ArgumentParser:
     parser.add_argument("stac_host", type=str, help="STAC API address")
     parser.add_argument("thredds_catalog_URL", type=str, help="URL to the CMIP6 THREDDS catalog")
     parser.add_argument("--update", action="store_true", help="Update collection and its items")
-    parser.add_argument("--mode", choices=["full", "single"],
+    parser.add_argument("--mode", choices=["full", "single"], default="full",
                         help="Operation mode, processing the full dataset or only the single reference.")
+    parser.add_argument(
+        "--config", type=str, help=(
+            "Override configuration file for the populator. "
+            "By default, uses the adjacent configuration to the implementation class."
+        )
+    )
     add_request_options(parser)
     return parser
 
@@ -188,7 +202,7 @@ def runner(ns: argparse.Namespace) -> Optional[int] | NoReturn:
             # To be implemented
             data_loader = ErrorLoader()
 
-        c = CMIP6populator(ns.stac_host, data_loader, update=ns.update, session=session)
+        c = CMIP6populator(ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config)
         c.ingest()
 
 

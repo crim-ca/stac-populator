@@ -1,11 +1,11 @@
 import functools
-import logging
+import inspect
+import os
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Optional
+from typing import Any, MutableMapping, Optional, Union
 
 import pystac
-from colorlog import ColoredFormatter
 from requests.sessions import Session
 
 from STACpopulator.api_requests import (
@@ -14,16 +14,10 @@ from STACpopulator.api_requests import (
     stac_host_reachable,
 )
 from STACpopulator.input import GenericLoader
-from STACpopulator.stac_utils import load_collection_configuration, url_validate
+from STACpopulator.stac_utils import get_logger, load_config, url_validate
 
-LOGGER = logging.getLogger(__name__)
-LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
-formatter = ColoredFormatter(LOGFORMAT)
-stream = logging.StreamHandler()
-stream.setFormatter(formatter)
-LOGGER.addHandler(stream)
-LOGGER.setLevel(logging.INFO)
-LOGGER.propagate = False
+
+LOGGER = get_logger(__name__)
 
 
 class STACpopulatorBase(ABC):
@@ -33,6 +27,7 @@ class STACpopulatorBase(ABC):
         data_loader: GenericLoader,
         update: Optional[bool] = False,
         session: Optional[Session] = None,
+        config_file: Optional[Union[os.PathLike[str], str]] = "collection_config.yml",
     ) -> None:
         """Constructor
 
@@ -44,7 +39,8 @@ class STACpopulatorBase(ABC):
         """
 
         super().__init__()
-        self._collection_info = None
+        self._collection_config_path = config_file
+        self._collection_info: MutableMapping[str, Any] = None
         self._session = session
         self.load_config()
 
@@ -57,7 +53,29 @@ class STACpopulatorBase(ABC):
         self.create_stac_collection()
 
     def load_config(self):
-        self._collection_info = load_collection_configuration()
+        """
+        Reads details of the STAC Collection to be created from a configuration file.
+
+        Once called, the collection information attribute should be set with relevant mapping attributes.
+        """
+        # use explicit override, or default to local definition
+        if not self._collection_config_path or not os.path.isfile(self._collection_config_path):
+            impl_path = inspect.getfile(self.__class__)
+            impl_dir = os.path.dirname(impl_path)
+            impl_cfg = os.path.join(impl_dir, "collection_config.yml")
+            self._collection_config_path = impl_cfg
+
+        LOGGER.info("Using populator collection configuration file: [%s]", self._collection_config_path)
+        collection_info = load_config(self._collection_config_path)
+
+        req_definitions = ["title", "id", "description", "keywords", "license"]
+        for req in req_definitions:
+            if req not in collection_info.keys():
+                mgs = f"'{req}' is required in the configuration file [{self._collection_config_path}]"
+                LOGGER.error(mgs)
+                raise RuntimeError(mgs)
+
+        self._collection_info = collection_info
 
     @property
     def collection_name(self) -> str:
