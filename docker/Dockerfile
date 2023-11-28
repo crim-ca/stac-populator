@@ -3,7 +3,7 @@ LABEL description.short="STAC Populator"
 LABEL description.long="Utility to populate STAC Catalog, Collections and Items from various dataset/catalog sources."
 LABEL maintainer="Francis Charette-Migneault <francis.charette-migneault@crim.ca>"
 LABEL vendor="CRIM"
-LABEL version="0.3.0"
+LABEL version="0.4.0"
 
 # setup paths
 ENV APP_DIR=/opt/local/src/stac-populator
@@ -28,5 +28,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN groupadd -r stac && useradd -r -g stac stac
 USER stac
 
-# FIXME: use common CLI
-CMD ["bash"]
+ENTRYPOINT ["stac-populator"]
