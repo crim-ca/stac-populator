@@ -2,6 +2,11 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
+<!-- insert list items of new changes here -->
+
+## [0.4.0](https://github.com/crim-ca/stac-populator/tree/0.4.0) (2023-11-27)
+
+
 * Replace logic to resolve and load specific implementation configuration file of a populator to avoid depending on
   inconsistent caller (`python <impl-module.py>` vs `stac-populator run <impl>`).
 * Fix configuration file of populator implementation not found when package is installed.
