@@ -66,11 +66,18 @@ def test_directory_loader_populator_runner(prune_option: bool):
         assert request_mock.calls[1].request.path_url == "/stac/collections"
         assert request_mock.calls[1].request.body == file_contents["collection.json"]
 
-        assert request_mock.calls[2].request.path_url == f"/stac/collections/{base_col}/items"
-        assert request_mock.calls[2].request.body == file_contents["item-0.json"]
+        # NOTE:
+        #   Because directory crawler users 'os.walk', loading order is OS-dependant.
+        #   Since the order does not actually matter, consider item indices interchangeably.
+        req0_json = json.loads(request_mock.calls[2].request.body.decode())
+        req0_item = req0_json["id"]
+        item0_idx, item1_idx = (2, 3) if "sample-0" in req0_item else (3, 2)
 
-        assert request_mock.calls[3].request.path_url == f"/stac/collections/{base_col}/items"
-        assert request_mock.calls[3].request.body == file_contents["item-1.json"]
+        assert request_mock.calls[item0_idx].request.path_url == f"/stac/collections/{base_col}/items"
+        assert request_mock.calls[item0_idx].request.body == file_contents["item-0.json"]
+
+        assert request_mock.calls[item1_idx].request.path_url == f"/stac/collections/{base_col}/items"
+        assert request_mock.calls[item1_idx].request.body == file_contents["item-1.json"]
 
         if not prune_option:
             assert request_mock.calls[4].request.url == stac_host
@@ -79,8 +86,15 @@ def test_directory_loader_populator_runner(prune_option: bool):
             assert request_mock.calls[5].request.path_url == "/stac/collections"
             assert request_mock.calls[5].request.body == file_contents["nested/collection.json"]
 
-            assert request_mock.calls[6].request.path_url == f"/stac/collections/{nested_col}/items"
-            assert request_mock.calls[6].request.body == file_contents["nested/item-0.json"]
+            # NOTE:
+            #   Because directory crawler users 'os.walk', loading order is OS-dependant.
+            #   Since the order does not actually matter, consider item indices interchangeably.
+            req0_json = json.loads(request_mock.calls[6].request.body.decode())
+            req0_item = req0_json["id"]
+            item0_idx, item1_idx = (6, 7) if "sample-0" in req0_item else (7, 6)
 
-            assert request_mock.calls[7].request.path_url == f"/stac/collections/{nested_col}/items"
-            assert request_mock.calls[7].request.body == file_contents["nested/item-1.json"]
+            assert request_mock.calls[item0_idx].request.path_url == f"/stac/collections/{nested_col}/items"
+            assert request_mock.calls[item0_idx].request.body == file_contents["nested/item-0.json"]
+
+            assert request_mock.calls[item1_idx].request.path_url == f"/stac/collections/{nested_col}/items"
+            assert request_mock.calls[item1_idx].request.body == file_contents["nested/item-1.json"]

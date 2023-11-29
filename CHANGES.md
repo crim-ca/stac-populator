@@ -2,10 +2,19 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
-<!-- insert list items of new changes here -->
-
 * New function `ncattrs` to get attributes from netCDF files hosted on a THREDDS server. 
 
+## [0.4.0](https://github.com/crim-ca/stac-populator/tree/0.4.0) (2023-11-27)
+
+
+* Replace logic to resolve and load specific implementation configuration file of a populator to avoid depending on
+  inconsistent caller (`python <impl-module.py>` vs `stac-populator run <impl>`).
+* Fix configuration file of populator implementation not found when package is installed.
+* Allow a populator implementation to override the desired configuration file.
+* Add missing CLI `default="full"` mode for `CMIP6_UofT` populator implementation.
+* Fix Docker entrypoint to use `stac-populator` to make call to the CLI more convenient.
+* Add `get_logger` function to avoid repeated configuration across modules.
+* Make sure that each implementation and module employs their own logger.
 
 ## [0.3.0](https://github.com/crim-ca/stac-populator/tree/0.3.0) (2023-11-16)
 

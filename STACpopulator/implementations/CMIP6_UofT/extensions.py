@@ -8,7 +8,7 @@ from STACpopulator.stac_utils import ncattrs_to_bbox
 class DataCubeHelper:
     """Return STAC Item from CF JSON metadata, as provided by `xncml.Dataset.to_cf_dict`."""
 
-    axis = {"X": "x", "Y": "y", "Z": "z", "T": "t", "longitude": "x", "latitude": "y", "vertical": "z", "time": "t"}
+    axis = {"X": "x", "Y": "y", "Z": "z", "T": None, "longitude": "x", "latitude": "y", "vertical": "z", "time": "t"}
 
     def __init__(self, attrs: dict):
         """
@@ -145,6 +145,7 @@ class DataCubeHelper:
     def dimensions(self) -> dict:
         """Return Dimension objects required for Datacube extension."""
 
+
         dims = {}
         for name, length in self.attrs["dimensions"].items():
             v = self.attrs["variables"].get(name)
@@ -163,17 +164,20 @@ class DataCubeHelper:
                                     extent = bbox[0], bbox[2]
                                 elif key == "Y":
                                     extent = bbox[1], bbox[3]
+                                elif key in ["T", "time"]:
+                                    extent = self.temporal_extent()
                                 else:
-                                    extent = None
+                                    extent = ["", ""]
 
-                            dims[name] = Dimension(
-                                properties=dict(
-                                    axis=axis,
-                                    type=type_,
-                                    extent=extent,
-                                    description=v.get("description", v.get("long_name", criteria["standard_name"])),
-                                )
+                            properties = dict(
+                                type=type_.value,
+                                extent=extent,
+                                description=v.get("description", v.get("long_name", criteria["standard_name"][0])) or "",
                             )
+                            if type_ == DimensionType.SPATIAL:
+                                properties["axis"] = axis
+
+                            dims[name] = Dimension(properties=properties)
 
         return dims
 
@@ -192,8 +196,8 @@ class DataCubeHelper:
                 properties=dict(
                     dimensions=meta["shape"],
                     type=VariableType.AUXILIARY.value if self.is_coordinate(attrs) else VariableType.DATA.value,
-                    description=attrs.get("description", attrs.get("long_name")),
-                    unit=attrs.get("units", None),
+                    description=attrs.get("description", attrs.get("long_name", "")),
+                    unit=attrs.get("units", ""),
                 )
             )
         return variables
@@ -207,3 +211,9 @@ class DataCubeHelper:
                 if attrs.get(criterion, None) in expected:
                     return True
         return False
+
+    def temporal_extent(self):
+        cfmeta = self.attrs["groups"]["CFMetadata"]["attributes"]
+        start_datetime = cfmeta["time_coverage_start"]
+        end_datetime = cfmeta["time_coverage_end"]
+        return [start_datetime, end_datetime]
