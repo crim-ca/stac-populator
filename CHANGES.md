@@ -2,7 +2,7 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
-<!-- insert list items of new changes here -->
+* New function `ncattrs` to get attributes from netCDF files hosted on a THREDDS server. 
 
 ## [0.4.0](https://github.com/crim-ca/stac-populator/tree/0.4.0) (2023-11-27)
 
