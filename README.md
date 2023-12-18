@@ -19,9 +19,13 @@ contain all the logic for constructing the STAC representation for an item in th
 
 Provided implementations of `STACpopulatorBase`:
 
-- [CMIP6_UofT][CMIP6_UofT]
+| Implementation                 | Description                                                                                                             |
+|--------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| [CMIP6_UofT][CMIP6_UofT]       | Crawls a THREDDS Catalog for CMIP6 NCML-annotated NetCDF references to publish corresponding STAC Collection and Items. |
+| [DirectoryLoader][DirLoader]   | Crawls a subdirectory hierarchy of pre-generated STAC Collections and Items to publish to a STAC API endpoint.          |
 
 [CMIP6_UofT]: STACpopulator/implementations/CMIP6_UofT/add_CMIP6.py
+[DirLoader]: STACpopulator/implementations/DirectoryLoader/crawl_directory.py
 
 ## Installation and Execution
 
