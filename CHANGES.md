@@ -2,7 +2,7 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
-<!-- insert list items of new changes here -->
+* Update README with a table providing missing `DirectoryLoader` implementation and adding `CMIP6_UofT` description.
 
 ## [0.4.0](https://github.com/crim-ca/stac-populator/tree/0.4.0) (2023-11-27)
 
