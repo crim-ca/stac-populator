@@ -24,6 +24,7 @@ from pystac.extensions.base import (
     ExtensionManagementMixin,
     PropertiesExtension,
     SummariesExtension,
+    S,  # generic pystac.STACObject
 )
 
 from STACpopulator.models import AnyGeometry
@@ -32,7 +33,10 @@ from STACpopulator.stac_utils import ServiceType, collection2literal, ncattrs_to
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
 
 SchemaName = Literal["cmip6"]
-SCHEMA_URI: str = "https://stac-extensions.github.io/cmip6/v1.0.0/schema.json"
+# FIXME: below reference (used as ID in the schema itself) should be updated once the extension is officially released
+# SCHEMA_URI: str = "https://stac-extensions.github.io/cmip6/v1.0.0/schema.json"
+# below is the temporary resolvable URI
+SCHEMA_URI: str = "https://raw.githubusercontent.com/TomAugspurger/cmip6/main/json-schema/schema.json"
 PREFIX = f"{get_args(SchemaName)[0]}:"
 
 # CMIP6 controlled vocabulary (CV)
@@ -199,6 +203,14 @@ class CMIP6Extension(
     @classmethod
     def get_schema_uri(cls) -> str:
         return SCHEMA_URI
+
+    @classmethod
+    def has_extension(cls, obj: S):
+        # FIXME: this override should be removed once an official and versioned schema is released
+        # ignore the original implementation logic for a version regex
+        # since in our case, the VERSION_REGEX is not fulfilled (ie: using 'main' branch, no tag available...)
+        ext_uri = cls.get_schema_uri()
+        return obj.stac_extensions is not None and any(uri == ext_uri for uri in obj.stac_extensions)
 
     @classmethod
     def ext(cls, obj: T, add_if_missing: bool = False) -> "CMIP6Extension[T]":
