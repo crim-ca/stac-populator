@@ -2,6 +2,9 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
+* Refactor CMIP6 implementation using distinct classes to define THREDDS helper utilities and the CMIP6 STAC Extension
+  using the same implementation strategy as other [`pystac`](https://github.com/stac-utils/pystac) extensions.
+* Add additional CMIP6 STAC Extension definitions to support STAC Collections, Items and Assets properties validation.
 * Update README with a table providing missing `DirectoryLoader` implementation and adding `CMIP6_UofT` description.
 
 ## [0.4.0](https://github.com/crim-ca/stac-populator/tree/0.4.0) (2023-11-27)
