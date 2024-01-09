@@ -3,7 +3,7 @@ MAKEFILE_NAME := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 -include Makefile.config
 APP_ROOT    := $(abspath $(lastword $(MAKEFILE_NAME))/..)
 APP_NAME    := STACpopulator
-APP_VERSION ?= 0.4.0
+APP_VERSION ?= 0.5.0
 
 DOCKER_COMPOSE_FILES := -f "$(APP_ROOT)/docker/docker-compose.yml"
 DOCKER_TAG := ghcr.io/crim-ca/stac-populator:$(APP_VERSION)
