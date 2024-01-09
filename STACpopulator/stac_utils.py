@@ -1,15 +1,13 @@
-import json
 import logging
 import os
 import re
-from typing import Any, Literal, MutableMapping, Union
+from enum import Enum
+from typing import Any, Literal, MutableMapping, Type, Union
 
 import numpy as np
 import pystac
 import yaml
 from colorlog import ColoredFormatter
-
-from STACpopulator.models import STACItem
 
 
 def get_logger(
@@ -74,9 +72,9 @@ def load_config(
     return config_info
 
 
-def collection2literal(collection, property="label"):
+def collection2literal(collection, property="label") -> "Type[Literal]":
     terms = tuple(getattr(term, property) for term in collection)
-    return Literal[terms]
+    return Literal[terms]  # noqa
 
 
 def ncattrs_to_geometry(attrs: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
@@ -157,73 +155,43 @@ def magpie_resource_link(url: str) -> pystac.Link:
     return link
 
 
-def STAC_item_from_metadata(iid: str, attrs: MutableMapping[str, Any], item_props_datamodel, item_geometry_model):
-    """
-    Create STAC Item from CF JSON metadata.
+class ServiceType(Enum):
+    adde = "ADDE"
+    dap4 = "DAP4"
+    dods = "DODS"  # same as OpenDAP
+    opendap = "OpenDAP"
+    opendapg = "OpenDAPG"
+    netcdfsubset = "NetcdfSubset"
+    cdmremote = "CdmRemote"
+    cdmfeature = "CdmFeature"
+    ncjson = "ncJSON"
+    h5service = "H5Service"
+    httpserver = "HTTPServer"
+    ftp = "FTP"
+    gridftp = "GridFTP"
+    file = "File"
+    iso = "ISO"
+    las = "LAS"
+    ncml = "NcML"
+    uddc = "UDDC"
+    wcs = "WCS"
+    wms = "WMS"
+    wsdl = "WSDL"
+    webform = "WebForm"
+    catalog = "Catalog"
+    compound = "Compound"
+    resolver = "Resolver"
+    thredds = "THREDDS"
 
-    Parameters
-    ----------
-    iid : str
-        Unique item ID.
-    attrs: dict
-        CF JSON metadata returned by `xncml.Dataset.to_cf_dict`.
-    item_props_datamodel : pydantic.BaseModel
-        Data model describing the properties of the STAC item.
-    item_geometry_model : pydantic.BaseModel
-        Data model describing the geometry of the STAC item.
-    """
-
-    cfmeta = attrs["groups"]["CFMetadata"]["attributes"]
-
-    # Create pydantic STAC item
-    item = STACItem(
-        id=iid,
-        geometry=item_geometry_model(**ncattrs_to_geometry(attrs)),
-        bbox=ncattrs_to_bbox(attrs),
-        properties=item_props_datamodel(
-            start_datetime=cfmeta["time_coverage_start"],
-            end_datetime=cfmeta["time_coverage_end"],
-            **attrs["attributes"],
-        ),
-        datetime=None,
-    )
-
-    # Convert pydantic STAC item to a PySTAC Item
-    item = pystac.Item(**json.loads(item.model_dump_json(by_alias=True)))
-
-    root = attrs["access_urls"]
-
-    for name, url in root.items():
-        name = str(name)  # converting name from siphon.catalog.CaseInsensitiveStr to str
-        asset = pystac.Asset(href=url, media_type=media_types.get(name), roles=asset_roles.get(name))
-
-        item.add_asset(name, asset)
-
-    item.add_link(magpie_resource_link(root["HTTPServer"]))
-
-    return item
-
-
-asset_name_remaps = {
-    "httpserver_service": "HTTPServer",
-    "opendap_service": "OPENDAP",
-    "wcs_service": "WCS",
-    "wms_service": "WMS",
-    "nccs_service": "NetcdfSubset",
-}
-
-media_types = {
-    "HTTPServer": "application/x-netcdf",
-    "OPENDAP": pystac.MediaType.HTML,
-    "WCS": pystac.MediaType.XML,
-    "WMS": pystac.MediaType.XML,
-    "NetcdfSubset": "application/x-netcdf",
-}
-
-asset_roles = {
-    "HTTPServer": ["data"],
-    "OPENDAP": ["data"],
-    "WCS": ["data"],
-    "WMS": ["visual"],
-    "NetcdfSubset": ["data"],
-}
+    @classmethod
+    def from_value(cls, value: str, default: Any = KeyError) -> "ServiceType":
+        """Return value irrespective of case."""
+        try:
+            svc = value.lower()
+            if svc.endswith("_service"):  # handle NCML edge cases
+                svc = svc.rsplit("_", 1)[0]
+            return cls[svc]
+        except KeyError:
+            if default is not KeyError:
+                return default
+            raise

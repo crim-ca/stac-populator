@@ -85,7 +85,7 @@
         "data"
       ]
     },
-    "OPENDAP": {
+    "OpenDAP": {
       "href": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/dodsC/birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc",
       "type": "text/html",
       "roles": [
@@ -120,5 +120,7 @@
     359.99493408203125,
     89.74176788330078
   ],
-  "stac_extensions": []
+  "stac_extensions": [
+    "https://raw.githubusercontent.com/TomAugspurger/cmip6/main/json-schema/schema.json"
+  ]
 }

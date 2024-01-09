@@ -7,10 +7,11 @@ from urllib.parse import quote
 
 import xncml
 
-from STACpopulator.implementations.CMIP6_UofT.add_CMIP6 import CMIP6ItemProperties, CMIP6populator
+from STACpopulator.extensions.cmip6 import CMIP6Helper
+from STACpopulator.extensions.thredds import THREDDSHelper, THREDDSExtension
+from STACpopulator.implementations.CMIP6_UofT.add_CMIP6 import CMIP6populator
 from STACpopulator.input import THREDDSLoader
 from STACpopulator.models import GeoJSONPolygon
-from STACpopulator.stac_utils import STAC_item_from_metadata
 
 CUR_DIR = os.path.dirname(__file__)
 
@@ -41,9 +42,10 @@ def test_standalone_stac_item_thredds_ncml():
         "WMS": f"{thredds_url}/wms/{thredds_path}/{thredds_nc}?service=WMS&version=1.3.0&request=GetCapabilities",
         "NetcdfSubset": f"{thredds_url}/ncss/{thredds_path}/{thredds_nc}/dataset.html",
     }
-
-    stac_item_id = CMIP6populator.make_cmip6_item_id(attrs["attributes"])
-    stac_item = STAC_item_from_metadata(stac_item_id, attrs, CMIP6ItemProperties, GeoJSONPolygon)
+    stac_item = CMIP6Helper(attrs, GeoJSONPolygon).stac_item()
+    thredds_helper = THREDDSHelper(attrs["access_urls"])
+    thredds_ext = THREDDSExtension.ext(stac_item)
+    thredds_ext.apply(services=thredds_helper.services, links=thredds_helper.links)
 
     ref_file = os.path.join(CUR_DIR, "data/stac_item_testdata_xclim_cmip6_ncml.json")
     with open(ref_file, mode="r", encoding="utf-8") as ff:

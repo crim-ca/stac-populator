@@ -3,7 +3,7 @@ import inspect
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, MutableMapping, Optional, Union
+from typing import Any, MutableMapping, Optional, Type, Union
 
 import pystac
 from requests.sessions import Session
@@ -14,6 +14,7 @@ from STACpopulator.api_requests import (
     stac_host_reachable,
 )
 from STACpopulator.input import GenericLoader
+from STACpopulator.models import AnyGeometry
 from STACpopulator.stac_utils import get_logger, load_config, url_validate
 
 
@@ -91,16 +92,10 @@ class STACpopulatorBase(ABC):
 
     @property
     @abstractmethod
-    def item_properties_model(self):
-        """In derived classes, this property should be defined as a pydantic data model that derives from
-        models.STACItemProperties."""
-        raise NotImplementedError
-
-    @property
-    @abstractmethod
-    def item_geometry_model(self):
-        """In derived classes, this property should be defined as a pydantic data model that derives from
-        models.STACItemProperties."""
+    def item_geometry_model(self) -> Type[AnyGeometry]:
+        """
+        Implementation of the expected Geometry representation in derived classes.
+        """
         raise NotImplementedError
 
     @abstractmethod
@@ -153,7 +148,7 @@ class STACpopulatorBase(ABC):
         for item_name, item_data in self._ingest_pipeline:
             LOGGER.info(f"Creating STAC representation for {item_name}")
             stac_item = self.create_stac_item(item_name, item_data)
-            if stac_item != -1:
+            if stac_item:
                 post_stac_item(
                     self.stac_host,
                     self.collection_id,
