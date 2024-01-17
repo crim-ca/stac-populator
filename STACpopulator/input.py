@@ -146,7 +146,6 @@ class THREDDSLoader(GenericLoader):
             for item_name, ds in self.catalog_head.datasets.items():
                 attrs = self.extract_metadata(ds)
                 yield item_name, ds.url_path, attrs
-                # yield item_name, ds.url_path, []
 
         for name, ref in self.catalog_head.catalog_refs.items():
             self.catalog_head = ref.follow()
@@ -208,7 +207,7 @@ class STACDirectoryLoader(GenericLoader):
                 if self.prune:  # stop recursive search if requested
                     del dirs[:]
                 col_path = os.path.join(root, self._collection_name)
-                yield col_path, self._load_json(col_path)
+                yield col_path, "", self._load_json(col_path)
             # if a collection is found deeper when not expected for items parsing
             # drop the nested directories to avoid over-crawling nested collections
             elif not self._collection_mode and not is_root and self._collection_name in files:
@@ -218,7 +217,7 @@ class STACDirectoryLoader(GenericLoader):
             for name in files:
                 if not self._collection_mode and self._is_item(name):
                     item_path = os.path.join(root, name)
-                    yield item_path, self._load_json(item_path)
+                    yield item_path, "", self._load_json(item_path)
 
     def _is_item(self, path: Union[os.PathLike[str], str]) -> bool:
         name = os.path.split(path)[-1]
