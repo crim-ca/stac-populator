@@ -60,6 +60,7 @@ class THREDDSCatalog(TDSCatalog):
     Because of how :class:`TDSCatalog` automatically loads and parses right away from ``__init__`` call,
     we need to hack around how the ``session`` attribute gets defined.
     """
+
     def __init__(self, catalog_url: str, session: Optional[Session] = None) -> None:
         self._session = session
         super().__init__(catalog_url)
@@ -91,7 +92,8 @@ class THREDDSLoader(GenericLoader):
         :type depth: int, optional
         """
         super().__init__()
-        self._depth = depth if depth is not None else 1000
+        self._max_depth = depth if depth is not None else 1000
+        self._depth = 0
 
         self.thredds_catalog_URL = self.validate_catalog_url(thredds_catalog_url)
 
@@ -134,18 +136,23 @@ class THREDDSLoader(GenericLoader):
         """Reset the generator."""
         self.catalog_head = self.catalog
 
-    def __iter__(self) -> Iterator[Tuple[str, MutableMapping[str, Any]]]:
+    def __iter__(self) -> Iterator[Tuple[str, str, MutableMapping[str, Any]]]:
         """Return a generator walking a THREDDS data catalog for datasets."""
+
+        if self._depth > self._max_depth:
+            return
+
         if self.catalog_head.datasets.items():
             for item_name, ds in self.catalog_head.datasets.items():
                 attrs = self.extract_metadata(ds)
-                yield item_name, attrs
+                yield item_name, ds.url_path, attrs
+                # yield item_name, ds.url_path, []
 
-        if self._depth > 0:
-            for name, ref in self.catalog_head.catalog_refs.items():
-                self.catalog_head = ref.follow()
-                self._depth -= 1
-                yield from self
+        for name, ref in self.catalog_head.catalog_refs.items():
+            self.catalog_head = ref.follow()
+            self._depth -= 1
+            yield from self
+            self._depth += 1
 
     def __getitem__(self, dataset):
         return self.catalog.datasets[dataset]

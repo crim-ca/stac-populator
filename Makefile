@@ -11,9 +11,12 @@ DOCKER_TAG := ghcr.io/crim-ca/stac-populator:$(APP_VERSION)
 IMP_DIR := $(APP_NAME)/implementations
 STAC_HOST ?= http://localhost:8880/stac
 # CATALOG = https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.html
-CATALOG = https://daccs.cs.toronto.edu/twitcher/ows/proxy/thredds/catalog/datasets/CMIP6/catalog.html
+# CATALOG = https://daccs.cs.toronto.edu/twitcher/ows/proxy/thredds/catalog/datasets/CMIP6/catalog.html
 # CATALOG = https://daccs.cs.toronto.edu/twitcher/ows/proxy/thredds/catalog/datasets/CMIP6/CMIP/NOAA-GFDL/catalog.html
 # CATALOG = https://daccs.cs.toronto.edu/twitcher/ows/proxy/thredds/catalog/datasets/CMIP6/CMIP/AS-RCEC/catalog.html
+
+# CATALOG = https://daccs.cs.toronto.edu/twitcher/ows/proxy/thredds/catalog/datasets/CMIP6/CMIP/NUIST/catalog.html
+CATALOG = https://daccs.cs.toronto.edu/twitcher/ows/proxy/thredds/catalog/datasets/CMIP6/CMIP/MIROC/catalog.html
 
 PYESSV_ARCHIVE_DIR ?= ~/.esdoc/pyessv-archive
 PYESSV_ARCHIVE_REF ?= https://github.com/ES-DOC/pyessv-archive
