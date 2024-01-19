@@ -147,8 +147,7 @@ class STACpopulatorBase(ABC):
         LOGGER.info("Data ingestion")
         for item_name, item_loc, item_data in self._ingest_pipeline:
             LOGGER.info(f"New data item: {item_name}")
-            if item_loc:
-                LOGGER.info(f"Data location: {item_loc}")
+            LOGGER.info(f"Data location: {item_loc}")
             stac_item = self.create_stac_item(item_name, item_data)
             if stac_item:
                 post_stac_item(
@@ -161,3 +160,5 @@ class STACpopulatorBase(ABC):
                 )
                 counter += 1
                 LOGGER.info(f"Processed {counter} data items")
+            else:
+                LOGGER.error("Failed to create STAC representation")

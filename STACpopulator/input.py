@@ -137,7 +137,11 @@ class THREDDSLoader(GenericLoader):
         self.catalog_head = self.catalog
 
     def __iter__(self) -> Iterator[Tuple[str, str, MutableMapping[str, Any]]]:
-        """Return a generator walking a THREDDS data catalog for datasets."""
+        """Return a generator walking a THREDDS data catalog for datasets.
+
+        :yield: Returns three quantities: name of the item, location of the item, and its attributes
+        :rtype: Iterator[Tuple[str, str, MutableMapping[str, Any]]]
+        """
 
         if self._depth > self._max_depth:
             return
@@ -198,7 +202,13 @@ class STACDirectoryLoader(GenericLoader):
         self._collection_mode = mode == "collection"
         self._collection_name = "collection.json"
 
-    def __iter__(self) -> Iterator[Tuple[str, MutableMapping[str, Any]]]:
+    def __iter__(self) -> Iterator[Tuple[str, str, MutableMapping[str, Any]]]:
+        """Return a generator that walks through a directory structure looking for sTAC Collections or Items.
+
+        :yield: Returns three quantities: name of the item, location of the item, and its attributes
+        :rtype: Iterator[Tuple[str, str, MutableMapping[str, Any]]]
+        """
+
         is_root = True
         for root, dirs, files in self.iter:
             # since there can ever be only one 'collection' file name in a same directory
@@ -207,7 +217,7 @@ class STACDirectoryLoader(GenericLoader):
                 if self.prune:  # stop recursive search if requested
                     del dirs[:]
                 col_path = os.path.join(root, self._collection_name)
-                yield col_path, "", self._load_json(col_path)
+                yield self._collection_name, col_path, self._load_json(col_path)
             # if a collection is found deeper when not expected for items parsing
             # drop the nested directories to avoid over-crawling nested collections
             elif not self._collection_mode and not is_root and self._collection_name in files:
@@ -217,7 +227,7 @@ class STACDirectoryLoader(GenericLoader):
             for name in files:
                 if not self._collection_mode and self._is_item(name):
                     item_path = os.path.join(root, name)
-                    yield item_path, "", self._load_json(item_path)
+                    yield self._collection_name, item_path, self._load_json(item_path)
 
     def _is_item(self, path: Union[os.PathLike[str], str]) -> bool:
         name = os.path.split(path)[-1]
