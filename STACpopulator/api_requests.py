@@ -1,10 +1,10 @@
 import logging
 import os
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 import requests
-from requests import Session
 from colorlog import ColoredFormatter
+from requests import Session
 
 LOGGER = logging.getLogger(__name__)
 LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
@@ -81,7 +81,7 @@ def post_stac_item(
     json_data: dict[str, dict],
     update: Optional[bool] = True,
     session: Optional[Session] = None,
-) -> None:
+) -> Union[None, str]:
     """Post a STAC item to the host server.
 
     :param stac_host: address of the STAC host
@@ -107,8 +107,12 @@ def post_stac_item(
         if update:
             LOGGER.info(f"Item {item_id} already exists. Updating.")
             r = session.put(os.path.join(stac_host, f"collections/{collection_id}/items/{item_id}"), json=json_data)
-            r.raise_for_status()
+            return f"Requests: {r.reason}"
+            # r.raise_for_status()
         else:
-            LOGGER.info(f"Item {item_id} already exists.")
+            LOGGER.warn(f"Item {item_id} already exists.")
     else:
-        r.raise_for_status()
+        return f"Requests: {r.reason}"
+        # r.raise_for_status()
+
+    return None

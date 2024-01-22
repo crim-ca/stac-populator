@@ -3,7 +3,7 @@ import inspect
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, MutableMapping, Optional, Type, Union
+from typing import Any, MutableMapping, Optional, TextIO, Type, Union
 
 import pystac
 from requests.sessions import Session
@@ -142,15 +142,26 @@ class STACpopulatorBase(ABC):
     def publish_stac_collection(self, collection_data: dict[str, Any]) -> None:
         post_stac_collection(self.stac_host, collection_data, self.update, session=self._session)
 
+    def open_error_file(self) -> TextIO:
+        implementation_name = type(self).__name__
+        fname = f"stac-populator_{implementation_name}_errors_{datetime.strftime(datetime.now(), '%Y%m%d-%H%M%S')}.txt"
+        return open(fname, "w", buffering=1)
+
     def ingest(self) -> None:
+        error_file = self.open_error_file()
         counter = 0
+        failures = 0
         LOGGER.info("Data ingestion")
         for item_name, item_loc, item_data in self._ingest_pipeline:
             LOGGER.info(f"New data item: {item_name}")
             LOGGER.info(f"Data location: {item_loc}")
             stac_item = self.create_stac_item(item_name, item_data)
-            if stac_item:
-                post_stac_item(
+            if isinstance(stac_item, tuple):
+                LOGGER.error("Failed to create STAC representation")
+                error_file.write(f"{stac_item[1]}: {item_loc}\n")
+                failures += 1
+            else:
+                errc = post_stac_item(
                     self.stac_host,
                     self.collection_id,
                     item_name,
@@ -158,7 +169,12 @@ class STACpopulatorBase(ABC):
                     update=self.update,
                     session=self._session,
                 )
-                counter += 1
-                LOGGER.info(f"Processed {counter} data items")
-            else:
-                LOGGER.error("Failed to create STAC representation")
+                if errc:
+                    LOGGER.error(errc)
+                    error_file.write(f"{errc}: {item_loc}\n")
+                    failures += 1
+
+            counter += 1
+            LOGGER.info(f"Processed {counter} data items. {failures} failures")
+
+        error_file.close()

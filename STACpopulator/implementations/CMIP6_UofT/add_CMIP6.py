@@ -3,14 +3,14 @@ import json
 import os
 from typing import Any, MutableMapping, NoReturn, Optional, Union
 
-from requests.sessions import Session
 from pystac.extensions.datacube import DatacubeExtension
+from requests.sessions import Session
 
 from STACpopulator.cli import add_request_options, apply_request_options
-from STACpopulator.extensions.cmip6 import CMIP6Properties, CMIP6Helper
+from STACpopulator.extensions.cmip6 import CMIP6Helper, CMIP6Properties
 from STACpopulator.extensions.datacube import DataCubeHelper
-from STACpopulator.extensions.thredds import THREDDSHelper, THREDDSExtension
-from STACpopulator.input import GenericLoader, ErrorLoader, THREDDSLoader
+from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
+from STACpopulator.input import ErrorLoader, GenericLoader, THREDDSLoader
 from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
 from STACpopulator.stac_utils import get_logger
@@ -44,7 +44,9 @@ class CMIP6populator(STACpopulatorBase):
             config_file=config_file,
         )
 
-    def create_stac_item(self, item_name: str, item_data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
+    def create_stac_item(
+        self, item_name: str, item_data: MutableMapping[str, Any]
+    ) -> Union[(int, str), MutableMapping[str, Any]]:
         """Creates the STAC item.
 
         :param item_name: name of the STAC item. Interpretation of name is left to the input loader implementation
@@ -60,7 +62,7 @@ class CMIP6populator(STACpopulatorBase):
             item = cmip_helper.stac_item()
         except Exception:
             LOGGER.error("Failed to add CMIP6 extension to item %s", item_name)
-            raise
+            return (-1, "Failed to add CMIP6 extension")
 
         # Add datacube extension
         try:
@@ -69,7 +71,7 @@ class CMIP6populator(STACpopulatorBase):
             dc_ext.apply(dimensions=dc_helper.dimensions, variables=dc_helper.variables)
         except Exception:
             LOGGER.error("Failed to add Datacube extension to item %s", item_name)
-            raise
+            return (-1, "Failed to add Datacube extension")
 
         try:
             thredds_helper = THREDDSHelper(item_data["access_urls"])
@@ -77,7 +79,7 @@ class CMIP6populator(STACpopulatorBase):
             thredds_ext.apply(thredds_helper.services, thredds_helper.links)
         except Exception:
             LOGGER.error("Failed to add THREDDS references to item %s", item_name)
-            raise
+            return (-1, "Failed to add THREDDS references")
 
         # print(json.dumps(item.to_dict()))
         return json.loads(json.dumps(item.to_dict()))
@@ -88,13 +90,19 @@ def make_parser() -> argparse.ArgumentParser:
     parser.add_argument("stac_host", type=str, help="STAC API address")
     parser.add_argument("href", type=str, help="URL to a THREDDS catalog or a NCML XML with CMIP6 metadata.")
     parser.add_argument("--update", action="store_true", help="Update collection and its items")
-    parser.add_argument("--mode", choices=["full", "single"], default="full",
-                        help="Operation mode, processing the full dataset or only the single reference.")
     parser.add_argument(
-        "--config", type=str, help=(
+        "--mode",
+        choices=["full", "single"],
+        default="full",
+        help="Operation mode, processing the full dataset or only the single reference.",
+    )
+    parser.add_argument(
+        "--config",
+        type=str,
+        help=(
             "Override configuration file for the populator. "
             "By default, uses the adjacent configuration to the implementation class."
-        )
+        ),
     )
     add_request_options(parser)
     return parser
