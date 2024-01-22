@@ -1,6 +1,6 @@
 import argparse
 import os.path
-from typing import NoReturn, Optional, MutableMapping, Any
+from typing import Any, MutableMapping, NoReturn, Optional
 
 from requests.sessions import Session
 
@@ -45,8 +45,9 @@ def make_parser() -> argparse.ArgumentParser:
     parser.add_argument("directory", type=str, help="Path to a directory structure with STAC Collections and Items.")
     parser.add_argument("--update", action="store_true", help="Update collection and its items.")
     parser.add_argument(
-        "--prune", action="store_true",
-        help="Limit search of STAC Collections only to first top-most matches in the crawled directory structure."
+        "--prune",
+        action="store_true",
+        help="Limit search of STAC Collections only to first top-most matches in the crawled directory structure.",
     )
     add_request_options(parser)
     return parser
@@ -57,7 +58,7 @@ def runner(ns: argparse.Namespace) -> Optional[int] | NoReturn:
 
     with Session() as session:
         apply_request_options(session, ns)
-        for collection_path, collection_json in STACDirectoryLoader(ns.directory, "collection", ns.prune):
+        for _, collection_path, collection_json in STACDirectoryLoader(ns.directory, "collection", ns.prune):
             collection_dir = os.path.dirname(collection_path)
             loader = STACDirectoryLoader(collection_dir, "item", prune=ns.prune)
             populator = DirectoryPopulator(ns.stac_host, loader, ns.update, collection_json, session=session)

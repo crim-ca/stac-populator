@@ -60,6 +60,7 @@ class THREDDSCatalog(TDSCatalog):
     Because of how :class:`TDSCatalog` automatically loads and parses right away from ``__init__`` call,
     we need to hack around how the ``session`` attribute gets defined.
     """
+
     def __init__(self, catalog_url: str, session: Optional[Session] = None) -> None:
         self._session = session
         super().__init__(catalog_url)
@@ -91,7 +92,8 @@ class THREDDSLoader(GenericLoader):
         :type depth: int, optional
         """
         super().__init__()
-        self._depth = depth if depth is not None else 1000
+        self._max_depth = depth if depth is not None else 1000
+        self._depth = 0
 
         self.thredds_catalog_URL = self.validate_catalog_url(thredds_catalog_url)
 
@@ -134,18 +136,26 @@ class THREDDSLoader(GenericLoader):
         """Reset the generator."""
         self.catalog_head = self.catalog
 
-    def __iter__(self) -> Iterator[Tuple[str, MutableMapping[str, Any]]]:
-        """Return a generator walking a THREDDS data catalog for datasets."""
+    def __iter__(self) -> Iterator[Tuple[str, str, MutableMapping[str, Any]]]:
+        """Return a generator walking a THREDDS data catalog for datasets.
+
+        :yield: Returns three quantities: name of the item, location of the item, and its attributes
+        :rtype: Iterator[Tuple[str, str, MutableMapping[str, Any]]]
+        """
+
+        if self._depth > self._max_depth:
+            return
+
         if self.catalog_head.datasets.items():
             for item_name, ds in self.catalog_head.datasets.items():
                 attrs = self.extract_metadata(ds)
-                yield item_name, attrs
+                yield item_name, ds.url_path, attrs
 
-        if self._depth > 0:
-            for name, ref in self.catalog_head.catalog_refs.items():
-                self.catalog_head = ref.follow()
-                self._depth -= 1
-                yield from self
+        for name, ref in self.catalog_head.catalog_refs.items():
+            self.catalog_head = ref.follow()
+            self._depth -= 1
+            yield from self
+            self._depth += 1
 
     def __getitem__(self, dataset):
         return self.catalog.datasets[dataset]
@@ -192,7 +202,13 @@ class STACDirectoryLoader(GenericLoader):
         self._collection_mode = mode == "collection"
         self._collection_name = "collection.json"
 
-    def __iter__(self) -> Iterator[Tuple[str, MutableMapping[str, Any]]]:
+    def __iter__(self) -> Iterator[Tuple[str, str, MutableMapping[str, Any]]]:
+        """Return a generator that walks through a directory structure looking for sTAC Collections or Items.
+
+        :yield: Returns three quantities: name of the item, location of the item, and its attributes
+        :rtype: Iterator[Tuple[str, str, MutableMapping[str, Any]]]
+        """
+
         is_root = True
         for root, dirs, files in self.iter:
             # since there can ever be only one 'collection' file name in a same directory
@@ -201,7 +217,7 @@ class STACDirectoryLoader(GenericLoader):
                 if self.prune:  # stop recursive search if requested
                     del dirs[:]
                 col_path = os.path.join(root, self._collection_name)
-                yield col_path, self._load_json(col_path)
+                yield self._collection_name, col_path, self._load_json(col_path)
             # if a collection is found deeper when not expected for items parsing
             # drop the nested directories to avoid over-crawling nested collections
             elif not self._collection_mode and not is_root and self._collection_name in files:
@@ -211,7 +227,7 @@ class STACDirectoryLoader(GenericLoader):
             for name in files:
                 if not self._collection_mode and self._is_item(name):
                     item_path = os.path.join(root, name)
-                    yield item_path, self._load_json(item_path)
+                    yield self._collection_name, item_path, self._load_json(item_path)
 
     def _is_item(self, path: Union[os.PathLike[str], str]) -> bool:
         name = os.path.split(path)[-1]

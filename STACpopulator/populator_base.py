@@ -17,7 +17,6 @@ from STACpopulator.input import GenericLoader
 from STACpopulator.models import AnyGeometry
 from STACpopulator.stac_utils import get_logger, load_config, url_validate
 
-
 LOGGER = get_logger(__name__)
 
 
@@ -144,9 +143,11 @@ class STACpopulatorBase(ABC):
         post_stac_collection(self.stac_host, collection_data, self.update, session=self._session)
 
     def ingest(self) -> None:
+        counter = 0
         LOGGER.info("Data ingestion")
-        for item_name, item_data in self._ingest_pipeline:
-            LOGGER.info(f"Creating STAC representation for {item_name}")
+        for item_name, item_loc, item_data in self._ingest_pipeline:
+            LOGGER.info(f"New data item: {item_name}")
+            LOGGER.info(f"Data location: {item_loc}")
             stac_item = self.create_stac_item(item_name, item_data)
             if stac_item:
                 post_stac_item(
@@ -157,3 +158,7 @@ class STACpopulatorBase(ABC):
                     update=self.update,
                     session=self._session,
                 )
+                counter += 1
+                LOGGER.info(f"Processed {counter} data items")
+            else:
+                LOGGER.error("Failed to create STAC representation")
