@@ -1,9 +1,10 @@
 import functools
 import inspect
+import logging
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, MutableMapping, Optional, TextIO, Type, Union
+from typing import Any, MutableMapping, Optional, Type, Union
 
 import pystac
 from requests.sessions import Session
@@ -15,9 +16,9 @@ from STACpopulator.api_requests import (
 )
 from STACpopulator.input import GenericLoader
 from STACpopulator.models import AnyGeometry
-from STACpopulator.stac_utils import get_logger, load_config, url_validate
+from STACpopulator.stac_utils import load_config, setup_logging, url_validate
 
-LOGGER = get_logger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 class STACpopulatorBase(ABC):
@@ -39,6 +40,7 @@ class STACpopulatorBase(ABC):
         """
 
         super().__init__()
+        self.configure_app_logging()
         self._collection_config_path = config_file
         self._collection_info: MutableMapping[str, Any] = None
         self._session = session
@@ -142,13 +144,14 @@ class STACpopulatorBase(ABC):
     def publish_stac_collection(self, collection_data: dict[str, Any]) -> None:
         post_stac_collection(self.stac_host, collection_data, self.update, session=self._session)
 
-    def open_error_file(self) -> TextIO:
+    def configure_app_logging(self) -> None:
+        """Configure the logger for the App."""
+        # generating the log file name
         implementation_name = type(self).__name__
-        fname = f"stac-populator_{implementation_name}_errors_{datetime.strftime(datetime.now(), '%Y%m%d-%H%M%S')}.txt"
-        return open(fname, "w", buffering=1)
+        fname = f"{implementation_name}_log_{datetime.strftime(datetime.now(), '%Y%m%d-%H%M%S')}.jsonl"
+        setup_logging(fname)
 
     def ingest(self) -> None:
-        error_file = self.open_error_file()
         counter = 0
         failures = 0
         LOGGER.info("Data ingestion")
@@ -158,7 +161,7 @@ class STACpopulatorBase(ABC):
             stac_item = self.create_stac_item(item_name, item_data)
             if isinstance(stac_item, tuple):
                 LOGGER.error("Failed to create STAC representation")
-                error_file.write(f"{stac_item[1]}: {item_loc}\n")
+                # error_file.write(f"{stac_item[1]}: {item_loc}\n")
                 failures += 1
             else:
                 errc = post_stac_item(
@@ -171,10 +174,10 @@ class STACpopulatorBase(ABC):
                 )
                 if errc:
                     LOGGER.error(errc)
-                    error_file.write(f"{errc}: {item_loc}\n")
+                    # error_file.write(f"{errc}: {item_loc}\n")
                     failures += 1
 
             counter += 1
             LOGGER.info(f"Processed {counter} data items. {failures} failures")
 
-        error_file.close()
+        # error_file.close()

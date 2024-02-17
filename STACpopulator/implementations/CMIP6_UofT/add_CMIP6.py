@@ -1,5 +1,6 @@
 import argparse
 import json
+import logging
 import os
 from typing import Any, MutableMapping, NoReturn, Optional, Union
 
@@ -13,9 +14,8 @@ from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
 from STACpopulator.input import ErrorLoader, GenericLoader, THREDDSLoader
 from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
-from STACpopulator.stac_utils import get_logger
 
-LOGGER = get_logger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 class CMIP6populator(STACpopulatorBase):

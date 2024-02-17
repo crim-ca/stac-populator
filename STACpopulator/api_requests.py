@@ -3,17 +3,9 @@ import os
 from typing import Any, Optional, Union
 
 import requests
-from colorlog import ColoredFormatter
 from requests import Session
 
 LOGGER = logging.getLogger(__name__)
-LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
-formatter = ColoredFormatter(LOGFORMAT)
-stream = logging.StreamHandler()
-stream.setFormatter(formatter)
-LOGGER.addHandler(stream)
-LOGGER.setLevel(logging.INFO)
-LOGGER.propagate = False
 
 
 def stac_host_reachable(url: str, session: Optional[Session] = None) -> bool:

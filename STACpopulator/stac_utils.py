@@ -7,24 +7,22 @@ from typing import Any, Literal, MutableMapping, Type, Union
 import numpy as np
 import pystac
 import yaml
-from colorlog import ColoredFormatter
+
+from STACpopulator.logging import logconfig
 
 
-def get_logger(
-    name: str,
-    log_fmt: str = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s",
-) -> logging.Logger:
-    logger = logging.getLogger(name)
-    formatter = ColoredFormatter(log_fmt)
-    stream = logging.StreamHandler()
-    stream.setFormatter(formatter)
-    logger.addHandler(stream)
-    logger.setLevel(logging.INFO)
-    logger.propagate = False
-    return logger
+def setup_logging(logfname: str) -> None:
+    """Setup the logger for the app.
+
+    :param logfname: name of the file to which to write log outputs
+    :type logfname: str
+    """
+    config = logconfig
+    config["handlers"]["file"]["filename"] = logfname
+    logging.config.dictConfig(config)
 
 
-LOGGER = get_logger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 def url_validate(target: str) -> bool:

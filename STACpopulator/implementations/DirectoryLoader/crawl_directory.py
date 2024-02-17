@@ -1,4 +1,5 @@
 import argparse
+import logging
 import os.path
 from typing import Any, MutableMapping, NoReturn, Optional
 
@@ -8,9 +9,8 @@ from STACpopulator.cli import add_request_options, apply_request_options
 from STACpopulator.input import STACDirectoryLoader
 from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
-from STACpopulator.stac_utils import get_logger
 
-LOGGER = get_logger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 class DirectoryPopulator(STACpopulatorBase):
