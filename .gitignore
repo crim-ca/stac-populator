@@ -19,3 +19,6 @@ reports
 STACpopulator.egg-info/
 build
 *.pyc
+
+## Logs
+*.jsonl
