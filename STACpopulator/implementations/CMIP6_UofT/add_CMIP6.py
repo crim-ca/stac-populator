@@ -46,7 +46,7 @@ class CMIP6populator(STACpopulatorBase):
 
     def create_stac_item(
         self, item_name: str, item_data: MutableMapping[str, Any]
-    ) -> Union[(int, str), MutableMapping[str, Any]]:
+    ) -> Union[tuple[int, str], MutableMapping[str, Any]]:
         """Creates the STAC item.
 
         :param item_name: name of the STAC item. Interpretation of name is left to the input loader implementation
