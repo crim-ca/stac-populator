@@ -11,14 +11,18 @@ import yaml
 from STACpopulator.logging import logconfig
 
 
-def setup_logging(logfname: str) -> None:
+def setup_logging(logfname: str, log_level: str) -> None:
     """Setup the logger for the app.
 
     :param logfname: name of the file to which to write log outputs
     :type logfname: str
+    :param log_level: base logging level (e.g. "INFO")
+    :type log_level: str
     """
     config = logconfig
     config["handlers"]["file"]["filename"] = logfname
+    for handler in config["handlers"]:
+        config["handlers"][handler]["level"] = log_level
     logging.config.dictConfig(config)
 
 

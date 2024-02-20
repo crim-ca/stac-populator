@@ -29,6 +29,7 @@ class CMIP6populator(STACpopulatorBase):
         update: Optional[bool] = False,
         session: Optional[Session] = None,
         config_file: Optional[Union[os.PathLike[str], str]] = None,
+        log_debug: Optional[bool] = False,
     ) -> None:
         """Constructor
 
@@ -37,11 +38,7 @@ class CMIP6populator(STACpopulatorBase):
         :param data_loader: loader to iterate over ingestion data.
         """
         super().__init__(
-            stac_host,
-            data_loader,
-            update=update,
-            session=session,
-            config_file=config_file,
+            stac_host, data_loader, update=update, session=session, config_file=config_file, log_debug=log_debug
         )
 
     def create_stac_item(
@@ -101,6 +98,7 @@ def make_parser() -> argparse.ArgumentParser:
             "By default, uses the adjacent configuration to the implementation class."
         ),
     )
+    parser.add_argument("--debug", action="store_true", help="Set logger level to debug")
     add_request_options(parser)
     return parser
 
@@ -116,7 +114,9 @@ def runner(ns: argparse.Namespace) -> Optional[int] | NoReturn:
             # To be implemented
             data_loader = ErrorLoader()
 
-        c = CMIP6populator(ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config)
+        c = CMIP6populator(
+            ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config, log_debug=ns.debug
+        )
         c.ingest()
 
 
