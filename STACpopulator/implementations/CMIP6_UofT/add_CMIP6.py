@@ -46,7 +46,7 @@ class CMIP6populator(STACpopulatorBase):
 
     def create_stac_item(
         self, item_name: str, item_data: MutableMapping[str, Any]
-    ) -> Union[tuple[int, str], MutableMapping[str, Any]]:
+    ) -> Union[None, MutableMapping[str, Any]]:
         """Creates the STAC item.
 
         :param item_name: name of the STAC item. Interpretation of name is left to the input loader implementation
@@ -60,26 +60,23 @@ class CMIP6populator(STACpopulatorBase):
         try:
             cmip_helper = CMIP6Helper(item_data, self.item_geometry_model)
             item = cmip_helper.stac_item()
-        except Exception:
-            LOGGER.error("Failed to add CMIP6 extension to item %s", item_name)
-            return (-1, "Failed to add CMIP6 extension")
+        except Exception as e:
+            raise Exception("Failed to add CMIP6 extension") from e
 
         # Add datacube extension
         try:
             dc_helper = DataCubeHelper(item_data)
             dc_ext = DatacubeExtension.ext(item, add_if_missing=True)
             dc_ext.apply(dimensions=dc_helper.dimensions, variables=dc_helper.variables)
-        except Exception:
-            LOGGER.error("Failed to add Datacube extension to item %s", item_name)
-            return (-1, "Failed to add Datacube extension")
+        except Exception as e:
+            raise Exception("Failed to add Datacube extension") from e
 
         try:
             thredds_helper = THREDDSHelper(item_data["access_urls"])
             thredds_ext = THREDDSExtension.ext(item)
             thredds_ext.apply(thredds_helper.services, thredds_helper.links)
-        except Exception:
-            LOGGER.error("Failed to add THREDDS references to item %s", item_name)
-            return (-1, "Failed to add THREDDS references")
+        except Exception as e:
+            raise Exception("Failed to add THREDDS extension") from e
 
         # print(json.dumps(item.to_dict()))
         return json.loads(json.dumps(item.to_dict()))

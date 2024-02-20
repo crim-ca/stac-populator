@@ -156,14 +156,9 @@ class STACpopulatorBase(ABC):
         failures = 0
         LOGGER.info("Data ingestion")
         for item_name, item_loc, item_data in self._ingest_pipeline:
-            LOGGER.info(f"New data item: {item_name}")
-            LOGGER.info(f"Data location: {item_loc}")
-            stac_item = self.create_stac_item(item_name, item_data)
-            if isinstance(stac_item, tuple):
-                LOGGER.error("Failed to create STAC representation")
-                # error_file.write(f"{stac_item[1]}: {item_loc}\n")
-                failures += 1
-            else:
+            LOGGER.info(f"New data item: {item_name}", extra={"item_loc": item_loc})
+            try:
+                stac_item = self.create_stac_item(item_name, item_data)
                 errc = post_stac_item(
                     self.stac_host,
                     self.collection_id,
@@ -174,10 +169,13 @@ class STACpopulatorBase(ABC):
                 )
                 if errc:
                     LOGGER.error(errc)
-                    # error_file.write(f"{errc}: {item_loc}\n")
                     failures += 1
+            except Exception:
+                LOGGER.exception(
+                    f"Failed to create STAC item for {item_name}",
+                    extra={"item_loc": item_loc, "loader": type(self._ingest_pipeline)},
+                )
+                failures += 1
 
             counter += 1
             LOGGER.info(f"Processed {counter} data items. {failures} failures")
-
-        # error_file.close()
