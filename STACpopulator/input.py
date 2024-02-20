@@ -141,7 +141,9 @@ class THREDDSLoader(GenericLoader):
         if self.catalog_head.datasets.items():
             for item_name, ds in self.catalog_head.datasets.items():
                 attrs = self.extract_metadata(ds)
-                yield item_name, ds.url_path, attrs
+                filename = ds.url_path[ds.url_path.rfind("/") :]
+                url = self.catalog_head.catalog_url[: self.catalog_head.catalog_url.rfind("/")] + filename
+                yield item_name, url, attrs
 
         for name, ref in self.catalog_head.catalog_refs.items():
             self.catalog_head = ref.follow()
