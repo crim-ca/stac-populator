@@ -16,7 +16,6 @@ from STACpopulator.api_requests import (
     stac_host_reachable,
 )
 from STACpopulator.input import GenericLoader
-from STACpopulator.logging import setup_logging
 from STACpopulator.models import AnyGeometry
 from STACpopulator.stac_utils import load_config, url_validate
 
@@ -43,7 +42,6 @@ class STACpopulatorBase(ABC):
         """
 
         super().__init__()
-        self.configure_app_logging(log_debug)
         self._collection_config_path = config_file
         self._collection_info: MutableMapping[str, Any] = None
         self._session = session
@@ -146,14 +144,6 @@ class STACpopulatorBase(ABC):
 
     def publish_stac_collection(self, collection_data: dict[str, Any]) -> None:
         post_stac_collection(self.stac_host, collection_data, self.update, session=self._session)
-
-    def configure_app_logging(self, log_debug) -> None:
-        """Configure the logger for the App."""
-        # generating the log file name
-        implementation_name = type(self).__name__
-        fname = f"{implementation_name}_log_{datetime.strftime(datetime.now(), '%Y%m%d-%H%M%S')}.jsonl"
-        log_level = "DEBUG" if log_debug else "INFO"
-        setup_logging(fname, log_level)
 
     def ingest(self) -> None:
         counter = 0

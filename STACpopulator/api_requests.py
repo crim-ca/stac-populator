@@ -99,10 +99,8 @@ def post_stac_item(
         if update:
             LOGGER.info(f"Item {item_id} already exists. Updating.")
             r = session.put(os.path.join(stac_host, f"collections/{collection_id}/items/{item_id}"), json=json_data)
-            # return f"Requests: {r.reason}"
             r.raise_for_status()
         else:
             LOGGER.warn(f"Item {item_id} already exists.")
     else:
-        # return f"Requests: {r.reason}"
         r.raise_for_status()

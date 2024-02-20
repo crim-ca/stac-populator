@@ -29,7 +29,7 @@ LOG_RECORD_BUILTIN_ATTRS = {
 }
 
 
-def setup_logging(logfname: str, log_level: str) -> None:
+def setup_logging(logfname: str, log_level: int) -> None:
     """Setup the logger for the app.
 
     :param logfname: name of the file to which to write log outputs
@@ -40,7 +40,7 @@ def setup_logging(logfname: str, log_level: str) -> None:
     config = logconfig
     config["handlers"]["file"]["filename"] = logfname
     for handler in config["handlers"]:
-        config["handlers"][handler]["level"] = log_level
+        config["handlers"][handler]["level"] = logging.getLevelName(log_level)
     logging.config.dictConfig(config)
 
 
@@ -97,7 +97,7 @@ logconfig = {
             "datefmt": "%Y-%m-%dT%H:%M:%S%z",
         },
         "json": {
-            "()": "STACpopulator.logging.JSONLogFormatter",
+            "()": f"{JSONLogFormatter.__module__}.{JSONLogFormatter.__name__}",
             "fmt_keys": {
                 "level": "levelname",
                 "message": "message",
