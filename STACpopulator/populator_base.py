@@ -15,8 +15,9 @@ from STACpopulator.api_requests import (
     stac_host_reachable,
 )
 from STACpopulator.input import GenericLoader
+from STACpopulator.logging import setup_logging
 from STACpopulator.models import AnyGeometry
-from STACpopulator.stac_utils import load_config, setup_logging, url_validate
+from STACpopulator.stac_utils import load_config, url_validate
 
 LOGGER = logging.getLogger(__name__)
 
