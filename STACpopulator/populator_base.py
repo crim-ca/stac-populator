@@ -1,5 +1,6 @@
 import functools
 import inspect
+import json
 import logging
 import os
 from abc import ABC, abstractmethod
@@ -162,23 +163,38 @@ class STACpopulatorBase(ABC):
             LOGGER.info(f"New data item: {item_name}", extra={"item_loc": item_loc})
             try:
                 stac_item = self.create_stac_item(item_name, item_data)
-                errc = post_stac_item(
-                    self.stac_host,
-                    self.collection_id,
-                    item_name,
-                    stac_item,
-                    update=self.update,
-                    session=self._session,
-                )
-                if errc:
-                    LOGGER.error(errc)
-                    failures += 1
             except Exception:
                 LOGGER.exception(
                     f"Failed to create STAC item for {item_name}",
                     extra={"item_loc": item_loc, "loader": type(self._ingest_pipeline)},
                 )
                 failures += 1
+                stac_item = None
+
+            if stac_item:
+                try:
+                    post_stac_item(
+                        self.stac_host,
+                        self.collection_id,
+                        item_name,
+                        stac_item,
+                        update=self.update,
+                        session=self._session,
+                    )
+                except Exception:
+                    # Something went wrong on the server side, most likely because the STAC item generated above has
+                    # incorrect data. Writing the STAC item to file so that the issue could be diagnosed and fixed.
+                    stac_output_fname = "error_STAC_rep_" + item_name.split(".")[0] + ".json"
+                    json.dump(stac_item, open(stac_output_fname, "w"), indent=2)
+                    LOGGER.exception(
+                        f"Failed to post STAC item for {item_name}",
+                        extra={
+                            "item_loc": item_loc,
+                            "loader": type(self._ingest_pipeline),
+                            "stac_output_fname": stac_output_fname,
+                        },
+                    )
+                    failures += 1
 
             counter += 1
             LOGGER.info(f"Processed {counter} data items. {failures} failures")

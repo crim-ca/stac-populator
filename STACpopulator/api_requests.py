@@ -73,7 +73,7 @@ def post_stac_item(
     json_data: dict[str, dict],
     update: Optional[bool] = True,
     session: Optional[Session] = None,
-) -> Union[None, str]:
+) -> None:
     """Post a STAC item to the host server.
 
     :param stac_host: address of the STAC host
@@ -99,12 +99,10 @@ def post_stac_item(
         if update:
             LOGGER.info(f"Item {item_id} already exists. Updating.")
             r = session.put(os.path.join(stac_host, f"collections/{collection_id}/items/{item_id}"), json=json_data)
-            return f"Requests: {r.reason}"
-            # r.raise_for_status()
+            # return f"Requests: {r.reason}"
+            r.raise_for_status()
         else:
             LOGGER.warn(f"Item {item_id} already exists.")
     else:
-        return f"Requests: {r.reason}"
-        # r.raise_for_status()
-
-    return None
+        # return f"Requests: {r.reason}"
+        r.raise_for_status()
