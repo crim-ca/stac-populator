@@ -4,6 +4,7 @@ import logging
 import os
 from typing import Any, MutableMapping, NoReturn, Optional, Union
 
+from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
 from requests.sessions import Session
 
@@ -74,6 +75,11 @@ class CMIP6populator(STACpopulatorBase):
             thredds_ext.apply(thredds_helper.services, thredds_helper.links)
         except Exception as e:
             raise Exception("Failed to add THREDDS extension") from e
+
+        try:
+            item.validate()
+        except STACValidationError:
+            raise Exception("Failed to validate STAC item") from e
 
         # print(json.dumps(item.to_dict()))
         return json.loads(json.dumps(item.to_dict()))
