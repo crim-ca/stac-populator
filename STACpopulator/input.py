@@ -8,20 +8,12 @@ import pystac
 import requests
 import siphon
 import xncml
-from colorlog import ColoredFormatter
 from requests.sessions import Session
 from siphon.catalog import TDSCatalog, session_manager
 
 from STACpopulator.stac_utils import numpy_to_python_datatypes, url_validate
 
 LOGGER = logging.getLogger(__name__)
-LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
-formatter = ColoredFormatter(LOGFORMAT)
-stream = logging.StreamHandler()
-stream.setFormatter(formatter)
-LOGGER.addHandler(stream)
-LOGGER.setLevel(logging.INFO)
-LOGGER.propagate = False
 
 
 class GenericLoader(ABC):
@@ -149,7 +141,9 @@ class THREDDSLoader(GenericLoader):
         if self.catalog_head.datasets.items():
             for item_name, ds in self.catalog_head.datasets.items():
                 attrs = self.extract_metadata(ds)
-                yield item_name, ds.url_path, attrs
+                filename = ds.url_path[ds.url_path.rfind("/") :]
+                url = self.catalog_head.catalog_url[: self.catalog_head.catalog_url.rfind("/")] + filename
+                yield item_name, url, attrs
 
         for name, ref in self.catalog_head.catalog_refs.items():
             self.catalog_head = ref.follow()

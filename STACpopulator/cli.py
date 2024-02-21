@@ -1,16 +1,19 @@
 import argparse
 import glob
 import importlib
+import logging
 import os
 import sys
+from datetime import datetime
+from http import cookiejar
 from typing import Callable, Optional
 
 import requests
-from http import cookiejar
 from requests.auth import AuthBase, HTTPBasicAuth, HTTPDigestAuth, HTTPProxyAuth
 from requests.sessions import Session
 
 from STACpopulator import __version__
+from STACpopulator.logging import setup_logging
 
 POPULATORS = {}
 
@@ -54,19 +57,24 @@ def add_request_options(parser: argparse.ArgumentParser) -> None:
     Adds arguments to a parser to allow update of a request session definition used across a populator procedure.
     """
     parser.add_argument(
-        "--no-verify", "--no-ssl", "--no-ssl-verify", dest="verify", action="store_false",
-        help="Disable SSL verification (not recommended unless for development/test servers)."
+        "--no-verify",
+        "--no-ssl",
+        "--no-ssl-verify",
+        dest="verify",
+        action="store_false",
+        help="Disable SSL verification (not recommended unless for development/test servers).",
+    )
+    parser.add_argument("--cert", type=argparse.FileType(), required=False, help="Path to a certificate file to use.")
+    parser.add_argument(
+        "--auth-handler",
+        choices=["basic", "digest", "bearer", "proxy", "cookie"],
+        required=False,
+        help="Authentication strategy to employ for the requests session.",
     )
     parser.add_argument(
-        "--cert", type=argparse.FileType(), required=False, help="Path to a certificate file to use."
-    )
-    parser.add_argument(
-        "--auth-handler", choices=["basic", "digest", "bearer", "proxy", "cookie"], required=False,
-        help="Authentication strategy to employ for the requests session."
-    )
-    parser.add_argument(
-        "--auth-identity", required=False,
-        help="Bearer token, cookie-jar file or proxy/digest/basic username:password for selected authorization handler."
+        "--auth-identity",
+        required=False,
+        help="Bearer token, cookie-jar file or proxy/digest/basic username:password for selected authorization handler.",
     )
 
 
@@ -93,19 +101,29 @@ def apply_request_options(session: Session, namespace: argparse.Namespace) -> No
 
 def make_main_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="stac-populator", description="STACpopulator operations.")
-    parser.add_argument("--version", "-V", action="version", version=f"%(prog)s {__version__}",
-                        help="prints the version of the library and exits")
+    parser.add_argument(
+        "--version",
+        "-V",
+        action="version",
+        version=f"%(prog)s {__version__}",
+        help="prints the version of the library and exits",
+    )
     commands = parser.add_subparsers(title="command", dest="command", description="STAC populator command to execute.")
 
     run_cmd_parser = make_run_command_parser(parser.prog)
     commands.add_parser(
         "run",
-        prog=f"{parser.prog} {run_cmd_parser.prog}", parents=[run_cmd_parser],
-        formatter_class=run_cmd_parser.formatter_class, usage=run_cmd_parser.usage,
-        add_help=False, help=run_cmd_parser.description, description=run_cmd_parser.description
+        prog=f"{parser.prog} {run_cmd_parser.prog}",
+        parents=[run_cmd_parser],
+        formatter_class=run_cmd_parser.formatter_class,
+        usage=run_cmd_parser.usage,
+        add_help=False,
+        help=run_cmd_parser.description,
+        description=run_cmd_parser.description,
     )
 
     # add more commands as needed...
+    parser.add_argument("--debug", action="store_true", help="Set logger level to debug")
 
     return parser
 
@@ -142,9 +160,12 @@ def make_run_command_parser(parent) -> argparse.ArgumentParser:
             populator_prog = f"{parent} {parser.prog} {populator_name}"
             subparsers.add_parser(
                 populator_name,
-                prog=populator_prog, parents=[populator_parser], formatter_class=populator_parser.formatter_class,
+                prog=populator_prog,
+                parents=[populator_parser],
+                formatter_class=populator_parser.formatter_class,
                 add_help=False,  # add help disabled otherwise conflicts with this main populator help
-                help=populator_parser.description, description=populator_parser.description,
+                help=populator_parser.description,
+                description=populator_parser.description,
                 usage=populator_parser.usage,
             )
             POPULATORS[populator_name] = {
@@ -168,6 +189,12 @@ def main(*args: str) -> Optional[int]:
     result = None
     if populator_cmd == "run":
         populator_name = params.pop("populator")
+
+        # Setup the application logger:
+        fname = f"{populator_name}_log_{datetime.utcnow().isoformat() + 'Z'}.jsonl"
+        log_level = logging.DEBUG if ns.debug else logging.INFO
+        setup_logging(fname, log_level)
+
         if not populator_name:
             parser.print_help()
             return 0

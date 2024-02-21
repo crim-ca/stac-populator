@@ -1,19 +1,11 @@
 import logging
 import os
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 import requests
 from requests import Session
-from colorlog import ColoredFormatter
 
 LOGGER = logging.getLogger(__name__)
-LOGFORMAT = "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s"
-formatter = ColoredFormatter(LOGFORMAT)
-stream = logging.StreamHandler()
-stream.setFormatter(formatter)
-LOGGER.addHandler(stream)
-LOGGER.setLevel(logging.INFO)
-LOGGER.propagate = False
 
 
 def stac_host_reachable(url: str, session: Optional[Session] = None) -> bool:
@@ -109,6 +101,6 @@ def post_stac_item(
             r = session.put(os.path.join(stac_host, f"collections/{collection_id}/items/{item_id}"), json=json_data)
             r.raise_for_status()
         else:
-            LOGGER.info(f"Item {item_id} already exists.")
+            LOGGER.warn(f"Item {item_id} already exists.")
     else:
         r.raise_for_status()
