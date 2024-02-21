@@ -7,28 +7,40 @@ from typing import (
     List,
     Literal,
     MutableMapping,
+    Optional,
     Type,
     TypeVar,
     Union,
-    Optional,
     cast,
-    get_args
+    get_args,
 )
 
-import pystac
 import pyessv
-from pydantic import AnyHttpUrl, BaseModel, ConfigDict, Field, FieldValidationInfo, field_validator
+import pystac
+from pydantic import (
+    AnyHttpUrl,
+    BaseModel,
+    ConfigDict,
+    Field,
+    FieldValidationInfo,
+    field_validator,
+)
 from pydantic.fields import FieldInfo
 from pystac.extensions import item_assets
+from pystac.extensions.base import S  # generic pystac.STACObject
 from pystac.extensions.base import (
     ExtensionManagementMixin,
     PropertiesExtension,
     SummariesExtension,
-    S,  # generic pystac.STACObject
 )
 
 from STACpopulator.models import AnyGeometry
-from STACpopulator.stac_utils import ServiceType, collection2literal, ncattrs_to_bbox, ncattrs_to_geometry
+from STACpopulator.stac_utils import (
+    ServiceType,
+    collection2literal,
+    ncattrs_to_bbox,
+    ncattrs_to_geometry,
+)
 
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
 
@@ -240,9 +252,7 @@ class CMIP6Extension(
             raise pystac.ExtensionTypeError(cls._ext_error_message(obj))
 
     @classmethod
-    def summaries(
-        cls, obj: pystac.Collection, add_if_missing: bool = False
-    ) -> "SummariesCMIP6Extension":
+    def summaries(cls, obj: pystac.Collection, add_if_missing: bool = False) -> "SummariesCMIP6Extension":
         """Returns the extended summaries object for the given collection."""
         cls.ensure_has_extension(obj, add_if_missing)
         return SummariesCMIP6Extension(obj)
@@ -278,19 +288,14 @@ class ItemCMIP6Extension(CMIP6Extension[pystac.Item]):
         return {
             key: asset
             for key, asset in self.item.get_assets().items()
-            if (
-                service_type is ServiceType and service_type.value in asset.extra_fields
-            )
-            or any(
-                ServiceType.from_value(field, default=None) is ServiceType
-                for field in asset.extra_fields
-            )
+            if (service_type is ServiceType and service_type.value in asset.extra_fields)
+            or any(ServiceType.from_value(field, default=None) is ServiceType for field in asset.extra_fields)
         }
 
     def __repr__(self) -> str:
         return f"<ItemCMIP6Extension Item id={self.item.id}>"
-    
-    
+
+
 class ItemAssetsCMIP6Extension(CMIP6Extension[item_assets.AssetDefinition]):
     properties: dict[str, Any]
     asset_defn: item_assets.AssetDefinition
@@ -334,6 +339,7 @@ class SummariesCMIP6Extension(SummariesExtension):
     the ``summaries`` field of a :class:`~pystac.Collection` to include properties
     defined in the :stac-ext:`CMIP6 <cmip6>`.
     """
+
     def _check_cmip6_property(self, prop: str) -> FieldInfo:
         try:
             return CMIP6Properties.model_fields[prop]
@@ -363,6 +369,5 @@ class SummariesCMIP6Extension(SummariesExtension):
 
 
 class CollectionCMIP6Extension(CMIP6Extension[pystac.Collection]):
-
     def __init__(self, collection: pystac.Collection):
         self.collection = collection
