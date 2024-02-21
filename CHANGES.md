@@ -2,7 +2,12 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
-<!-- insert list items of new changes here -->
+* Replace CMIP6 JSON-schema URL to
+  `"https://raw.githubusercontent.com/dchandan/stac-extension-cmip6/main/json-schema/schema.json"`
+  for a more up-to-date validation of available STAC CMIP6 properties.
+* Add `.jsonl` logging and error reporting of failed STAC Item publishing to the server.
+* Improve logging configuration setup and level selection from CLI `--debug` argument.
+* Fix a bug related to `THREDDSLoader` incorrectly handling the depth of crawled directories.
 
 ## [0.5.0](https://github.com/crim-ca/stac-populator/tree/0.5.0) (2024-01-09)
 
