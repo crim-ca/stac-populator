@@ -123,6 +123,7 @@ def make_main_parser() -> argparse.ArgumentParser:
     )
 
     # add more commands as needed...
+    parser.add_argument("--debug", action="store_true", help="Set logger level to debug")
 
     return parser
 

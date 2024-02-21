@@ -98,7 +98,6 @@ def make_parser() -> argparse.ArgumentParser:
             "By default, uses the adjacent configuration to the implementation class."
         ),
     )
-    parser.add_argument("--debug", action="store_true", help="Set logger level to debug")
     add_request_options(parser)
     return parser
 
