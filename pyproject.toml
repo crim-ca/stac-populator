@@ -51,7 +51,7 @@ output = "reports/coverage.xml"
 
 
 [tool.bumpversion]
-current_version = "0.5.0"
+current_version = "0.6.0"
 commit = true
 commit_args = "--no-verify"
 tag = true
@@ -98,9 +98,10 @@ regex = true
 search = "^name = \"STACpopulator\"\nversion = \"{current_version}\"$"
 replace = "name = \"STACpopulator\"\nversion = \"{new_version}\""
 
+
 [project]
 name = "STACpopulator"
-version = "0.5.0"
+version = "0.6.0"
 description = "Utility to populate STAC Catalog, Collections and Items from various dataset/catalog sources."
 requires-python = ">=3.10"
 dependencies = [

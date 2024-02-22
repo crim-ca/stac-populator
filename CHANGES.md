@@ -2,6 +2,11 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
+<!-- insert list items of new changes here -->
+
+## [0.6.0](https://github.com/crim-ca/stac-populator/tree/0.6.0) (2024-02-22)
+
+
 * Add validation to the STAC Items in `CMIP6_UofT` implementation.
 * Replace CMIP6 JSON-schema URL to
   `"https://raw.githubusercontent.com/dchandan/stac-extension-cmip6/main/json-schema/schema.json"`
