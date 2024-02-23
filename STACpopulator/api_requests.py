@@ -93,14 +93,16 @@ def post_stac_item(
     item_url = os.path.join(stac_host, f"collections/{collection_id}/items")
     r = session.post(item_url, json=json_data)
 
+    extra_log_info = {"item_id": item_id, "item_url": os.path.join(item_url, item_id)}
+
     if r.status_code == 200:
-        LOGGER.info(f"Item {item_name} successfully added")
+        LOGGER.info(f"Item {item_name} successfully added", extra=extra_log_info)
     elif r.status_code == 409:
         if update:
-            LOGGER.info(f"Item {item_id} already exists. Updating.")
+            LOGGER.info(f"Item {item_id} already exists. Updating.", extra=extra_log_info)
             r = session.put(os.path.join(stac_host, f"collections/{collection_id}/items/{item_id}"), json=json_data)
             r.raise_for_status()
         else:
-            LOGGER.warn(f"Item {item_id} already exists.")
+            LOGGER.warn(f"Item {item_id} already exists.", extra=extra_log_info)
     else:
         r.raise_for_status()
