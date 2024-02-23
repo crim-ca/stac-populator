@@ -169,10 +169,8 @@ class DataCubeHelper:
                             properties = dict(
                                 type=type_.value,
                                 extent=extent,
-                                description=v.get(
-                                    "description",
-                                    v.get("long_name", criteria["standard_name"][0])
-                                ) or "",
+                                description=v.get("description", v.get("long_name", criteria["standard_name"][0]))
+                                or "",
                             )
                             if type_ == DimensionType.SPATIAL:
                                 properties["axis"] = axis
@@ -197,6 +195,8 @@ class DataCubeHelper:
                 # Some variables like "time_bnds" in some model files do not have any attributes.
                 attrs = {}
 
+            self._infer_variable_units_description(name, attrs)
+
             variables[name] = Variable(
                 properties=dict(
                     dimensions=meta["shape"],
@@ -206,6 +206,25 @@ class DataCubeHelper:
                 )
             )
         return variables
+
+    def _infer_variable_units_description(self, name, attrs):
+        """Try to infer the units and description of some simple coordinate variables."""
+        if name == "time_bnds":
+            related_variable = "time"
+            attrs["description"] = "bounds for the time coordinate"
+        elif name == "lat_bnds":
+            related_variable = "lat"
+            attrs["description"] = "bounds for the latitude coordinate"
+        elif name == "lon_bnds":
+            related_variable = "lon"
+            attrs["description"] = "bounds for the longitude coordinate"
+        else:
+            return
+
+        try:
+            attrs["units"] = self.attrs["variables"][related_variable]["attributes"]["units"]
+        except KeyError:
+            pass
 
     def is_coordinate(self, attrs: MutableMapping[str, Any]) -> bool:
         """Return whether variable is a coordinate."""
