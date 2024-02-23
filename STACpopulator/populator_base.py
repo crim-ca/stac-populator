@@ -5,7 +5,7 @@ import logging
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, MutableMapping, Optional, Type, Union
+from typing import Any, Dict, MutableMapping, Optional, Type, Union
 
 import pystac
 from requests.sessions import Session
@@ -135,12 +135,26 @@ class STACpopulatorBase(ABC):
         )
         self._collection_info["extent"] = pystac.Extent(sp_extent, tmp_extent)
         self._collection_info["summaries"] = pystac.Summaries({"needs_summaries_update": ["true"]})
+
+        if "assets" in self._collection_info:
+            self._collection_info["assets"] = self.__make_collection_assets()
         collection = pystac.Collection(**self._collection_info)
 
         collection.add_links(self._ingest_pipeline.links)
         collection_data = collection.to_dict()
         self.publish_stac_collection(collection_data)
         return collection_data
+
+    def __make_collection_assets(self) -> Dict[pystac.Asset]:
+        """Creates collection level assets based on data read in from the configuration file.
+
+        :return: Dictionary of pystac Asset objects
+        :rtype: Dict[pystac.Asset]
+        """
+        pystac_assets = {}
+        for asset_name, asset_info in self._collection_info["assets"].items():
+            pystac_assets[asset_name] = pystac.Asset(**asset_info)
+        return pystac_assets
 
     def publish_stac_collection(self, collection_data: dict[str, Any]) -> None:
         post_stac_collection(self.stac_host, collection_data, self.update, session=self._session)
