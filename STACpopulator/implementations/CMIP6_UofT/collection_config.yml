@@ -5,3 +5,16 @@ keywords: ['CMIP', 'CMIP6', 'WCRP', 'Climate Change']
 license: "CC-BY-4.0"
 spatialextent: [-180, -90, 180, 90]
 temporalextent: ['1850-01-01', null]
+
+assets:
+  homepage:
+      title : Project homepage
+      href : https://wcrp-cmip.org/cmip-phase-6-cmip6/
+      description: CMIP6 project homepage
+      media_type: text/html
+  license:
+      title : License
+      href : https://raw.githubusercontent.com/WCRP-CMIP/CMIP6_CVs/main/LICENSE-CC-BY
+      description: License for CMIP6 data
+      media_type: text/plain
+
