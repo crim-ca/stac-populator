@@ -4,7 +4,7 @@ description: Coupled Model Intercomparison Project phase 6
 keywords: ['CMIP', 'CMIP6', 'WCRP', 'Climate Change']
 license: "CC-BY-4.0"
 spatialextent: [-180, -90, 180, 90]
-temporalextent: ['1850-01-01', null]
+temporalextent: ['1850-01-01', '2500-01-01']
 
 assets:
   homepage:
