@@ -189,11 +189,8 @@ class DataCubeHelper:
             if name in self.attrs["dimensions"]:
                 continue
 
-            try:
-                attrs = meta["attributes"]
-            except KeyError:
-                # Some variables like "time_bnds" in some model files do not have any attributes.
-                attrs = {}
+            # Some variables like "time_bnds" in some model files do not have any attributes.
+            attrs = meta.get("attributes", {})
 
             self._infer_variable_units_description(name, attrs)
 
