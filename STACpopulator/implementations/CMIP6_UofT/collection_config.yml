@@ -6,15 +6,15 @@ license: "CC-BY-4.0"
 spatialextent: [-180, -90, 180, 90]
 temporalextent: ['1850-01-01', '2500-01-01']
 
-assets:
+links:
   homepage:
+      rel: about
       title : Project homepage
-      href : https://wcrp-cmip.org/cmip-phase-6-cmip6/
-      description: CMIP6 project homepage
+      target : https://wcrp-cmip.org/cmip-phase-6-cmip6/
       media_type: text/html
   license:
+      rel: license  
       title : License
-      href : https://raw.githubusercontent.com/WCRP-CMIP/CMIP6_CVs/main/LICENSE-CC-BY
-      description: License for CMIP6 data
+      target : https://raw.githubusercontent.com/WCRP-CMIP/CMIP6_CVs/main/LICENSE-CC-BY
       media_type: text/plain
 
