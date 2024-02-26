@@ -145,7 +145,7 @@ class STACpopulatorBase(ABC):
         self.publish_stac_collection(collection_data)
         return collection_data
 
-    def __make_collection_assets(self) -> Dict[pystac.Asset]:
+    def __make_collection_assets(self) -> Dict[str, pystac.Asset]:
         """Creates collection level assets based on data read in from the configuration file.
 
         :return: Dictionary of pystac Asset objects
