@@ -225,6 +225,11 @@ class DataCubeHelper:
 
     def is_coordinate(self, attrs: MutableMapping[str, Any]) -> bool:
         """Return whether variable is a coordinate."""
+
+        if (desc := attrs.get("description", None)) is not None:
+            if "bounds for" in desc:
+                return True
+
         for key, criteria in self.coordinate_criteria.items():
             for criterion, expected in criteria.items():
                 if attrs.get(criterion, None) in expected:
