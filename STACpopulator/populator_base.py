@@ -5,7 +5,7 @@ import logging
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Dict, MutableMapping, Optional, Type, Union
+from typing import Any, Dict, List, MutableMapping, Optional, Type, Union
 
 import pystac
 from requests.sessions import Session
@@ -136,14 +136,37 @@ class STACpopulatorBase(ABC):
         self._collection_info["extent"] = pystac.Extent(sp_extent, tmp_extent)
         self._collection_info["summaries"] = pystac.Summaries({"needs_summaries_update": ["true"]})
 
+        # Add any assets if provided in the config
         if "assets" in self._collection_info:
             self._collection_info["assets"] = self.__make_collection_assets()
+
+        # Construct links if provided in the config
+        if "links" in self._collection_info:
+            collection_links = self.__make_collection_links()
+            # need to remove the links item other constructing a collection object fails
+            _ = self._collection_info.pop("links")
+        else:
+            collection_links = []
+
         collection = pystac.Collection(**self._collection_info)
 
+        if collection_links:
+            collection.add_links(collection_links)
         collection.add_links(self._ingest_pipeline.links)
         collection_data = collection.to_dict()
         self.publish_stac_collection(collection_data)
         return collection_data
+
+    def __make_collection_links(self) -> List[pystac.Link]:
+        """Create collection level links based on data read in from the configuration file.
+
+        :return: List of pystac Link objects
+        :rtype: List[pystac.Link]
+        """
+        links = []
+        for link_name, link_info in self._collection_info["links"].items():
+            links.append(pystac.Link(**link_info))
+        return links
 
     def __make_collection_assets(self) -> Dict[str, pystac.Asset]:
         """Creates collection level assets based on data read in from the configuration file.
