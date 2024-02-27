@@ -158,7 +158,7 @@ class STACpopulatorBase(ABC):
         :rtype: List[pystac.Link]
         """
         links = []
-        config_links = self._collection_info.pop("links", [])
+        config_links = self._collection_info.pop("links", {})
         for link_name, link_info in config_links.items():
             links.append(pystac.Link(**link_info))
         return links
