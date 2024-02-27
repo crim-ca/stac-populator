@@ -1,0 +1,133 @@
+<ncml:netcdf xmlns:ncml="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2" location="https://redoak.cs.toronto.edu/twitcher/ows/proxy/thredds/dodsC/datasets/CMIP6/CMIP/EC-Earth-Consortium/EC-Earth3/historical/r2i1p1f1/Amon/clt/gr/v20201215/clt_Amon_EC-Earth3_historical_r2i1p1f1_gr_185001-201412.nc">
+<ncml:attribute name="Conventions" value="CF-1.7 CMIP-6.2"/>
+<ncml:attribute name="activity_id" value="CMIP"/>
+<ncml:attribute name="branch_time" type="double" value="0.0"/>
+<ncml:attribute name="contact" value="cmip6-data@ec-earth.org"/>
+<ncml:attribute name="creation_date" value="2019-08-13T19:08:49Z"/>
+<ncml:attribute name="data_specs_version" value="01.00.27"/>
+<ncml:attribute name="experiment" value="all-forcing simulation of the recent past"/>
+<ncml:attribute name="experiment_id" value="historical"/>
+<ncml:attribute name="external_variables" value="areacella"/>
+<ncml:attribute name="forcing_index" type="int" value="1"/>
+<ncml:attribute name="frequency" value="mon"/>
+<ncml:attribute name="further_info_url" value="https://furtherinfo.es-doc.org/CMIP6.EC-Earth-Consortium.EC-Earth3.historical.none.r2i1p1f1"/>
+<ncml:attribute name="grid" value="ORCA1T255"/>
+<ncml:attribute name="grid_label" value="gr"/>
+<ncml:attribute name="initialization_index" type="int" value="1"/>
+<ncml:attribute name="institution" value="AEMET, Spain; BSC, Spain; CNR-ISAC, Italy; DMI, Denmark; ENEA, Italy; FMI, Finland; Geomar, Germany; ICHEC, Ireland; ICTP, Italy; IDL, Portugal; IMAU, The Netherlands; IPMA, Portugal; KIT, Karlsruhe, Germany; KNMI, The Netherlands; Lund University, Sweden; Met Eireann, Ireland; NLeSC, The Netherlands; NTNU, Norway; Oxford University, UK; surfSARA, The Netherlands; SMHI, Sweden; Stockholm University, Sweden; Unite ASTR, Belgium; University College Dublin, Ireland; University of Bergen, Norway; University of Copenhagen, Denmark; University of Helsinki, Finland; University of Santiago de Compostela, Spain; Uppsala University, Sweden; Utrecht University, The Netherlands; Vrije Universiteit Amsterdam, the Netherlands; Wageningen University, The Netherlands. Mailing address: EC-Earth consortium, Rossby Center, Swedish Meteorological and Hydrological Institute/SMHI, SE-601 76 Norrkoping, Sweden"/>
+<ncml:attribute name="institution_id" value="EC-Earth-Consortium"/>
+<ncml:attribute name="mip_era" value="CMIP6"/>
+<ncml:attribute name="parent_activity_id" value="CMIP"/>
+<ncml:attribute name="parent_experiment_id" value="piControl"/>
+<ncml:attribute name="parent_mip_era" value="CMIP6"/>
+<ncml:attribute name="parent_source_id" value="EC-Earth3"/>
+<ncml:attribute name="parent_sub_experiment_id" value="no parent"/>
+<ncml:attribute name="parent_time_units" value="days since 1850-01-01"/>
+<ncml:attribute name="physics_index" type="int" value="1"/>
+<ncml:attribute name="product" value="model-output"/>
+<ncml:attribute name="realization_index" type="int" value="2"/>
+<ncml:attribute name="realm" value="atmos"/>
+<ncml:attribute name="source" value="EC-Earth3 (2019): aerosol: none atmos: IFS cy36r4 (TL255, linearly reduced Gaussian grid equivalent to 512 x 256 longitude/latitude; 91 levels; top level 0.01 hPa) atmosChem: none land: HTESSEL (land surface scheme built in IFS) landIce: none ocean: NEMO3.6 (ORCA1 tripolar primarily 1 deg with meridional refinement down to 1/3 degree in the tropics; 362 x 292 longitude/latitude; 75 levels; top grid cell 0-1 m) ocnBgchem: none seaIce: LIM3"/>
+<ncml:attribute name="source_id" value="EC-Earth3"/>
+<ncml:attribute name="source_type" value="AOGCM"/>
+<ncml:attribute name="sub_experiment" value="none"/>
+<ncml:attribute name="sub_experiment_id" value="none"/>
+<ncml:attribute name="table_id" value="Amon"/>
+<ncml:attribute name="table_info" value="Creation Date:(20 July 2018) MD5:b2dc68c38656de0e72d665d82e3c038c"/>
+<ncml:attribute name="title" value="EC-Earth3 output prepared for CMIP6"/>
+<ncml:attribute name="variable_id" value="clt"/>
+<ncml:attribute name="variant_info" value="forcing: Nat.Ant. Member generated from autosubmit member fc0"/>
+<ncml:attribute name="variant_label" value="r2i1p1f1"/>
+<ncml:attribute name="license" value="CMIP6 model data produced by EC-Earth-Consortium is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License (https://creativecommons.org/licenses). Consult https://pcmdi.llnl.gov/CMIP6/TermsOfUse for terms of use governing CMIP6 output, including citation requirements and proper acknowledgment. Further information about this data, including some limitations, can be found via the further_info_url (recorded as a global attribute in this file) . The data producers and data providers make no warranty, either express or implied, including, but not limited to, warranties of merchantability and fitness for a particular purpose. All liabilities arising from the supply of the information (including any liability arising in negligence) are excluded to the fullest extent permitted by law."/>
+<ncml:attribute name="cmor_version" value="3.4.0"/>
+<ncml:attribute name="nominal_resolution" value="100 km"/>
+<ncml:attribute name="branch_method" value="standard"/>
+<ncml:attribute name="branch_time_in_parent" type="double" value="164358.0"/>
+<ncml:attribute name="branch_time_in_child" type="double" value="0.0"/>
+<ncml:attribute name="parent_variant_label" value="r1i1p1f1"/>
+<ncml:attribute name="history" value="This file was generated on Fri Nov 3 20:42:43 2023 by combining two or more individual files for this dataset."/>
+<ncml:attribute name="_CoordSysBuilder" value="ucar.nc2.dataset.conv.CF1Convention"/>
+<ncml:dimension name="time" length="1980" isUnlimited="true"/>
+<ncml:dimension name="lat" length="256"/>
+<ncml:dimension name="lon" length="512"/>
+<ncml:dimension name="bnds" length="2"/>
+<group xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2" name="CFMetadata">
+<attribute name="geospatial_lon_min" value=".0" type="float"/>
+<attribute name="geospatial_lat_min" value="-89.46282" type="float"/>
+<attribute name="geospatial_lon_max" value="359.29688" type="float"/>
+<attribute name="geospatial_lat_max" value="89.46282" type="float"/>
+<attribute name="geospatial_lon_units" value="degrees_east"/>
+<attribute name="geospatial_lat_units" value="degrees_north"/>
+<attribute name="geospatial_lon_resolution" value="0.703125"/>
+<attribute name="geospatial_lat_resolution" value="0.7016691764705881"/>
+<attribute name="time_coverage_start" value="1850-01-16T12:00:00Z"/>
+<attribute name="time_coverage_end" value="2014-12-16T12:00:00Z"/>
+<attribute name="time_coverage_units" value="seconds"/>
+<attribute name="time_coverage_resolution" value="2629720.0"/>
+<attribute name="time_coverage_duration" value="P0Y0M60234DT0H0M0.000S"/>
+</group>
+<group xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2" name="NCISOMetadata">
+<attribute name="metadata_creation" value="2024-02-27"/>
+<attribute name="nciso_version" value="2.2.3"/>
+</group>
+<group xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2" name="THREDDSMetadata">
+<attribute name="id" value="datasets/CMIP6/CMIP/EC-Earth-Consortium/EC-Earth3/historical/r2i1p1f1/Amon/clt/gr/v20201215/clt_Amon_EC-Earth3_historical_r2i1p1f1_gr_185001-201412.nc"/>
+<attribute name="full_name" value="v20201215/clt_Amon_EC-Earth3_historical_r2i1p1f1_gr_185001-201412.nc"/>
+<group name="services">
+<attribute name="httpserver_service" value="https://redoak.cs.toronto.edu/twitcher/ows/proxy/thredds/fileServer/datasets/CMIP6/CMIP/EC-Earth-Consortium/EC-Earth3/historical/r2i1p1f1/Amon/clt/gr/v20201215/clt_Amon_EC-Earth3_historical_r2i1p1f1_gr_185001-201412.nc"/>
+<attribute name="opendap_service" value="https://redoak.cs.toronto.edu/twitcher/ows/proxy/thredds/dodsC/datasets/CMIP6/CMIP/EC-Earth-Consortium/EC-Earth3/historical/r2i1p1f1/Amon/clt/gr/v20201215/clt_Amon_EC-Earth3_historical_r2i1p1f1_gr_185001-201412.nc"/>
+<attribute name="nccs_service" value="https://redoak.cs.toronto.edu/twitcher/ows/proxy/thredds/ncss/datasets/CMIP6/CMIP/EC-Earth-Consortium/EC-Earth3/historical/r2i1p1f1/Amon/clt/gr/v20201215/clt_Amon_EC-Earth3_historical_r2i1p1f1_gr_185001-201412.nc/dataset.html"/>
+</group>
+<group name="dates">
+<attribute name="date" value="2023-11-03T20:43:10.555Z" type="modified"/>
+</group>
+</group>
+<ncml:variable name="time_bnds" shape="time bnds" type="double">
+<ncml:attribute name="units" value="days since 1850-01-01"/>
+<ncml:attribute name="_ChunkSizes" type="int" value="1 2"/>
+</ncml:variable>
+<ncml:variable name="lat_bnds" shape="lat bnds" type="double">
+<ncml:attribute name="_ChunkSizes" type="int" value="256 2"/>
+</ncml:variable>
+<ncml:variable name="lon_bnds" shape="lon bnds" type="double">
+<ncml:attribute name="_ChunkSizes" type="int" value="512 2"/>
+</ncml:variable>
+<ncml:variable name="clt" shape="time lat lon" type="float">
+<ncml:attribute name="_FillValue" type="float" value="1.0E20"/>
+<ncml:attribute name="standard_name" value="cloud_area_fraction"/>
+<ncml:attribute name="long_name" value="Total Cloud Fraction"/>
+<ncml:attribute name="comment" value="Total cloud area fraction for the whole atmospheric column, as seen from the surface or the top of the atmosphere. Includes both large-scale and convective cloud."/>
+<ncml:attribute name="units" value="%"/>
+<ncml:attribute name="cell_methods" value="area: time: mean"/>
+<ncml:attribute name="cell_measures" value="area: areacella"/>
+<ncml:attribute name="history" value="2019-08-13T19:08:49Z altered by CMOR: Reordered dimensions, original order: lat lon time."/>
+<ncml:attribute name="missing_value" type="float" value="1.0E20"/>
+<ncml:attribute name="_ChunkSizes" type="int" value="1 256 512"/>
+</ncml:variable>
+<ncml:variable name="time" shape="time" type="double">
+<ncml:attribute name="bounds" value="time_bnds"/>
+<ncml:attribute name="axis" value="T"/>
+<ncml:attribute name="long_name" value="time"/>
+<ncml:attribute name="standard_name" value="time"/>
+<ncml:attribute name="units" value="days since 1850-01-01"/>
+<ncml:attribute name="calendar" value="gregorian"/>
+<ncml:attribute name="_ChunkSizes" type="int" value="1"/>
+<ncml:attribute name="_CoordinateAxisType" value="Time"/>
+</ncml:variable>
+<ncml:variable name="lat" shape="lat" type="double">
+<ncml:attribute name="bounds" value="lat_bnds"/>
+<ncml:attribute name="units" value="degrees_north"/>
+<ncml:attribute name="axis" value="Y"/>
+<ncml:attribute name="long_name" value="latitude"/>
+<ncml:attribute name="standard_name" value="latitude"/>
+<ncml:attribute name="_CoordinateAxisType" value="Lat"/>
+</ncml:variable>
+<ncml:variable name="lon" shape="lon" type="double">
+<ncml:attribute name="bounds" value="lon_bnds"/>
+<ncml:attribute name="units" value="degrees_east"/>
+<ncml:attribute name="axis" value="X"/>
+<ncml:attribute name="long_name" value="Longitude"/>
+<ncml:attribute name="standard_name" value="longitude"/>
+<ncml:attribute name="_CoordinateAxisType" value="Lon"/>
+</ncml:variable>
+</ncml:netcdf>

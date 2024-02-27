@@ -2,7 +2,8 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
-<!-- insert list items of new changes here -->
+* Make sure *bounds* variables are given the auxiliary type attribute. 
+* Fix for variables that have no attributes.
 
 ## [0.6.0](https://github.com/crim-ca/stac-populator/tree/0.6.0) (2024-02-22)
 

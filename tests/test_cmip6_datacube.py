@@ -35,3 +35,22 @@ def test_datacube_helper():
     assert len(schemas) >= 2
     assert "item.json" in schemas[0]
     assert "datacube" in schemas[1]
+
+
+def test_auxiliary_variables():
+    # https://github.com/crim-ca/stac-populator/issues/52
+
+    file_path = DIR / "data" / "clt_Amon_EC-Earth3_historical_r2i1p1f1_gr_185001-201412.xml"
+
+    ds = xncml.Dataset(filepath=str(file_path))
+    attrs = ds.to_cf_dict()
+    attrs["access_urls"] = {"HTTPServer": "http://example.com"}
+    item = CMIP6Helper(attrs, GeoJSONPolygon).stac_item()
+
+    dc = DataCubeHelper(attrs)
+    dc_ext = DatacubeExtension.ext(item, add_if_missing=True)
+    dc_ext.apply(dimensions=dc.dimensions, variables=dc.variables)
+
+    p = dc_ext.properties
+    assert set(['time', 'lat', 'lon']) == set(p['cube:dimensions'].keys())
+    assert p["cube:variables"]["lon_bnds"]["unit"] == "degrees_east"
