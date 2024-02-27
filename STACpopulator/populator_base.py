@@ -137,16 +137,10 @@ class STACpopulatorBase(ABC):
         self._collection_info["summaries"] = pystac.Summaries({"needs_summaries_update": ["true"]})
 
         # Add any assets if provided in the config
-        if "assets" in self._collection_info:
-            self._collection_info["assets"] = self.__make_collection_assets()
+        self._collection_info["assets"] = self.__make_collection_assets()
 
-        # Construct links if provided in the config
-        if "links" in self._collection_info:
-            collection_links = self.__make_collection_links()
-            # need to remove the links item other constructing a collection object fails
-            _ = self._collection_info.pop("links")
-        else:
-            collection_links = []
+        # Construct links if provided in the config. This needs to be done before constructing a collection object.
+        collection_links = self.__make_collection_links()
 
         collection = pystac.Collection(**self._collection_info)
 
@@ -164,7 +158,8 @@ class STACpopulatorBase(ABC):
         :rtype: List[pystac.Link]
         """
         links = []
-        for link_name, link_info in self._collection_info["links"].items():
+        config_links = self._collection_info.pop("links", [])
+        for link_name, link_info in config_links.items():
             links.append(pystac.Link(**link_info))
         return links
 
@@ -175,8 +170,9 @@ class STACpopulatorBase(ABC):
         :rtype: Dict[pystac.Asset]
         """
         pystac_assets = {}
-        for asset_name, asset_info in self._collection_info["assets"].items():
-            pystac_assets[asset_name] = pystac.Asset(**asset_info)
+        if "assets" in self._collection_info:
+            for asset_name, asset_info in self._collection_info["assets"].items():
+                pystac_assets[asset_name] = pystac.Asset(**asset_info)
         return pystac_assets
 
     def publish_stac_collection(self, collection_data: dict[str, Any]) -> None:
