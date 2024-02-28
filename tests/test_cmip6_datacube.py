@@ -54,3 +54,6 @@ def test_auxiliary_variables():
     p = dc_ext.properties
     assert set(['time', 'lat', 'lon']) == set(p['cube:dimensions'].keys())
     assert p["cube:variables"]["lon_bnds"]["unit"] == "degrees_east"
+    assert p["cube:variables"]["time_bnds"]["unit"] == "days since 1850-01-01"
+    assert p["cube:variables"]["clt"]["type"] == "data"
+    assert p["cube:variables"]["time_bnds"]["type"] == "auxiliary"

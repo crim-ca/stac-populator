@@ -2,8 +2,13 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
+<!-- insert list items of new changes here -->
 * Make sure *bounds* variables are given the auxiliary type attribute. 
 * Fix for variables that have no attributes.
+* Adding ability to add collection level assets
+* Adding ability to add collection level links
+* Adding collection links to `CMIP6_UofT`
+* Adding an end date to `CMIP6_UofT`'s temporal extent for better rendering in STAC Browser
 
 ## [0.6.0](https://github.com/crim-ca/stac-populator/tree/0.6.0) (2024-02-22)
 
