@@ -159,7 +159,7 @@ class STACpopulatorBase(ABC):
         """
         links = []
         config_links = self._collection_info.pop("links", {})
-        for link_name, link_info in config_links.items():
+        for link_info in config_links:
             links.append(pystac.Link(**link_info))
         return links
 

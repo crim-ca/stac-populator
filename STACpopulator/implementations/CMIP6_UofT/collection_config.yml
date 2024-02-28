@@ -7,13 +7,11 @@ spatialextent: [-180, -90, 180, 90]
 temporalextent: ['1850-01-01', '2500-01-01']
 
 links:
-  homepage:
-      rel: about
+    - rel: about
       title : Project homepage
       target : https://wcrp-cmip.org/cmip-phase-6-cmip6/
       media_type: text/html
-  license:
-      rel: license  
+    - rel: license  
       title : License
       target : https://raw.githubusercontent.com/WCRP-CMIP/CMIP6_CVs/main/LICENSE-CC-BY
       media_type: text/plain
