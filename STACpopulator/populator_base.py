@@ -5,7 +5,7 @@ import logging
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, MutableMapping, Optional, Type, Union
+from typing import Any, Dict, List, MutableMapping, Optional, Type, Union
 
 import pystac
 from requests.sessions import Session
@@ -135,12 +135,45 @@ class STACpopulatorBase(ABC):
         )
         self._collection_info["extent"] = pystac.Extent(sp_extent, tmp_extent)
         self._collection_info["summaries"] = pystac.Summaries({"needs_summaries_update": ["true"]})
+
+        # Add any assets if provided in the config
+        self._collection_info["assets"] = self.__make_collection_assets()
+
+        # Construct links if provided in the config. This needs to be done before constructing a collection object.
+        collection_links = self.__make_collection_links()
+
         collection = pystac.Collection(**self._collection_info)
 
+        if collection_links:
+            collection.add_links(collection_links)
         collection.add_links(self._ingest_pipeline.links)
         collection_data = collection.to_dict()
         self.publish_stac_collection(collection_data)
         return collection_data
+
+    def __make_collection_links(self) -> List[pystac.Link]:
+        """Create collection level links based on data read in from the configuration file.
+
+        :return: List of pystac Link objects
+        :rtype: List[pystac.Link]
+        """
+        links = []
+        config_links = self._collection_info.pop("links", {})
+        for link_info in config_links:
+            links.append(pystac.Link(**link_info))
+        return links
+
+    def __make_collection_assets(self) -> Dict[str, pystac.Asset]:
+        """Creates collection level assets based on data read in from the configuration file.
+
+        :return: Dictionary of pystac Asset objects
+        :rtype: Dict[pystac.Asset]
+        """
+        pystac_assets = {}
+        if "assets" in self._collection_info:
+            for asset_name, asset_info in self._collection_info["assets"].items():
+                pystac_assets[asset_name] = pystac.Asset(**asset_info)
+        return pystac_assets
 
     def publish_stac_collection(self, collection_data: dict[str, Any]) -> None:
         post_stac_collection(self.stac_host, collection_data, self.update, session=self._session)
