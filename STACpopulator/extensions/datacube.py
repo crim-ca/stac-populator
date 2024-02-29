@@ -202,6 +202,9 @@ class DataCubeHelper:
                     if (u := self.attrs["variables"][bounds[name]].get("attributes", {}).get("units")) is not None:
                         attrs["units"] = u
 
+                if "description" not in "attrs":
+                    attrs["description"] = f"bounds for the {bounds[name]} coordinate"
+
             elif self.is_coordinate(attrs):
                 # Using the CF-xarray heuristics to determine if variable is a coordinate.
                 dtype = VariableType.AUXILIARY.value
