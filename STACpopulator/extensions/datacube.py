@@ -184,6 +184,7 @@ class DataCubeHelper:
     def variables(self) -> dict[str, Variable]:
         """Return Variable objects required for Datacube extension."""
         variables = {}
+        bounds = self.bounds()
 
         for name, meta in self.attrs["variables"].items():
             if name in self.attrs["dimensions"]:
@@ -192,44 +193,50 @@ class DataCubeHelper:
             # Some variables like "time_bnds" in some model files do not have any attributes.
             attrs = meta.get("attributes", {})
 
-            self._infer_variable_units_description(name, attrs)
+            if name in bounds:
+                # Bounds are auxiliary variables
+                dtype = VariableType.AUXILIARY.value
+
+                # We can safely assume that the bounds variable has the same units as the variable it bounds.
+                if "units" not in attrs:
+                    if (u := self.attrs["variables"][bounds[name]].get("attributes", {}).get("units")) is not None:
+                        attrs["units"] = u
+
+                if "description" not in "attrs":
+                    attrs["description"] = f"bounds for the {bounds[name]} coordinate"
+
+            elif self.is_coordinate(attrs):
+                # Using the CF-xarray heuristics to determine if variable is a coordinate.
+                dtype = VariableType.AUXILIARY.value
+            else:
+                dtype = VariableType.DATA.value
 
             variables[name] = Variable(
                 properties=dict(
                     dimensions=meta["shape"],
-                    type=VariableType.AUXILIARY.value if self.is_coordinate(attrs) else VariableType.DATA.value,
+                    type=dtype,
                     description=attrs.get("description", attrs.get("long_name", "")),
                     unit=attrs.get("units", ""),
                 )
             )
         return variables
 
-    def _infer_variable_units_description(self, name, attrs):
-        """Try to infer the units and description of some simple coordinate variables."""
-        if name == "time_bnds":
-            related_variable = "time"
-            attrs["description"] = "bounds for the time coordinate"
-        elif name == "lat_bnds":
-            related_variable = "lat"
-            attrs["description"] = "bounds for the latitude coordinate"
-        elif name == "lon_bnds":
-            related_variable = "lon"
-            attrs["description"] = "bounds for the longitude coordinate"
-        else:
-            return
+    def bounds(self):
+        """Return a list of variables that are bounds for other variables."""
+        out = {}
+        for name, meta in self.attrs["variables"].items():
+            attrs = meta.get("attributes", {})
+            if "bounds" in attrs:
+                out[attrs["bounds"]] = name
+        return out
 
-        try:
-            attrs["units"] = self.attrs["variables"][related_variable]["attributes"]["units"]
-        except KeyError:
-            pass
 
     def is_coordinate(self, attrs: MutableMapping[str, Any]) -> bool:
-        """Return whether variable is a coordinate."""
+        """Return whether variable is a coordinate.
 
-        if (desc := attrs.get("description", None)) is not None:
-            if "bounds for" in desc:
-                return True
-
+        - data: a variable indicating some measured value, for example "precipitation", "temperature", etc.
+        - auxiliary: a variable that contains coordinate data, but isn't a dimension in cube:dimensions.
+        """
         for key, criteria in self.coordinate_criteria.items():
             for criterion, expected in criteria.items():
                 if attrs.get(criterion, None) in expected:
