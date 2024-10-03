@@ -49,16 +49,16 @@ You should then be able to call the STAC populator CLI with following commands:
 
 ```shell
 # obtain the installed version of the STAC populator
-stac-popultaor --version
+stac-populator --version
 
 # obtain general help about available commands
-stac-popultaor --help
+stac-populator --help
 
 # obtain general help about available STAC populator implementations
-stac-popultaor run --help
+stac-populator run --help
 
 # obtain help specifically for the execution of a STAC populator implementation
-stac-popultaor run [implementation] --help
+stac-populator run [implementation] --help
 ```
 
 You can also employ the pre-built Docker, which can be called as follows,
