@@ -15,7 +15,6 @@ from typing import (
     get_args,
 )
 
-import pyessv
 import pystac
 from pydantic import (
     AnyHttpUrl,
@@ -34,6 +33,7 @@ from pystac.extensions.base import (
     SummariesExtension,
 )
 
+from STACpopulator.exceptions import ExtensionLoadError
 from STACpopulator.models import AnyGeometry
 from STACpopulator.stac_utils import (
     ServiceType,
@@ -41,6 +41,11 @@ from STACpopulator.stac_utils import (
     ncattrs_to_bbox,
     ncattrs_to_geometry,
 )
+
+try:
+    import pyessv
+except OSError as e:
+    raise ExtensionLoadError(str(e)) from e
 
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
 
