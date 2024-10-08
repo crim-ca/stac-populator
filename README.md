@@ -49,17 +49,48 @@ You should then be able to call the STAC populator CLI with following commands:
 
 ```shell
 # obtain the installed version of the STAC populator
-stac-popultaor --version
+stac-populator --version
 
 # obtain general help about available commands
-stac-popultaor --help
+stac-populator --help
 
 # obtain general help about available STAC populator implementations
-stac-popultaor run --help
+stac-populator run --help
 
 # obtain help specifically for the execution of a STAC populator implementation
-stac-popultaor run [implementation] --help
+stac-populator run [implementation] --help
 ```
+
+### CMIP6 extension: extra requirements
+
+The CMIP6 stac-populator extension requires that the [pyessv-archive](https://github.com/ES-DOC/pyessv-archive) data 
+files be installed. To install this package to the default location in your home directory at `~/.esdoc/pyessv-archive`:
+
+```shell
+git clone https://github.com/ES-DOC/pyessv-archive ~/.esdoc/pyessv-archive
+# OR
+make setup-pyessv-archive
+```
+
+You can also choose to install them to a location on disk other than the default:
+
+```shell
+git clone https://github.com/ES-DOC/pyessv-archive /some/other/place
+# OR
+PYESSV_ARCHIVE_HOME=/some/other/place make setup-pyessv-archive
+```
+
+*Note*: <br>
+If you have installed the [pyessv-archive](https://github.com/ES-DOC/pyessv-archive) data files to a non-default
+location, you need to specify that location with the `PYESSV_ARCHIVE_HOME` environment variable. For example,
+if you've installed the pyessv-archive files to `/some/other/place` then run the following before executing 
+any of the example commands above:
+
+```shell
+export PYESSV_ARCHIVE_HOME=/some/other/place
+```
+
+### Docker
 
 You can also employ the pre-built Docker, which can be called as follows,
 where `[command]` corresponds to any of the above example operations.

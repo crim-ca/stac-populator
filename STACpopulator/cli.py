@@ -4,6 +4,7 @@ import importlib
 import logging
 import os
 import sys
+import warnings
 from datetime import datetime
 from http import cookiejar
 from typing import Callable, Optional
@@ -13,6 +14,7 @@ from requests.auth import AuthBase, HTTPBasicAuth, HTTPDigestAuth, HTTPProxyAuth
 from requests.sessions import Session
 
 from STACpopulator import __version__
+from STACpopulator.exceptions import STACPopulatorError
 from STACpopulator.logging import setup_logging
 
 POPULATORS = {}
@@ -151,7 +153,11 @@ def make_run_command_parser(parent) -> argparse.ArgumentParser:
         populator_name, pop_mod_file = populator_py_mod.rsplit(".", 1)
         populator_root = f"STACpopulator.{populators_impl}.{populator_name}"
         pop_mod_file_loc = f"{populator_root}.{pop_mod_file}"
-        populator_module = importlib.import_module(pop_mod_file_loc, populator_root)
+        try:
+            populator_module = importlib.import_module(pop_mod_file_loc, populator_root)
+        except STACPopulatorError as e:
+            warnings.warn(f"Could not load extension {populator_name} because of error {e}")
+            continue
         parser_maker: Callable[[], argparse.ArgumentParser] = getattr(populator_module, "make_parser", None)
         populator_runner = getattr(populator_module, "runner", None)  # optional, call main directly if not available
         populator_caller = getattr(populator_module, "main", None)
