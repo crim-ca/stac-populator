@@ -128,6 +128,7 @@ def runner(ns: argparse.Namespace) -> int:
 
 def main(*args: str) -> int:
     parser = argparse.ArgumentParser()
+    add_parser_args(parser)
     ns = parser.parse_args(args or None)
     return runner(ns)
 

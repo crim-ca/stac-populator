@@ -23,7 +23,7 @@ def add_parser_args(parser: argparse.ArgumentParser) -> dict[str, Callable]:
     )
     parser.add_argument("--debug", action="store_const", const=logging.DEBUG, help="set logger level to debug")
     parser.add_argument(
-        "--log_file", help="file to write log output to. By default logs will be written to the current directory."
+        "--log-file", help="file to write log output to. By default logs will be written to the current directory."
     )
     commands_subparser = parser.add_subparsers(
         title="command", dest="command", description="STAC populator command to execute.", required=True

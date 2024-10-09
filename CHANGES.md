@@ -14,8 +14,8 @@
 * Fix bug where logger setup failed
 * Simplify CLI argument constructor code (for cleaner and more testable code)
 * Add tests for CLI and implementations when invoked through the CLI
-* Refactored code dealing with requests and authentication to the `requests.py` file
-* Add `--log_file` command line option to specify a non-default location to write log files to
+* Refactored code dealing with requests and authentication to the `STACpopulator/requests.py` file
+* Add `--log-file` command line option to specify a non-default location to write log files to
 
 ## [0.6.0](https://github.com/crim-ca/stac-populator/tree/0.6.0) (2024-02-22)
 
