@@ -10,7 +10,7 @@ import responses
 from STACpopulator.implementations.DirectoryLoader import crawl_directory
 from STACpopulator.cli import add_parser_args, main as cli_main
 
-type RequestContext = Generator[responses.RequestsMock, None, None]
+RequestContext = Generator[responses.RequestsMock, None, None]
 
 
 @pytest.fixture(scope="session")
