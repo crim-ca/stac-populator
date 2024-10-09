@@ -23,3 +23,8 @@ build
 ## Logs
 *.jsonl
 *.json
+
+# Old Submodule Path
+# Could be used locally
+pyessv-archive/
+
