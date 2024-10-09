@@ -1,30 +1,21 @@
+import abc
 import argparse
+import functools
 import json
 import os
+from typing import Any, Callable, Generator
 import pytest
 import responses
 
 from STACpopulator.implementations.DirectoryLoader import crawl_directory
+from STACpopulator.cli import add_parser_args, main as cli_main
 
-CUR_DIR = os.path.dirname(__file__)
+type RequestContext = Generator[responses.RequestsMock, None, None]
 
 
-@pytest.mark.parametrize(
-    "prune_option",
-    [True, False]
-)
-def test_directory_loader_populator_runner(prune_option: bool):
-    ns = argparse.Namespace()
-    stac_host = "http://test-host.com/stac/"
-    setattr(ns, "verify", False)
-    setattr(ns, "cert", None)
-    setattr(ns, "auth_handler", None)
-    setattr(ns, "stac_host", stac_host)
-    setattr(ns, "directory", os.path.join(CUR_DIR, "data/test_directory"))
-    setattr(ns, "prune", prune_option)
-    setattr(ns, "update", True)
-
-    file_id_map = {
+@pytest.fixture(scope="session")
+def file_id_map() -> dict[str, str]:
+    return {
         "collection.json": "EuroSAT-subset-train",
         "item-0.json": "EuroSAT-subset-train-sample-0-class-AnnualCrop",
         "item-1.json": "EuroSAT-subset-train-sample-1-class-AnnualCrop",
@@ -32,37 +23,68 @@ def test_directory_loader_populator_runner(prune_option: bool):
         "nested/item-0.json": "EuroSAT-subset-test-sample-0-class-AnnualCrop",
         "nested/item-1.json": "EuroSAT-subset-test-sample-1-class-AnnualCrop",
     }
-    file_contents = {}
+
+
+@pytest.fixture(scope="package")
+def file_contents(file_id_map: dict[str, str], request: pytest.FixtureRequest) -> dict[str, bytes]:
+    contents = {}
     for file_name in file_id_map:
-        ref_file = os.path.join(CUR_DIR, "data/test_directory", file_name)
+        ref_file = os.path.join(request.fspath.dirname, "data/test_directory", file_name)
         with open(ref_file, mode="r", encoding="utf-8") as f:
             json_data = json.load(f)
-            file_contents[file_name] = json.dumps(json_data, indent=None).encode()
+            contents[file_name] = json.dumps(json_data, indent=None).encode()
+    return contents
 
-    with responses.RequestsMock(assert_all_requests_are_fired=False) as request_mock:
-        request_mock.add("GET", stac_host, json={"stac_version": "1.0.0", "type": "Catalog"})
-        request_mock.add(
-            "POST",
-            f"{stac_host}collections",
-            headers={"Content-Type": "application/json"},
-        )
-        request_mock.add(
-            "POST",
-            f"{stac_host}collections/{file_id_map['collection.json']}/items",
-            headers={"Content-Type": "application/json"},
-        )
-        request_mock.add(
-            "POST",
-            f"{stac_host}collections/{file_id_map['nested/collection.json']}/items",
-            headers={"Content-Type": "application/json"},
-        )
 
-        crawl_directory.runner(ns)
+@pytest.fixture(autouse=True)
+def request_mock(namespace: argparse.Namespace, file_id_map: dict[str, str]) -> RequestContext:
+    with responses.RequestsMock(assert_all_requests_are_fired=False) as mock_context:
+        mock_context.add("GET", namespace.stac_host, json={"stac_version": "1.0.0", "type": "Catalog"})
+        mock_context.add(
+            "POST",
+            f"{namespace.stac_host}collections",
+            headers={"Content-Type": "application/json"},
+        )
+        mock_context.add(
+            "POST",
+            f"{namespace.stac_host}collections/{file_id_map['collection.json']}/items",
+            headers={"Content-Type": "application/json"},
+        )
+        mock_context.add(
+            "POST",
+            f"{namespace.stac_host}collections/{file_id_map['nested/collection.json']}/items",
+            headers={"Content-Type": "application/json"},
+        )
+        yield mock_context
+
+
+@pytest.mark.parametrize("prune_option", [True, False])
+class _TestDirectoryLoader(abc.ABC):
+    @abc.abstractmethod
+    @pytest.fixture
+    def namespace(self, *args: Any) -> argparse.Namespace:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    @pytest.fixture
+    def runner(self, *args: Any) -> Callable:
+        raise NotImplementedError
+
+    def test_runner(
+        self,
+        prune_option: bool,
+        namespace: argparse.Namespace,
+        file_id_map: dict[str, str],
+        file_contents: dict[str, bytes],
+        request_mock: RequestContext,
+        runner: Callable,
+    ):
+        runner()
 
         assert len(request_mock.calls) == (4 if prune_option else 8)
-        assert request_mock.calls[0].request.url == stac_host
+        assert request_mock.calls[0].request.url == namespace.stac_host
 
-        base_col = file_id_map['collection.json']
+        base_col = file_id_map["collection.json"]
         assert request_mock.calls[1].request.path_url == "/stac/collections"
         assert request_mock.calls[1].request.body == file_contents["collection.json"]
 
@@ -80,7 +102,7 @@ def test_directory_loader_populator_runner(prune_option: bool):
         assert request_mock.calls[item1_idx].request.body == file_contents["item-1.json"]
 
         if not prune_option:
-            assert request_mock.calls[4].request.url == stac_host
+            assert request_mock.calls[4].request.url == namespace.stac_host
 
             nested_col = file_id_map["nested/collection.json"]
             assert request_mock.calls[5].request.path_url == "/stac/collections"
@@ -98,3 +120,47 @@ def test_directory_loader_populator_runner(prune_option: bool):
 
             assert request_mock.calls[item1_idx].request.path_url == f"/stac/collections/{nested_col}/items"
             assert request_mock.calls[item1_idx].request.body == file_contents["nested/item-1.json"]
+
+
+class TestModule(_TestDirectoryLoader):
+    @pytest.fixture
+    def runner(self, namespace: argparse.Namespace) -> Callable:
+        return functools.partial(crawl_directory.runner, namespace)
+
+    @pytest.fixture
+    def namespace(self, request: pytest.FixtureRequest, prune_option: bool) -> argparse.Namespace:
+        return argparse.Namespace(
+            verify=False,
+            cert=None,
+            auth_handler=None,
+            stac_host="http://example.com/stac/",
+            directory=os.path.join(request.fspath.dirname, "data/test_directory"),
+            prune=prune_option,
+            update=True,
+        )
+
+
+class TestFromCLI(_TestDirectoryLoader):
+    @pytest.fixture
+    def args(self, request: pytest.FixtureRequest, prune_option: bool) -> list[str]:
+        cmd_args = [
+            "run",
+            "DirectoryLoader",
+            "http://example.com/stac/",
+            os.path.join(request.fspath.dirname, "data/test_directory"),
+            "--no-verify",
+            "--update",
+        ]
+        if prune_option:
+            cmd_args.append("--prune")
+        return cmd_args
+
+    @pytest.fixture
+    def runner(self, args: list[str]) -> int:
+        return functools.partial(cli_main, *args)
+
+    @pytest.fixture
+    def namespace(self, args: tuple[str]) -> argparse.Namespace:
+        parser = argparse.ArgumentParser()
+        add_parser_args(parser)
+        return parser.parse_args(args)

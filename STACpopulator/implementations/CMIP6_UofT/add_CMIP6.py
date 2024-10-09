@@ -2,13 +2,14 @@ import argparse
 import json
 import logging
 import os
-from typing import Any, MutableMapping, NoReturn, Optional, Union
+import sys
+from typing import Any, MutableMapping, Optional, Union
 
 from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
 from requests.sessions import Session
 
-from STACpopulator.cli import add_request_options, apply_request_options
+from STACpopulator.requests import add_request_options, apply_request_options
 from STACpopulator.extensions.cmip6 import CMIP6Helper, CMIP6Properties
 from STACpopulator.extensions.datacube import DataCubeHelper
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
@@ -78,17 +79,17 @@ class CMIP6populator(STACpopulatorBase):
 
         try:
             item.validate()
-        except STACValidationError:
+        except STACValidationError as e:
             raise Exception("Failed to validate STAC item") from e
 
         # print(json.dumps(item.to_dict()))
         return json.loads(json.dumps(item.to_dict()))
 
 
-def make_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="CMIP6 STAC populator from a THREDDS catalog or NCML XML.")
-    parser.add_argument("stac_host", type=str, help="STAC API address")
-    parser.add_argument("href", type=str, help="URL to a THREDDS catalog or a NCML XML with CMIP6 metadata.")
+def add_parser_args(parser: argparse.ArgumentParser) -> None:
+    parser.description="CMIP6 STAC populator from a THREDDS catalog or NCML XML."
+    parser.add_argument("stac_host", help="STAC API URL")
+    parser.add_argument("href", help="URL to a THREDDS catalog or a NCML XML with CMIP6 metadata.")
     parser.add_argument("--update", action="store_true", help="Update collection and its items")
     parser.add_argument(
         "--mode",
@@ -105,10 +106,9 @@ def make_parser() -> argparse.ArgumentParser:
         ),
     )
     add_request_options(parser)
-    return parser
 
 
-def runner(ns: argparse.Namespace) -> Optional[int] | NoReturn:
+def runner(ns: argparse.Namespace) -> int:
     LOGGER.info(f"Arguments to call: {vars(ns)}")
 
     with Session() as session:
@@ -123,13 +123,14 @@ def runner(ns: argparse.Namespace) -> Optional[int] | NoReturn:
             ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config, log_debug=ns.debug
         )
         c.ingest()
+    return 0
 
 
-def main(*args: str) -> Optional[int]:
-    parser = make_parser()
+def main(*args: str) -> int:
+    parser = argparse.ArgumentParser()
     ns = parser.parse_args(args or None)
     return runner(ns)
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
