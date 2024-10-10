@@ -11,6 +11,11 @@
 * Adding an end date to `CMIP6_UofT`'s temporal extent for better rendering in STAC Browser
 * Updates to datacube extension helper routines for `CMIP6_UofT`.
 * Make pyessv-archive a requirement for *only* the cmip6 implementation instead of for the whole CLI
+* Fix bug where logger setup failed
+* Simplify CLI argument constructor code (for cleaner and more testable code)
+* Add tests for CLI and implementations when invoked through the CLI
+* Refactored code dealing with requests and authentication to the `STACpopulator/requests.py` file
+* Add `--log-file` command line option to specify a non-default location to write log files to
 
 ## [0.6.0](https://github.com/crim-ca/stac-populator/tree/0.6.0) (2024-02-22)
 

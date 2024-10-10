@@ -1,6 +1,6 @@
 import datetime as dt
 import json
-import logging
+import logging.config
 
 LOG_RECORD_BUILTIN_ATTRS = {
     "args",
