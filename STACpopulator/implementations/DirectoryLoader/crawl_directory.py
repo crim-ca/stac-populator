@@ -1,11 +1,12 @@
 import argparse
 import logging
 import os.path
-from typing import Any, MutableMapping, NoReturn, Optional
+import sys
+from typing import Any, MutableMapping, Optional
 
 from requests.sessions import Session
 
-from STACpopulator.cli import add_request_options, apply_request_options
+from STACpopulator.requests import add_request_options, apply_request_options
 from STACpopulator.input import STACDirectoryLoader
 from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
@@ -39,8 +40,8 @@ class DirectoryPopulator(STACpopulatorBase):
         return item_data
 
 
-def make_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Directory STAC populator")
+def add_parser_args(parser: argparse.ArgumentParser) -> None:
+    parser.description="Directory STAC populator"
     parser.add_argument("stac_host", type=str, help="STAC API URL.")
     parser.add_argument("directory", type=str, help="Path to a directory structure with STAC Collections and Items.")
     parser.add_argument("--update", action="store_true", help="Update collection and its items.")
@@ -50,10 +51,9 @@ def make_parser() -> argparse.ArgumentParser:
         help="Limit search of STAC Collections only to first top-most matches in the crawled directory structure.",
     )
     add_request_options(parser)
-    return parser
 
 
-def runner(ns: argparse.Namespace) -> Optional[int] | NoReturn:
+def runner(ns: argparse.Namespace) -> int:
     LOGGER.info(f"Arguments to call: {vars(ns)}")
 
     with Session() as session:
@@ -63,13 +63,15 @@ def runner(ns: argparse.Namespace) -> Optional[int] | NoReturn:
             loader = STACDirectoryLoader(collection_dir, "item", prune=ns.prune)
             populator = DirectoryPopulator(ns.stac_host, loader, ns.update, collection_json, session=session)
             populator.ingest()
+    return 0
 
 
-def main(*args: str) -> Optional[int]:
-    parser = make_parser()
+def main(*args: str) -> int:
+    parser = argparse.ArgumentParser()
+    add_parser_args(parser)
     ns = parser.parse_args(args or None)
     return runner(ns)
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

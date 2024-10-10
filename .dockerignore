@@ -26,3 +26,8 @@ reports
 STACpopulator.egg-info/
 build
 *.pyc
+
+# Old Submodule Path
+# Could be used locally
+pyessv-archive
+
