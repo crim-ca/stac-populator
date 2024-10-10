@@ -144,13 +144,13 @@ class THREDDSCatalogDataModel(BaseModel):
             geometry=self.geometry.model_dump(),
             bbox=self.bbox,
             properties={
-                "start_datetime": self.start_datetime,
-                "end_datetime": self.end_datetime,
+                "start_datetime": str(self.start_datetime),
+                "end_datetime": str(self.end_datetime),
             },
             datetime=None,
         )
 
-        self.metadata_extension(item)
+        # self.metadata_extension(item)
         self.datacube_extension(item)
         self.thredds_extension(item)
 
@@ -164,9 +164,9 @@ class THREDDSCatalogDataModel(BaseModel):
 
 
     def metadata_extension(self, item):
-        ExtSubCls = metacls_extension(self.properties._prefix, schema_uri=self.properties._schema_uri)
-        item_ext = ExtSubCls.ext(item, add_if_missing=True)
-        item_ext.apply(self.properties.model_dump(by_alias=True))
+        ExtSubCls = metacls_extension(self.properties._prefix, schema_uri=str(self.properties._schema_uri))
+        item_ext = ExtSubCls.ext(item, add_if_missing=False)
+        item_ext.apply(self.properties.model_dump(mode="json", by_alias=True))
         return item
 
     def datacube_extension(self, item):
@@ -174,7 +174,7 @@ class THREDDSCatalogDataModel(BaseModel):
         dc_ext.apply(dimensions=self.datacube.dimensions, variables=self.datacube.variables)
 
     def thredds_extension(self, item):
-        thredds_ext = THREDDSExtension.ext(item)
+        thredds_ext = THREDDSExtension.ext(item, add_if_missing=False)
         thredds_ext.apply(self.thredds.services, self.thredds.links)
 
 
@@ -213,6 +213,7 @@ class MetaExtension:
 
     @classmethod
     def get_schema_uri(cls) -> str:
+        """We have already validated the JSON schema."""
         return cls.schema_uri
 
     @classmethod

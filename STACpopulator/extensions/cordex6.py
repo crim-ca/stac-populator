@@ -62,7 +62,7 @@ class Cordex6DataModel(THREDDSCatalogDataModel):
             "driving_experiment_id",
             "driving_variant_label",
             "variable_id",
-            "grid",
+            "domain_id",
         ]
         name = "_".join(getattr(self.properties, k) for k in keys)
         return name
@@ -86,3 +86,9 @@ def get_test_data():
             attrs["attributes"] = numpy_to_python_datatypes(attrs["attributes"])
             attrs["access_urls"] = ds.access_urls
             return attrs
+
+def test_item():
+    attrs = get_test_data()
+    model = Cordex6DataModel.from_data(attrs)
+    model.stac_item()
+
