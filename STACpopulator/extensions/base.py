@@ -11,6 +11,7 @@ from pystac.extensions.base import (
     PropertiesExtension,
     SummariesExtension,
 )
+from pystac import STACValidationError
 from pystac.extensions.base import S  # generic pystac.STACObject
 from STACpopulator.models import AnyGeometry, GeoJSONPolygon
 from STACpopulator.stac_utils import (
@@ -19,6 +20,10 @@ from STACpopulator.stac_utils import (
     ncattrs_to_geometry,
 )
 import types
+from pystac.extensions.datacube import DatacubeExtension
+from STACpopulator.extensions.datacube import DataCubeHelper
+from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
+
 
 
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
@@ -93,7 +98,6 @@ class THREDDSCatalogDataModel(BaseModel):
      - pydantic validation using type hints, and
      - json schema validation.
     """
-    properties: DataModel
 
     # Fields required by STAC item creation
     geometry: GeoJSONPolygon
@@ -101,21 +105,24 @@ class THREDDSCatalogDataModel(BaseModel):
     start_datetime: datetime
     end_datetime: datetime
 
-    # Field for asset creation
-    access_urls: Dict[str, HttpUrl]
+    # Extensions helper classes
+    properties: DataModel
+    datacube: DataCubeHelper
+    thredds: THREDDSHelper
 
     # Private attributes used to validate schema properties
-    model_config = ConfigDict(populate_by_name=True, extra="ignore")
+    model_config = ConfigDict(populate_by_name=True, extra="ignore", arbitrary_types_allowed=True)
 
     @classmethod
     def from_data(cls, data):
         """Instantiate class from data provided by THREDDS Loader."""
-        return cls(properties=data["attributes"],
-                   start_datetime=data["groups"]["CFMetadata"]["attributes"]["time_coverage_start"],
+        return cls(start_datetime=data["groups"]["CFMetadata"]["attributes"]["time_coverage_start"],
                    end_datetime=data["groups"]["CFMetadata"]["attributes"]["time_coverage_end"],
                    geometry=ncattrs_to_geometry(data),
                    bbox=ncattrs_to_bbox(data),
-                   access_urls=data["access_urls"]
+                   properties=data["attributes"],
+                   datacube=DataCubeHelper(data),  # A bit clunky to avoid breaking CMIP6
+                   thredds=THREDDSHelper(data["access_urls"])
                    )
 
     @property
@@ -124,12 +131,12 @@ class THREDDSCatalogDataModel(BaseModel):
         import uuid
         return str(uuid.uuid4())
 
-    @field_validator("access_urls")
-    @classmethod
-    def validate_access_urls(cls, value):
-        assert len(set(["HTTPServer", "OPENDAP"]).intersection(value.keys())) >= 1, (
-            "Access URLs must include HTTPServer or OPENDAP keys.")
-        return value
+    # @field_validator("access_urls")
+    # @classmethod
+    # def validate_access_urls(cls, value):
+    #     assert len(set(["HTTPServer", "OPENDAP"]).intersection(value.keys())) >= 1, (
+    #         "Access URLs must include HTTPServer or OPENDAP keys.")
+    #     return value
 
     def stac_item(self) -> "pystac.Item":
         item = pystac.Item(
@@ -142,13 +149,36 @@ class THREDDSCatalogDataModel(BaseModel):
             },
             datetime=None,
         )
-        ExtSubCls = meta_extension(self.properties._prefix, schema_uri=self.properties._schema_uri)
+
+        self.metadata_extension(item)
+        self.datacube_extension(item)
+        self.thredds_extension(item)
+
+        try:
+            item.validate()
+        except STACValidationError as e:
+            raise Exception("Failed to validate STAC item") from e
+
+        # print(json.dumps(item.to_dict()))
+        return json.loads(json.dumps(item.to_dict()))
+
+
+    def metadata_extension(self, item):
+        ExtSubCls = metacls_extension(self.properties._prefix, schema_uri=self.properties._schema_uri)
         item_ext = ExtSubCls.ext(item, add_if_missing=True)
         item_ext.apply(self.properties.model_dump(by_alias=True))
         return item
 
+    def datacube_extension(self, item):
+        dc_ext = DatacubeExtension.ext(item, add_if_missing=True)
+        dc_ext.apply(dimensions=self.datacube.dimensions, variables=self.datacube.variables)
 
-def meta_extension(name, schema_uri):
+    def thredds_extension(self, item):
+        thredds_ext = THREDDSExtension.ext(item)
+        thredds_ext.apply(self.thredds.services, self.thredds.links)
+
+
+def metacls_extension(name, schema_uri):
         cls_name = f"{name.upper()}Extension"
 
         bases = (MetaExtension,
@@ -211,7 +241,6 @@ class MetaExtension:
             if isinstance(obj, key):
                 cls.ensure_has_extension(obj, add_if_missing)
                 kls = extend_type(key, meta, cls[key])
-
                 return cast(cls[T], kls(obj))
         else:
             raise pystac.ExtensionTypeError(cls._ext_error_message(obj))
