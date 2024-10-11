@@ -28,6 +28,7 @@ from STACpopulator.extensions.cordex6 import THREDDSCatalogDataModel
 
 class CORDEX_STAC_Populator(STACpopulatorBase):
     data_model = THREDDSCatalogDataModel
+    item_geometry_model = None  # Unnecessary, but kept for consistency
 
     def create_stac_item(self, item_name: str, item_data: dict[str, Any]) -> dict[str, Any]:
         dm = self.data_model.from_data(item_data)
@@ -72,14 +73,3 @@ def runner(ns: argparse.Namespace) -> int:
         )
         c.ingest()
     return 0
-
-
-def main(*args: str) -> int:
-    parser = argparse.ArgumentParser()
-    add_parser_args(parser)
-    ns = parser.parse_args(args or None)
-    return runner(ns)
-
-
-if __name__ == "__main__":
-    sys.exit(main())
