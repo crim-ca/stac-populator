@@ -226,7 +226,7 @@ class STACpopulatorBase(ABC):
 
             counter += 1
             LOGGER.info(f"Processed {counter} data items. {failures} failures")
-            break
+            
 
 
 class THREDDSRunner:
