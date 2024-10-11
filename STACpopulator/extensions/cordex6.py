@@ -43,6 +43,7 @@ class CordexCmip6(DataModel):
     external_variables: str | list[str]
 
     _prefix: str = "cordex6"
+    # Note that this is not a STAC item schema, but a schema for the global attributes of the CMIP6 data.
     _schema_uri: FilePath = Path(__file__).parent / "schemas" / "cordex6" / "cmip6-cordex-global-attrs-schema.json"
 
 
@@ -69,7 +70,7 @@ class Cordex6DataModel(THREDDSCatalogDataModel):
 
 
 
-
+# TODO: Remove before merging
 def get_test_data():
     import requests
     from siphon.catalog import TDSCatalog

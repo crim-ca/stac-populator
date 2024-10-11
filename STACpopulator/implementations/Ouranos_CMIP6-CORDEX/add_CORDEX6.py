@@ -19,9 +19,7 @@ from STACpopulator.populator_base import STACpopulatorBase
 
 LOGGER = logging.getLogger(__name__)
 import argparse
-import sys
 from typing import Any
-from STACpopulator.populator_base import THREDDSRunner
 from STACpopulator.populator_base import STACpopulatorBase
 from STACpopulator.extensions.cordex6 import Cordex6DataModel
 
@@ -35,8 +33,10 @@ class CORDEX_STAC_Populator(STACpopulatorBase):
         return dm.stac_item()
 
 
+
+# TODO: This probably doesn't need to be copied for every implementation, right ?
 def add_parser_args(parser: argparse.ArgumentParser) -> None:
-    parser.description="CMIP6 STAC populator from a THREDDS catalog or NCML XML."
+    parser.description="CMIP6-CORDEX STAC populator from a THREDDS catalog or NCML XML."
     parser.add_argument("stac_host", help="STAC API URL")
     parser.add_argument("href", help="URL to a THREDDS catalog or a NCML XML with CMIP6 metadata.")
     parser.add_argument("--update", action="store_true", help="Update collection and its items")
