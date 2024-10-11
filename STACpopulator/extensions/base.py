@@ -36,7 +36,7 @@ LOGGER = logging.getLogger(__name__)
 What we have:
   - `Loader`, which returns attributes.
   - An external json schema describing a subset of the attributes returned by the Loader. This schema might preclude
-  additional properties, so it cannot be applied wholesale to the Loader's output.
+  additional properties, so it cannot be applied wholesale to the Loader's output. (maybe overkill since not a lot of schemas can be found in the wild...)
   - `data model` describing the content we want included in the catalog. It includes a subset of the schema properties,
   as well as additional attributes desired by the catalog admins.
 
@@ -100,23 +100,25 @@ class THREDDSCatalogDataModel(BaseModel):
      - json schema validation.
     """
 
-    # Fields required by STAC item creation
+    # STAC item properties
     geometry: GeoJSONPolygon
     bbox: list[float]
     start_datetime: datetime
     end_datetime: datetime
 
-    # Extensions helper classes
+    # Extensions classes
     properties: DataModel
     datacube: DataCubeHelper
     thredds: THREDDSHelper
 
-    # Private attributes used to validate schema properties
     model_config = ConfigDict(populate_by_name=True, extra="ignore", arbitrary_types_allowed=True)
 
     @classmethod
     def from_data(cls, data):
-        """Instantiate class from data provided by THREDDS Loader."""
+        """Instantiate class from data provided by THREDDS Loader.
+        """
+        # This is where we match the Loader's output to the STAC item and extensions inputs. If we had multiple
+        # loaders, that's probably the only thing that would be different between them.
         return cls(start_datetime=data["groups"]["CFMetadata"]["attributes"]["time_coverage_start"],
                    end_datetime=data["groups"]["CFMetadata"]["attributes"]["time_coverage_end"],
                    geometry=ncattrs_to_geometry(data),
@@ -129,9 +131,11 @@ class THREDDSCatalogDataModel(BaseModel):
     @property
     def uid(self) -> str:
         """Return a unique ID. When subclassing, use a combination of properties uniquely identifying a dataset."""
+        # TODO: Should this be an abstract method?
         import uuid
         return str(uuid.uuid4())
 
+    # TODO: Move this into the THREDDS extension?
     # @field_validator("access_urls")
     # @classmethod
     # def validate_access_urls(cls, value):
@@ -140,6 +144,7 @@ class THREDDSCatalogDataModel(BaseModel):
     #     return value
 
     def stac_item(self) -> "pystac.Item":
+        """Create a STAC item and add extensions."""
         item = pystac.Item(
             id=self.uid,
             geometry=self.geometry.model_dump(),
@@ -160,7 +165,6 @@ class THREDDSCatalogDataModel(BaseModel):
         except STACValidationError as e:
             raise Exception("Failed to validate STAC item") from e
 
-        # print(json.dumps(item.to_dict()))
         return json.loads(json.dumps(item.to_dict()))
 
 
@@ -264,12 +268,12 @@ def extend_type(stac, cls, ext):
 
 
 class MetaItemExtension:
-    """A concrete implementation of :class:`CMIP6Extension` on an :class:`~pystac.Item`
+    """A concrete implementation of :class:`Extension` on an :class:`~pystac.Item`
     that extends the properties of the Item to include properties defined in the
     :stac-ext:`Extension`.
 
     This class should generally not be instantiated directly. Instead, call
-    :meth:`CMIP6Extension.ext` on an :class:`~pystac.Item` to extend it.
+    :meth:`Extension.ext` on an :class:`~pystac.Item` to extend it.
     """
     def __init__(self, item: pystac.Item):
         self.item = item
