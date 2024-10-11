@@ -150,7 +150,8 @@ keywords = [
     "SpatioTemporal Asset Catalog",
     "Data Ingestion",
     "THREDDS",
-    "CMIP6"
+    "CMIP6",
+    "CORDEX"
 ]
 
 [project.scripts]
