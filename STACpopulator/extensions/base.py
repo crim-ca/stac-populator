@@ -1,6 +1,7 @@
 from datetime import datetime
 import json
 import jsonschema
+import logging
 from typing import Any, Dict, Generic,    TypeVar, Union, cast, Optional
 from pydantic import (BaseModel, create_model, Field, FilePath, field_validator, model_validator, HttpUrl, ConfigDict,
                       PrivateAttr)
@@ -28,7 +29,7 @@ from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
 
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
 
-
+LOGGER = logging.getLogger(__name__)
 """
 # Context
 
@@ -150,7 +151,7 @@ class THREDDSCatalogDataModel(BaseModel):
             datetime=None,
         )
 
-        # self.metadata_extension(item)
+        self.metadata_extension(item)
         self.datacube_extension(item)
         self.thredds_extension(item)
 
@@ -164,45 +165,42 @@ class THREDDSCatalogDataModel(BaseModel):
 
 
     def metadata_extension(self, item):
+        """Add extension for the properties of the dataset to the STAC item.
+        The extension class is created dynamically from the properties.
+        """
         ExtSubCls = metacls_extension(self.properties._prefix, schema_uri=str(self.properties._schema_uri))
         item_ext = ExtSubCls.ext(item, add_if_missing=False)
         item_ext.apply(self.properties.model_dump(mode="json", by_alias=True))
         return item
 
     def datacube_extension(self, item):
+        """Add datacube extension to the STAC item."""
         dc_ext = DatacubeExtension.ext(item, add_if_missing=True)
         dc_ext.apply(dimensions=self.datacube.dimensions, variables=self.datacube.variables)
 
     def thredds_extension(self, item):
+        """Add THREDDS extension to the STAC item."""
         thredds_ext = THREDDSExtension.ext(item, add_if_missing=False)
         thredds_ext.apply(self.thredds.services, self.thredds.links)
 
 
 def metacls_extension(name, schema_uri):
-        cls_name = f"{name.upper()}Extension"
+    """Create an extension class dynamically from the properties."""
+    cls_name = f"{name.upper()}Extension"
 
-        bases = (MetaExtension,
-                 Generic[T],
-                 PropertiesExtension,
-                 ExtensionManagementMixin[Union[pystac.Asset, pystac.Item, pystac.Collection]]
-                 )
+    bases = (MetaExtension,
+             Generic[T],
+             PropertiesExtension,
+             ExtensionManagementMixin[Union[pystac.Asset, pystac.Item, pystac.Collection]]
+             )
 
-        attrs = {"schema_name": name, "schema_uri": schema_uri}
-        return types.new_class(name=cls_name, bases=bases, kwds=None, exec_body=lambda ns: ns.update(attrs))
-
-
-def extend_type(stac, cls, ext):
-    cls_name = f"{stac.__name__ }{ext.__name__}"
-    return types.new_class(cls_name, (cls, ext), {}, lambda ns: ns)
+    attrs = {"name": name, "schema_uri": schema_uri}
+    return types.new_class(name=cls_name, bases=bases, kwds=None, exec_body=lambda ns: ns.update(attrs))
 
 
 class MetaExtension:
-    schema_name: str
+    name: str
     schema_uri: str
-
-    @property
-    def name(self) -> str:
-        return self.schema_name
 
     def apply(self, properties: dict[str, Any]) -> None:
         """Applies CMIP6 Extension properties to the extended
@@ -240,11 +238,29 @@ class MetaExtension:
 
         for key, meta in cls_map.items():
             if isinstance(obj, key):
-                cls.ensure_has_extension(obj, add_if_missing)
+                # cls.ensure_has_extension(obj, add_if_missing)
                 kls = extend_type(key, meta, cls[key])
                 return cast(cls[T], kls(obj))
         else:
             raise pystac.ExtensionTypeError(cls._ext_error_message(obj))
+
+
+def extend_type(stac, cls, ext):
+    """Create an extension subclass for different STAC objects.
+
+    Note: This is super confusing... we should come up with some better nomenclature.
+
+    Parameters
+    ----------
+    stac: pystac.Item, pystac.Asset, pystac.Collection
+      The STAC object.
+    cls: MetaItemExtension
+      The generic extension class for the STAC object.
+    ext: MetaExtension[T]
+      The meta extension class.
+    """
+    cls_name = f"{stac.__name__ }{ext.__name__}"
+    return types.new_class(cls_name, (cls, ext), {}, lambda ns: ns)
 
 
 class MetaItemExtension:
@@ -283,6 +299,8 @@ class MetaItemExtension:
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} Item id={self.item.id}>"
 
+
+# TODO: Add the other STAC item meta extensions
 
 def schema_properties(schema: dict) -> list[str]:
     """Return the list of properties described by schema."""

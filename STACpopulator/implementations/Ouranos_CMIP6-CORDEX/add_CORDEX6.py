@@ -23,11 +23,11 @@ import sys
 from typing import Any
 from STACpopulator.populator_base import THREDDSRunner
 from STACpopulator.populator_base import STACpopulatorBase
-from STACpopulator.extensions.cordex6 import THREDDSCatalogDataModel
+from STACpopulator.extensions.cordex6 import Cordex6DataModel
 
 
 class CORDEX_STAC_Populator(STACpopulatorBase):
-    data_model = THREDDSCatalogDataModel
+    data_model = Cordex6DataModel
     item_geometry_model = None  # Unnecessary, but kept for consistency
 
     def create_stac_item(self, item_name: str, item_data: dict[str, Any]) -> dict[str, Any]:
