@@ -1,21 +1,8 @@
-import argparse
-import json
 import logging
-import os
-import sys
-from typing import Any, MutableMapping, Optional, Union
-
-from pystac import STACValidationError
-from pystac.extensions.datacube import DatacubeExtension
 from requests.sessions import Session
 
 from STACpopulator.requests import add_request_options, apply_request_options
-from STACpopulator.extensions.cmip6 import CMIP6Helper, CMIP6Properties
-from STACpopulator.extensions.datacube import DataCubeHelper
-from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
-from STACpopulator.input import ErrorLoader, GenericLoader, THREDDSLoader
-from STACpopulator.models import GeoJSONPolygon
-from STACpopulator.populator_base import STACpopulatorBase
+from STACpopulator.input import ErrorLoader, THREDDSLoader
 
 LOGGER = logging.getLogger(__name__)
 import argparse

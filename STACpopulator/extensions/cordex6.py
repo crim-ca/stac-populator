@@ -27,7 +27,7 @@ class CordexCmip6(DataModelHelper):
     frequency: str = Field(..., alias='cordex6:frequency')
     grid: str = Field(..., alias='cordex6:grid')
     institution: str = Field(..., alias='cordex6:institution')
-    institution_id: str = Field(..., alias='cordex6:institution_id'    )
+    institution_id: str = Field(..., alias='cordex6:institution_id')
     license: str = Field(..., alias='cordex6:license')
     mip_era: str = Field(..., alias='cordex6:mip_era')
     product: str = Field(..., alias='cordex6:product')
