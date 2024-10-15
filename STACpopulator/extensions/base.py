@@ -46,16 +46,15 @@ from STACpopulator.stac_utils import (
     ncattrs_to_geometry,
 )
 import types
-from pystac.extensions.datacube import DatacubeExtension
 from STACpopulator.extensions.datacube import DataCubeHelper
-from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
+from STACpopulator.extensions.thredds import THREDDSHelper
 
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
 
 LOGGER = logging.getLogger(__name__)
 
 
-class DataModel(BaseModel):
+class DataModelHelper(BaseModel):
     """Base class for dataset properties going into the catalog.
 
     Subclass this with attributes.
@@ -94,6 +93,15 @@ class DataModel(BaseModel):
 
         return data
 
+    def apply(self, item, add_if_missing=False):
+        """Add extension for the properties of the dataset to the STAC item.
+        The extension class is created dynamically from the properties.
+        """
+        ExtSubCls = metacls_extension(self._prefix, schema_uri=str(self._schema_uri))
+        item_ext = ExtSubCls.ext(item, add_if_missing=add_if_missing)
+        item_ext.apply(self.model_dump(mode="json", by_alias=True))
+        return item
+
 
 class THREDDSCatalogDataModel(BaseModel):
     """Base class ingesting attributes loaded by `THREDDSLoader` and creating a STAC item.
@@ -111,10 +119,15 @@ class THREDDSCatalogDataModel(BaseModel):
     start_datetime: datetime
     end_datetime: datetime
 
+    # Data from loader
+    data: dict
+
     # Extensions classes
-    properties: DataModel
+    properties: DataModelHelper
     datacube: DataCubeHelper
     thredds: THREDDSHelper
+
+    extensions: list = ["properties", "datacube", "thredds"]
 
     model_config = ConfigDict(populate_by_name=True, extra="ignore", arbitrary_types_allowed=True)
 
@@ -124,14 +137,33 @@ class THREDDSCatalogDataModel(BaseModel):
         """
         # This is where we match the Loader's output to the STAC item and extensions inputs. If we had multiple
         # loaders, that's probably the only thing that would be different between them.
-        return cls(start_datetime=data["groups"]["CFMetadata"]["attributes"]["time_coverage_start"],
+        return cls(data=data,
+                   start_datetime=data["groups"]["CFMetadata"]["attributes"]["time_coverage_start"],
                    end_datetime=data["groups"]["CFMetadata"]["attributes"]["time_coverage_end"],
                    geometry=ncattrs_to_geometry(data),
                    bbox=ncattrs_to_bbox(data),
-                   properties=data["attributes"],
-                   datacube=DataCubeHelper(data),  # A bit clunky to avoid breaking CMIP6
-                   thredds=THREDDSHelper(data["access_urls"])
                    )
+
+    @model_validator(mode="before")
+    @classmethod
+    def properties_helper(cls, data):
+        """Instantiate the properties helper."""
+        data["properties"] = data['data']['attributes']
+        return data
+
+    @model_validator(mode="before")
+    @classmethod
+    def datacube_helper(cls, data):
+        """Instantiate the DataCubeHelper."""
+        data["datacube"] = DataCubeHelper(data['data'])
+        return data
+
+    @model_validator(mode="before")
+    @classmethod
+    def thredds_helper(cls, data):
+        """Instantiate the THREDDSHelper."""
+        data["thredds"] = THREDDSHelper(data['data']["access_urls"])
+        return data
 
     @property
     def uid(self) -> str:
@@ -153,9 +185,9 @@ class THREDDSCatalogDataModel(BaseModel):
             datetime=None,
         )
 
-        self.metadata_extension(item)
-        self.datacube_extension(item)
-        self.thredds_extension(item)
+        # Add extensions
+        for ext in self.extensions:
+            getattr(self, ext).apply(item)
 
         try:
             item.validate()
@@ -163,25 +195,6 @@ class THREDDSCatalogDataModel(BaseModel):
             raise Exception("Failed to validate STAC item") from e
 
         return json.loads(json.dumps(item.to_dict()))
-
-    def metadata_extension(self, item):
-        """Add extension for the properties of the dataset to the STAC item.
-        The extension class is created dynamically from the properties.
-        """
-        ExtSubCls = metacls_extension(self.properties._prefix, schema_uri=str(self.properties._schema_uri))
-        item_ext = ExtSubCls.ext(item, add_if_missing=False)
-        item_ext.apply(self.properties.model_dump(mode="json", by_alias=True))
-        return item
-
-    def datacube_extension(self, item):
-        """Add datacube extension to the STAC item."""
-        dc_ext = DatacubeExtension.ext(item, add_if_missing=True)
-        dc_ext.apply(dimensions=self.datacube.dimensions, variables=self.datacube.variables)
-
-    def thredds_extension(self, item):
-        """Add THREDDS extension to the STAC item."""
-        thredds_ext = THREDDSExtension.ext(item, add_if_missing=False)
-        thredds_ext.apply(self.thredds.services, self.thredds.links)
 
 
 def metacls_extension(name, schema_uri):

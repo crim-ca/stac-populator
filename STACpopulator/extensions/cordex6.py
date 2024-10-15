@@ -7,11 +7,11 @@ from datetime import datetime
 from importlib import reload
 import STACpopulator.extensions.base
 reload(STACpopulator.extensions.base)
-from STACpopulator.extensions.base import THREDDSCatalogDataModel, DataModel
+from STACpopulator.extensions.base import THREDDSCatalogDataModel, DataModelHelper
 
 
 # This is generated using datamodel-codegen + manual edits
-class CordexCmip6(DataModel):
+class CordexCmip6(DataModelHelper):
     # Fields from schema
     activity_id: str = Field(..., alias='cordex6:activity_id')
     contact: str = Field(..., alias='cordex6:contact')
@@ -65,8 +65,10 @@ class Cordex6DataModel(THREDDSCatalogDataModel):
             "variable_id",
             "domain_id",
         ]
-        name = "_".join(getattr(self.properties, k) for k in keys)
-        return name
+        values = [getattr(self.properties, k) for k in keys]
+        values.append(self.start_datetime.strftime("%Y%m%d"))
+        values.append(self.end_datetime.strftime("%Y%m%d"))
+        return "_".join(values)
 
 
 

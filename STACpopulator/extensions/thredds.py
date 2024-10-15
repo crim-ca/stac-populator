@@ -133,6 +133,12 @@ class THREDDSHelper:
         link = magpie_resource_link(url)
         return [link]
 
+    def apply(self, item, add_if_missing:bool = False):
+        """Apply the THREDDS extension to an item."""
+        ext = THREDDSExtension.ext(item, add_if_missing=add_if_missing)
+        ext.apply(services=self.services, links=self.links)
+        return item
+
 
 # TODO: Validate services links exist ?
 # @field_validator("access_urls")

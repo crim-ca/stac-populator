@@ -47,7 +47,7 @@ docker-build:
 	docker build "$(APP_ROOT)" -f "$(APP_ROOT)/docker/Dockerfile" -t "$(DOCKER_TAG)"
 
 del_docker_volume: stophost
-	docker volume rm stac-populator_stac-db
+	docker volume rm docker_stac-db
 
 resethost: del_docker_volume starthost
 
