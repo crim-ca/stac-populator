@@ -7,11 +7,11 @@ from datetime import datetime
 from importlib import reload
 import STACpopulator.extensions.base
 reload(STACpopulator.extensions.base)
-from STACpopulator.extensions.base import THREDDSCatalogDataModel, DataModelHelper
+from STACpopulator.extensions.base import THREDDSCatalogDataModel, ExtensionHelper
 
 
 # This is generated using datamodel-codegen + manual edits
-class CordexCmip6(DataModelHelper):
+class CordexCmip6(ExtensionHelper):
     # Fields from schema
     activity_id: str = Field(..., alias='cordex6:activity_id')
     contact: str = Field(..., alias='cordex6:contact')
