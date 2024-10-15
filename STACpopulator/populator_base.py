@@ -226,55 +226,5 @@ class STACpopulatorBase(ABC):
 
             counter += 1
             LOGGER.info(f"Processed {counter} data items. {failures} failures")
-            
 
-
-class THREDDSRunner:
-    def __init__(self, populator):
-        self.populator = populator
-        self.parser = argparse.ArgumentParser()
-        self.add_parser_args(self.parser)
-
-    @staticmethod
-    def add_parser_args(parser: argparse.ArgumentParser) -> None:
-        parser.description="STAC populator from a THREDDS catalog or NCML XML."
-        parser.add_argument("stac_host", help="STAC API URL")
-        parser.add_argument("href", help="URL to a THREDDS catalog or a NCML XML with CMIP6 metadata.")
-        parser.add_argument("--update", action="store_true", help="Update collection and its items")
-        parser.add_argument(
-            "--mode",
-            choices=["full", "single"],
-            default="full",
-            help="Operation mode, processing the full dataset or only the single reference.",
-        )
-        parser.add_argument(
-            "--config",
-            type=str,
-            help=(
-                "Override configuration file for the populator. "
-                "By default, uses the adjacent configuration to the implementation class."
-            ),
-        )
-        add_request_options(parser)
-
-    def runner(self, ns: argparse.Namespace) -> int:
-        LOGGER.info(f"Arguments to call: {vars(ns)}")
-
-        with Session() as session:
-            apply_request_options(session, ns)
-            if ns.mode == "full":
-                data_loader = THREDDSLoader(ns.href, session=session)
-            else:
-                # To be implemented
-                data_loader = ErrorLoader()
-
-            c = self.populator(
-                ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config, log_debug=ns.debug
-            )
-            c.ingest()
-        return 0
-
-    def main(self, *args: str) -> int:
-        ns = self.parser.parse_args(args or None)
-        return self.runner(ns)
 

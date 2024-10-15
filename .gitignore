@@ -22,6 +22,10 @@ build
 
 ## Logs
 *.jsonl
+*.json
+
+## Exclude schemas
+!schemas/**/*.json
 
 # Old Submodule Path
 # Could be used locally

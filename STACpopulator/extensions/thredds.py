@@ -132,3 +132,12 @@ class THREDDSHelper:
         url = self.access_urls[ServiceType.httpserver]
         link = magpie_resource_link(url)
         return [link]
+
+
+# TODO: Validate services links exist ?
+# @field_validator("access_urls")
+# @classmethod
+# def validate_access_urls(cls, value):
+#     assert len(set(["HTTPServer", "OPENDAP"]).intersection(value.keys())) >= 1, (
+#         "Access URLs must include HTTPServer or OPENDAP keys.")
+#     return value

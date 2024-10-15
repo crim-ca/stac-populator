@@ -1,3 +1,28 @@
+"""
+# Base classes for STAC extensions
+
+What we have:
+  - `Loader`, which returns attributes.
+  - An external json schema describing a subset of the attributes returned by the Loader. This schema might preclude
+  additional properties, so it cannot be applied wholesale to the Loader's output. (maybe overkill since not a lot of schemas can be found in the wild...)
+  - `data model` describing the content we want included in the catalog. It includes a subset of the schema properties,
+  as well as additional attributes desired by the catalog admins.
+
+Desiderata:
+  - Not having to replicate existing validation logic in the schema
+  - Not having to create a modified schema
+  - Being able to supplement the schema validation by pydantic validation logic
+  - Streamline the creation of new data models (reduce boilerplate, allow subclassing)
+  - Developer-friendly validation error messages
+
+
+How-to:
+  - Instructions to create basic datamodel from schema (codegen)
+
+
+
+"""
+
 from datetime import datetime
 import json
 import jsonschema
@@ -25,47 +50,27 @@ from pystac.extensions.datacube import DatacubeExtension
 from STACpopulator.extensions.datacube import DataCubeHelper
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
 
-
-
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
 
 LOGGER = logging.getLogger(__name__)
-"""
-# Context
-
-What we have:
-  - `Loader`, which returns attributes.
-  - An external json schema describing a subset of the attributes returned by the Loader. This schema might preclude
-  additional properties, so it cannot be applied wholesale to the Loader's output. (maybe overkill since not a lot of schemas can be found in the wild...)
-  - `data model` describing the content we want included in the catalog. It includes a subset of the schema properties,
-  as well as additional attributes desired by the catalog admins.
-
-Desiderata:
-  - Not having to replicate existing validation logic in the schema
-  - Not having to create a modified schema
-  - Being able to supplement the schema validation by pydantic validation logic
-  - Streamline the creation of new data models (reduce boilerplate, allow subclassing)
-  - Developer-friendly validation error messages
 
 
-How-to:
-  - Instructions to create basic datamodel from schema (codegen)
-  
-  
-  
-"""
 class DataModel(BaseModel):
     """Base class for dataset properties going into the catalog.
 
     Subclass this with attributes.
+
+    Attributes
+    ----------
+    _prefix : str
+        If not None, a prefix for the properties in the catalog will be added.
+    _schema_uri : str
+        URI of the json schema to validate against.
+    _schema_exclude : list[str]
+        Properties not meant to be validated by json schema, but still included in the data model.
     """
-    # Ideally, the catalog properties would be described by a jsonschema.
     _prefix: str = PrivateAttr()
-
-    # URI of the json schema to validate against.
     _schema_uri: FilePath = PrivateAttr(None)
-
-    # List of properties not meant to be validated by json schema.
     _schema_exclude: list[str] = PrivateAttr([])
 
     model_config = ConfigDict(populate_by_name=True, extra="ignore")
@@ -135,14 +140,6 @@ class THREDDSCatalogDataModel(BaseModel):
         import uuid
         return str(uuid.uuid4())
 
-    # TODO: Move this into the THREDDS extension?
-    # @field_validator("access_urls")
-    # @classmethod
-    # def validate_access_urls(cls, value):
-    #     assert len(set(["HTTPServer", "OPENDAP"]).intersection(value.keys())) >= 1, (
-    #         "Access URLs must include HTTPServer or OPENDAP keys.")
-    #     return value
-
     def stac_item(self) -> "pystac.Item":
         """Create a STAC item and add extensions."""
         item = pystac.Item(
@@ -166,7 +163,6 @@ class THREDDSCatalogDataModel(BaseModel):
             raise Exception("Failed to validate STAC item") from e
 
         return json.loads(json.dumps(item.to_dict()))
-
 
     def metadata_extension(self, item):
         """Add extension for the properties of the dataset to the STAC item.
