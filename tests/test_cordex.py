@@ -21,4 +21,9 @@ def get_test_data():
 def test_item():
     attrs = get_test_data()
     model = Cordex6DataModel.from_data(attrs)
-    model.stac_item()
+    item = model.stac_item()
+
+    assert item["properties"]["cordex6:activity_id"] == "DD"
+    assert item["properties"]["cordex6:project_id"] == "CORDEX"
+    assert item["properties"]["xscen:type"] == "simulation"
+

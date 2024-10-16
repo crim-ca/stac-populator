@@ -69,11 +69,19 @@ class ExtensionHelper(BaseModel):
     _schema_exclude : list[str]
         Properties not meant to be validated by json schema, but still included in the data model.
     """
-    _prefix: str = PrivateAttr()
+    _prefix: str = PrivateAttr(None)
     _schema_uri: FilePath = PrivateAttr(None)
     _schema_exclude: list[str] = PrivateAttr([])
 
     model_config = ConfigDict(populate_by_name=True, extra="ignore")
+
+    @classmethod
+    def __init_subclass__(cls, **kwargs):
+        """Automatically set an alias generator from the `_prefix`."""
+        prefix = cls._prefix.default
+
+        if prefix is not None:
+            cls.model_config["alias_generator"] = lambda key: f"{prefix}:{key}"
 
     @model_validator(mode="before")
     @classmethod

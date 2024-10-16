@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from pathlib import Path
-from pydantic import BaseModel, Field, FilePath
+from pydantic import BaseModel, Field, FilePath, model_validator
 from datetime import datetime
 
 from importlib import reload
+from STACpopulator.extensions.xscen import Xscen
 import STACpopulator.extensions.base
 reload(STACpopulator.extensions.base)
 from STACpopulator.extensions.base import THREDDSCatalogDataModel, ExtensionHelper
@@ -13,36 +14,36 @@ from STACpopulator.extensions.base import THREDDSCatalogDataModel, ExtensionHelp
 # This is generated using datamodel-codegen + manual edits
 class CordexCmip6(ExtensionHelper):
     # Fields from schema
-    activity_id: str = Field(..., alias='cordex6:activity_id')
-    contact: str = Field(..., alias='cordex6:contact')
+    activity_id: str
+    contact: str
     # Conventions: str = Field(..., alias='cordex6:Conventions')
-    creation_date: datetime = Field(..., alias='cordex6:creation_date')
-    domain_id: str = Field(..., alias='cordex6:domain_id')
-    domain: str = Field(..., alias='cordex6:domain')
-    driving_experiment_id: str = Field(..., alias='cordex6:driving_experiment_id')
-    driving_experiment: str = Field(..., alias='cordex6:driving_experiment')
-    driving_institution_id: str = Field(..., alias='cordex6:driving_institution_id')
-    driving_source_id: str = Field(..., alias='cordex6:driving_source_id')
-    driving_variant_label: str = Field(..., alias='cordex6:driving_variant_label')
-    frequency: str = Field(..., alias='cordex6:frequency')
-    grid: str = Field(..., alias='cordex6:grid')
-    institution: str = Field(..., alias='cordex6:institution')
-    institution_id: str = Field(..., alias='cordex6:institution_id')
-    license: str = Field(..., alias='cordex6:license')
-    mip_era: str = Field(..., alias='cordex6:mip_era')
-    product: str = Field(..., alias='cordex6:product')
-    project_id: str = Field(..., alias='cordex6:project_id')
-    source: str = Field(..., alias='cordex6:source')
-    source_id: str = Field(..., alias='cordex6:source_id')
-    source_type: str = Field(..., alias='cordex6:source_type')
-    tracking_id: str = Field(..., alias='cordex6:tracking_id')
-    variable_id: str = Field(..., alias='cordex6:variable_id')
-    version_realization: str = Field(..., alias='cordex6:version_realization')
+    creation_date: datetime
+    domain_id: str
+    domain: str
+    driving_experiment_id: str
+    driving_experiment: str
+    driving_institution_id: str
+    driving_source_id: str
+    driving_variant_label: str
+    frequency: str
+    grid: str
+    institution: str
+    institution_id: str
+    license: str
+    mip_era: str
+    product: str
+    project_id: str
+    source: str
+    source_id: str
+    source_type: str
+    tracking_id: str
+    variable_id: str
+    version_realization: str
 
     # Extra fields
     external_variables: str | list[str]
 
-    _prefix: str = "cordex6"
+    _prefix = "cordex6"
     # Note that this is not a STAC item schema, but a schema for the global attributes of the CMIP6 data.
     _schema_uri: FilePath = Path(__file__).parent / "schemas" / "cordex6" / "cmip6-cordex-global-attrs-schema.json"
 
@@ -50,6 +51,9 @@ class CordexCmip6(ExtensionHelper):
 # Customize the THREDDSCatalogDataModel
 class Cordex6DataModel(THREDDSCatalogDataModel):
     properties: CordexCmip6
+    xscen: Xscen = Xscen(type="simulation", processing_level="raw")
+
+    extensions: list = ["properties", "datacube", "thredds", "xscen"]
 
     @property
     def uid(self) -> str:
