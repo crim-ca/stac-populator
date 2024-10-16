@@ -63,7 +63,7 @@ class ExtensionHelper(BaseModel):
     Attributes
     ----------
     _prefix : str
-        If not None, a prefix for the properties in the catalog will be added.
+        If not None, this prefix is added to ingested data before the jsonschema validation.
     _schema_uri : str
         URI of the json schema to validate against.
     _schema_exclude : list[str]
@@ -105,7 +105,21 @@ class ExtensionHelper(BaseModel):
 
 
 class BaseSTAC(BaseModel):
-    """Base class for STAC item data models."""
+    """Base class for STAC item data models.
+
+    Attributes
+    ----------
+    geometry : AnyGeometry
+        The geometry of the dataset.
+    bbox : list[float]
+        The bounding box of the dataset.
+    start_datetime : datetime
+        The start datetime of the dataset.
+    end_datetime : datetime
+        The end datetime of the dataset.
+    extensions : list[str]
+        Name of the class attributes that point to STAC extension helper classes. Those extension classes should have an `apply` method.
+    """
     # STAC item properties
     geometry: AnyGeometry | None
     bbox: list[float]
