@@ -6,7 +6,8 @@ from typing import Any, MutableMapping, Optional
 
 from requests.sessions import Session
 
-from STACpopulator.requests import add_request_options, apply_request_options
+from STACpopulator.log import add_logging_options
+from STACpopulator.request_utils import add_request_options, apply_request_options
 from STACpopulator.input import STACDirectoryLoader
 from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
@@ -51,6 +52,7 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
         help="Limit search of STAC Collections only to first top-most matches in the crawled directory structure.",
     )
     add_request_options(parser)
+    add_logging_options(parser)
 
 
 def runner(ns: argparse.Namespace) -> int:

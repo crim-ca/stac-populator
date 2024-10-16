@@ -5,12 +5,11 @@ import logging
 import sys
 from types import ModuleType
 import warnings
-from datetime import datetime, timezone
 from typing import Callable
 
 from STACpopulator import __version__, implementations
 from STACpopulator.exceptions import STACPopulatorError
-from STACpopulator.logging import setup_logging
+from STACpopulator.log import setup_logging
 
 
 def add_parser_args(parser: argparse.ArgumentParser) -> dict[str, Callable]:
@@ -20,10 +19,6 @@ def add_parser_args(parser: argparse.ArgumentParser) -> dict[str, Callable]:
         action="version",
         version=f"%(prog)s {__version__}",
         help="prints the version of the library and exits",
-    )
-    parser.add_argument("--debug", action="store_const", const=logging.DEBUG, help="set logger level to debug")
-    parser.add_argument(
-        "--log-file", help="file to write log output to. By default logs will be written to the current directory."
     )
     commands_subparser = parser.add_subparsers(
         title="command", dest="command", description="STAC populator command to execute.", required=True
@@ -52,8 +47,7 @@ def implementation_modules() -> dict[str, ModuleType]:
 
 def run(ns: argparse.Namespace) -> int:
     if ns.command == "run":
-        logfile_name = ns.log_file or f"{ns.populator}_log_{datetime.now(timezone.utc).isoformat() + 'Z'}.jsonl"
-        setup_logging(logfile_name, ns.debug or logging.INFO)
+        setup_logging(ns.log_file, ns.debug or logging.INFO)
         return implementation_modules()[ns.populator].runner(ns) or 0
 
 
