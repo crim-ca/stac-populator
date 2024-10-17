@@ -6,6 +6,7 @@ APP_NAME    := STACpopulator
 APP_VERSION ?= 0.6.0
 
 DOCKER_COMPOSE_FILES := -f "$(APP_ROOT)/docker/docker-compose.yml"
+COMPOSE_PROJECT_NAME := stac-populator
 DOCKER_TAG := ghcr.io/crim-ca/stac-populator:$(APP_VERSION)
 
 IMP_DIR := $(APP_NAME)/implementations
@@ -35,19 +36,20 @@ del-cmip6:
 	curl --location --request DELETE '$(STAC_HOST)/collections/CMIP6_UofT'
 	@echo ""
 
+
 docker-start:
-	docker compose $(DOCKER_COMPOSE_FILES) up
+	docker compose -p "$(COMPOSE_PROJECT_NAME)" $(DOCKER_COMPOSE_FILES) up
 starthost: docker-start
 
 docker-stop:
-	docker compose $(DOCKER_COMPOSE_FILES) down
+	docker compose -p "$(COMPOSE_PROJECT_NAME)"  $(DOCKER_COMPOSE_FILES) down
 stophost: docker-stop
+
+del_docker_volume: stophost
+	docker volume rm -p $(COMPOSE_PROJECT_NAME)_stac-db
 
 docker-build:
 	docker build "$(APP_ROOT)" -f "$(APP_ROOT)/docker/Dockerfile" -t "$(DOCKER_TAG)"
-
-del_docker_volume: stophost
-	docker volume rm docker_stac-db
 
 resethost: del_docker_volume starthost
 

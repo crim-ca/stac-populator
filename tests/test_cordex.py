@@ -1,4 +1,4 @@
-from STACpopulator.extensions.cordex6 import Cordex6DataModel
+from STACpopulator.extensions.cordex6 import Cordex6DataModel, Cordex6DataModelNcML
 
 
 def get_first_item_attrs(url):
@@ -26,14 +26,13 @@ def test_item_raw():
 
     assert item["properties"]["cordex6:activity_id"] == "DD"
     assert item["properties"]["cordex6:project_id"] == "CORDEX"
-    assert item["properties"]["xscen:type"] == "simulation"
 
 
 def test_item_ncml():
     url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/datasets/simulations/RCM-CMIP6/CORDEX/NAM-12/day/catalog.html"
 
     attrs = get_first_item_attrs(url)
-    model = Cordex6DataModel.from_data(attrs)
+    model = Cordex6DataModelNcML.from_data(attrs)
     item = model.stac_item()
 
     assert item["properties"]["cordex6:activity_id"] == "DD"

@@ -49,10 +49,10 @@ class CordexCmip6(ExtensionHelper):
 
 
 # Customize the THREDDSCatalogDataModel
-class Cordex6DataModel(THREDDSCatalogDataModel):
+class Cordex6DataModelNcML(THREDDSCatalogDataModel):
+    """Data model for CORDEX-CMIP6 NcML aggregations."""
     properties: CordexCmip6
-    xscen: Xscen = Xscen(type="simulation", processing_level="raw")
-
+    xscen: Xscen
     extensions: list = ["properties", "datacube", "thredds", "xscen"]
 
     @property
@@ -74,5 +74,33 @@ class Cordex6DataModel(THREDDSCatalogDataModel):
         values.append(self.end_datetime.strftime("%Y%m%d"))
         return "_".join(values)
 
+    @model_validator(mode="before")
+    @classmethod
+    def xscen_helper(cls, data):
+        data['xscen'] = data['data']['attributes']
+        return data
 
 
+# Customize the THREDDSCatalogDataModel
+class Cordex6DataModel(THREDDSCatalogDataModel):
+    """Data model for CORDEX-CMIP6 NetCDF datasets."""
+    properties: CordexCmip6
+
+    @property
+    def uid(self) -> str:
+        """Return a unique ID for CMIP6 data item."""
+        keys = [
+            "activity_id",
+            "driving_institution_id",
+            "driving_source_id",
+            "institution_id",
+            "source_id",
+            "driving_experiment_id",
+            "driving_variant_label",
+            "variable_id",
+            "domain_id",
+        ]
+        values = [getattr(self.properties, k) for k in keys]
+        values.append(self.start_datetime.strftime("%Y%m%d"))
+        values.append(self.end_datetime.strftime("%Y%m%d"))
+        return "_".join(values)

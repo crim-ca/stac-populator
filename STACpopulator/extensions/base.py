@@ -25,6 +25,7 @@ How-to:
 from __future__ import annotations
 
 from datetime import datetime
+from pathlib import Path
 import json
 import jsonschema
 import logging
@@ -65,7 +66,7 @@ class ExtensionHelper(BaseModel):
     _prefix : str
         If not None, this prefix is added to ingested data before the jsonschema validation.
     _schema_uri : str
-        URI of the json schema to validate against.
+        URI of the json schema to validate against. Note this is not a STAC schema, but a schema for the dataset properties only.
     _schema_exclude : list[str]
         Properties not meant to be validated by json schema, but still included in the data model.
     """
@@ -106,10 +107,25 @@ class ExtensionHelper(BaseModel):
         """Add extension for the properties of the dataset to the STAC item.
         The extension class is created dynamically from the properties.
         """
-        ExtSubCls = metacls_extension(self._prefix, schema_uri=str(self._schema_uri))
+        schema_uri = self.write_stac_schema() if self._schema_uri else None
+        ExtSubCls = metacls_extension(self._prefix, schema_uri=schema_uri)
         item_ext = ExtSubCls.ext(item, add_if_missing=add_if_missing)
         item_ext.apply(self.model_dump(mode="json", by_alias=True))
         return item
+
+    def to_stac_schema(self) -> dict:
+        """Return the STAC schema for the extension."""
+        return {'type': 'object',
+                'required': ['type', 'properties'],
+                'properties': {'type': {'const': 'Feature'},
+                               'properties': {'$ref': str(self._schema_uri)}
+                               }
+                }
+    def write_stac_schema(self) -> str:
+        path = f"/tmp/{self._prefix}-schema.json"
+        with open(path, "w") as fh:
+            json.dump(self.to_stac_schema(), fh)
+        return path
 
 
 class BaseSTAC(BaseModel):
@@ -151,10 +167,8 @@ class BaseSTAC(BaseModel):
             id=self.uid,
             geometry=self.geometry.model_dump(),
             bbox=self.bbox,
-            properties={
-                "start_datetime": str(self.start_datetime),
-                "end_datetime": str(self.end_datetime),
-            },
+            start_datetime=self.start_datetime,
+            end_datetime=self.end_datetime,
             datetime=None,
         )
 
