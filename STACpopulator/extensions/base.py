@@ -25,7 +25,6 @@ How-to:
 from __future__ import annotations
 
 from datetime import datetime
-from pathlib import Path
 import json
 import jsonschema
 import logging
@@ -149,6 +148,9 @@ class BaseSTAC(BaseModel):
 
     model_config = ConfigDict(populate_by_name=True, extra="ignore", arbitrary_types_allowed=True)
 
+    # Extensions are automatically detected by being Helper subclasses
+    _extensions: list[str] = PrivateAttr([])
+
     @property
     def uid(self) -> str:
         """Return a unique ID. When subclassing, use a combination of properties uniquely identifying a dataset."""
@@ -156,10 +158,13 @@ class BaseSTAC(BaseModel):
         import uuid
         return str(uuid.uuid4())
 
-    # @field_validator("extensions")
-    # def validate_extensions(cls, value):
-    #     pass
-
+    @model_validator(mode="after")
+    def find_extensions(self):
+        """Populate the list of extensions."""
+        for key, field in self.model_fields.items():
+            if isinstance(field.annotation, type) and issubclass(field.annotation, Helper):
+                self._extensions.append(key)
+            
     def stac_item(self) -> "pystac.Item":
         """Create a STAC item and add extensions."""
         item = pystac.Item(
@@ -173,7 +178,7 @@ class BaseSTAC(BaseModel):
         )
 
         # Add extensions
-        for ext in self.extensions:
+        for ext in self._extensions:
             getattr(self, ext).apply(item)
 
         try:

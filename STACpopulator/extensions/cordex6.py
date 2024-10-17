@@ -4,12 +4,9 @@ from pathlib import Path
 from pydantic import BaseModel, Field, FilePath, model_validator
 from datetime import datetime
 
-from importlib import reload
-from STACpopulator.extensions.xscen import Xscen
-import STACpopulator.extensions.base
-reload(STACpopulator.extensions.base)
 from STACpopulator.extensions.base import ExtensionHelper
 from STACpopulator.extensions.thredds import THREDDSCatalogDataModel
+from STACpopulator.extensions.xscen import Xscen
 
 
 # This is generated using datamodel-codegen + manual edits
@@ -69,7 +66,7 @@ class Cordex6DataModel(THREDDSCatalogDataModel):
             "variable_id",
             "domain_id",
         ]
-        values = [getattr(self.properties, k) for k in keys]
+        values = [getattr(self.cordex6, k) for k in keys]
         values.append(self.start_datetime.strftime("%Y%m%d"))
         values.append(self.end_datetime.strftime("%Y%m%d"))
         return "_".join(values)

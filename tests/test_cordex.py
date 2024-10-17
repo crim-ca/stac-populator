@@ -6,7 +6,7 @@ def get_first_item_attrs(url):
     import requests
     from siphon.catalog import TDSCatalog
     import xncml
-    from STACpopulator.stac_utils import np
+    from STACpopulator.stac_utils import np2py
 
     cat = TDSCatalog(url)
 
@@ -15,7 +15,7 @@ def get_first_item_attrs(url):
             r = requests.get(ds.access_urls["NCML"])
             attrs = xncml.Dataset.from_text(r.text).to_cf_dict()
             attrs["access_urls"] = ds.access_urls
-            return numpy_to_python_datatypes(attrs)
+            return np2py(attrs)
 
 
 def make_test_data():
@@ -35,20 +35,20 @@ def make_test_data():
 
 
 def test_item_raw():
-
     attrs = json.load(open("tests/data/cordex6_raw.json"))
     model = Cordex6DataModel.from_data(attrs)
     item = model.stac_item()
+    assert set(model._extensions) == {"cordex6", "thredds", "datacube"}
 
     assert item["properties"]["cordex6:activity_id"] == "DD"
     assert item["properties"]["cordex6:project_id"] == "CORDEX"
 
 
 def test_item_ncml():
-
     attrs = json.load(open("tests/data/cordex6_ncml.json"))
     model = Cordex6DataModelNcML.from_data(attrs)
     item = model.stac_item()
+    assert set(model._extensions) == {"cordex6", "thredds", "datacube", "xscen"}
 
     assert item["properties"]["cordex6:activity_id"] == "DD"
     assert item["properties"]["cordex6:project_id"] == "CORDEX"
