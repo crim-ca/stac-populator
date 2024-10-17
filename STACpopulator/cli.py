@@ -14,6 +14,7 @@ from STACpopulator.logging import setup_logging
 
 
 def add_parser_args(parser: argparse.ArgumentParser) -> dict[str, Callable]:
+    """Common CLI arguments for all implementations."""
     parser.add_argument(
         "--version",
         "-V",
