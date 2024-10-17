@@ -6,6 +6,7 @@ from typing import Any, MutableMapping, Optional
 
 from requests.sessions import Session
 
+from STACpopulator import cli
 from STACpopulator.log import add_logging_options
 from STACpopulator.request_utils import add_request_options, apply_request_options
 from STACpopulator.input import STACDirectoryLoader
@@ -72,7 +73,8 @@ def main(*args: str) -> int:
     parser = argparse.ArgumentParser()
     add_parser_args(parser)
     ns = parser.parse_args(args or None)
-    return runner(ns)
+    ns.populator = "DirectoryLoader"
+    return cli.run(ns)
 
 
 if __name__ == "__main__":

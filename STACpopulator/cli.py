@@ -5,14 +5,13 @@ import logging
 import sys
 from types import ModuleType
 import warnings
-from typing import Callable
 
 from STACpopulator import __version__, implementations
 from STACpopulator.exceptions import STACPopulatorError
 from STACpopulator.log import setup_logging
 
 
-def add_parser_args(parser: argparse.ArgumentParser) -> dict[str, Callable]:
+def add_parser_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--version",
         "-V",

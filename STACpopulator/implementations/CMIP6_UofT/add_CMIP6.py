@@ -9,6 +9,7 @@ from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
 from requests.sessions import Session
 
+from STACpopulator import cli
 from STACpopulator.log import add_logging_options
 from STACpopulator.request_utils import add_request_options, apply_request_options
 from STACpopulator.extensions.cmip6 import CMIP6Helper, CMIP6Properties
@@ -131,8 +132,8 @@ def main(*args: str) -> int:
     parser = argparse.ArgumentParser()
     add_parser_args(parser)
     ns = parser.parse_args(args or None)
-    return runner(ns)
-
+    ns.populator = "CMIP6_UofT"
+    return cli.run(ns)
 
 if __name__ == "__main__":
     sys.exit(main())
