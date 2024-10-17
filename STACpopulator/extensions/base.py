@@ -170,6 +170,7 @@ class BaseSTAC(BaseModel):
             start_datetime=self.start_datetime,
             end_datetime=self.end_datetime,
             datetime=None,
+            properties={},
         )
 
         # Add extensions
