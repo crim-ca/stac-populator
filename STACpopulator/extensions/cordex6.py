@@ -8,7 +8,8 @@ from importlib import reload
 from STACpopulator.extensions.xscen import Xscen
 import STACpopulator.extensions.base
 reload(STACpopulator.extensions.base)
-from STACpopulator.extensions.base import THREDDSCatalogDataModel, ExtensionHelper
+from STACpopulator.extensions.base import ExtensionHelper
+from STACpopulator.extensions.thredds import THREDDSCatalogDataModel
 
 
 # This is generated using datamodel-codegen + manual edits
@@ -48,12 +49,11 @@ class CordexCmip6(ExtensionHelper):
     _schema_uri: FilePath = Path(__file__).parent / "schemas" / "cordex6" / "cmip6-cordex-global-attrs-schema.json"
 
 
+
 # Customize the THREDDSCatalogDataModel
-class Cordex6DataModelNcML(THREDDSCatalogDataModel):
-    """Data model for CORDEX-CMIP6 NcML aggregations."""
-    properties: CordexCmip6
-    xscen: Xscen
-    extensions: list = ["properties", "datacube", "thredds", "xscen"]
+class Cordex6DataModel(THREDDSCatalogDataModel):
+    """Data model for CORDEX-CMIP6 NetCDF datasets."""
+    cordex6: CordexCmip6
 
     @property
     def uid(self) -> str:
@@ -76,31 +76,19 @@ class Cordex6DataModelNcML(THREDDSCatalogDataModel):
 
     @model_validator(mode="before")
     @classmethod
-    def xscen_helper(cls, data):
-        data['xscen'] = data['data']['attributes']
+    def properties_helper(cls, data):
+        """Instantiate the properties helper."""
+        data["cordex6"] = data['data']['attributes']
         return data
 
 
 # Customize the THREDDSCatalogDataModel
-class Cordex6DataModel(THREDDSCatalogDataModel):
-    """Data model for CORDEX-CMIP6 NetCDF datasets."""
-    properties: CordexCmip6
+class Cordex6DataModelNcML(Cordex6DataModel):
+    """Data model for CORDEX-CMIP6 NcML aggregations."""
+    xscen: Xscen
 
-    @property
-    def uid(self) -> str:
-        """Return a unique ID for CMIP6 data item."""
-        keys = [
-            "activity_id",
-            "driving_institution_id",
-            "driving_source_id",
-            "institution_id",
-            "source_id",
-            "driving_experiment_id",
-            "driving_variant_label",
-            "variable_id",
-            "domain_id",
-        ]
-        values = [getattr(self.properties, k) for k in keys]
-        values.append(self.start_datetime.strftime("%Y%m%d"))
-        values.append(self.end_datetime.strftime("%Y%m%d"))
-        return "_".join(values)
+    @model_validator(mode="before")
+    @classmethod
+    def xscen_helper(cls, data):
+        data['xscen'] = data['data']['attributes']
+        return data

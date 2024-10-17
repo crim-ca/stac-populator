@@ -4,7 +4,7 @@ from typing import Literal
 from importlib import reload
 import STACpopulator.extensions.base
 reload(STACpopulator.extensions.base)
-from STACpopulator.extensions.base import THREDDSCatalogDataModel, ExtensionHelper
+from STACpopulator.extensions.base import ExtensionHelper
 
 
 class Xscen(ExtensionHelper):

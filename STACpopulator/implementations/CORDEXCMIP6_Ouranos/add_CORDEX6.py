@@ -4,11 +4,12 @@ from requests.sessions import Session
 from STACpopulator.requests import add_request_options, apply_request_options
 from STACpopulator.input import ErrorLoader, THREDDSLoader
 
-LOGGER = logging.getLogger(__name__)
 import argparse
 from typing import Any
 from STACpopulator.populator_base import STACpopulatorBase
 from STACpopulator.extensions.cordex6 import Cordex6DataModel
+
+LOGGER = logging.getLogger(__name__)
 
 
 class CORDEX_STAC_Populator(STACpopulatorBase):

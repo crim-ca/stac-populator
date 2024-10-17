@@ -4,9 +4,9 @@ from typing import Any, MutableMapping, MutableSequence
 from pystac.extensions.datacube import Dimension, DimensionType, Variable, VariableType, DatacubeExtension
 
 from STACpopulator.stac_utils import ncattrs_to_bbox
+from STACpopulator.extensions.base import Helper
 
-
-class DataCubeHelper:
+class DataCubeHelper(Helper):
     """Return STAC Item from CF JSON metadata, as provided by `xncml.Dataset.to_cf_dict`."""
 
     axis = {"X": "x", "Y": "y", "Z": "z", "T": None, "longitude": "x", "latitude": "y", "vertical": "z", "time": "t"}

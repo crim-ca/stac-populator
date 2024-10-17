@@ -38,15 +38,15 @@ del-cmip6:
 
 
 docker-start:
-	docker compose -p "$(COMPOSE_PROJECT_NAME)" $(DOCKER_COMPOSE_FILES) up
+	docker compose $(DOCKER_COMPOSE_FILES) up
 starthost: docker-start
 
 docker-stop:
-	docker compose -p "$(COMPOSE_PROJECT_NAME)"  $(DOCKER_COMPOSE_FILES) down
+	docker compose $(DOCKER_COMPOSE_FILES) down
 stophost: docker-stop
 
 del_docker_volume: stophost
-	docker volume rm -p $(COMPOSE_PROJECT_NAME)_stac-db
+	docker volume rm stac-db
 
 docker-build:
 	docker build "$(APP_ROOT)" -f "$(APP_ROOT)/docker/Dockerfile" -t "$(DOCKER_TAG)"

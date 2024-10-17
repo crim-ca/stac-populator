@@ -42,21 +42,18 @@ from pystac.extensions.base import (
 from pystac import STACValidationError
 from pystac.extensions.base import S  # generic pystac.STACObject
 from STACpopulator.models import AnyGeometry, GeoJSONPolygon
-from STACpopulator.stac_utils import (
-    ServiceType,
-    ncattrs_to_bbox,
-    ncattrs_to_geometry,
-)
+from STACpopulator.stac_utils import ServiceType
 import types
-from STACpopulator.extensions.datacube import DataCubeHelper
-from STACpopulator.extensions.thredds import THREDDSHelper
 
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
 
 LOGGER = logging.getLogger(__name__)
 
+class Helper:
+    """Class to be subclassed by extension helpers."""
 
-class ExtensionHelper(BaseModel):
+
+class ExtensionHelper(BaseModel, Helper):
     """Base class for dataset properties going into the catalog.
 
     Subclass this with attributes.
@@ -70,7 +67,7 @@ class ExtensionHelper(BaseModel):
     _schema_exclude : list[str]
         Properties not meant to be validated by json schema, but still included in the data model.
     """
-    _prefix: str = PrivateAttr(None)
+    _prefix: str = PrivateAttr()
     _schema_uri: FilePath = PrivateAttr(None)
     _schema_exclude: list[str] = PrivateAttr([])
 
@@ -150,8 +147,6 @@ class BaseSTAC(BaseModel):
     start_datetime: datetime
     end_datetime: datetime
 
-    extensions: list = []
-
     model_config = ConfigDict(populate_by_name=True, extra="ignore", arbitrary_types_allowed=True)
 
     @property
@@ -160,6 +155,10 @@ class BaseSTAC(BaseModel):
         # TODO: Should this be an abstract method?
         import uuid
         return str(uuid.uuid4())
+
+    # @field_validator("extensions")
+    # def validate_extensions(cls, value):
+    #     pass
 
     def stac_item(self) -> "pystac.Item":
         """Create a STAC item and add extensions."""
@@ -183,62 +182,6 @@ class BaseSTAC(BaseModel):
             raise Exception("Failed to validate STAC item") from e
 
         return json.loads(json.dumps(item.to_dict()))
-
-
-class THREDDSCatalogDataModel(BaseSTAC):
-    """Base class ingesting attributes loaded by `THREDDSLoader` and creating a STAC item.
-
-    This is meant to be subclassed for each extension.
-
-    It includes two validation mechanisms:
-     - pydantic validation using type hints, and
-     - json schema validation.
-    """
-    # Data from loader
-    data: dict
-
-    # Extensions classes
-    properties: ExtensionHelper
-    datacube: DataCubeHelper
-    thredds: THREDDSHelper
-
-    extensions: list = ["properties", "datacube", "thredds"]
-
-    model_config = ConfigDict(populate_by_name=True, extra="ignore", arbitrary_types_allowed=True)
-
-    @classmethod
-    def from_data(cls, data):
-        """Instantiate class from data provided by THREDDS Loader.
-        """
-        # This is where we match the Loader's output to the STAC item and extensions inputs. If we had multiple
-        # loaders, that's probably the only thing that would be different between them.
-        return cls(data=data,
-                   start_datetime=data["groups"]["CFMetadata"]["attributes"]["time_coverage_start"],
-                   end_datetime=data["groups"]["CFMetadata"]["attributes"]["time_coverage_end"],
-                   geometry=ncattrs_to_geometry(data),
-                   bbox=ncattrs_to_bbox(data),
-                   )
-
-    @model_validator(mode="before")
-    @classmethod
-    def properties_helper(cls, data):
-        """Instantiate the properties helper."""
-        data["properties"] = data['data']['attributes']
-        return data
-
-    @model_validator(mode="before")
-    @classmethod
-    def datacube_helper(cls, data):
-        """Instantiate the DataCubeHelper."""
-        data["datacube"] = DataCubeHelper(data['data'])
-        return data
-
-    @model_validator(mode="before")
-    @classmethod
-    def thredds_helper(cls, data):
-        """Instantiate the THREDDSHelper."""
-        data["thredds"] = THREDDSHelper(data['data']["access_urls"])
-        return data
 
 
 def metacls_extension(name, schema_uri):
