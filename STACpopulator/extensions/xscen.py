@@ -10,5 +10,5 @@ from STACpopulator.extensions.base import THREDDSCatalogDataModel, ExtensionHelp
 class Xscen(ExtensionHelper):
     type: Literal["forecast", "station-obs", "gridded-obs", "reconstruction", "simulation"]
     processing_level: Literal["raw", "extracted", "regridded", "biasadjusted"]
-
+    license_type: Literal["permissive", "permissive non-commercial"]
     _prefix: str = "xscen"
