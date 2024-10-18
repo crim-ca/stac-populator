@@ -1,0 +1,18 @@
+title: CMIP6-CORDEX
+id: Ouranos_CMIP6-CORDEX
+description: Coordinated Regional Downscaling Experiment phase 6
+keywords: ['CMIP', 'CMIP6', 'WCRP', 'Climate Change', 'CORDEX']
+license: "CC-BY-4.0"
+spatialextent: [-180, -90, 180, 90]
+temporalextent: ['1850-01-01', '2500-01-01']
+
+links:
+    - rel: about
+      title : Project homepage
+      target : https://cordex.org/experiment-guidelines/cordex-cmip6/
+      media_type: text/html
+    - rel: license
+      title : License
+      target : https://cordex.org/data-access/cordex-cmip6-data/cordex-cmip6-terms-of-use
+      media_type: text/plain
+
