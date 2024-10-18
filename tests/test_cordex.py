@@ -24,13 +24,13 @@ def make_test_data():
     url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/disk2/ouranos/CORDEX/CMIP6/DD/NAM-12/OURANOS/MPI-ESM1-2-LR/ssp370/r1i1p1f1/CRCM5/v1-r1/day/tas/v20231208/catalog.html"
     attrs = get_first_item_attrs(url)
     with open("data/cordex6_raw.json", "w") as f:
-        json.dump(attrs, f)
+        json.dump(attrs, f, indent=2)
 
     # NcML CORDEX data
     url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/datasets/simulations/RCM-CMIP6/CORDEX/NAM-12/day/catalog.html"
     attrs = get_first_item_attrs(url)
     with open("data/cordex6_ncml.json", "w") as f:
-        json.dump(attrs, f)
+        json.dump(attrs, f, indent=2)
 
 
 
