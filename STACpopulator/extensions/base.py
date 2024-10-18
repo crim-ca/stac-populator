@@ -99,7 +99,7 @@ class ExtensionHelper(BaseModel, Helper):
 
         return data
 
-    def apply(self, item, add_if_missing=False):
+    def apply(self, item, add_if_missing=True):
         """Add extension for the properties of the dataset to the STAC item.
         The extension class is created dynamically from the properties.
         """
@@ -148,8 +148,8 @@ class BaseSTAC(BaseModel):
 
     model_config = ConfigDict(populate_by_name=True, extra="ignore", arbitrary_types_allowed=True)
 
-    # Extensions are automatically detected by being Helper subclasses
-    _extensions: list[str] = PrivateAttr([])
+    # Helpers are automatically detected by being Helper subclasses
+    _helpers: list[str] = PrivateAttr([])
 
     @property
     def uid(self) -> str:
@@ -159,12 +159,12 @@ class BaseSTAC(BaseModel):
         return str(uuid.uuid4())
 
     @model_validator(mode="after")
-    def find_extensions(self):
+    def find_helpers(self):
         """Populate the list of extensions."""
         for key, field in self.model_fields.items():
             if isinstance(field.annotation, type) and issubclass(field.annotation, Helper):
-                self._extensions.append(key)
-            
+                self._helpers.append(key)
+
     def stac_item(self) -> "pystac.Item":
         """Create a STAC item and add extensions."""
         item = pystac.Item(
@@ -178,7 +178,7 @@ class BaseSTAC(BaseModel):
         )
 
         # Add extensions
-        for ext in self._extensions:
+        for ext in self._helpers:
             getattr(self, ext).apply(item)
 
         try:
