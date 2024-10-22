@@ -132,7 +132,7 @@ def main(*args: str) -> int:
     parser = argparse.ArgumentParser()
     add_parser_args(parser)
     ns = parser.parse_args(args or None)
-    ns.populator = "CMIP6_UofT"
+    ns.populator = os.path.basename(os.path.dirname(__file__))
     return cli.run(ns)
 
 if __name__ == "__main__":
