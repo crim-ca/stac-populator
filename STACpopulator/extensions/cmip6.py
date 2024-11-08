@@ -49,12 +49,11 @@ except OSError as e:
 
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
 
-SchemaName = Literal["cmip6"]
 # FIXME: below reference (used as ID in the schema itself) should be updated once the extension is officially released
 # SCHEMA_URI: str = "https://stac-extensions.github.io/cmip6/v1.0.0/schema.json"
 # below is the temporary resolvable URI
 SCHEMA_URI: str = "https://raw.githubusercontent.com/dchandan/stac-extension-cmip6/main/json-schema/schema.json"
-PREFIX = f"{get_args(SchemaName)[0]}:"
+PREFIX = "cmip6:"
 
 # CMIP6 controlled vocabulary (CV)
 CV = pyessv.WCRP.CMIP6  # noqa
@@ -200,9 +199,7 @@ class CMIP6Extension(
     PropertiesExtension,
     ExtensionManagementMixin[Union[pystac.Asset, pystac.Item, pystac.Collection]],
 ):
-    @property
-    def name(self) -> SchemaName:
-        return get_args(SchemaName)[0]
+    name: Literal["cmip6"] = "cmip6"
 
     def apply(
         self,
