@@ -32,10 +32,9 @@ class STACpopulatorBase(ABC):
         self,
         stac_host: str,
         data_loader: GenericLoader,
-        update: Optional[bool] = False,
+        update: bool = False,
         session: Optional[Session] = None,
         config_file: Optional[Union[os.PathLike[str], str]] = "collection_config.yml",
-        log_debug: Optional[bool] = False,
     ) -> None:
         """Constructor
 
@@ -46,7 +45,6 @@ class STACpopulatorBase(ABC):
         :raises RuntimeError: Raised if one of the required definitions is not found in the collection info filename
         """
 
-        super().__init__()
         self._collection_config_path = config_file
         self._collection_info: MutableMapping[str, Any] = None
         self._session = session

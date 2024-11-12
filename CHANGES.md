@@ -16,6 +16,10 @@
 * Add tests for CLI and implementations when invoked through the CLI
 * Refactored code dealing with requests and authentication to the `STACpopulator/requests.py` file
 * Add `--log-file` command line option to specify a non-default location to write log files to
+* fix incorrect example in README
+* move argument parsing for logging options to the implementation code
+* fix bug where logging options were being set incorrectly
+* rename files to avoid potential naming conflicts with other packages (`logging` and `requests`)
 * Add `cordex6` extension and `CORDEX-CMIP6_Ouranos` implementation. This includes a refactoring of base extension classes.
 * Add an `xscen` extension demonstrating how to add properties to a STAC Item.
 

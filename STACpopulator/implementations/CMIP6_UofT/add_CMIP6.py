@@ -9,7 +9,9 @@ from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
 from requests.sessions import Session
 
-from STACpopulator.requests import add_request_options, apply_request_options
+from STACpopulator import cli
+from STACpopulator.log import add_logging_options
+from STACpopulator.request_utils import add_request_options, apply_request_options
 from STACpopulator.extensions.cmip6 import CMIP6Helper, CMIP6Properties
 from STACpopulator.extensions.datacube import DataCubeHelper
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
@@ -31,7 +33,6 @@ class CMIP6populator(STACpopulatorBase):
         update: Optional[bool] = False,
         session: Optional[Session] = None,
         config_file: Optional[Union[os.PathLike[str], str]] = None,
-        log_debug: Optional[bool] = False,
     ) -> None:
         """Constructor
 
@@ -40,7 +41,7 @@ class CMIP6populator(STACpopulatorBase):
         :param data_loader: loader to iterate over ingestion data.
         """
         super().__init__(
-            stac_host, data_loader, update=update, session=session, config_file=config_file, log_debug=log_debug
+            stac_host, data_loader, update=update, session=session, config_file=config_file
         )
 
     def create_stac_item(
@@ -106,6 +107,7 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
         ),
     )
     add_request_options(parser)
+    add_logging_options(parser)
 
 
 def runner(ns: argparse.Namespace) -> int:
@@ -120,7 +122,7 @@ def runner(ns: argparse.Namespace) -> int:
             data_loader = ErrorLoader()
 
         c = CMIP6populator(
-            ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config, log_debug=ns.debug
+            ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config
         )
         c.ingest()
     return 0
@@ -130,8 +132,8 @@ def main(*args: str) -> int:
     parser = argparse.ArgumentParser()
     add_parser_args(parser)
     ns = parser.parse_args(args or None)
-    return runner(ns)
-
+    ns.populator = os.path.basename(os.path.dirname(__file__))
+    return cli.run(ns)
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -121,7 +121,7 @@ For example, using the [CMIP6_UofT][CMIP6_UofT] implementation, the script can b
 python STACpopulator/implementations/CMIP6_UofT/add_CMIP6.py \
     "http://localhost:8880/stac/" \
     "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.html" \
-    "STACpopulator/implementations/CMIP6_UofT/collection_config.yml"
+    --config "STACpopulator/implementations/CMIP6_UofT/collection_config.yml"
 ```
 
 *Note*: <br>
