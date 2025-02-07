@@ -169,8 +169,8 @@ dev = [
     "bump-my-version",
     "jsonschema",
     "pystac[validation]>=1.9.0",
-    "ruff",
-    "pre-commit"
+    "ruff~=0.9",
+    "pre-commit~=4.1"
 ]
 
 [tool.ruff]
