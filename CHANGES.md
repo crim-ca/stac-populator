@@ -20,7 +20,8 @@
 * move argument parsing for logging options to the implementation code
 * fix bug where logging options were being set incorrectly
 * rename files to avoid potential naming conflicts with other packages (`logging` and `requests`)
-
+* add `ruff` as a dev dependency to format and lint files
+* add `pre-commit` as a dev dependency to run `ruff` on commit and a workflow to run it on github as well
 
 ## [0.6.0](https://github.com/crim-ca/stac-populator/tree/0.6.0) (2024-02-22)
 

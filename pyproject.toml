@@ -168,6 +168,25 @@ dev = [
     "responses",
     "bump-my-version",
     "jsonschema",
-    "pystac[validation]>=1.9.0"
+    "pystac[validation]>=1.9.0",
+    "ruff",
+    "pre-commit"
 ]
 
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.format]
+docstring-code-format = true
+line-ending = "lf"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "D", "I", "ANN"]
+ignore = ["D100", "D104", "D417", "ANN002", "ANN003"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.lint.per-file-ignores]
+"test/**.py" = ["D", "ANN"]
