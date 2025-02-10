@@ -24,6 +24,7 @@ How-to:
 """
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from datetime import datetime
 import json
 import jsonschema
@@ -44,6 +45,8 @@ from STACpopulator.models import AnyGeometry, GeoJSONPolygon
 from STACpopulator.stac_utils import ServiceType
 import types
 import uuid
+from pathlib import Path
+import tempfile
 
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
 
@@ -147,7 +150,6 @@ class BaseSTAC(BaseModel):
     bbox: list[float]
     start_datetime: datetime
     end_datetime: datetime
-    uid: Field(default_factory=lambda: str(uuid.uuid4()))
 
     model_config = ConfigDict(populate_by_name=True, extra="ignore", arbitrary_types_allowed=True)
 
@@ -155,18 +157,22 @@ class BaseSTAC(BaseModel):
     # Helpers are automatically detected by being Helper subclasses
     _helpers: list[str] = PrivateAttr([])
 
+    @abstractmethod
+    def create_uid(self):
+        """Return a unique identifier for the dataset."""
+
     @model_validator(mode="after")
     def find_helpers(self):
         """Populate the list of extensions."""
         for key, field in self.model_fields.items():
             if isinstance(field.annotation, type) and issubclass(field.annotation, Helper):
                 self._helpers.append(key)
-                return self
+        return self
 
     def stac_item(self) -> "pystac.Item":
         """Create a STAC item and add extensions."""
         item = pystac.Item(
-            id=self.uid,
+            id=self.create_uid(),
             geometry=self.geometry.model_dump(),
             bbox=self.bbox,
             start_datetime=self.start_datetime,

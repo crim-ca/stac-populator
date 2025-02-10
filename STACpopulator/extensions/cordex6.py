@@ -52,8 +52,7 @@ class Cordex6DataModel(THREDDSCatalogDataModel):
     """Data model for CORDEX-CMIP6 NetCDF datasets."""
     cordex6: CordexCmip6
 
-    @property
-    def uid(self) -> str:
+    def create_uid(self) -> str:
         """Return a unique ID for CMIP6 data item."""
         keys = [
             "activity_id",
