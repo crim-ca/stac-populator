@@ -42,6 +42,7 @@ def test_item_raw():
 
     assert item["properties"]["cordex6:activity_id"] == "DD"
     assert item["properties"]["cordex6:project_id"] == "CORDEX"
+    assert item["id"].startswith("DD_")
 
 
 def test_item_ncml():
