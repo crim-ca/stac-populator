@@ -43,6 +43,7 @@ from pystac.extensions.base import S  # generic pystac.STACObject
 from STACpopulator.models import AnyGeometry, GeoJSONPolygon
 from STACpopulator.stac_utils import ServiceType
 import types
+import uuid
 
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
 
@@ -118,7 +119,7 @@ class ExtensionHelper(BaseModel, Helper):
                                }
                 }
     def write_stac_schema(self) -> str:
-        path = f"/tmp/{self._prefix}-schema.json"
+        path = Path(tempfile.mkdtemp()) / f"{self._prefix}-schema.json"
         with open(path, "w") as fh:
             json.dump(self.to_stac_schema(), fh)
         return path
@@ -145,18 +146,13 @@ class BaseSTAC(BaseModel):
     bbox: list[float]
     start_datetime: datetime
     end_datetime: datetime
+    uid: Field(default_factory=lambda: str(uuid.uuid4()))
 
     model_config = ConfigDict(populate_by_name=True, extra="ignore", arbitrary_types_allowed=True)
 
+
     # Helpers are automatically detected by being Helper subclasses
     _helpers: list[str] = PrivateAttr([])
-
-    @property
-    def uid(self) -> str:
-        """Return a unique ID. When subclassing, use a combination of properties uniquely identifying a dataset."""
-        # TODO: Should this be an abstract method?
-        import uuid
-        return str(uuid.uuid4())
 
     @model_validator(mode="after")
     def find_helpers(self):
@@ -164,6 +160,7 @@ class BaseSTAC(BaseModel):
         for key, field in self.model_fields.items():
             if isinstance(field.annotation, type) and issubclass(field.annotation, Helper):
                 self._helpers.append(key)
+                return self
 
     def stac_item(self) -> "pystac.Item":
         """Create a STAC item and add extensions."""
@@ -208,7 +205,7 @@ class MetaExtension:
     schema_uri: str
 
     def apply(self, properties: dict[str, Any]) -> None:
-        """Applies CMIP6 Extension properties to the extended
+        """Applies Extension properties to the extended
         :class:`~pystac.Item` or :class:`~pystac.Asset`.
         """
         for prop, val in properties.items():
@@ -221,9 +218,6 @@ class MetaExtension:
 
     @classmethod
     def has_extension(cls, obj: S):
-        # FIXME: this override should be removed once an official and versioned schema is released
-        # ignore the original implementation logic for a version regex
-        # since in our case, the VERSION_REGEX is not fulfilled (ie: using 'main' branch, no tag available...)
         ext_uri = cls.get_schema_uri()
         return obj.stac_extensions is not None and any(uri == ext_uri for uri in obj.stac_extensions)
 

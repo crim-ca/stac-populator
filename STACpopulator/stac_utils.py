@@ -136,8 +136,6 @@ def np2py(data):
     data : dict, list, tuple, int, float, np.integer, np.floating, str
       Object to convert.
     """
-    import numpy as np
-
     if isinstance(data, dict):
         return {key: np2py(value) for key, value in data.items()}
 

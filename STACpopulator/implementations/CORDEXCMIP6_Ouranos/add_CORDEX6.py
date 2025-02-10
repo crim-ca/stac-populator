@@ -1,7 +1,8 @@
 import logging
 from requests.sessions import Session
 
-from STACpopulator.requests import add_request_options, apply_request_options
+from STACpopulator.log import add_logging_options
+from STACpopulator.request_utils import add_request_options, apply_request_options
 from STACpopulator.input import ErrorLoader, THREDDSLoader
 
 import argparse
@@ -43,6 +44,7 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
         ),
     )
     add_request_options(parser)
+    add_logging_options(parser)
 
 
 def runner(ns: argparse.Namespace) -> int:
