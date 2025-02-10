@@ -87,7 +87,8 @@ class ExtensionHelper(BaseModel, Helper):
         # Load schema
         uri =  cls._schema_uri.default
         if uri is not None:
-            schema = json.load(open(uri))
+            with open(uri) as f:
+                schema = json.load(f)
             validator_cls = jsonschema.validators.validator_for(schema)
             validator_cls.check_schema(schema)
             validator = validator_cls(schema)
