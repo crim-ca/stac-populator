@@ -25,7 +25,7 @@ How-to:
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from datetime import datetime
+from datetime import datetime as Datetime
 import json
 import jsonschema
 import logging
@@ -148,8 +148,9 @@ class BaseSTAC(BaseModel):
     # STAC item properties
     geometry: AnyGeometry | None
     bbox: list[float]
-    start_datetime: datetime
-    end_datetime: datetime
+    start_datetime: Datetime = None
+    end_datetime: Datetime = None
+    datetime: Datetime = None
     id: str = None
 
     model_config = ConfigDict(populate_by_name=True, extra="ignore", arbitrary_types_allowed=True)
@@ -185,7 +186,7 @@ class BaseSTAC(BaseModel):
             bbox=self.bbox,
             start_datetime=self.start_datetime,
             end_datetime=self.end_datetime,
-            datetime=None,
+            datetime=self.datetime,
             properties={},
         )
 
