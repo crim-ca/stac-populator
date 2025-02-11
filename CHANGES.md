@@ -20,7 +20,7 @@
 * move argument parsing for logging options to the implementation code
 * fix bug where logging options were being set incorrectly
 * rename files to avoid potential naming conflicts with other packages (`logging` and `requests`)
-
+* deprecate calling implementation scripts directly
 
 ## [0.6.0](https://github.com/crim-ca/stac-populator/tree/0.6.0) (2024-02-22)
 
