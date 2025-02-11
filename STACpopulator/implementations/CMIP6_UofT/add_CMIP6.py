@@ -133,6 +133,7 @@ def main(*args: str) -> int:
     add_parser_args(parser)
     ns = parser.parse_args(args or None)
     ns.populator = os.path.basename(os.path.dirname(__file__))
+    ns.command = "run"
     return cli.run(ns)
 
 if __name__ == "__main__":
