@@ -1,4 +1,5 @@
 import json
+import pystac
 import pytest
 import requests
 import os
@@ -6,7 +7,6 @@ import tempfile
 from urllib.parse import quote
 
 import xncml
-from pystac.version import get_stac_version
 
 from STACpopulator.extensions.cmip6 import CMIP6Helper
 from STACpopulator.extensions.thredds import THREDDSHelper, THREDDSExtension
@@ -50,8 +50,7 @@ def test_standalone_stac_item_thredds_ncml():
 
     ref_file = os.path.join(CUR_DIR, "data/stac_item_testdata_xclim_cmip6_ncml.json")
     with open(ref_file, mode="r", encoding="utf-8") as ff:
-        reference = json.load(ff)
-        reference["stac_version"] = get_stac_version()
+        reference = pystac.Item.from_dict(json.load(ff)).to_dict()
 
     assert stac_item.to_dict() == reference
 
@@ -87,7 +86,6 @@ def test_cmip6_stac_thredds_catalog_parsing():
 
     ref_file = os.path.join(CUR_DIR, "data/stac_collection_testdata_xclim_cmip6_catalog.json")
     with open(ref_file, mode="r", encoding="utf-8") as ff:
-        reference = json.load(ff)
-        reference["stac_version"] = get_stac_version()
+        reference = pystac.Collection.from_dict(json.load(ff)).to_dict()
 
     assert result == reference
