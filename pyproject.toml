@@ -103,7 +103,7 @@ replace = "name = \"STACpopulator\"\nversion = \"{new_version}\""
 name = "STACpopulator"
 version = "0.6.0"
 description = "Utility to populate STAC Catalog, Collections and Items from various dataset/catalog sources."
-requires-python = ">=3.10"
+requires-python = ">=3.10,<4"
 dependencies = [
     "colorlog",
     "pyyaml",
@@ -127,6 +127,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Operating System :: OS Independent",
     "Topic :: Database :: Database Engines/Servers",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
@@ -170,4 +171,3 @@ dev = [
     "jsonschema",
     "pystac[validation]>=1.9.0"
 ]
-
