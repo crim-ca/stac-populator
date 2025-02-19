@@ -130,3 +130,28 @@ For more tests validation, you can also run the test suite with coverage analysi
 ```shell
 make test-cov
 ```
+
+## Contributing
+
+We welcome any contributions to this codebase. To submit suggested changes, please do the following:
+
+- create a new feature branch off of `master`
+- update the code, write/update tests, write/update documentation
+- submit a pull request targetting the `master` branch
+
+### Coding Style
+
+This codebase uses the [`ruff`](https://docs.astral.sh/ruff/) formatter and linter to enforce style policies.
+
+To check that your changes conform to these policies please run:
+
+```sh
+ruff format
+ruff check
+```
+
+You can also set up pre-commit hooks that will run these checks before you create any commit in this repo:
+
+```sh
+pre-commit install
+```
