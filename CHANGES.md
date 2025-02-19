@@ -20,7 +20,7 @@
 * move argument parsing for logging options to the implementation code
 * fix bug where logging options were being set incorrectly
 * rename files to avoid potential naming conflicts with other packages (`logging` and `requests`)
-
+* FIx mismatch between CMIP6 schema URI given to `pystac` and the actual schema URI
 
 ## [0.6.0](https://github.com/crim-ca/stac-populator/tree/0.6.0) (2024-02-22)
 
