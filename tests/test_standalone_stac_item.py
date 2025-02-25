@@ -7,6 +7,7 @@ import tempfile
 from urllib.parse import quote
 
 import xncml
+from packaging.version import Version
 
 from STACpopulator.extensions.cmip6 import CMIP6Helper
 from STACpopulator.extensions.thredds import THREDDSHelper, THREDDSExtension
@@ -21,8 +22,22 @@ def quote_none_safe(url):
     return quote(url, safe="")
 
 
+@pytest.fixture
+def reference_item() -> pystac.Item:
+    ref_file = os.path.join(CUR_DIR, "data/stac_item_testdata_xclim_cmip6_ncml.json")
+    with open(ref_file, mode="r", encoding="utf-8") as ff:
+        return pystac.Item.from_dict(json.load(ff))
+
+
+@pytest.fixture
+def reference_collection() -> pystac.Item:
+    ref_file = os.path.join(CUR_DIR, "data/stac_collection_testdata_xclim_cmip6_catalog.json")
+    with open(ref_file, mode="r", encoding="utf-8") as ff:
+        return pystac.Collection.from_dict(json.load(ff))
+
+
 @pytest.mark.online
-def test_standalone_stac_item_thredds_ncml():
+def test_standalone_stac_item_thredds_ncml(reference_item):
     thredds_url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds"
     thredds_path = "birdhouse/testdata/xclim/cmip6"
     thredds_nc = "sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc"
@@ -48,11 +63,7 @@ def test_standalone_stac_item_thredds_ncml():
     thredds_ext = THREDDSExtension.ext(stac_item)
     thredds_ext.apply(services=thredds_helper.services, links=thredds_helper.links)
 
-    ref_file = os.path.join(CUR_DIR, "data/stac_item_testdata_xclim_cmip6_ncml.json")
-    with open(ref_file, mode="r", encoding="utf-8") as ff:
-        reference = pystac.Item.from_dict(json.load(ff)).to_dict()
-
-    assert stac_item.to_dict() == reference
+    assert stac_item.to_dict() == reference_item.to_dict()
 
 
 class MockedNoSTACUpload(CMIP6populator):
@@ -76,7 +87,7 @@ class MockedNoSTACUpload(CMIP6populator):
 
 
 @pytest.mark.online
-def test_cmip6_stac_thredds_catalog_parsing():
+def test_cmip6_stac_thredds_catalog_parsing(reference_collection):
     url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.html"
     loader = THREDDSLoader(url)
     with tempfile.NamedTemporaryFile():
@@ -84,8 +95,15 @@ def test_cmip6_stac_thredds_catalog_parsing():
 
     result = populator.create_stac_collection()
 
-    ref_file = os.path.join(CUR_DIR, "data/stac_collection_testdata_xclim_cmip6_catalog.json")
-    with open(ref_file, mode="r", encoding="utf-8") as ff:
-        reference = pystac.Collection.from_dict(json.load(ff)).to_dict()
+    assert result == reference_collection.to_dict()
 
-    assert result == reference
+
+@pytest.mark.parametrize("reference_name", ["reference_item", "reference_collection"])
+def test_stac_correct_version(reference_name, request):
+    reference = request.getfixturevalue(reference_name)
+    pystac_version = Version(pystac.__version__)
+    stac_version = Version(reference.to_dict()["stac_version"])
+    if pystac_version >= Version("1.12.0"):
+        assert stac_version >= Version("1.1.0")
+    else:
+        assert stac_version == Version("1.0.0")

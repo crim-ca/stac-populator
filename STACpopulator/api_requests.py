@@ -1,23 +1,45 @@
+from functools import cache
 import logging
 import os
 from typing import Any, Optional, Union
 
+import pystac
 import requests
 from requests import Session
 
 LOGGER = logging.getLogger(__name__)
 
 
-def stac_host_reachable(url: str, session: Optional[Session] = None) -> bool:
+@cache
+def stac_host_catalog_info(url: str, session: Optional[Session] = None) -> dict:
     try:
         session = session or requests
         response = session.get(url, headers={"Accept": "application/json"})
         response.raise_for_status()
-        body = response.json()
-        return body["type"] == "Catalog" and "stac_version" in body
+        return response.json()
 
     except (requests.exceptions.RequestException, requests.exceptions.ConnectionError) as exc:
         LOGGER.error("Could not validate STAC host. Not reachable [%s] due to [%s]", url, exc, exc_info=exc)
+    return {}
+
+
+def stac_host_reachable(url: str, session: Optional[Session] = None) -> bool:
+    body = stac_host_catalog_info(url, session)
+    return body.get("type") == "Catalog" and "stac_version" in body
+
+
+def stac_version_match(url: str, session: Optional[Session] = None) -> bool:
+    body = stac_host_catalog_info(url, session)
+    host_version = body.get("stac_version")
+    pystac_version = pystac.get_stac_version()
+    if host_version == pystac_version:
+        return True
+    else:
+        LOGGER.error(
+            "STAC version mismatch: STAC host uses stac version '%s' but pystac uses version '%s'", 
+            host_version, 
+            pystac_version
+        )
     return False
 
 
