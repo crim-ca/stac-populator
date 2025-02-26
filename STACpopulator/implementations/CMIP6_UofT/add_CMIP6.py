@@ -4,6 +4,7 @@ import logging
 import os
 import sys
 from typing import Any, MutableMapping, Optional, Union
+import warnings
 
 from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
@@ -129,10 +130,15 @@ def runner(ns: argparse.Namespace) -> int:
 
 
 def main(*args: str) -> int:
+    warnings.warn(
+        "Calling implementation scripts directly is deprecated. Please use the 'stac-populator' CLI instead.",
+        DeprecationWarning
+    )
     parser = argparse.ArgumentParser()
     add_parser_args(parser)
     ns = parser.parse_args(args or None)
     ns.populator = os.path.basename(os.path.dirname(__file__))
+    ns.command = "run"
     return cli.run(ns)
 
 if __name__ == "__main__":

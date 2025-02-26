@@ -20,9 +20,12 @@
 * move argument parsing for logging options to the implementation code
 * fix bug where logging options were being set incorrectly
 * rename files to avoid potential naming conflicts with other packages (`logging` and `requests`)
+* deprecate calling implementation scripts directly
+* fix bug where populator scripts could not be called directly from the command line
 * enforce versions for dependencies so that new installs won't fail unexpectedly
 * update tests to allow for a variable `stac_version` field in STAC item and collections
 * add alternative installation options to support older versions of the STAC spec (versions 1.0+ only)
+
 
 ## [0.6.0](https://github.com/crim-ca/stac-populator/tree/0.6.0) (2024-02-22)
 

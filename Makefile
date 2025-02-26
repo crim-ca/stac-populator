@@ -29,7 +29,7 @@ setup-pyessv-archive:
 	@cd $(PYESSV_ARCHIVE_HOME) && git pull
 
 test-cmip6:
-	python $(IMP_DIR)/CMIP6_UofT/add_CMIP6.py $(STAC_HOST) $(CATALOG)
+	stac-populator run CMIP6_UofT $(STAC_HOST) $(CATALOG)
 
 del-cmip6:
 	curl --location --request DELETE '$(STAC_HOST)/collections/CMIP6_UofT'
