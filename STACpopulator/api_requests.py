@@ -71,7 +71,7 @@ def post_stac_item(
     collection_id: str,
     item_name: str,
     json_data: dict[str, dict],
-    update: Optional[bool] = True,
+    update: Optional[bool] = False,
     session: Optional[Session] = None,
 ) -> None:
     """Post a STAC item to the host server.
@@ -84,7 +84,7 @@ def post_stac_item(
     :type item_name: str
     :param json_data: JSON representation of the STAC item
     :type json_data: dict[str, dict]
-    :param update: if True, update the item on the host server if it is already present, defaults to True
+    :param update: if True, update the item on the host server if it is already present, defaults to False
     :type update: Optional[bool], optional
     :param session: Session with additional configuration to perform requests.
     """
