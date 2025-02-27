@@ -139,7 +139,17 @@ class TestModule(_TestDirectoryLoader):
             directory=os.path.join(request.fspath.dirname, "data/test_directory"),
             prune=prune_option,
             update=True,
+            stac_version=None
         )
+
+    def test_set_stac_version(self, namespace, runner):
+        if pystac.get_stac_version() == "1.0.0":
+            namespace.stac_version = "1.1.0"
+        else:
+            namespace.stac_version = "1.0.0"
+        with pytest.raises(RuntimeError):
+            runner()
+        assert pystac.get_stac_version() == namespace.stac_version
 
 
 class TestFromCLI(_TestDirectoryLoader):
@@ -155,6 +165,12 @@ class TestFromCLI(_TestDirectoryLoader):
         ]
         if prune_option:
             cmd_args.append("--prune")
+        if request.node.get_closest_marker("set_stac_version"):
+            if pystac.get_stac_version() == "1.0.0":
+                stac_version = "1.1.0"
+            else:
+                stac_version = "1.0.0"
+            cmd_args.extend(["--stac-version", stac_version])
         return cmd_args
 
     @pytest.fixture
@@ -166,3 +182,10 @@ class TestFromCLI(_TestDirectoryLoader):
         parser = argparse.ArgumentParser()
         add_parser_args(parser)
         return parser.parse_args(args)
+
+    @pytest.mark.set_stac_version
+    def test_set_stac_version(self, runner):
+        prev_stac_version = pystac.get_stac_version()
+        with pytest.raises(RuntimeError):
+            runner()        
+        assert prev_stac_version != pystac.get_stac_version()

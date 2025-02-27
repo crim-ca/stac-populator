@@ -5,6 +5,7 @@ import sys
 from typing import Any, MutableMapping, Optional
 import warnings
 
+import pystac
 from requests.sessions import Session
 
 from STACpopulator import cli
@@ -53,12 +54,22 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
         action="store_true",
         help="Limit search of STAC Collections only to first top-most matches in the crawled directory structure.",
     )
+    parser.add_argument(
+        "--stac-version",
+        help="Sets the STAC version that should be used. This must match the version used by "
+             "the STAC server that is being populated. This can also be set by setting the "
+             "'PYSTAC_STAC_VERSION_OVERRIDE' environment variable. "
+             f"Default is {pystac.get_stac_version()}"
+    )
     add_request_options(parser)
     add_logging_options(parser)
 
 
 def runner(ns: argparse.Namespace) -> int:
     LOGGER.info(f"Arguments to call: {vars(ns)}")
+
+    if ns.stac_version:
+        pystac.set_stac_version(ns.stac_version)
 
     with Session() as session:
         apply_request_options(session, ns)

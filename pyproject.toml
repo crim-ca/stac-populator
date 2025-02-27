@@ -108,7 +108,7 @@ dependencies = [
     "colorlog~=6.9",
     "pyyaml~=6.0",
     "siphon~=0.10",
-    "pystac<1.13",
+    "pystac~=1.12.1",
     "xncml~=0.3",  # python 3.12 support
     "pydantic~=2.10",
     "pyessv~=0.9",
@@ -168,11 +168,5 @@ dev = [
     "responses~=0.25",
     "bump-my-version~=0.32",
     "jsonschema~=4.23",
-    "pystac[validation]<1.13"
-]
-stac_spec_latest = [
-    "pystac~=1.12.1"
-]
-stac_spec_10 = [
-    "pystac~=1.11.0"
+    "pystac[validation]~=1.12.1"
 ]

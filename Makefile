@@ -52,13 +52,10 @@ del_docker_volume: stophost
 resethost: del_docker_volume starthost
 
 install:
-	pip install "$(APP_ROOT)[stac_spec_latest]"
+	pip install "$(APP_ROOT)"
 
 install-dev:
 	pip install "$(APP_ROOT)[dev]"
-
-install-stac-spec-10:
-	pip install "$(APP_ROOT)[stac_spec_10]"
 
 test-unit:
 	pytest "$(APP_ROOT)"

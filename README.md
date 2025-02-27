@@ -45,21 +45,6 @@ pip install .[dev]
 make install-dev
 ```
 
-With support for STAC version 1.0.0 (by default pystac supports the latest STAC version):
-
-```shell
-pip install .[stac_spec_10]
-# OR
-make install-stac-spec-10
-```
-
-If you have installed this library with support for STAC version 1.0.0 and later want to
-update to the latest version you can run:
-
-```shell
-pip install .[stac_spec_latest]
-```
-
 You should then be able to call the STAC populator CLI with following commands:
 
 ```shell
