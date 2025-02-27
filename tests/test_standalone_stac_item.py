@@ -43,7 +43,7 @@ def test_standalone_stac_item_thredds_ncml():
         "WMS": f"{thredds_url}/wms/{thredds_path}/{thredds_nc}?service=WMS&version=1.3.0&request=GetCapabilities",
         "NetcdfSubset": f"{thredds_url}/ncss/{thredds_path}/{thredds_nc}/dataset.html",
     }
-    stac_item = CMIP6Helper(attrs, GeoJSONPolygon).stac_item()
+    stac_item = CMIP6Helper(attrs, GeoJSONPolygon).stac_item(add_if_missing=True)
     thredds_helper = THREDDSHelper(attrs["access_urls"])
     thredds_ext = THREDDSExtension.ext(stac_item)
     thredds_ext.apply(services=thredds_helper.services, links=thredds_helper.links)

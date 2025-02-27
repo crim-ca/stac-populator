@@ -60,14 +60,14 @@ class CMIP6populator(STACpopulatorBase):
         # Add CMIP6 extension
         try:
             cmip_helper = CMIP6Helper(item_data, self.item_geometry_model)
-            item = cmip_helper.stac_item()
+            item = cmip_helper.stac_item(add_if_missing=self.update)
         except Exception as e:
             raise Exception("Failed to add CMIP6 extension") from e
 
         # Add datacube extension
         try:
             dc_helper = DataCubeHelper(item_data)
-            dc_ext = DatacubeExtension.ext(item, add_if_missing=True)
+            dc_ext = DatacubeExtension.ext(item, add_if_missing=self.update)
             dc_ext.apply(dimensions=dc_helper.dimensions, variables=dc_helper.variables)
         except Exception as e:
             raise Exception("Failed to add Datacube extension") from e

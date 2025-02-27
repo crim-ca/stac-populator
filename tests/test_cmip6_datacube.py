@@ -17,7 +17,7 @@ def test_datacube_helper():
     ds = xncml.Dataset(filepath=str(file_path))
     attrs = ds.to_cf_dict()
     attrs["access_urls"] = {"HTTPServer": "http://example.com"}
-    item = CMIP6Helper(attrs, GeoJSONPolygon).stac_item()
+    item = CMIP6Helper(attrs, GeoJSONPolygon).stac_item(add_if_missing=True)
 
     # Add extension
     dc = DataCubeHelper(attrs)
@@ -45,7 +45,7 @@ def test_auxiliary_variables():
     ds = xncml.Dataset(filepath=str(file_path))
     attrs = ds.to_cf_dict()
     attrs["access_urls"] = {"HTTPServer": "http://example.com"}
-    item = CMIP6Helper(attrs, GeoJSONPolygon).stac_item()
+    item = CMIP6Helper(attrs, GeoJSONPolygon).stac_item(add_if_missing=True)
 
     dc = DataCubeHelper(attrs)
     dc_ext = DatacubeExtension.ext(item, add_if_missing=True)

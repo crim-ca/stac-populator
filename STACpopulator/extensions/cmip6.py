@@ -179,7 +179,7 @@ class CMIP6Helper:
         props = CMIP6Properties(**self.cmip6_attrs)
         return props
 
-    def stac_item(self) -> "pystac.Item":
+    def stac_item(self, add_if_missing: bool = False) -> "pystac.Item":
         item = pystac.Item(
             id=self.uid,
             geometry=self.geometry.model_dump(),
@@ -190,7 +190,7 @@ class CMIP6Helper:
             },
             datetime=None,
         )
-        item_cmip6 = CMIP6Extension.ext(item, add_if_missing=True)
+        item_cmip6 = CMIP6Extension.ext(item, add_if_missing=add_if_missing)
         item_cmip6.apply(self.properties)
         return item
 

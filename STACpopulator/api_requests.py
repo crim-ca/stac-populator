@@ -35,7 +35,7 @@ def stac_collection_exists(stac_host: str, collection_id: str, session: Optional
 def post_stac_collection(
     stac_host: str,
     json_data: dict[str, Any],
-    update: Optional[bool] = True,
+    update: Optional[bool] = False,
     session: Optional[Session] = None,
 ) -> None:
     """Post/create a collection on the STAC host
