@@ -80,7 +80,7 @@ dry: pyproject.toml		## run 'bump' target without applying changes (dry-run) [ma
 bump:  ## bump version using VERSION specified as user input [make VERSION=<x.y.z> bump]
 	@-echo "Updating package version ..."
 	@[ "${VERSION}" ] || ( echo ">> 'VERSION' is not set"; exit 1 )
-	@-bash -c '$(CONDA_CMD) $(BUMP_TOOL) $(BUMP_XARGS) --new-version "${VERSION}" patch;'
+	@-bash -c '$(CONDA_CMD) $(BUMP_TOOL) bump $(BUMP_XARGS) --new-version "${VERSION}" patch;'
 
 .PHONY: version
 version:	## display current version
