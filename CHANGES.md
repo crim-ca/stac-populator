@@ -24,7 +24,8 @@
 * fix bug where populator scripts could not be called directly from the command line
 * enforce versions for dependencies so that new installs won't fail unexpectedly
 * update tests to allow for a variable `stac_version` field in STAC item and collections
-* add `--stac-version` command line option to specify the version used by the STAC server that is being populated 
+* fix inconsistent defaults for parameters that update stac items and collections
+* add `--stac-version` command line option to specify the version used by the STAC server that is being populated
 
 
 ## [0.6.0](https://github.com/crim-ca/stac-populator/tree/0.6.0) (2024-02-22)
