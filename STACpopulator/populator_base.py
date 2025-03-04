@@ -14,6 +14,7 @@ from STACpopulator.api_requests import (
     post_stac_collection,
     post_stac_item,
     stac_host_reachable,
+    stac_version_match,
 )
 from STACpopulator.input import GenericLoader
 from STACpopulator.models import AnyGeometry
@@ -107,6 +108,8 @@ class STACpopulatorBase(ABC):
             raise ValueError("stac_host URL is not appropriately formatted")
         if not stac_host_reachable(stac_host, session=self._session):
             raise RuntimeError("stac_host is not reachable")
+        if not stac_version_match(stac_host, session=self._session):
+            raise RuntimeError("stac_version of the stac_host does not match the version used by pystac.")
 
         return stac_host
 
