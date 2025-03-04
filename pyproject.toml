@@ -16,7 +16,7 @@ exclude = [
 ]
 
 [tool.setuptools.package-data]
-STACpopulator = ["**/collection_config.yml"]
+STACpopulator = ["**/collection_config.yml", "extensions/schemas/**/*.json"]
 
 
 [tool.pytest.ini_options]
@@ -151,7 +151,8 @@ keywords = [
     "SpatioTemporal Asset Catalog",
     "Data Ingestion",
     "THREDDS",
-    "CMIP6"
+    "CMIP6",
+    "CORDEX"
 ]
 
 [project.scripts]

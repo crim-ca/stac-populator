@@ -1,3 +1,4 @@
+import argparse
 import functools
 import inspect
 import json
@@ -6,6 +7,7 @@ import os
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any, Dict, List, MutableMapping, Optional, Type, Union
+
 
 import pystac
 from requests.sessions import Session
@@ -222,3 +224,5 @@ class STACpopulatorBase(ABC):
 
             counter += 1
             LOGGER.info(f"Processed {counter} data items. {failures} failures")
+
+
