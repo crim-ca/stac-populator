@@ -30,7 +30,7 @@ setup-pyessv-archive:
 	@cd $(PYESSV_ARCHIVE_HOME) && git pull
 
 test-cmip6:
-	python $(IMP_DIR)/CMIP6_UofT/add_CMIP6.py $(STAC_HOST) $(CATALOG)
+	stac-populator run CMIP6_UofT $(STAC_HOST) $(CATALOG)
 
 del-cmip6:
 	curl --location --request DELETE '$(STAC_HOST)/collections/CMIP6_UofT'
@@ -82,7 +82,7 @@ dry: pyproject.toml		## run 'bump' target without applying changes (dry-run) [ma
 bump:  ## bump version using VERSION specified as user input [make VERSION=<x.y.z> bump]
 	@-echo "Updating package version ..."
 	@[ "${VERSION}" ] || ( echo ">> 'VERSION' is not set"; exit 1 )
-	@-bash -c '$(CONDA_CMD) $(BUMP_TOOL) $(BUMP_XARGS) --new-version "${VERSION}" patch;'
+	@-bash -c '$(CONDA_CMD) $(BUMP_TOOL) bump $(BUMP_XARGS) --new-version "${VERSION}" patch;'
 
 .PHONY: version
 version:	## display current version

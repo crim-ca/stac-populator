@@ -22,6 +22,12 @@
 * rename files to avoid potential naming conflicts with other packages (`logging` and `requests`)
 * Add `cordex6` extension and `CORDEX-CMIP6_Ouranos` implementation. This includes a refactoring of base extension classes.
 * Add an `xscen` extension demonstrating how to add properties to a STAC Item.
+* Deprecate calling implementation scripts directly
+* Fix bug where populator scripts could not be called directly from the command line
+* Enforce versions for dependencies so that new installs won't fail unexpectedly
+* Update tests to allow for a variable `stac_version` field in STAC item and collections
+* Fix inconsistent defaults for parameters that update stac items and collections
+* Add `--stac-version` command line option to specify the version used by the STAC server that is being populated
 
 ## [0.6.0](https://github.com/crim-ca/stac-populator/tree/0.6.0) (2024-02-22)
 

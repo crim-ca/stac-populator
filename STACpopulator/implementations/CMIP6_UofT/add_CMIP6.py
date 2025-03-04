@@ -4,8 +4,10 @@ import logging
 import os
 import sys
 from typing import Any, MutableMapping, Optional, Union
+import warnings
 
 from pystac import STACValidationError
+import pystac
 from pystac.extensions.datacube import DatacubeExtension
 from requests.sessions import Session
 
@@ -106,12 +108,22 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
             "By default, uses the adjacent configuration to the implementation class."
         ),
     )
+    parser.add_argument(
+        "--stac-version",
+        help="Sets the STAC version that should be used. This must match the version used by "
+             "the STAC server that is being populated. This can also be set by setting the "
+             "'PYSTAC_STAC_VERSION_OVERRIDE' environment variable. "
+             f"Default is {pystac.get_stac_version()}"
+    )
     add_request_options(parser)
     add_logging_options(parser)
 
 
 def runner(ns: argparse.Namespace) -> int:
     LOGGER.info(f"Arguments to call: {vars(ns)}")
+
+    if ns.stac_version:
+        pystac.set_stac_version(ns.stac_version)
 
     with Session() as session:
         apply_request_options(session, ns)
@@ -129,10 +141,15 @@ def runner(ns: argparse.Namespace) -> int:
 
 
 def main(*args: str) -> int:
+    warnings.warn(
+        "Calling implementation scripts directly is deprecated. Please use the 'stac-populator' CLI instead.",
+        DeprecationWarning
+    )
     parser = argparse.ArgumentParser()
     add_parser_args(parser)
     ns = parser.parse_args(args or None)
     ns.populator = os.path.basename(os.path.dirname(__file__))
+    ns.command = "run"
     return cli.run(ns)
 
 if __name__ == "__main__":
