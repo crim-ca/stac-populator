@@ -149,7 +149,13 @@ def np2py(data):
         return int(data)
 
     elif issubclass(type(data), np.floating):
-        return float(data)
+        data = float(data)
+
+        if np.isnan(data):
+            return "NaN"
+
+        return data
+
 
     else:
         return data
