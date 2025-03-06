@@ -145,20 +145,8 @@ def np2py(data):
             return tuple(out)
         return out
 
-    elif issubclass(type(data), np.integer):
-        return int(data)
-
-    elif issubclass(type(data), np.floating):
-        data = float(data)
-
-        if np.isnan(data):
-            return "NaN"
-
-        return data
-
-
     else:
-        return data
+        return getattr(data, "tolist", lambda: data)()
 
 
 def magpie_resource_link(url: str) -> pystac.Link:

@@ -81,7 +81,7 @@
     },
     "NCISOMetadata": {
       "attributes": {
-        "metadata_creation": "2025-03-05",
+        "metadata_creation": "2025-03-06",
         "nciso_version": "2.4.6"
       }
     }
@@ -94,7 +94,7 @@
       "type": "double",
       "attributes": {
         "_FillValue": [
-          "NaN"
+          NaN
         ],
         "actual_range": [
           -33.625,
@@ -120,7 +120,7 @@
           37.895
         ],
         "_FillValue": [
-          "NaN"
+          NaN
         ],
         "axis": "X",
         "standard_name": "grid_longitude",
@@ -136,7 +136,7 @@
       "type": "double",
       "attributes": {
         "_FillValue": [
-          "NaN"
+          NaN
         ],
         "units": "days since 1950-01-01",
         "calendar": "standard",
@@ -195,7 +195,7 @@
       "type": "double",
       "attributes": {
         "_FillValue": [
-          "NaN"
+          NaN
         ],
         "coordinates": "lat lon"
       }
@@ -209,7 +209,7 @@
       "type": "double",
       "attributes": {
         "_FillValue": [
-          "NaN"
+          NaN
         ],
         "coordinates": "lat lon"
       }
@@ -221,7 +221,7 @@
       "type": "double",
       "attributes": {
         "_FillValue": [
-          "NaN"
+          NaN
         ],
         "units": "m",
         "standard_name": "height",
@@ -240,7 +240,7 @@
       "type": "double",
       "attributes": {
         "_FillValue": [
-          "NaN"
+          NaN
         ],
         "standard_name": "latitude",
         "long_name": "latitude",
@@ -257,7 +257,7 @@
       "type": "double",
       "attributes": {
         "_FillValue": [
-          "NaN"
+          NaN
         ],
         "standard_name": "longitude",
         "long_name": "longitude",
