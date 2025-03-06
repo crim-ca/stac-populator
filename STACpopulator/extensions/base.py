@@ -74,7 +74,7 @@ class ExtensionHelper(BaseModel, Helper):
     _schema_uri: FilePath = PrivateAttr(None)
     _schema_exclude: list[str] = PrivateAttr([])
 
-    model_config = ConfigDict(populate_by_name=True, extra="ignore")
+    model_config = ConfigDict(populate_by_name=True, extra="ignore", ser_json_inf_nan="strings")
 
     @classmethod
     def __init_subclass__(cls, **kwargs):
@@ -111,7 +111,11 @@ class ExtensionHelper(BaseModel, Helper):
         schema_uri = self.write_stac_schema() if self._schema_uri else None
         ExtSubCls = metacls_extension(self._prefix, schema_uri=schema_uri)
         item_ext = ExtSubCls.ext(item, add_if_missing=add_if_missing)
-        item_ext.apply(self.model_dump(mode="json", by_alias=True))
+
+        # Sanitize the output so it's json serializable.
+        data = json.loads(self.model_dump_json(by_alias=True))
+
+        item_ext.apply(data)
         return item
 
     def to_stac_schema(self) -> dict:
