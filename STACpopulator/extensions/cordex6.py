@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from pathlib import Path
-from pydantic import BaseModel, Field, FilePath, model_validator
 from datetime import datetime
+from pathlib import Path
+
+from pydantic import FilePath, model_validator
 
 from STACpopulator.extensions.base import ExtensionHelper
 from STACpopulator.extensions.thredds import THREDDSCatalogDataModel
@@ -46,10 +47,10 @@ class CordexCmip6(ExtensionHelper):
     _schema_uri: FilePath = Path(__file__).parent / "schemas" / "cordex6" / "cmip6-cordex-global-attrs-schema.json"
 
 
-
 # Customize the THREDDSCatalogDataModel
 class Cordex6DataModel(THREDDSCatalogDataModel):
     """Data model for CORDEX-CMIP6 NetCDF datasets."""
+
     cordex6: CordexCmip6
 
     def create_uid(self) -> str:
@@ -74,17 +75,18 @@ class Cordex6DataModel(THREDDSCatalogDataModel):
     @classmethod
     def properties_helper(cls, data):
         """Instantiate the properties helper."""
-        data["cordex6"] = data['data']['attributes']
+        data["cordex6"] = data["data"]["attributes"]
         return data
 
 
 # Customize the THREDDSCatalogDataModel
 class Cordex6DataModelNcML(Cordex6DataModel):
     """Data model for CORDEX-CMIP6 NcML aggregations."""
+
     xscen: Xscen
 
     @model_validator(mode="before")
     @classmethod
     def xscen_helper(cls, data):
-        data['xscen'] = data['data']['attributes']
+        data["xscen"] = data["data"]["attributes"]
         return data

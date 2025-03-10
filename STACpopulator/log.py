@@ -128,13 +128,14 @@ logconfig = {
     "loggers": {"root": {"level": "DEBUG", "handlers": ["stderr", "file"]}},
 }
 
+
 def add_logging_options(parser: argparse.ArgumentParser) -> None:
     """
     Adds arguments to a parser to configure logging options.
     """
     parser.add_argument("--debug", action="store_const", const=logging.DEBUG, help="set logger level to debug")
     parser.add_argument(
-        "--log-file", 
+        "--log-file",
         default=f"stac_populator_log_{dt.datetime.now(dt.timezone.utc).isoformat() + 'Z'}.jsonl",
-        help="file to write log output to. By default logs will be written to the current directory."
+        help="file to write log output to. By default logs will be written to the current directory.",
     )

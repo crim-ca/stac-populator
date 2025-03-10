@@ -1,11 +1,12 @@
+from pathlib import Path
+
 import pystac
 import xncml
-from pathlib import Path
+from pystac.extensions.datacube import DatacubeExtension
 from pystac.validation import validate_dict
 
-from STACpopulator.extensions.datacube import DataCubeHelper
 from STACpopulator.extensions.cmip6 import CMIP6Helper
-from pystac.extensions.datacube import DatacubeExtension
+from STACpopulator.extensions.datacube import DataCubeHelper
 from STACpopulator.models import GeoJSONPolygon
 
 DIR = Path(__file__).parent
@@ -52,7 +53,7 @@ def test_auxiliary_variables():
     dc_ext.apply(dimensions=dc.dimensions, variables=dc.variables)
 
     p = dc_ext.properties
-    assert set(['time', 'lat', 'lon']) == set(p['cube:dimensions'].keys())
+    assert set(["time", "lat", "lon"]) == set(p["cube:dimensions"].keys())
     assert p["cube:variables"]["lon_bnds"]["unit"] == "degrees_east"
     assert p["cube:variables"]["time_bnds"]["unit"] == "days since 1850-01-01"
     assert p["cube:variables"]["time_bnds"]["type"] == "auxiliary"

@@ -1,7 +1,7 @@
-from functools import cache
 import logging
 import os
-from typing import Any, Optional, Union
+from functools import cache
+from typing import Any, Optional
 
 import pystac
 import requests
@@ -36,9 +36,9 @@ def stac_version_match(url: str, session: Optional[Session] = None) -> bool:
         return True
     else:
         LOGGER.error(
-            "STAC version mismatch: STAC host uses stac version '%s' but pystac uses version '%s'", 
-            host_version, 
-            pystac_version
+            "STAC version mismatch: STAC host uses stac version '%s' but pystac uses version '%s'",
+            host_version,
+            pystac_version,
         )
     return False
 

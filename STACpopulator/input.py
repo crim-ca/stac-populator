@@ -134,7 +134,6 @@ class THREDDSLoader(GenericLoader):
         :yield: Returns three quantities: name of the item, location of the item, and its attributes
         :rtype: Iterator[Tuple[str, str, MutableMapping[str, Any]]]
         """
-
         if self._depth > self._max_depth:
             return
 
@@ -202,7 +201,6 @@ class STACDirectoryLoader(GenericLoader):
         :yield: Returns three quantities: name of the item, location of the item, and its attributes
         :rtype: Iterator[Tuple[str, str, MutableMapping[str, Any]]]
         """
-
         is_root = True
         for root, dirs, files in self.iter:
             # since there can ever be only one 'collection' file name in a same directory

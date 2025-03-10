@@ -26,10 +26,10 @@ from pydantic import (
 )
 from pydantic.fields import FieldInfo
 from pystac.extensions import item_assets
-from pystac.extensions.base import S  # generic pystac.STACObject
 from pystac.extensions.base import (
     ExtensionManagementMixin,
     PropertiesExtension,
+    S,  # generic pystac.STACObject
     SummariesExtension,
 )
 
@@ -237,8 +237,8 @@ class CMIP6Extension(
         This extension can be applied to instances of :class:`~pystac.Item` or
         :class:`~pystac.Asset`.
 
-        Raises:
-
+        Raises
+        ------
             pystac.ExtensionTypeError : If an invalid object type is passed.
         """
         if isinstance(obj, pystac.Collection):
@@ -286,7 +286,8 @@ class ItemCMIP6Extension(CMIP6Extension[pystac.Item]):
             service_type: If set, filter the assets such that only those with a
                 matching :class:`~STACpopulator.stac_utils.ServiceType` are returned.
 
-        Returns:
+        Returns
+        -------
             Dict[str, Asset]: A dictionary of assets that match ``service_type``
                 if set or else all of this item's assets were service types are defined.
         """

@@ -3,23 +3,23 @@ import json
 import logging
 import os
 import sys
-from typing import Any, MutableMapping, Optional, Union
 import warnings
+from typing import Any, MutableMapping, Optional, Union
 
-from pystac import STACValidationError
 import pystac
+from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
 from requests.sessions import Session
 
 from STACpopulator import cli
-from STACpopulator.log import add_logging_options
-from STACpopulator.request_utils import add_request_options, apply_request_options
 from STACpopulator.extensions.cmip6 import CMIP6Helper, CMIP6Properties
 from STACpopulator.extensions.datacube import DataCubeHelper
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
 from STACpopulator.input import ErrorLoader, GenericLoader, THREDDSLoader
+from STACpopulator.log import add_logging_options
 from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
+from STACpopulator.request_utils import add_request_options, apply_request_options
 
 LOGGER = logging.getLogger(__name__)
 
@@ -42,9 +42,7 @@ class CMIP6populator(STACpopulatorBase):
         :type stac_host: str
         :param data_loader: loader to iterate over ingestion data.
         """
-        super().__init__(
-            stac_host, data_loader, update=update, session=session, config_file=config_file
-        )
+        super().__init__(stac_host, data_loader, update=update, session=session, config_file=config_file)
 
     def create_stac_item(
         self, item_name: str, item_data: MutableMapping[str, Any]
@@ -90,7 +88,7 @@ class CMIP6populator(STACpopulatorBase):
 
 
 def add_parser_args(parser: argparse.ArgumentParser) -> None:
-    parser.description="CMIP6 STAC populator from a THREDDS catalog or NCML XML."
+    parser.description = "CMIP6 STAC populator from a THREDDS catalog or NCML XML."
     parser.add_argument("stac_host", help="STAC API URL")
     parser.add_argument("href", help="URL to a THREDDS catalog or a NCML XML with CMIP6 metadata.")
     parser.add_argument("--update", action="store_true", help="Update collection and its items")
@@ -111,9 +109,9 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--stac-version",
         help="Sets the STAC version that should be used. This must match the version used by "
-             "the STAC server that is being populated. This can also be set by setting the "
-             "'PYSTAC_STAC_VERSION_OVERRIDE' environment variable. "
-             f"Default is {pystac.get_stac_version()}"
+        "the STAC server that is being populated. This can also be set by setting the "
+        "'PYSTAC_STAC_VERSION_OVERRIDE' environment variable. "
+        f"Default is {pystac.get_stac_version()}",
     )
     add_request_options(parser)
     add_logging_options(parser)
@@ -133,9 +131,7 @@ def runner(ns: argparse.Namespace) -> int:
             # To be implemented
             data_loader = ErrorLoader()
 
-        c = CMIP6populator(
-            ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config
-        )
+        c = CMIP6populator(ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config)
         c.ingest()
     return 0
 
@@ -143,7 +139,7 @@ def runner(ns: argparse.Namespace) -> int:
 def main(*args: str) -> int:
     warnings.warn(
         "Calling implementation scripts directly is deprecated. Please use the 'stac-populator' CLI instead.",
-        DeprecationWarning
+        DeprecationWarning,
     )
     parser = argparse.ArgumentParser()
     add_parser_args(parser)
@@ -151,6 +147,7 @@ def main(*args: str) -> int:
     ns.populator = os.path.basename(os.path.dirname(__file__))
     ns.command = "run"
     return cli.run(ns)
+
 
 if __name__ == "__main__":
     sys.exit(main())

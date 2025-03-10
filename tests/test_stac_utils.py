@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def test_np2py():
     """Test different use cases for np2py."""
     from STACpopulator.stac_utils import np2py

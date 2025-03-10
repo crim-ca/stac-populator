@@ -3,8 +3,8 @@ import functools
 import importlib
 import logging
 import sys
-from types import ModuleType
 import warnings
+from types import ModuleType
 
 from STACpopulator import __version__, implementations
 from STACpopulator.exceptions import STACPopulatorError

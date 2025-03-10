@@ -1,11 +1,13 @@
 import json
+
 from STACpopulator.extensions.cordex6 import Cordex6DataModel, Cordex6DataModelNcML
 
 
 def get_first_item_attrs(url):
     import requests
-    from siphon.catalog import TDSCatalog
     import xncml
+    from siphon.catalog import TDSCatalog
+
     from STACpopulator.stac_utils import np2py
 
     cat = TDSCatalog(url)
@@ -31,7 +33,6 @@ def make_test_data():
     attrs = get_first_item_attrs(url)
     with open("data/cordex6_ncml.json", "w") as f:
         json.dump(attrs, f, indent=2)
-
 
 
 def test_item_raw():

@@ -5,6 +5,7 @@ STAC API collection processor
 
 Create a STAC collection or update its summaries based on its queryables.
 """
+
 __author__ = "Mathieu Provencher"
 __date__ = "2022-04-20"
 __copyright__ = "Copyright 2022 Computer Research Institute of Montreal"
@@ -116,7 +117,6 @@ class CollectionProcessor:
 
         Returns the collection.
         """
-
         sp_extent = pystac.SpatialExtent([[-140.99778, 41.6751050889, -52.6480987209, 83.23324]])
         capture_date = datetime.datetime.strptime("2015-10-22", "%Y-%m-%d")
         end_capture_date = datetime.datetime.strptime("2100-10-22", "%Y-%m-%d")

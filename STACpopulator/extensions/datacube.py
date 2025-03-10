@@ -1,10 +1,11 @@
 import functools
 from typing import Any, MutableMapping, MutableSequence
 
-from pystac.extensions.datacube import Dimension, DimensionType, Variable, VariableType, DatacubeExtension
+from pystac.extensions.datacube import DatacubeExtension, Dimension, DimensionType, Variable, VariableType
 
-from STACpopulator.stac_utils import ncattrs_to_bbox
 from STACpopulator.extensions.base import Helper
+from STACpopulator.stac_utils import ncattrs_to_bbox
+
 
 class DataCubeHelper(Helper):
     """Return STAC Item from CF JSON metadata, as provided by `xncml.Dataset.to_cf_dict`."""
@@ -230,7 +231,6 @@ class DataCubeHelper(Helper):
                 out[attrs["bounds"]] = name
         return out
 
-
     def is_coordinate(self, attrs: MutableMapping[str, Any]) -> bool:
         """Return whether variable is a coordinate.
 
@@ -249,9 +249,8 @@ class DataCubeHelper(Helper):
         end_datetime = cfmeta["time_coverage_end"]
         return [start_datetime, end_datetime]
 
-    def apply(self, item, add_if_missing:bool = True):
+    def apply(self, item, add_if_missing: bool = True):
         """Apply the Datacube extension to an item."""
         ext = DatacubeExtension.ext(item, add_if_missing=add_if_missing)
         ext.apply(dimensions=self.dimensions, variables=self.variables)
         return item
-

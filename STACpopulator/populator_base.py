@@ -1,4 +1,3 @@
-import argparse
 import functools
 import inspect
 import json
@@ -7,7 +6,6 @@ import os
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any, Dict, List, MutableMapping, Optional, Type, Union
-
 
 import pystac
 from requests.sessions import Session
@@ -42,7 +40,6 @@ class STACpopulatorBase(ABC):
         :type data_loader: GenericLoader
         :raises RuntimeError: Raised if one of the required definitions is not found in the collection info filename
         """
-
         self._collection_config_path = config_file
         self._collection_info: MutableMapping[str, Any] = None
         self._session = session
@@ -224,5 +221,3 @@ class STACpopulatorBase(ABC):
 
             counter += 1
             LOGGER.info(f"Processed {counter} data items. {failures} failures")
-
-

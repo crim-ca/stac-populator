@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Literal
+
 from STACpopulator.extensions.base import ExtensionHelper
 
 
