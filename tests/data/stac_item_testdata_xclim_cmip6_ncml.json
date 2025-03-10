@@ -121,6 +121,6 @@
     89.74176788330078
   ],
   "stac_extensions": [
-    "https://raw.githubusercontent.com/dchandan/stac-extension-cmip6/main/json-schema/schema.json"
+    "https://raw.githubusercontent.com/dchandan/stac-extension-cmip6/v1.0.0/json-schema/schema.json"
   ]
 }
