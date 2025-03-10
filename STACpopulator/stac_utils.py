@@ -38,7 +38,7 @@ def url_validate(target: str) -> bool:
 def load_config(
     config_file: Union[os.PathLike[str], str],
 ) -> MutableMapping[str, Any]:
-    """Reads a generic YAML or JSON configuration file.
+    """Read a generic YAML or JSON configuration file.
 
     :raises OSError: If the configuration file is not present
     :raises ValueError: If the configuration file is not correctly formatted.
@@ -56,7 +56,8 @@ def load_config(
     return config_info
 
 
-def collection2literal(collection, property="label") -> "Type[Literal]":
+def collection2literal(collection: str, property: str = "label") -> "Type[Literal]":
+    """Return a Literal annotation for the given collection and property."""
     terms = tuple(getattr(term, property) for term in collection)
     return Literal[terms]  # noqa
 
@@ -126,7 +127,7 @@ def numpy_to_python_datatypes(data: MutableMapping[str, Any]) -> MutableMapping[
     return data
 
 
-def np2py(data):
+def np2py(data: Any) -> Any:
     """Convert numpy datatypes to python standard datatypes.
 
     This is useful when validating against a JSON schema that does not recognize an int32 as an integer.
@@ -150,8 +151,8 @@ def np2py(data):
 
 
 def magpie_resource_link(url: str) -> pystac.Link:
-    """Creates a link that will be used by Cowbird to create a resource in Magpie
-    associated with the STAC item.
+    """
+    Create a link that will be used by Cowbird to create a resource in Magpie associated with the STAC item.
 
     :param url: HTTPServer access URL for a STAC item
     :type url: str
@@ -166,6 +167,8 @@ def magpie_resource_link(url: str) -> pystac.Link:
 
 
 class ServiceType(Enum):
+    """Service Type."""
+
     adde = "ADDE"
     dap4 = "DAP4"
     dods = "DODS"  # same as OpenDAP

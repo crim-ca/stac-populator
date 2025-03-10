@@ -1,10 +1,13 @@
 import functools
-from typing import Any, MutableMapping, MutableSequence
+from typing import Any, MutableMapping, MutableSequence, TypeVar
 
+import pystac
 from pystac.extensions.datacube import DatacubeExtension, Dimension, DimensionType, Variable, VariableType
 
 from STACpopulator.extensions.base import Helper
 from STACpopulator.stac_utils import ncattrs_to_bbox
+
+PySTACType = TypeVar("PySTACType", pystac.Collection, pystac.Item)
 
 
 class DataCubeHelper(Helper):
@@ -12,7 +15,7 @@ class DataCubeHelper(Helper):
 
     axis = {"X": "x", "Y": "y", "Z": "z", "T": None, "longitude": "x", "latitude": "y", "vertical": "z", "time": "t"}
 
-    def __init__(self, attrs: MutableMapping[str, Any]):
+    def __init__(self, attrs: MutableMapping[str, Any]) -> None:
         """
         Create STAC Item from CF JSON metadata.
 
@@ -141,9 +144,7 @@ class DataCubeHelper(Helper):
     @property
     @functools.cache
     def dimensions(self) -> dict[str, Dimension]:
-        """
-        Return Dimension objects required for Datacube extension.
-        """
+        """Return Dimension objects required for Datacube extension."""
         dims = {}
         for name, length in self.attrs["dimensions"].items():
             v = self.attrs["variables"].get(name)
@@ -222,7 +223,7 @@ class DataCubeHelper(Helper):
             )
         return variables
 
-    def bounds(self):
+    def bounds(self) -> dict:
         """Return a list of variables that are bounds for other variables."""
         out = {}
         for name, meta in self.attrs["variables"].items():
@@ -244,12 +245,13 @@ class DataCubeHelper(Helper):
         return False
 
     def temporal_extent(self) -> MutableSequence[str]:
+        """Return the temporal extent (start time and end time)."""
         cfmeta = self.attrs["groups"]["CFMetadata"]["attributes"]
         start_datetime = cfmeta["time_coverage_start"]
         end_datetime = cfmeta["time_coverage_end"]
         return [start_datetime, end_datetime]
 
-    def apply(self, item, add_if_missing: bool = True):
+    def apply(self, item: PySTACType, add_if_missing: bool = True) -> PySTACType:
         """Apply the Datacube extension to an item."""
         ext = DatacubeExtension.ext(item, add_if_missing=add_if_missing)
         ext.apply(dimensions=self.dimensions, variables=self.variables)

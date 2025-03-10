@@ -17,32 +17,41 @@ LOGGER = logging.getLogger(__name__)
 
 
 class GenericLoader(ABC):
+    """Generic data loader class."""
+    
     def __init__(self) -> None:
         self.links = []
 
     @abstractmethod
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         """
-        A generator that returns an item from the input. The item could be anything
-        depending on the specific concrete implementation of this abstract class.
+        Iterate over this loader.
+
+        Returns items from the input. Items may be anything depending on the specific concrete 
+        implementation of this abstract class.
         """
         raise NotImplementedError
 
     @abstractmethod
-    def reset(self):
+    def reset(self) -> None:
         """Reset the internal state of the generator."""
         raise NotImplementedError
 
 
 class ErrorLoader(GenericLoader):
-    def __init__(self):  # noqa
+    """A data loader that will raise an error if used."""
+
+    def __init__(self) -> None:
         raise NotImplementedError
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
+        """Iterate over this loader."""
         raise NotImplementedError
 
-    def reset(self):
+    def reset(self) -> None:
+        """Reset the internal state of the generator."""
         raise NotImplementedError
+
 
 
 class THREDDSCatalog(TDSCatalog):
@@ -59,6 +68,7 @@ class THREDDSCatalog(TDSCatalog):
 
     @property
     def session(self) -> Session:
+        """Return the current session or a new one if one does not exist."""
         if self._session is None:
             self._session = session_manager.create_session()
         return self._session
@@ -69,13 +79,15 @@ class THREDDSCatalog(TDSCatalog):
 
 
 class THREDDSLoader(GenericLoader):
+    """Data loader from a THREDDS instance."""
+
     def __init__(
         self,
         thredds_catalog_url: str,
         depth: Optional[int] = None,
         session: Optional[Session] = None,
     ) -> None:
-        """Constructor
+        """Initialize the THREDDS loader.
 
         :param thredds_catalog_url: the URL to the THREDDS catalog to ingest
         :type thredds_catalog_url: str
@@ -111,7 +123,7 @@ class THREDDSLoader(GenericLoader):
         return url.replace(".html", ".xml") if url.endswith(".html") else url
 
     def magpie_collection_link(self) -> pystac.Link:
-        """Creates a PySTAC Link for the collection that is used by Cowbird and Magpie.
+        """Create a PySTAC Link for the collection that is used by Cowbird and Magpie.
 
         :return: A PySTAC Link
         :rtype: pystac.Link
@@ -124,7 +136,7 @@ class THREDDSLoader(GenericLoader):
         title = f"{service}:{path}"
         return pystac.Link(rel="source", target=url, media_type="text/xml", title=title)
 
-    def reset(self):
+    def reset(self) -> None:
         """Reset the generator."""
         self.catalog_head = self.catalog
 
@@ -150,10 +162,12 @@ class THREDDSLoader(GenericLoader):
             yield from self
             self._depth += 1
 
-    def __getitem__(self, dataset):
+    def __getitem__(self, dataset: str) -> dict:
+        """Return the given dataset."""
         return self.catalog.datasets[dataset]
 
     def extract_metadata(self, ds: siphon.catalog.Dataset) -> MutableMapping[str, Any]:
+        """Extract metadata from an NcML item."""
         LOGGER.info("Requesting NcML dataset description")
         url = ds.access_urls["NCML"]
         r = requests.get(url)
@@ -229,27 +243,36 @@ class STACDirectoryLoader(GenericLoader):
         with open(path, mode="r", encoding="utf-8") as file:
             return json.load(file)
 
-    def reset(self):
+    def reset(self) -> None:
+        """Reset the internal state of the generator."""
         self.iter = os.walk(self.path)
 
 
 class STACLoader(GenericLoader):
+    """Data loader from a STAC catalog instance."""
+
     def __init__(self) -> None:
         super().__init__()
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
+        """Iterate over this loader."""
         raise NotImplementedError
 
-    def reset(self):
+    def reset(self) -> None:
+        """Reset the internal state of the generator."""
         raise NotImplementedError
 
 
 class GeoServerLoader(GenericLoader):
+    """Data loader from a Geoserver instance."""
+
     def __init__(self) -> None:
         super().__init__()
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
+        """Iterate over this loader."""
         raise NotImplementedError
 
-    def reset(self):
+    def reset(self) -> None:
+        """Reset the internal state of the generator."""
         raise NotImplementedError

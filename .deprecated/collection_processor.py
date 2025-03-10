@@ -1,7 +1,6 @@
 # encoding: utf-8
 """
-STAC API collection processor
--------------
+STAC API collection processor.
 
 Create a STAC collection or update its summaries based on its queryables.
 """
@@ -24,6 +23,8 @@ import yaml
 
 
 class bcolors:
+    """Color prefixes for terminal strings."""
+
     HEADER = "\033[95m"
     OKBLUE = "\033[94m"
     OKCYAN = "\033[96m"
@@ -36,11 +37,9 @@ class bcolors:
 
 
 class CollectionProcessor:
-    """
-    Create a STAC collection or update its summaries based on its queryables.
-    """
+    """Create a STAC collection or update its summaries based on its queryables."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         filepath = sys.argv[1]
         collections = []
 
@@ -56,7 +55,8 @@ class CollectionProcessor:
         for col in collections:
             self.process_collection(stac_host, col["name"], col["description"])
 
-    def process_collection(self, stac_host, collection_name, collection_description):
+    def process_collection(self, stac_host: str, collection_name: str, collection_description: str) -> None:
+        """Create a collection if it exists otherwise update it."""
         collection_id = hashlib.md5(collection_name.encode("utf-8")).hexdigest()
         stac_collection = self.get_stac_collection(stac_host, collection_id)
 
@@ -70,9 +70,9 @@ class CollectionProcessor:
             default_collection = self.create_stac_collection(collection_id, collection_name, collection_description)
             self.post_collection(stac_host, default_collection)
 
-    def get_stac_collection(self, stac_host, collection_id):
+    def get_stac_collection(self, stac_host: str, collection_id: str) -> dict:
         """
-        Get a STAC collection
+        Get a STAC collection.
 
         Returns the collection JSON.
         """
@@ -83,7 +83,7 @@ class CollectionProcessor:
 
         return {}
 
-    def get_stac_collection_queryables(self, stac_host, collection_id):
+    def get_stac_collection_queryables(self, stac_host: str, collection_id: str) -> dict:
         """
         Get the queryables of a STAC collection.
 
@@ -96,7 +96,7 @@ class CollectionProcessor:
 
         return {}
 
-    def update_stac_collection(self, stac_collection, stac_collection_queryables):
+    def update_stac_collection(self, stac_collection: dict, stac_collection_queryables: dict) -> dict:
         """
         Update a STAC collection with summaries obtain by queryables.
 
@@ -111,7 +111,7 @@ class CollectionProcessor:
 
         return stac_collection
 
-    def create_stac_collection(self, collection_id, collection_name, collection_description):
+    def create_stac_collection(self, collection_id: str, collection_name: str, collection_description: str) -> dict:
         """
         Create a basic STAC collection.
 
@@ -135,7 +135,7 @@ class CollectionProcessor:
 
         return collection.to_dict()
 
-    def post_collection(self, stac_host, json_data):
+    def post_collection(self, stac_host: str, json_data: dict) -> str:
         """
         Post a STAC collection.
 

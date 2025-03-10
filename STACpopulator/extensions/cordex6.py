@@ -12,6 +12,8 @@ from STACpopulator.extensions.xscen import Xscen
 
 # This is generated using datamodel-codegen + manual edits
 class CordexCmip6(ExtensionHelper):
+    """Helper for CORDEX CMIP6 data."""
+    
     # Fields from schema
     activity_id: str
     contact: str
@@ -73,7 +75,7 @@ class Cordex6DataModel(THREDDSCatalogDataModel):
 
     @model_validator(mode="before")
     @classmethod
-    def properties_helper(cls, data):
+    def properties_helper(cls, data: dict) -> dict:
         """Instantiate the properties helper."""
         data["cordex6"] = data["data"]["attributes"]
         return data
@@ -87,6 +89,7 @@ class Cordex6DataModelNcML(Cordex6DataModel):
 
     @model_validator(mode="before")
     @classmethod
-    def xscen_helper(cls, data):
+    def xscen_helper(cls, data: dict) -> dict:
+        """Instantiate the XSCEN helper."""
         data["xscen"] = data["data"]["attributes"]
         return data

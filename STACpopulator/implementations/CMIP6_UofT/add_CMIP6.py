@@ -25,6 +25,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 class CMIP6populator(STACpopulatorBase):
+    """Populator that creates STAC objects representing CMIP6 data from a THREDDS catalog."""
+
     item_properties_model = CMIP6Properties
     item_geometry_model = GeoJSONPolygon
 
@@ -36,18 +38,12 @@ class CMIP6populator(STACpopulatorBase):
         session: Optional[Session] = None,
         config_file: Optional[Union[os.PathLike[str], str]] = None,
     ) -> None:
-        """Constructor
-
-        :param stac_host: URL to the STAC API
-        :type stac_host: str
-        :param data_loader: loader to iterate over ingestion data.
-        """
         super().__init__(stac_host, data_loader, update=update, session=session, config_file=config_file)
 
     def create_stac_item(
         self, item_name: str, item_data: MutableMapping[str, Any]
     ) -> Union[None, MutableMapping[str, Any]]:
-        """Creates the STAC item.
+        """Create a STAC item.
 
         :param item_name: name of the STAC item. Interpretation of name is left to the input loader implementation
         :type item_name: str
@@ -88,6 +84,7 @@ class CMIP6populator(STACpopulatorBase):
 
 
 def add_parser_args(parser: argparse.ArgumentParser) -> None:
+    """Add additional CLI arguments to the argument parser."""
     parser.description = "CMIP6 STAC populator from a THREDDS catalog or NCML XML."
     parser.add_argument("stac_host", help="STAC API URL")
     parser.add_argument("href", help="URL to a THREDDS catalog or a NCML XML with CMIP6 metadata.")
@@ -118,6 +115,7 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
 
 
 def runner(ns: argparse.Namespace) -> int:
+    """Run the populator."""
     LOGGER.info(f"Arguments to call: {vars(ns)}")
 
     if ns.stac_version:
@@ -137,6 +135,7 @@ def runner(ns: argparse.Namespace) -> int:
 
 
 def main(*args: str) -> int:
+    """Call this implementation directly."""
     warnings.warn(
         "Calling implementation scripts directly is deprecated. Please use the 'stac-populator' CLI instead.",
         DeprecationWarning,

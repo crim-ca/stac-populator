@@ -14,16 +14,20 @@ LOGGER = logging.getLogger(__name__)
 
 
 class CORDEX_STAC_Populator(STACpopulatorBase):
+    """Populator that creates STAC objects representing CORDEX data from a THREDDS catalog."""
+    
     data_model = Cordex6DataModel
     item_geometry_model = None  # Unnecessary, but kept for consistency
 
     def create_stac_item(self, item_name: str, item_data: dict[str, Any]) -> dict[str, Any]:
+        """Return a STAC item."""
         dm = self.data_model.from_data(item_data)
         return dm.stac_item()
 
 
 # TODO: This probably doesn't need to be copied for every implementation, right ?
 def add_parser_args(parser: argparse.ArgumentParser) -> None:
+    """Add additional CLI arguments to the argument parser."""
     parser.description = "CMIP6-CORDEX STAC populator from a THREDDS catalog or NCML XML."
     parser.add_argument("stac_host", help="STAC API URL")
     parser.add_argument("href", help="URL to a THREDDS catalog or a NCML XML with CMIP6 metadata.")
@@ -47,6 +51,7 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
 
 
 def runner(ns: argparse.Namespace) -> int:
+    """Run the populator."""
     LOGGER.info(f"Arguments to call: {vars(ns)}")
 
     with Session() as session:

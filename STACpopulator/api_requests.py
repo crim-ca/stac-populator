@@ -12,6 +12,7 @@ LOGGER = logging.getLogger(__name__)
 
 @cache
 def stac_host_catalog_info(url: str, session: Optional[Session] = None) -> dict:
+    """Return information about the catalog at url."""
     try:
         session = session or requests
         response = session.get(url, headers={"Accept": "application/json"})
@@ -24,11 +25,13 @@ def stac_host_catalog_info(url: str, session: Optional[Session] = None) -> dict:
 
 
 def stac_host_reachable(url: str, session: Optional[Session] = None) -> bool:
+    """Return True if the catalog at url can be accessed."""
     body = stac_host_catalog_info(url, session)
     return body.get("type") == "Catalog" and "stac_version" in body
 
 
 def stac_version_match(url: str, session: Optional[Session] = None) -> bool:
+    """Return True iff the catalog at url uses the same STAC spec version as pystac."""
     body = stac_host_catalog_info(url, session)
     host_version = body.get("stac_version")
     pystac_version = pystac.get_stac_version()
@@ -45,7 +48,7 @@ def stac_version_match(url: str, session: Optional[Session] = None) -> bool:
 
 def stac_collection_exists(stac_host: str, collection_id: str, session: Optional[Session] = None) -> bool:
     """
-    Get a STAC collection
+    Get a STAC collection.
 
     Returns the collection JSON.
     """
@@ -60,7 +63,7 @@ def post_stac_collection(
     update: Optional[bool] = True,
     session: Optional[Session] = None,
 ) -> None:
-    """Post/create a collection on the STAC host
+    """Post/create a collection on the STAC host.
 
     :param stac_host: address of the STAC host
     :type stac_host: str

@@ -7,23 +7,23 @@ def test_np2py():
 
     # Test int
     i = np2py(np.int32(1))
-    assert type(i) == int
+    assert type(i) is int
 
     # Test float
     f = np2py(np.float32(1.0))
-    assert type(f) == float
+    assert type(f) is float
 
     # Test str
     s = np2py(np.str_("string"))
-    assert type(s) == str
+    assert type(s) is str
 
     # Test dict
     d = np2py({"a": np.int32(1), "b": np.float32(2.0)})
     assert d == {"a": 1, "b": 2.0}
 
     # Test list
-    l = np2py([np.int32(1), np.float32(2.0)])
-    assert l == [1, 2.0]
+    l_ = np2py([np.int32(1), np.float32(2.0)])
+    assert l_ == [1, 2.0]
 
     # Test tuple
     t = np2py((np.int32(1), np.float32(2.0)))
@@ -31,8 +31,8 @@ def test_np2py():
 
     # Test NaNs
     n = np2py(np.float64(np.nan))
-    assert type(n) == float
+    assert type(n) is float
 
     # Test Infinity
     n = np2py(np.float64(np.inf))
-    assert type(n) == float
+    assert type(n) is float

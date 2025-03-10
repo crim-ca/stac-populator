@@ -1,5 +1,5 @@
 """
-# Base classes for STAC extensions
+Base classes for STAC extensions.
 
 What we have:
   - `Loader`, which returns attributes.
@@ -32,7 +32,7 @@ import types
 from abc import abstractmethod
 from datetime import datetime as Datetime
 from pathlib import Path
-from typing import Any, Generic, Optional, TypeVar, Union, cast
+from typing import Any, Generic, Optional, Type, TypeVar, Union, cast
 
 import jsonschema
 import pystac
@@ -87,7 +87,7 @@ class ExtensionHelper(BaseModel, Helper):
     model_config = ConfigDict(populate_by_name=True, extra="ignore", ser_json_inf_nan="strings")
 
     @classmethod
-    def __init_subclass__(cls, **kwargs):
+    def __init_subclass__(cls, **kwargs) -> None:
         """Automatically set an alias generator from the `_prefix`."""
         prefix = cls._prefix.default
 
@@ -96,7 +96,7 @@ class ExtensionHelper(BaseModel, Helper):
 
     @model_validator(mode="before")
     @classmethod
-    def validate_jsonschema(cls, data):
+    def validate_jsonschema(cls, data: dict) -> dict:
         """Validate the data model against the json schema, if given."""
         # Load schema
         uri = cls._schema_uri.default
@@ -114,8 +114,10 @@ class ExtensionHelper(BaseModel, Helper):
 
         return data
 
-    def apply(self, item, add_if_missing=True):
-        """Add extension for the properties of the dataset to the STAC item.
+    def apply(self, item: pystac.Item, add_if_missing: bool = True) -> pystac.Item:
+        """
+        Add extension for the properties of the dataset to the STAC item.
+
         The extension class is created dynamically from the properties.
         """
         schema_uri = self.write_stac_schema() if self._schema_uri else None
@@ -137,6 +139,7 @@ class ExtensionHelper(BaseModel, Helper):
         }
 
     def write_stac_schema(self) -> str:
+        """Write STAC schema to a temporary file and return that file path."""
         path = Path(tempfile.mkdtemp()) / f"{self._prefix}-schema.json"
         with open(path, "w") as fh:
             json.dump(self.to_stac_schema(), fh)
@@ -174,18 +177,18 @@ class BaseSTAC(BaseModel):
     _helpers: list[str] = PrivateAttr([])
 
     @model_validator(mode="after")
-    def set_id(self):
-        """Set the ID of the dataset if None"""
+    def set_id(self) -> "BaseSTAC":
+        """Set the ID of the dataset if None."""
         if self.id is None:
             self.id = self.create_uid()
         return self
 
     @abstractmethod
-    def create_uid(self):
+    def create_uid(self) -> str:
         """Return a unique identifier for the dataset."""
 
     @model_validator(mode="after")
-    def find_helpers(self):
+    def find_helpers(self) -> "BaseSTAC":
         """Populate the list of extensions."""
         for key, field in self.model_fields.items():
             if isinstance(field.annotation, type) and issubclass(field.annotation, Helper):
@@ -216,7 +219,7 @@ class BaseSTAC(BaseModel):
         return json.loads(json.dumps(item.to_dict()))
 
 
-def metacls_extension(name, schema_uri):
+def metacls_extension(name: str, schema_uri: str) -> Type:
     """Create an extension class dynamically from the properties."""
     cls_name = f"{name.upper()}Extension"
 
@@ -232,13 +235,13 @@ def metacls_extension(name, schema_uri):
 
 
 class MetaExtension:
+    """Extension metaclass."""
+
     name: str
     schema_uri: str
 
     def apply(self, properties: dict[str, Any]) -> None:
-        """Applies Extension properties to the extended
-        :class:`~pystac.Item` or :class:`~pystac.Asset`.
-        """
+        """Apply Extension properties to the extended :class:`~pystac.Item` or :class:`~pystac.Asset`."""
         for prop, val in properties.items():
             self._set_property(prop, val)
 
@@ -248,14 +251,14 @@ class MetaExtension:
         return cls.schema_uri
 
     @classmethod
-    def has_extension(cls, obj: S):
+    def has_extension(cls, obj: S) -> bool:
+        """Return True iff the object has an extension for that matches this class' schema URI."""
         ext_uri = cls.get_schema_uri()
         return obj.stac_extensions is not None and any(uri == ext_uri for uri in obj.stac_extensions)
 
     @classmethod
-    def ext(cls, obj: T, add_if_missing: bool = False) -> "Extension[T]":
-        """Extends the given STAC Object with properties from the
-        :stac-ext:`Extension`.
+    def ext(cls, obj: T, add_if_missing: bool = False) -> "Extension[T]":  # noqa: F821
+        """Extend the given STAC Object with properties from the :stac-ext:`Extension`.
 
         This extension can be applied to instances of :class:`~pystac.Item` or
         :class:`~pystac.Asset`.
@@ -275,7 +278,7 @@ class MetaExtension:
             raise pystac.ExtensionTypeError(cls._ext_error_message(obj))
 
 
-def extend_type(stac, cls, ext):
+def extend_type(stac: T, cls: MetaItemExtension, ext: MetaItemExtension[T]) -> Type:
     """Create an extension subclass for different STAC objects.
 
     Note: This is super confusing... we should come up with some better nomenclature.
@@ -294,15 +297,16 @@ def extend_type(stac, cls, ext):
 
 
 class MetaItemExtension:
-    """A concrete implementation of :class:`Extension` on an :class:`~pystac.Item`
-    that extends the properties of the Item to include properties defined in the
+    """A concrete implementation of :class:`Extension` on an :class:`~pystac.Item`.
+    
+    Extends the properties of the Item to include properties defined in the
     :stac-ext:`Extension`.
 
     This class should generally not be instantiated directly. Instead, call
     :meth:`Extension.ext` on an :class:`~pystac.Item` to extend it.
     """
 
-    def __init__(self, item: pystac.Item):
+    def __init__(self, item: pystac.Item) -> None:
         self.item = item
         self.properties = item.properties
 
@@ -329,6 +333,7 @@ class MetaItemExtension:
         }
 
     def __repr__(self) -> str:
+        """Return repr."""
         return f"<{self.__class__.__name__} Item id={self.item.id}>"
 
 
@@ -344,7 +349,7 @@ def schema_properties(schema: dict) -> list[str]:
     return out
 
 
-def model_from_schema(model_name, schema: dict):
+def model_from_schema(model_name: str, schema: dict) -> BaseModel:
     """Create pydantic BaseModel from JSON schema."""
     type_map = {
         "string": str,

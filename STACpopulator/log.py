@@ -31,7 +31,8 @@ LOG_RECORD_BUILTIN_ATTRS = {
 
 
 def setup_logging(logfname: str, log_level: int) -> None:
-    """Setup the logger for the app.
+    """
+    Set up the logger for the app.
 
     :param logfname: name of the file to which to write log outputs
     :type logfname: str
@@ -46,20 +47,26 @@ def setup_logging(logfname: str, log_level: int) -> None:
 
 
 class JSONLogFormatter(logging.Formatter):
-    # From: https://github.com/mCodingLLC/VideosSampleCode/tree/master/videos/135_modern_logging
+    """
+    Log formatter for JSON logs.
+
+    See: https://github.com/mCodingLLC/VideosSampleCode/tree/master/videos/135_modern_logging
+    """
+
     def __init__(
         self,
         *,
         fmt_keys: dict[str, str] | None = None,
-    ):
+    ) -> None:
         super().__init__()
         self.fmt_keys = fmt_keys if fmt_keys is not None else {}
 
     def format(self, record: logging.LogRecord) -> str:
+        """Return a formatted log entry."""
         message = self._prepare_log_dict(record)
         return json.dumps(message, default=str)
 
-    def _prepare_log_dict(self, record: logging.LogRecord):
+    def _prepare_log_dict(self, record: logging.LogRecord) -> dict:
         always_fields = {
             "message": record.getMessage(),
             "timestamp": dt.datetime.fromtimestamp(record.created, tz=dt.timezone.utc).isoformat(),
@@ -84,7 +91,10 @@ class JSONLogFormatter(logging.Formatter):
 
 
 class NonErrorFilter(logging.Filter):
+    """Log filter that filters ERROR level logs."""
+
     def filter(self, record: logging.LogRecord) -> bool | logging.LogRecord:
+        """Return True iff the log level is not at ERROR level."""
         return record.levelno <= logging.INFO
 
 
@@ -130,9 +140,7 @@ logconfig = {
 
 
 def add_logging_options(parser: argparse.ArgumentParser) -> None:
-    """
-    Adds arguments to a parser to configure logging options.
-    """
+    """Add arguments to a parser to configure logging options."""
     parser.add_argument("--debug", action="store_const", const=logging.DEBUG, help="set logger level to debug")
     parser.add_argument(
         "--log-file",
