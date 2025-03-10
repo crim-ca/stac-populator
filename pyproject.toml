@@ -16,7 +16,7 @@ exclude = [
 ]
 
 [tool.setuptools.package-data]
-STACpopulator = ["**/collection_config.yml"]
+STACpopulator = ["**/collection_config.yml", "extensions/schemas/**/*.json"]
 
 
 [tool.pytest.ini_options]
@@ -51,7 +51,7 @@ output = "reports/coverage.xml"
 
 
 [tool.bumpversion]
-current_version = "0.6.0"
+current_version = "0.7.0"
 commit = true
 commit_args = "--no-verify"
 tag = true
@@ -101,19 +101,19 @@ replace = "name = \"STACpopulator\"\nversion = \"{new_version}\""
 
 [project]
 name = "STACpopulator"
-version = "0.6.0"
+version = "0.7.0"
 description = "Utility to populate STAC Catalog, Collections and Items from various dataset/catalog sources."
-requires-python = ">=3.10"
+requires-python = ">=3.10,<4"
 dependencies = [
-    "colorlog",
-    "pyyaml",
-    "siphon",
-    "pystac",
-    "xncml>=0.3.1",  # python 3.12 support
-    "pydantic>=2",
-    "pyessv",
-    "requests",
-    "lxml",
+    "colorlog~=6.9",
+    "pyyaml~=6.0",
+    "siphon~=0.10",
+    "pystac~=1.12.1",
+    "xncml~=0.3",  # python 3.12 support
+    "pydantic~=2.10",
+    "pyessv~=0.9",
+    "requests~=2.32",
+    "lxml~=5.3",
 ]
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -127,6 +127,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Operating System :: OS Independent",
     "Topic :: Database :: Database Engines/Servers",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
@@ -150,7 +151,8 @@ keywords = [
     "SpatioTemporal Asset Catalog",
     "Data Ingestion",
     "THREDDS",
-    "CMIP6"
+    "CMIP6",
+    "CORDEX"
 ]
 
 [project.scripts]
@@ -162,12 +164,11 @@ Changelog = "https://github.com/crim-ca/stac-populator/blob/master/CHANGES.md"
 
 [project.optional-dependencies]
 dev = [
-    "pytest",
-    "pytest-cov",
-    "coverage",
-    "responses",
-    "bump-my-version",
-    "jsonschema",
-    "pystac[validation]>=1.9.0"
+    "pytest~=8.3",
+    "pytest-cov~=6.0",
+    "coverage~=7.6",
+    "responses~=0.25",
+    "bump-my-version~=1.0",
+    "jsonschema~=4.23",
+    "pystac[validation]~=1.12.1"
 ]
-

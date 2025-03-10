@@ -51,7 +51,7 @@ T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.Asset
 
 SchemaName = Literal["cmip6"]
 # FIXME: below reference (used as ID in the schema itself) should be updated once the extension is officially released
-# SCHEMA_URI: str = "https://stac-extensions.github.io/cmip6/v1.0.0/schema.json"
+# SCHEMA_URI: str = "https://raw.githubusercontent.com/stac-extensions/cmip6/refs/heads/main/json-schema/schema.json"
 # below is the temporary resolvable URI
 SCHEMA_URI: str = "https://raw.githubusercontent.com/dchandan/stac-extension-cmip6/v1.0.0/json-schema/schema.json"
 PREFIX = f"{get_args(SchemaName)[0]}:"

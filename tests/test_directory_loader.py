@@ -5,6 +5,7 @@ import json
 import os
 from typing import Any, Callable, Generator
 import pytest
+import pystac
 import responses
 
 from STACpopulator.implementations.DirectoryLoader import crawl_directory
@@ -39,7 +40,7 @@ def file_contents(file_id_map: dict[str, str], request: pytest.FixtureRequest) -
 @pytest.fixture(autouse=True)
 def request_mock(namespace: argparse.Namespace, file_id_map: dict[str, str]) -> RequestContext:
     with responses.RequestsMock(assert_all_requests_are_fired=False) as mock_context:
-        mock_context.add("GET", namespace.stac_host, json={"stac_version": "1.0.0", "type": "Catalog"})
+        mock_context.add("GET", namespace.stac_host, json={"stac_version": pystac.get_stac_version(), "type": "Catalog"})
         mock_context.add(
             "POST",
             f"{namespace.stac_host}collections",
@@ -81,7 +82,7 @@ class _TestDirectoryLoader(abc.ABC):
     ):
         runner()
 
-        assert len(request_mock.calls) == (4 if prune_option else 8)
+        assert len(request_mock.calls) == (4 if prune_option else 7)
         assert request_mock.calls[0].request.url == namespace.stac_host
 
         base_col = file_id_map["collection.json"]
@@ -102,18 +103,19 @@ class _TestDirectoryLoader(abc.ABC):
         assert request_mock.calls[item1_idx].request.body == file_contents["item-1.json"]
 
         if not prune_option:
-            assert request_mock.calls[4].request.url == namespace.stac_host
+            # test that previous validation calls were cached properly
+            assert request_mock.calls[4].request.url != namespace.stac_host
 
             nested_col = file_id_map["nested/collection.json"]
-            assert request_mock.calls[5].request.path_url == "/stac/collections"
-            assert request_mock.calls[5].request.body == file_contents["nested/collection.json"]
+            assert request_mock.calls[4].request.path_url == "/stac/collections"
+            assert request_mock.calls[4].request.body == file_contents["nested/collection.json"]
 
             # NOTE:
             #   Because directory crawler users 'os.walk', loading order is OS-dependant.
             #   Since the order does not actually matter, consider item indices interchangeably.
-            req0_json = json.loads(request_mock.calls[6].request.body.decode())
+            req0_json = json.loads(request_mock.calls[5].request.body.decode())
             req0_item = req0_json["id"]
-            item0_idx, item1_idx = (6, 7) if "sample-0" in req0_item else (7, 6)
+            item0_idx, item1_idx = (5, 6) if "sample-0" in req0_item else (6, 5)
 
             assert request_mock.calls[item0_idx].request.path_url == f"/stac/collections/{nested_col}/items"
             assert request_mock.calls[item0_idx].request.body == file_contents["nested/item-0.json"]
@@ -137,7 +139,17 @@ class TestModule(_TestDirectoryLoader):
             directory=os.path.join(request.fspath.dirname, "data/test_directory"),
             prune=prune_option,
             update=True,
+            stac_version=None
         )
+
+    def test_set_stac_version(self, namespace, runner):
+        if pystac.get_stac_version() == "1.0.0":
+            namespace.stac_version = "1.1.0"
+        else:
+            namespace.stac_version = "1.0.0"
+        with pytest.raises(RuntimeError):
+            runner()
+        assert pystac.get_stac_version() == namespace.stac_version
 
 
 class TestFromCLI(_TestDirectoryLoader):
@@ -153,6 +165,12 @@ class TestFromCLI(_TestDirectoryLoader):
         ]
         if prune_option:
             cmd_args.append("--prune")
+        if request.node.get_closest_marker("set_stac_version"):
+            if pystac.get_stac_version() == "1.0.0":
+                stac_version = "1.1.0"
+            else:
+                stac_version = "1.0.0"
+            cmd_args.extend(["--stac-version", stac_version])
         return cmd_args
 
     @pytest.fixture
@@ -164,3 +182,10 @@ class TestFromCLI(_TestDirectoryLoader):
         parser = argparse.ArgumentParser()
         add_parser_args(parser)
         return parser.parse_args(args)
+
+    @pytest.mark.set_stac_version
+    def test_set_stac_version(self, runner):
+        prev_stac_version = pystac.get_stac_version()
+        with pytest.raises(RuntimeError):
+            runner()        
+        assert prev_stac_version != pystac.get_stac_version()
