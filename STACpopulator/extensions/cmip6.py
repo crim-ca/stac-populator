@@ -278,7 +278,7 @@ class CMIP6Extension(
 class ItemCMIP6Extension(CMIP6Extension[pystac.Item]):
     """
     A concrete implementation of :class:`CMIP6Extension` on an :class:`~pystac.Item`.
-    
+
     Extends the properties of the Item to include properties defined in the
     :stac-ext:`CMIP6 Extension <cmip6>`.
 
@@ -331,7 +331,7 @@ class ItemAssetsCMIP6Extension(CMIP6Extension[item_assets.AssetDefinition]):
 class AssetCMIP6Extension(CMIP6Extension[pystac.Asset]):
     """
     A concrete implementation of :class:`CMIP6Extension` on an :class:`~pystac.Asset`.
-    
+
     Extends the Asset fields to include properties defined in the
     :stac-ext:`CMIP6 Extension <cmip6>`.
 
@@ -362,8 +362,8 @@ class AssetCMIP6Extension(CMIP6Extension[pystac.Asset]):
 
 class SummariesCMIP6Extension(SummariesExtension):
     """
-    A concrete implementation of :class:`~SummariesExtension`. 
-    
+    A concrete implementation of :class:`~SummariesExtension`.
+
     Extends the ``summaries`` field of a :class:`~pystac.Collection` to include properties
     defined in the :stac-ext:`CMIP6 <cmip6>`.
     """

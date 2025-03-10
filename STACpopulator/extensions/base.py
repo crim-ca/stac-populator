@@ -51,7 +51,7 @@ from pystac.extensions.base import (
     ExtensionManagementMixin,
     PropertiesExtension,
     S,  # generic pystac.STACObject
-    )
+)
 
 from STACpopulator.models import AnyGeometry
 from STACpopulator.stac_utils import ServiceType
@@ -298,7 +298,7 @@ def extend_type(stac: T, cls: MetaItemExtension, ext: MetaItemExtension[T]) -> T
 
 class MetaItemExtension:
     """A concrete implementation of :class:`Extension` on an :class:`~pystac.Item`.
-    
+
     Extends the properties of the Item to include properties defined in the
     :stac-ext:`Extension`.
 

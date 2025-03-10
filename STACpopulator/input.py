@@ -18,7 +18,7 @@ LOGGER = logging.getLogger(__name__)
 
 class GenericLoader(ABC):
     """Generic data loader class."""
-    
+
     def __init__(self) -> None:
         self.links = []
 
@@ -27,7 +27,7 @@ class GenericLoader(ABC):
         """
         Iterate over this loader.
 
-        Returns items from the input. Items may be anything depending on the specific concrete 
+        Returns items from the input. Items may be anything depending on the specific concrete
         implementation of this abstract class.
         """
         raise NotImplementedError
@@ -51,7 +51,6 @@ class ErrorLoader(GenericLoader):
     def reset(self) -> None:
         """Reset the internal state of the generator."""
         raise NotImplementedError
-
 
 
 class THREDDSCatalog(TDSCatalog):

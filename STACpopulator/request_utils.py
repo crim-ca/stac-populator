@@ -8,7 +8,7 @@ from requests.sessions import Session
 
 class HTTPBearerTokenAuth(AuthBase):
     """Authorizer class for HTTP Bearer Tokens."""
-    
+
     def __init__(self, token: str) -> None:
         self._token = token
 

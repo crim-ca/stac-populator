@@ -13,7 +13,7 @@ from STACpopulator.extensions.xscen import Xscen
 # This is generated using datamodel-codegen + manual edits
 class CordexCmip6(ExtensionHelper):
     """Helper for CORDEX CMIP6 data."""
-    
+
     # Fields from schema
     activity_id: str
     contact: str

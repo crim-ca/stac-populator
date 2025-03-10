@@ -16,7 +16,7 @@ T = TypeVar("T", pystac.Collection, pystac.Item)
 
 class THREDDSMetadata:
     """Metadata for THREDDS objects."""
-    
+
     media_types = {
         ServiceType.httpserver: "application/x-netcdf",
         ServiceType.opendap: pystac.MediaType.HTML,
@@ -179,7 +179,7 @@ class THREDDSCatalogDataModel(BaseSTAC):
     def from_data(cls, data: dict) -> None:
         """
         Instantiate class from data provided by THREDDS Loader.
-        
+
         This is where we match the Loader's output to the STAC item and extensions inputs. If we had multiple
         loaders, that's probably the only thing that would be different between them.
         """

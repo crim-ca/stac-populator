@@ -6,5 +6,5 @@ class STACPopulatorError(Exception):
 
 class ExtensionLoadError(STACPopulatorError):
     """Extension Loading Error."""
-    
+
     pass

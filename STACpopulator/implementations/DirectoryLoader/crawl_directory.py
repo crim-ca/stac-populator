@@ -20,7 +20,7 @@ LOGGER = logging.getLogger(__name__)
 
 class DirectoryPopulator(STACpopulatorBase):
     """Populator that constructs STAC objects from files in a directory."""
-    
+
     item_geometry_model = GeoJSONPolygon
 
     def __init__(

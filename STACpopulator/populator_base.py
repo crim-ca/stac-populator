@@ -25,7 +25,7 @@ LOGGER = logging.getLogger(__name__)
 
 class STACpopulatorBase(ABC):
     """Abstract base class for STAC populators."""
-    
+
     def __init__(
         self,
         stac_host: str,

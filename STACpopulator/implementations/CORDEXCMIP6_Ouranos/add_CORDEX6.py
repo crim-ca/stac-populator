@@ -15,7 +15,7 @@ LOGGER = logging.getLogger(__name__)
 
 class CORDEX_STAC_Populator(STACpopulatorBase):
     """Populator that creates STAC objects representing CORDEX data from a THREDDS catalog."""
-    
+
     data_model = Cordex6DataModel
     item_geometry_model = None  # Unnecessary, but kept for consistency
 
