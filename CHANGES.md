@@ -3,6 +3,11 @@
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
 <!-- insert list items of new changes here -->
+
+## [0.7.0](https://github.com/crim-ca/stac-populator/tree/0.7.0) (2025-03-07)
+
+
+<!-- insert list items of new changes here -->
 * Make sure *bounds* variables are given the auxiliary type attribute. 
 * Fix for variables that have no attributes.
 * Adding ability to add collection level assets
