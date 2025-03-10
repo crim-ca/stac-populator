@@ -1,0 +1,280 @@
+{
+  "@location": "Not provided because of security concerns.",
+  "@xmlns": {
+    "": "http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2"
+  },
+  "attributes": {
+    "Conventions": "CF-1.11",
+    "activity_id": "DD",
+    "comment": "CRCM5 v3331 0.11 deg AMNO11d1 L56 S17-15m MPI-ESM1-2-LR membre 1 PILSPEC PS3",
+    "contact": "simulations_ouranos@ouranos.ca",
+    "creation_date": "2023-12-08T19:52:05Z",
+    "domain": "North America",
+    "domain_id": "NAM-12",
+    "driving_experiment": "gap-filling scenario reaching 7.0 based on SSP3",
+    "driving_experiment_id": "ssp370",
+    "driving_institution_id": "MPI-M",
+    "driving_source_id": "MPI-ESM1-2-LR",
+    "driving_variant_label": "r1i1p1f1",
+    "institution_id": "OURANOS",
+    "mip_era": "CMIP6",
+    "ouranos_experiment_name": "cau",
+    "product": "model-output",
+    "project_id": "CORDEX",
+    "source_type": "ARCM",
+    "title": "CRMC5 output, model ran by Ouranos, prepared for CORDEX-CMIP6",
+    "external_variables": "areacella",
+    "frequency": "day",
+    "variable_id": "tas",
+    "history": "Thu Aug 29 22:41:53 2024: ncks --cmp=dfl,6 CORDEX/CMIP6/DD/NAM-12/OURANOS/MPI-ESM1-2-LR/ssp370/r1i1p1f1/CRCM5/v1-r1/day/tas/v20231208/tas_NAM-12_MPI-ESM1-2-LR_ssp370_r1i1p1f1_OURANOS_CRCM5_v1-r1_day_20150101-20151231.nc CORDEX/CMIP6/DD/NAM-12/OURANOS/MPI-ESM1-2-LR/ssp370/r1i1p1f1/CRCM5/v1-r1/day/tas/v20231208/tas_NAM-12_MPI-ESM1-2-LR_ssp370_r1i1p1f1_OURANOS_CRCM5_v1-r1_day_20150101-20151231.nc.comp\nFri Dec 08 15:09:39 2023: Metadata converted to CORDEX specifications.Monthly files merged by chunks of 1 years. Data resampled from H to D.\nSat May 21 03:43:17 2022: ncks -O --chunk_policy g3d --cnk_dmn plev,1 --cnk_dmn rlon,50 --cnk_dmn rlat,50 --cnk_dmn time,250 /home/dpaquin1/scratch/arch/cau/201501/nc4c_tas_cau_201501_se.nc /home/dpaquin1/scratch/arch/cau/201501/tas_cau_201501_se.nc\nSat May 21 03:40:09 2022: ncks -O --fl_fmt=netcdf4_classic -L 6 /home/dpaquin1/scratch/arch/cau/201501/trim_tas_cau_201501_se.nc /home/dpaquin1/scratch/arch/cau/201501/nc4c_tas_cau_201501_se.nc\nSat May 21 03:40:04 2022: ncks -O -d time,2015-01-01 00:00:00,2015-01-31 23:59:59 /home/dpaquin1/postprod/cau/transit2/201501/tas_cau_201501_se.nc /home/dpaquin1/scratch/arch/cau/201501/trim_tas_cau_201501_se.nc",
+    "tracking_id": "hdl:21.14100/036eef09-912f-4d92-b73b-27c751fcc9e3",
+    "coordinates": "vertices_latitude vertices_longitude crs",
+    "license": "https://cordex.org/data-access/cordex-cmip6-data/cordex-cmip6-terms-of-use",
+    "source": "Canadian Regional Climate Model version 5",
+    "source_id": "CRCM5-SN",
+    "source_name": "CRCM5",
+    "doi": "https://zenodo.org/doi/10.5281/zenodo.11061924",
+    "further_info_url": "https://zenodo.org/doi/10.5281/zenodo.11061924",
+    "grid": "Rotated-pole latitude-longitude with 0.11 degree grid spacing (AMNO11d1)",
+    "version_realization": "v1-r1",
+    "institution": "Ouranos Consortium, Montreal (Quebec), Canada",
+    "NCO": "netCDF Operators version 5.1.8 (Homepage = http://nco.sf.net, Code = http://github.com/nco/nco, Citation = 10.1016/j.envsoft.2008.03.004)",
+    "_NCProperties": "version=2,netcdf=4.9.2,hdf5=1.14.2",
+    "_CoordSysBuilder": "ucar.nc2.internal.dataset.conv.CF1Convention"
+  },
+  "dimensions": {
+    "rlat": 628,
+    "rlon": 655,
+    "time": 365,
+    "bounds": 4
+  },
+  "groups": {
+    "CFMetadata": {
+      "attributes": {
+        "geospatial_lon_min": [
+          -179.9917755126953
+        ],
+        "geospatial_lat_min": [
+          6.3356499671936035
+        ],
+        "geospatial_lon_max": [
+          179.9958038330078
+        ],
+        "geospatial_lat_max": [
+          82.84487915039062
+        ],
+        "geospatial_lon_units": "degrees_east",
+        "geospatial_lat_units": "degrees_north",
+        "geospatial_lon_resolution": "8.751603406088485E-4",
+        "geospatial_lat_resolution": "1.8600042124828522E-4",
+        "geospatial_vertical_min": "2.0",
+        "geospatial_vertical_max": "2.0",
+        "geospatial_vertical_units": "m",
+        "geospatial_vertical_resolution": "0.0",
+        "geospatial_vertical_positive": "up",
+        "time_coverage_start": "2015-01-01T12:00:00Z",
+        "time_coverage_end": "2015-12-31T12:00:00Z",
+        "time_coverage_units": "seconds",
+        "time_coverage_resolution": "86400.0",
+        "time_coverage_duration": "P0Y0M364DT0H0M0.000S"
+      }
+    },
+    "NCISOMetadata": {
+      "attributes": {
+        "metadata_creation": "2025-03-06",
+        "nciso_version": "2.4.6"
+      }
+    }
+  },
+  "variables": {
+    "rlat": {
+      "shape": [
+        "rlat"
+      ],
+      "type": "double",
+      "attributes": {
+        "_FillValue": [
+          NaN
+        ],
+        "actual_range": [
+          -33.625,
+          35.345
+        ],
+        "units": "degrees",
+        "axis": "Y",
+        "long_name": "latitude in rotated pole grid",
+        "standard_name": "grid_latitude",
+        "bounds": "rlat_bounds",
+        "_CoordinateAxisType": "GeoY"
+      }
+    },
+    "rlon": {
+      "shape": [
+        "rlon"
+      ],
+      "type": "double",
+      "attributes": {
+        "long_name": "longitude in rotated pole grid",
+        "actual_range": [
+          -34.045,
+          37.895
+        ],
+        "_FillValue": [
+          NaN
+        ],
+        "axis": "X",
+        "standard_name": "grid_longitude",
+        "bounds": "rlon_bounds",
+        "units": "degrees",
+        "_CoordinateAxisType": "GeoX"
+      }
+    },
+    "time": {
+      "shape": [
+        "time"
+      ],
+      "type": "double",
+      "attributes": {
+        "_FillValue": [
+          NaN
+        ],
+        "units": "days since 1950-01-01",
+        "calendar": "standard",
+        "_CoordinateAxisType": "Time"
+      }
+    },
+    "crs": {
+      "shape": [
+        ""
+      ],
+      "type": "char",
+      "attributes": {
+        "grid_mapping_name": "rotated_latitude_longitude",
+        "grid_north_pole_latitude": [
+          42.5
+        ],
+        "grid_north_pole_longitude": [
+          83.0
+        ],
+        "north_pole_grid_longitude": [
+          0.0
+        ],
+        "_CoordinateTransformType": "Projection",
+        "_CoordinateAxisTypes": "GeoX GeoY"
+      }
+    },
+    "tas": {
+      "shape": [
+        "time",
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "long_name": "Near-Surface Air Temperature",
+        "_FillValue": [
+          1.0000000200408773e+20
+        ],
+        "standard_name": "air_temperature",
+        "cell_measures": "area: areacella",
+        "cell_methods": "area: mean time: point",
+        "missing_value": [
+          1.0000000200408773e+20
+        ],
+        "units": "K",
+        "grid_mapping": "crs",
+        "coordinates": "height lat lon"
+      }
+    },
+    "vertices_latitude": {
+      "shape": [
+        "rlat",
+        "rlon",
+        "bounds"
+      ],
+      "type": "double",
+      "attributes": {
+        "_FillValue": [
+          NaN
+        ],
+        "coordinates": "lat lon"
+      }
+    },
+    "vertices_longitude": {
+      "shape": [
+        "rlat",
+        "rlon",
+        "bounds"
+      ],
+      "type": "double",
+      "attributes": {
+        "_FillValue": [
+          NaN
+        ],
+        "coordinates": "lat lon"
+      }
+    },
+    "height": {
+      "shape": [
+        ""
+      ],
+      "type": "double",
+      "attributes": {
+        "_FillValue": [
+          NaN
+        ],
+        "units": "m",
+        "standard_name": "height",
+        "axis": "Z",
+        "long_name": "height",
+        "positive": "up",
+        "_CoordinateAxisType": "Height",
+        "_CoordinateZisPositive": "up"
+      }
+    },
+    "lat": {
+      "shape": [
+        "rlat",
+        "rlon"
+      ],
+      "type": "double",
+      "attributes": {
+        "_FillValue": [
+          NaN
+        ],
+        "standard_name": "latitude",
+        "long_name": "latitude",
+        "units": "degrees_north",
+        "bounds": "vertices_latitude",
+        "_CoordinateAxisType": "Lat"
+      }
+    },
+    "lon": {
+      "shape": [
+        "rlat",
+        "rlon"
+      ],
+      "type": "double",
+      "attributes": {
+        "_FillValue": [
+          NaN
+        ],
+        "standard_name": "longitude",
+        "long_name": "longitude",
+        "units": "degrees_east",
+        "bounds": "vertices_longitude",
+        "_CoordinateAxisType": "Lon"
+      }
+    }
+  },
+  "access_urls": {
+    "HTTPServer": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/fileServer/birdhouse/disk2/ouranos/CORDEX/CMIP6/DD/NAM-12/OURANOS/MPI-ESM1-2-LR/ssp370/r1i1p1f1/CRCM5/v1-r1/day/tas/v20231208/tas_NAM-12_MPI-ESM1-2-LR_ssp370_r1i1p1f1_OURANOS_CRCM5_v1-r1_day_20150101-20151231.nc",
+    "OpenDAP": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/dodsC/birdhouse/disk2/ouranos/CORDEX/CMIP6/DD/NAM-12/OURANOS/MPI-ESM1-2-LR/ssp370/r1i1p1f1/CRCM5/v1-r1/day/tas/v20231208/tas_NAM-12_MPI-ESM1-2-LR_ssp370_r1i1p1f1_OURANOS_CRCM5_v1-r1_day_20150101-20151231.nc",
+    "NCML": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/ncml/birdhouse/disk2/ouranos/CORDEX/CMIP6/DD/NAM-12/OURANOS/MPI-ESM1-2-LR/ssp370/r1i1p1f1/CRCM5/v1-r1/day/tas/v20231208/tas_NAM-12_MPI-ESM1-2-LR_ssp370_r1i1p1f1_OURANOS_CRCM5_v1-r1_day_20150101-20151231.nc",
+    "UDDC": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/uddc/birdhouse/disk2/ouranos/CORDEX/CMIP6/DD/NAM-12/OURANOS/MPI-ESM1-2-LR/ssp370/r1i1p1f1/CRCM5/v1-r1/day/tas/v20231208/tas_NAM-12_MPI-ESM1-2-LR_ssp370_r1i1p1f1_OURANOS_CRCM5_v1-r1_day_20150101-20151231.nc",
+    "ISO": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/iso/birdhouse/disk2/ouranos/CORDEX/CMIP6/DD/NAM-12/OURANOS/MPI-ESM1-2-LR/ssp370/r1i1p1f1/CRCM5/v1-r1/day/tas/v20231208/tas_NAM-12_MPI-ESM1-2-LR_ssp370_r1i1p1f1_OURANOS_CRCM5_v1-r1_day_20150101-20151231.nc",
+    "WCS": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/wcs/birdhouse/disk2/ouranos/CORDEX/CMIP6/DD/NAM-12/OURANOS/MPI-ESM1-2-LR/ssp370/r1i1p1f1/CRCM5/v1-r1/day/tas/v20231208/tas_NAM-12_MPI-ESM1-2-LR_ssp370_r1i1p1f1_OURANOS_CRCM5_v1-r1_day_20150101-20151231.nc",
+    "WMS": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/wms/birdhouse/disk2/ouranos/CORDEX/CMIP6/DD/NAM-12/OURANOS/MPI-ESM1-2-LR/ssp370/r1i1p1f1/CRCM5/v1-r1/day/tas/v20231208/tas_NAM-12_MPI-ESM1-2-LR_ssp370_r1i1p1f1_OURANOS_CRCM5_v1-r1_day_20150101-20151231.nc",
+    "NetcdfSubset": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/ncss/point/birdhouse/disk2/ouranos/CORDEX/CMIP6/DD/NAM-12/OURANOS/MPI-ESM1-2-LR/ssp370/r1i1p1f1/CRCM5/v1-r1/day/tas/v20231208/tas_NAM-12_MPI-ESM1-2-LR_ssp370_r1i1p1f1_OURANOS_CRCM5_v1-r1_day_20150101-20151231.nc"
+  }
+}
