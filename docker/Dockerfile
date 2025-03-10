@@ -1,9 +1,9 @@
-FROM python:3.10-slim
+FROM python:3.13.2-slim
 LABEL description.short="STAC Populator"
 LABEL description.long="Utility to populate STAC Catalog, Collections and Items from various dataset/catalog sources."
 LABEL maintainer="Francis Charette-Migneault <francis.charette-migneault@crim.ca>"
 LABEL vendor="CRIM"
-LABEL version="0.6.0"
+LABEL version="0.7.0"
 
 # setup paths
 ENV APP_DIR=/opt/local/src/stac-populator

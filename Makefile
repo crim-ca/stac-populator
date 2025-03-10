@@ -3,9 +3,10 @@ MAKEFILE_NAME := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 -include Makefile.config
 APP_ROOT    := $(abspath $(lastword $(MAKEFILE_NAME))/..)
 APP_NAME    := STACpopulator
-APP_VERSION ?= 0.6.0
+APP_VERSION ?= 0.7.0
 
 DOCKER_COMPOSE_FILES := -f "$(APP_ROOT)/docker/docker-compose.yml"
+COMPOSE_PROJECT_NAME := stac-populator
 DOCKER_TAG := ghcr.io/crim-ca/stac-populator:$(APP_VERSION)
 
 IMP_DIR := $(APP_NAME)/implementations
@@ -29,11 +30,12 @@ setup-pyessv-archive:
 	@cd $(PYESSV_ARCHIVE_HOME) && git pull
 
 test-cmip6:
-	python $(IMP_DIR)/CMIP6_UofT/add_CMIP6.py $(STAC_HOST) $(CATALOG)
+	stac-populator run CMIP6_UofT $(STAC_HOST) $(CATALOG)
 
 del-cmip6:
 	curl --location --request DELETE '$(STAC_HOST)/collections/CMIP6_UofT'
 	@echo ""
+
 
 docker-start:
 	docker compose $(DOCKER_COMPOSE_FILES) up
@@ -43,11 +45,11 @@ docker-stop:
 	docker compose $(DOCKER_COMPOSE_FILES) down
 stophost: docker-stop
 
+del_docker_volume: stophost
+	docker volume rm stac-db
+
 docker-build:
 	docker build "$(APP_ROOT)" -f "$(APP_ROOT)/docker/Dockerfile" -t "$(DOCKER_TAG)"
-
-del_docker_volume: stophost
-	docker volume rm stac-populator_stac-db
 
 resethost: del_docker_volume starthost
 
@@ -80,7 +82,7 @@ dry: pyproject.toml		## run 'bump' target without applying changes (dry-run) [ma
 bump:  ## bump version using VERSION specified as user input [make VERSION=<x.y.z> bump]
 	@-echo "Updating package version ..."
 	@[ "${VERSION}" ] || ( echo ">> 'VERSION' is not set"; exit 1 )
-	@-bash -c '$(CONDA_CMD) $(BUMP_TOOL) $(BUMP_XARGS) --new-version "${VERSION}" patch;'
+	@-bash -c '$(CONDA_CMD) $(BUMP_TOOL) bump $(BUMP_XARGS) --new-version "${VERSION}" patch;'
 
 .PHONY: version
 version:	## display current version
