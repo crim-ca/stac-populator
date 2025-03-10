@@ -105,7 +105,10 @@ def ncattrs_to_bbox(attrs: MutableMapping[str, Any]) -> list[float]:
 
 
 def numpy_to_python_datatypes(data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
-    # Converting numpy datatypes to python standard datatypes
+    """Convert numpy datatypes to python standard datatypes.
+
+    This is useful when validating against a JSON schema that does not recognize an int32 as an integer.
+    """
     for key, value in data.items():
         if isinstance(value, list):
             newlist = []
@@ -121,6 +124,29 @@ def numpy_to_python_datatypes(data: MutableMapping[str, Any]) -> MutableMapping[
             data[key] = int(value)
 
     return data
+
+
+def np2py(data):
+    """Convert numpy datatypes to python standard datatypes.
+
+    This is useful when validating against a JSON schema that does not recognize an int32 as an integer.
+
+    Parameters
+    ----------
+    data : dict, list, tuple, int, float, np.integer, np.floating, str
+      Object to convert.
+    """
+    if isinstance(data, dict):
+        return {key: np2py(value) for key, value in data.items()}
+
+    elif isinstance(data, (list, tuple)):
+        out = [np2py(item) for item in data]
+        if isinstance(data, tuple):
+            return tuple(out)
+        return out
+
+    else:
+        return getattr(data, "tolist", lambda: data)()
 
 
 def magpie_resource_link(url: str) -> pystac.Link:
