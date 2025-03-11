@@ -219,7 +219,7 @@ class BaseSTAC(BaseModel):
         return json.loads(json.dumps(item.to_dict()))
 
 
-def metacls_extension(name: str, schema_uri: str) -> Type:
+def metacls_extension(name: str, schema_uri: str) -> "Type[MetaExtension]":
     """Create an extension class dynamically from the properties."""
     cls_name = f"{name.upper()}Extension"
 
