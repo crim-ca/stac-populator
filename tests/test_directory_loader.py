@@ -4,12 +4,14 @@ import functools
 import json
 import os
 from typing import Any, Callable, Generator
-import pytest
+
 import pystac
+import pytest
 import responses
 
+from STACpopulator.cli import add_parser_args
+from STACpopulator.cli import main as cli_main
 from STACpopulator.implementations.DirectoryLoader import crawl_directory
-from STACpopulator.cli import add_parser_args, main as cli_main
 
 RequestContext = Generator[responses.RequestsMock, None, None]
 
@@ -40,7 +42,9 @@ def file_contents(file_id_map: dict[str, str], request: pytest.FixtureRequest) -
 @pytest.fixture(autouse=True)
 def request_mock(namespace: argparse.Namespace, file_id_map: dict[str, str]) -> RequestContext:
     with responses.RequestsMock(assert_all_requests_are_fired=False) as mock_context:
-        mock_context.add("GET", namespace.stac_host, json={"stac_version": pystac.get_stac_version(), "type": "Catalog"})
+        mock_context.add(
+            "GET", namespace.stac_host, json={"stac_version": pystac.get_stac_version(), "type": "Catalog"}
+        )
         mock_context.add(
             "POST",
             f"{namespace.stac_host}collections",
@@ -139,7 +143,7 @@ class TestModule(_TestDirectoryLoader):
             directory=os.path.join(request.fspath.dirname, "data/test_directory"),
             prune=prune_option,
             update=True,
-            stac_version=None
+            stac_version=None,
         )
 
     def test_set_stac_version(self, namespace, runner):
@@ -187,5 +191,5 @@ class TestFromCLI(_TestDirectoryLoader):
     def test_set_stac_version(self, runner):
         prev_stac_version = pystac.get_stac_version()
         with pytest.raises(RuntimeError):
-            runner()        
+            runner()
         assert prev_stac_version != pystac.get_stac_version()

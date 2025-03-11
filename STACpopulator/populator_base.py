@@ -1,4 +1,3 @@
-import argparse
 import functools
 import inspect
 import json
@@ -7,7 +6,6 @@ import os
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any, Dict, List, MutableMapping, Optional, Type, Union
-
 
 import pystac
 from requests.sessions import Session
@@ -26,6 +24,8 @@ LOGGER = logging.getLogger(__name__)
 
 
 class STACpopulatorBase(ABC):
+    """Abstract base class for STAC populators."""
+
     def __init__(
         self,
         stac_host: str,
@@ -34,7 +34,7 @@ class STACpopulatorBase(ABC):
         session: Optional[Session] = None,
         config_file: Optional[Union[os.PathLike[str], str]] = "collection_config.yml",
     ) -> None:
-        """Constructor
+        """Initialize the STAC populator.
 
         :param stac_host: URL to the STAC API
         :type stac_host: str
@@ -42,7 +42,6 @@ class STACpopulatorBase(ABC):
         :type data_loader: GenericLoader
         :raises RuntimeError: Raised if one of the required definitions is not found in the collection info filename
         """
-
         self._collection_config_path = config_file
         self._collection_info: MutableMapping[str, Any] = None
         self._session = session
@@ -56,9 +55,9 @@ class STACpopulatorBase(ABC):
         LOGGER.info(f"Collection {self.collection_name} is assigned ID {self.collection_id}")
         self.create_stac_collection()
 
-    def load_config(self):
+    def load_config(self) -> None:
         """
-        Reads details of the STAC Collection to be created from a configuration file.
+        Read details of the STAC Collection to be created from a configuration file.
 
         Once called, the collection information attribute should be set with relevant mapping attributes.
         """
@@ -83,29 +82,32 @@ class STACpopulatorBase(ABC):
 
     @property
     def collection_name(self) -> str:
+        """Return the populator's collection name."""
         return self._collection_info["title"]
 
     @property
     def stac_host(self) -> str:
+        """Return the STAC host URL that will be used to upload new data to."""
         return self._stac_host
 
     @property
     def collection_id(self) -> str:
+        """Return the populator's collection id."""
         return self._collection_info["id"]
 
     @property
     @abstractmethod
     def item_geometry_model(self) -> Type[AnyGeometry]:
-        """
-        Implementation of the expected Geometry representation in derived classes.
-        """
+        """Return a geometry model class that represents the geometry used in this populator."""
         raise NotImplementedError
 
     @abstractmethod
     def create_stac_item(self, item_name: str, item_data: dict[str, Any]) -> dict[str, Any]:
+        """Create a STAC item."""
         raise NotImplementedError
 
     def validate_host(self, stac_host: str) -> str:
+        """Validate that the given STAC host can be used to upload data to."""
         if not url_validate(stac_host):
             raise ValueError("stac_host URL is not appropriately formatted")
         if not stac_host_reachable(stac_host, session=self._session):
@@ -167,7 +169,7 @@ class STACpopulatorBase(ABC):
         return links
 
     def __make_collection_assets(self) -> Dict[str, pystac.Asset]:
-        """Creates collection level assets based on data read in from the configuration file.
+        """Create collection level assets based on data read in from the configuration file.
 
         :return: Dictionary of pystac Asset objects
         :rtype: Dict[pystac.Asset]
@@ -179,9 +181,11 @@ class STACpopulatorBase(ABC):
         return pystac_assets
 
     def publish_stac_collection(self, collection_data: dict[str, Any]) -> None:
+        """Publish this collection by uploading it to the STAC catalog at self.stac_host."""
         post_stac_collection(self.stac_host, collection_data, self.update, session=self._session)
 
     def ingest(self) -> None:
+        """Ingest data."""
         counter = 0
         failures = 0
         LOGGER.info("Data ingestion")
@@ -224,5 +228,3 @@ class STACpopulatorBase(ABC):
 
             counter += 1
             LOGGER.info(f"Processed {counter} data items. {failures} failures")
-
-

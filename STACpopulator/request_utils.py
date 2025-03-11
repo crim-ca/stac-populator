@@ -7,18 +7,19 @@ from requests.sessions import Session
 
 
 class HTTPBearerTokenAuth(AuthBase):
+    """Authorizer class for HTTP Bearer Tokens."""
+
     def __init__(self, token: str) -> None:
         self._token = token
 
     def __call__(self, r: requests.PreparedRequest) -> requests.PreparedRequest:
+        """Call this authorizer."""
         r.headers["Authorization"] = f"Bearer {self._token}"
         return r
 
 
 def add_request_options(parser: argparse.ArgumentParser) -> None:
-    """
-    Adds arguments to a parser to allow update of a request session definition used across a populator procedure.
-    """
+    """Add arguments to a parser to allow update of a request session definition used across a populator procedure."""
     parser.add_argument(
         "--no-verify",
         "--no-ssl",
@@ -40,9 +41,7 @@ def add_request_options(parser: argparse.ArgumentParser) -> None:
 
 
 def apply_request_options(session: Session, namespace: argparse.Namespace) -> None:
-    """
-    Applies the relevant request session options from parsed input arguments.
-    """
+    """Apply the relevant request session options from parsed input arguments."""
     session.verify = namespace.verify
     session.cert = namespace.cert
     if namespace.auth_handler in ["basic", "digest", "proxy"]:

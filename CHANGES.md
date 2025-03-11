@@ -34,6 +34,9 @@
 * Update tests to allow for a variable `stac_version` field in STAC item and collections
 * Fix inconsistent defaults for parameters that update stac items and collections
 * Add `--stac-version` command line option to specify the version used by the STAC server that is being populated
+* add `ruff` as a dev dependency to format and lint files
+* add `pre-commit` as a dev dependency to run `ruff` on commit and a workflow to run it on github as well
+
 
 ## [0.6.0](https://github.com/crim-ca/stac-populator/tree/0.6.0) (2024-02-22)
 

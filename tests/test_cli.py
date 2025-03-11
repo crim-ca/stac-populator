@@ -15,7 +15,7 @@ def run_cli(*args: str, **kwargs: Mapping) -> subprocess.CompletedProcess:
 
 @pytest.fixture(scope="session")
 def populator_help_pattern():
-    name_options = ',?|'.join([imp.replace('.', '\\.') for imp in implementations.__all__])
+    name_options = ",?|".join([imp.replace(".", "\\.") for imp in implementations.__all__])
     return re.compile(f"{{({name_options},?)+}}")
 
 

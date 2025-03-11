@@ -2,23 +2,25 @@ import argparse
 import logging
 import os.path
 import sys
-from typing import Any, MutableMapping, Optional
 import warnings
+from typing import Any, MutableMapping, Optional
 
 import pystac
 from requests.sessions import Session
 
 from STACpopulator import cli
-from STACpopulator.log import add_logging_options
-from STACpopulator.request_utils import add_request_options, apply_request_options
 from STACpopulator.input import STACDirectoryLoader
+from STACpopulator.log import add_logging_options
 from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
+from STACpopulator.request_utils import add_request_options, apply_request_options
 
 LOGGER = logging.getLogger(__name__)
 
 
 class DirectoryPopulator(STACpopulatorBase):
+    """Populator that constructs STAC objects from files in a directory."""
+
     item_geometry_model = GeoJSONPolygon
 
     def __init__(
@@ -33,19 +35,23 @@ class DirectoryPopulator(STACpopulatorBase):
         super().__init__(stac_host, loader, update=update, session=session)
 
     def load_config(self) -> MutableMapping[str, Any]:
+        """Load configuration options."""
         self._collection_info = self._collection
         return self._collection_info
 
     def create_stac_collection(self) -> MutableMapping[str, Any]:
+        """Return a STAC collection."""
         self.publish_stac_collection(self._collection_info)
         return self._collection_info
 
     def create_stac_item(self, item_name: str, item_data: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
+        """Return a STAC item."""
         return item_data
 
 
 def add_parser_args(parser: argparse.ArgumentParser) -> None:
-    parser.description="Directory STAC populator"
+    """Add additional CLI arguments to the argument parser."""
+    parser.description = "Directory STAC populator"
     parser.add_argument("stac_host", type=str, help="STAC API URL.")
     parser.add_argument("directory", type=str, help="Path to a directory structure with STAC Collections and Items.")
     parser.add_argument("--update", action="store_true", help="Update collection and its items.")
@@ -57,15 +63,16 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--stac-version",
         help="Sets the STAC version that should be used. This must match the version used by "
-             "the STAC server that is being populated. This can also be set by setting the "
-             "'PYSTAC_STAC_VERSION_OVERRIDE' environment variable. "
-             f"Default is {pystac.get_stac_version()}"
+        "the STAC server that is being populated. This can also be set by setting the "
+        "'PYSTAC_STAC_VERSION_OVERRIDE' environment variable. "
+        f"Default is {pystac.get_stac_version()}",
     )
     add_request_options(parser)
     add_logging_options(parser)
 
 
 def runner(ns: argparse.Namespace) -> int:
+    """Run the populator."""
     LOGGER.info(f"Arguments to call: {vars(ns)}")
 
     if ns.stac_version:
@@ -82,9 +89,10 @@ def runner(ns: argparse.Namespace) -> int:
 
 
 def main(*args: str) -> int:
+    """Call this implementation directly."""
     warnings.warn(
         "Calling implementation scripts directly is deprecated. Please use the 'stac-populator' CLI instead.",
-        DeprecationWarning
+        DeprecationWarning,
     )
     parser = argparse.ArgumentParser()
     add_parser_args(parser)

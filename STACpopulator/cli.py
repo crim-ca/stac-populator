@@ -3,8 +3,8 @@ import functools
 import importlib
 import logging
 import sys
-from types import ModuleType
 import warnings
+from types import ModuleType
 
 from STACpopulator import __version__, implementations
 from STACpopulator.exceptions import STACPopulatorError
@@ -12,6 +12,7 @@ from STACpopulator.log import setup_logging
 
 
 def add_parser_args(parser: argparse.ArgumentParser) -> None:
+    """Add parser arguments to the argument parser."""
     parser.add_argument(
         "--version",
         "-V",
@@ -33,6 +34,11 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
 
 @functools.cache
 def implementation_modules() -> dict[str, ModuleType]:
+    """
+    Try to load implementations.
+
+    If one fails (i.e. due to missing dependencies) continue loading others.
+    """
     modules = {}
     for implementation_module_name in implementations.__all__:
         try:
@@ -45,12 +51,14 @@ def implementation_modules() -> dict[str, ModuleType]:
 
 
 def run(ns: argparse.Namespace) -> int:
+    """Run a given implementation given the arguments passed on the command line."""
     if ns.command == "run":
         setup_logging(ns.log_file, ns.debug or logging.INFO)
         return implementation_modules()[ns.populator].runner(ns) or 0
 
 
 def main(*args: str) -> int:
+    """Run this CLI."""
     parser = argparse.ArgumentParser()
     add_parser_args(parser)
     ns = parser.parse_args(args or None)

@@ -26,10 +26,10 @@ from pydantic import (
 )
 from pydantic.fields import FieldInfo
 from pystac.extensions import item_assets
-from pystac.extensions.base import S  # generic pystac.STACObject
 from pystac.extensions.base import (
     ExtensionManagementMixin,
     PropertiesExtension,
+    S,  # generic pystac.STACObject
     SummariesExtension,
 )
 
@@ -74,6 +74,7 @@ TableID = collection2literal(CV.table_id)
 
 
 def add_cmip6_prefix(name: str) -> str:
+    """Return the given name prefixed with this extension's prefix."""
     return PREFIX + name if "datetime" not in name else name
 
 
@@ -116,27 +117,30 @@ class CMIP6Properties(BaseModel, validate_assignment=True):
 
     @field_validator("initialization_index", "physics_index", "realization_index", "forcing_index", mode="before")
     @classmethod
-    def only_item(cls, v: list[int], info: FieldValidationInfo):
+    def only_item(cls, v: list[int], info: FieldValidationInfo) -> int:
         """Pick single item from list."""
         assert len(v) == 1, f"{info.field_name} must have one item only."
         return v[0]
 
     @field_validator("realm", "source_type", mode="before")
     @classmethod
-    def split(cls, v: str, __info: FieldValidationInfo):
-        """Split string into list."""
+    def split(cls, v: str, __info: FieldValidationInfo) -> list[str]:
+        """Split string into list on a single space."""
         return v.split(" ")
 
     @field_validator("version")
     @classmethod
-    def validate_version(cls, v: str, __info: FieldValidationInfo):
+    def validate_version(cls, v: str, __info: FieldValidationInfo) -> bool:
+        """Return True iff the given version is valid."""
         assert v[0] == "v", "Version string should begin with a lower case 'v'"
         assert v[1:].isdigit(), "All characters in version string, except first, should be digits"
         return v
 
 
 class CMIP6Helper:
-    def __init__(self, attrs: MutableMapping[str, Any], geometry_model: Type[AnyGeometry]):
+    """Helper for CMIP6 data."""
+
+    def __init__(self, attrs: MutableMapping[str, Any], geometry_model: Type[AnyGeometry]) -> None:
         self.attrs = attrs
         self.cmip6_attrs = attrs["attributes"]
         self.cfmeta = attrs["groups"]["CFMetadata"]["attributes"]
@@ -160,26 +164,32 @@ class CMIP6Helper:
 
     @property
     def geometry(self) -> AnyGeometry:
+        """Return the geometry."""
         return self.geometry_model(**ncattrs_to_geometry(self.attrs))
 
     @property
     def bbox(self) -> list[float]:
+        """Return the bounding box."""
         return ncattrs_to_bbox(self.attrs)
 
     @property
     def start_datetime(self) -> datetime:
+        """Return the beginning of the temporal extent."""
         return self.cfmeta["time_coverage_start"]
 
     @property
     def end_datetime(self) -> datetime:
+        """Return the end of the temporal extent."""
         return self.cfmeta["time_coverage_end"]
 
     @property
     def properties(self) -> CMIP6Properties:
+        """Return properties."""
         props = CMIP6Properties(**self.cmip6_attrs)
         return props
 
     def stac_item(self) -> "pystac.Item":
+        """Return a pystac Item."""
         item = pystac.Item(
             id=self.uid,
             geometry=self.geometry.model_dump(),
@@ -200,17 +210,18 @@ class CMIP6Extension(
     PropertiesExtension,
     ExtensionManagementMixin[Union[pystac.Asset, pystac.Item, pystac.Collection]],
 ):
+    """Extension for CMIP6 data."""
+
     @property
     def name(self) -> SchemaName:
+        """Return the schema name."""
         return get_args(SchemaName)[0]
 
     def apply(
         self,
         properties: Union[CMIP6Properties, dict[str, Any]],
     ) -> None:
-        """Applies CMIP6 Extension properties to the extended
-        :class:`~pystac.Item` or :class:`~pystac.Asset`.
-        """
+        """Apply CMIP6 Extension properties to the extended :class:`~pystac.Item` or :class:`~pystac.Asset`."""
         if isinstance(properties, dict):
             properties = CMIP6Properties(**properties)
         data_json = json.loads(properties.model_dump_json(by_alias=True))
@@ -219,10 +230,12 @@ class CMIP6Extension(
 
     @classmethod
     def get_schema_uri(cls) -> str:
+        """Return this extension's schema URI."""
         return SCHEMA_URI
 
     @classmethod
-    def has_extension(cls, obj: S):
+    def has_extension(cls, obj: S) -> bool:
+        """Return True iff the object has an extension for that matches this class' schema URI."""
         # FIXME: this override should be removed once an official and versioned schema is released
         # ignore the original implementation logic for a version regex
         # since in our case, the VERSION_REGEX is not fulfilled (ie: using 'main' branch, no tag available...)
@@ -231,14 +244,13 @@ class CMIP6Extension(
 
     @classmethod
     def ext(cls, obj: T, add_if_missing: bool = False) -> "CMIP6Extension[T]":
-        """Extends the given STAC Object with properties from the
-        :stac-ext:`CMIP6 Extension <cmip6>`.
+        """Extend the given STAC Object with properties from the :stac-ext:`CMIP6 Extension <cmip6>`.
 
         This extension can be applied to instances of :class:`~pystac.Item` or
         :class:`~pystac.Asset`.
 
-        Raises:
-
+        Raises
+        ------
             pystac.ExtensionTypeError : If an invalid object type is passed.
         """
         if isinstance(obj, pystac.Collection):
@@ -258,21 +270,23 @@ class CMIP6Extension(
 
     @classmethod
     def summaries(cls, obj: pystac.Collection, add_if_missing: bool = False) -> "SummariesCMIP6Extension":
-        """Returns the extended summaries object for the given collection."""
+        """Return the extended summaries object for the given collection."""
         cls.ensure_has_extension(obj, add_if_missing)
         return SummariesCMIP6Extension(obj)
 
 
 class ItemCMIP6Extension(CMIP6Extension[pystac.Item]):
-    """A concrete implementation of :class:`CMIP6Extension` on an :class:`~pystac.Item`
-    that extends the properties of the Item to include properties defined in the
+    """
+    A concrete implementation of :class:`CMIP6Extension` on an :class:`~pystac.Item`.
+
+    Extends the properties of the Item to include properties defined in the
     :stac-ext:`CMIP6 Extension <cmip6>`.
 
     This class should generally not be instantiated directly. Instead, call
     :meth:`CMIP6Extension.ext` on an :class:`~pystac.Item` to extend it.
     """
 
-    def __init__(self, item: pystac.Item):
+    def __init__(self, item: pystac.Item) -> None:
         self.item = item
         self.properties = item.properties
 
@@ -286,7 +300,8 @@ class ItemCMIP6Extension(CMIP6Extension[pystac.Item]):
             service_type: If set, filter the assets such that only those with a
                 matching :class:`~STACpopulator.stac_utils.ServiceType` are returned.
 
-        Returns:
+        Returns
+        -------
             Dict[str, Asset]: A dictionary of assets that match ``service_type``
                 if set or else all of this item's assets were service types are defined.
         """
@@ -298,21 +313,26 @@ class ItemCMIP6Extension(CMIP6Extension[pystac.Item]):
         }
 
     def __repr__(self) -> str:
+        """Return repr."""
         return f"<ItemCMIP6Extension Item id={self.item.id}>"
 
 
 class ItemAssetsCMIP6Extension(CMIP6Extension[item_assets.AssetDefinition]):
+    """Extention for CMIP6 item assets."""
+
     properties: dict[str, Any]
     asset_defn: item_assets.AssetDefinition
 
-    def __init__(self, item_asset: item_assets.AssetDefinition):
+    def __init__(self, item_asset: item_assets.AssetDefinition) -> None:
         self.asset_defn = item_asset
         self.properties = item_asset.properties
 
 
 class AssetCMIP6Extension(CMIP6Extension[pystac.Asset]):
-    """A concrete implementation of :class:`CMIP6Extension` on an :class:`~pystac.Asset`
-    that extends the Asset fields to include properties defined in the
+    """
+    A concrete implementation of :class:`CMIP6Extension` on an :class:`~pystac.Asset`.
+
+    Extends the Asset fields to include properties defined in the
     :stac-ext:`CMIP6 Extension <cmip6>`.
 
     This class should generally not be instantiated directly. Instead, call
@@ -329,19 +349,22 @@ class AssetCMIP6Extension(CMIP6Extension[pystac.Asset]):
     """If present, this will be a list containing 1 dictionary representing the
     properties of the owning :class:`~pystac.Item`."""
 
-    def __init__(self, asset: pystac.Asset):
+    def __init__(self, asset: pystac.Asset) -> None:
         self.asset_href = asset.href
         self.properties = asset.extra_fields
         if asset.owner and isinstance(asset.owner, pystac.Item):
             self.additional_read_properties = [asset.owner.properties]
 
     def __repr__(self) -> str:
+        """Return repr."""
         return f"<AssetCMIP6Extension Asset href={self.asset_href}>"
 
 
 class SummariesCMIP6Extension(SummariesExtension):
-    """A concrete implementation of :class:`~SummariesExtension` that extends
-    the ``summaries`` field of a :class:`~pystac.Collection` to include properties
+    """
+    A concrete implementation of :class:`~SummariesExtension`.
+
+    Extends the ``summaries`` field of a :class:`~pystac.Collection` to include properties
     defined in the :stac-ext:`CMIP6 <cmip6>`.
     """
 
@@ -358,21 +381,27 @@ class SummariesCMIP6Extension(SummariesExtension):
             validator.validate_assignment(model, prop, value)
 
     def get_cmip6_property(self, prop: str) -> list[Any]:
+        """Set CMIP6 property."""
         self._check_cmip6_property(prop)
         return self.summaries.get_list(prop)
 
     def set_cmip6_property(self, prop: str, summaries: list[Any]) -> None:
+        """Set CMIP6 property."""
         self._check_cmip6_property(prop)
         self._validate_cmip6_property(prop, summaries)
         self._set_summary(prop, summaries)
 
-    def __getattr__(self, prop):
+    def __getattr__(self, prop: str) -> list[Any]:
+        """Get CMIP6 property."""
         return self.get_cmip6_property(prop)
 
-    def __setattr__(self, prop, value):
+    def __setattr__(self, prop: str, value: Any) -> None:
+        """Set CMIP6 property."""
         self.set_cmip6_property(prop, value)
 
 
 class CollectionCMIP6Extension(CMIP6Extension[pystac.Collection]):
-    def __init__(self, collection: pystac.Collection):
+    """Extension for CMIP6 data."""
+
+    def __init__(self, collection: pystac.Collection) -> None:
         self.collection = collection
