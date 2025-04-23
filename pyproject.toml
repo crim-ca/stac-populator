@@ -108,7 +108,7 @@ dependencies = [
     "colorlog~=6.9",
     "pyyaml~=6.0",
     "siphon~=0.10",
-    "pystac~=1.12.1",
+    "pystac~=1.13.0",
     "xncml~=0.3",  # python 3.12 support
     "pydantic~=2.10",
     "pyessv~=0.9",
@@ -170,7 +170,7 @@ dev = [
     "responses~=0.25",
     "bump-my-version~=1.0",
     "jsonschema~=4.23",
-    "pystac[validation]~=1.12.1",
+    "pystac[validation]~=1.13.0",
     "ruff~=0.9",
     "pre-commit~=4.1"
 ]
