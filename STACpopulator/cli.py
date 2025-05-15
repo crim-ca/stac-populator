@@ -6,9 +6,13 @@ import sys
 import warnings
 from types import ModuleType
 
+import requests
+
 from STACpopulator import __version__, implementations
 from STACpopulator.exceptions import STACPopulatorError
-from STACpopulator.log import setup_logging
+from STACpopulator.export import export_catalog
+from STACpopulator.log import add_logging_options, setup_logging
+from STACpopulator.request_utils import add_request_options, apply_request_options
 
 
 def add_parser_args(parser: argparse.ArgumentParser) -> None:
@@ -30,6 +34,14 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     for implementation_module_name, module in implementation_modules().items():
         implementation_parser = populators_subparser.add_parser(implementation_module_name)
         module.add_parser_args(implementation_parser)
+    export_parser = commands_subparser.add_parser("export", description="Export a STAC catalog to JSON files on disk.")
+    export_parser.add_argument("stac_host", help="STAC API URL")
+    export_parser.add_argument("directory", type=str, help="Path to a directory to write STAC catalog contents.")
+    export_parser.add_argument(
+        "-c", "--continue", action="store_true", dest="continue_", help="Continue a partial download."
+    )
+    add_request_options(export_parser)
+    add_logging_options(export_parser)
 
 
 @functools.cache
@@ -52,9 +64,13 @@ def implementation_modules() -> dict[str, ModuleType]:
 
 def run(ns: argparse.Namespace) -> int:
     """Run a given implementation given the arguments passed on the command line."""
+    setup_logging(ns.log_file, ns.debug or logging.INFO)
     if ns.command == "run":
-        setup_logging(ns.log_file, ns.debug or logging.INFO)
         return implementation_modules()[ns.populator].runner(ns) or 0
+    else:
+        with requests.Session() as session:
+            apply_request_options(session, ns)
+            return export_catalog(ns.directory, ns.stac_host, session, ns.continue_) or 0
 
 
 def main(*args: str) -> int:

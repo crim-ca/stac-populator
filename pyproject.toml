@@ -109,6 +109,7 @@ dependencies = [
     "pyyaml~=6.0",
     "siphon~=0.10",
     "pystac~=1.13.0",
+    "pystac-client~=0.8",
     "xncml~=0.3",  # python 3.12 support
     "pydantic~=2.10",
     "pyessv~=0.9",
@@ -172,7 +173,8 @@ dev = [
     "jsonschema~=4.23",
     "pystac[validation]~=1.13.0",
     "ruff~=0.9",
-    "pre-commit~=4.1"
+    "pre-commit~=4.1",
+    "pytest-recording~=0.13"
 ]
 
 [tool.ruff]
