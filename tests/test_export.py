@@ -11,7 +11,6 @@ from STACpopulator.export import export_catalog
 def catalog_api_info():
     url = "https://hirondelle.crim.ca/stac"
     file_structure = {
-        ".",
         "stac-fastapi",
         "stac-fastapi/0798aa197d54eb4332767a5a4077fb0f",
         "stac-fastapi/EuroSAT-full-validate",
@@ -52,7 +51,6 @@ def catalog_api_info():
 def catalog_nested_info():
     url = "https://asc-jupiter.s3.us-west-2.amazonaws.com/catalog.json"
     file_structure = {
-        ".",
         "usgs_jupiter_catalog",
         "usgs_jupiter_catalog/catalog.json",
         "usgs_jupiter_catalog/usgs_europa_catalog",
@@ -86,7 +84,7 @@ def catalog_nested_info():
 
 
 def _test_file_types(tmp_path):
-    for file in tmp_path.glob("**"):
+    for file in tmp_path.rglob("*"):
         if file.is_file():
             with open(file) as f:
                 data = json.load(f)
@@ -103,7 +101,7 @@ def test_export_api(tmp_path, catalog_api_info):
     url, expected = catalog_api_info
     with requests.Session() as session:
         export_catalog(tmp_path, url, session)
-    assert expected == {str(p.relative_to(tmp_path)) for p in tmp_path.glob("**")}
+    assert expected == {str(p.relative_to(tmp_path)) for p in tmp_path.rglob("*")}
     _test_file_types(tmp_path)
 
 
@@ -115,5 +113,5 @@ def test_export_catalog_nested(tmp_path, catalog_nested_info):
         pytest.warns((pystac_client.warnings.FallbackToPystac, pystac_client.warnings.NoConformsTo)),
     ):
         export_catalog(tmp_path, url, session)
-    assert expected == {str(p.relative_to(tmp_path)) for p in tmp_path.glob("**")}
+    assert expected == {str(p.relative_to(tmp_path)) for p in tmp_path.rglob("*")}
     _test_file_types(tmp_path)
