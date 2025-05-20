@@ -37,9 +37,7 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     export_parser = commands_subparser.add_parser("export", description="Export a STAC catalog to JSON files on disk.")
     export_parser.add_argument("stac_host", help="STAC API URL")
     export_parser.add_argument("directory", type=str, help="Path to a directory to write STAC catalog contents.")
-    export_parser.add_argument(
-        "-r", "--resume", action="store_true", help="Resume a partial download."
-    )
+    export_parser.add_argument("-r", "--resume", action="store_true", help="Resume a partial download.")
     add_request_options(export_parser)
     add_logging_options(export_parser)
 
