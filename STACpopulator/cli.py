@@ -38,7 +38,7 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     export_parser.add_argument("stac_host", help="STAC API URL")
     export_parser.add_argument("directory", type=str, help="Path to a directory to write STAC catalog contents.")
     export_parser.add_argument(
-        "-c", "--continue", action="store_true", dest="continue_", help="Continue a partial download."
+        "-r", "--resume", action="store_true", help="Resume a partial download."
     )
     add_request_options(export_parser)
     add_logging_options(export_parser)
@@ -70,7 +70,7 @@ def run(ns: argparse.Namespace) -> int:
     else:
         with requests.Session() as session:
             apply_request_options(session, ns)
-            return export_catalog(ns.directory, ns.stac_host, session, ns.continue_) or 0
+            return export_catalog(ns.directory, ns.stac_host, session, ns.resume) or 0
 
 
 def main(*args: str) -> int:

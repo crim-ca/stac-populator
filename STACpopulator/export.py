@@ -75,30 +75,31 @@ pystac_client.client.Client = Client
 
 
 def _export_catalog(
-    client: Client | pystac_client.CollectionClient, directory: os.PathLike, continue_: bool = False
+    client: Client | pystac_client.CollectionClient, directory: pathlib.Path, resume: bool = False
 ) -> None:
     directory /= client.id
-    if not continue_ and directory.exists():
+    file_name = "catalog.json" if isinstance(client, Client) else "collection.json"
+    collection_type = file_name.split(".")[0].capitalize()
+    if not resume and directory.exists():
         n_duplicates = sum(1 for _ in directory.parent.glob(f"{client.id}*/"))
         directory = directory.parent / f"{client.id}-duplicate-id-{n_duplicates}"
         LOGGER.warning(
-            "Catalog or collection with ID %s already exists in this catalog. IDs should be unique!", client.id
+            "%s with ID %s already exists in this catalog. IDs should be unique!", collection_type, client.id
         )
     directory.mkdir(exist_ok=True, parents=True)
-    file_name = "catalog.json" if isinstance(client, Client) else "collection.json"
-    with open(directory / file_name, "w") as f:
+    with open(directory / file_name, "w", encoding="utf-8") as f:
         json.dump(client.to_dict(transform_hrefs=False), f)
     for item in client.get_items(recursive=False):
-        with open(directory / f"item-{item.id}.json", "w") as f:
+        with open(directory / f"item-{item.id}.json", "w", encoding="utf-8") as f:
             json.dump(item.to_dict(transform_hrefs=False), f)
     for child in client.get_children():
-        _export_catalog(child, directory, continue_=continue_)
+        _export_catalog(child, directory, resume=resume)
 
 
-def export_catalog(directory: os.PathLike, stac_host: str, session: requests.Session, continue_: bool = False) -> int:
+def export_catalog(directory: os.PathLike, stac_host: str, session: requests.Session, resume: bool = False) -> None:
     """Export a STAC catalog to files on disk."""
     stac_api_io = StacApiIO()
     stac_api_io.session = session
     directory = pathlib.Path(directory)
     client = Client.open(stac_host, stac_io=stac_api_io)
-    _export_catalog(client, directory, continue_)
+    _export_catalog(client, directory, resume)

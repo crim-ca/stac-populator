@@ -43,10 +43,6 @@ interactions:
       - Sat, 21 May 2022 14:17:47 GMT
       Server:
       - AmazonS3
-      x-amz-id-2:
-      - dVinDRm2FygoTatQQI5jAvu03pHJA3R76QLnJtUYcExAKIwJb3dz1L6FKhhGdSUH72dTna4NDd0=
-      x-amz-request-id:
-      - 2EJ1Q0ZQXPKWQP4C
     status:
       code: 200
       message: OK
@@ -91,10 +87,6 @@ interactions:
       - Sat, 21 May 2022 14:17:47 GMT
       Server:
       - AmazonS3
-      x-amz-id-2:
-      - zvkxHOmwS/sas8oJMbdNrjPFAo3yYfNPtqAY92dymiQY/2X1moOePyBr4kQvDZpBXAiNd6eu3D0=
-      x-amz-request-id:
-      - 2EJD7V4M4KQEQ70A
     status:
       code: 200
       message: OK
@@ -141,10 +133,6 @@ interactions:
       - Sat, 21 May 2022 14:17:47 GMT
       Server:
       - AmazonS3
-      x-amz-id-2:
-      - fN1DjYe4rjEINpsFShw9de2C/n0V37FEIAFCB4jcBqmeU95bN+syZVJwSnYSkKOpDYHrlFSoDnk9XvzOQL5wtw==
-      x-amz-request-id:
-      - VQ075NNRW9SY2KKV
     status:
       code: 200
       message: OK
@@ -191,10 +179,6 @@ interactions:
       - Sat, 21 May 2022 14:17:49 GMT
       Server:
       - AmazonS3
-      x-amz-id-2:
-      - +/o3J2fdh/8ZDIqfm8IzsnElZjQUQKRNQjLgWEuYGXH8CLUlMovIr/gwkusiNqjkvBK6f9TVlpmyZ07vsQwGAg==
-      x-amz-request-id:
-      - VQ08FN2KWYCGTVTZ
     status:
       code: 200
       message: OK
@@ -242,10 +226,6 @@ interactions:
       - Sat, 21 May 2022 14:17:47 GMT
       Server:
       - AmazonS3
-      x-amz-id-2:
-      - z84U4N+ngUiv3ZylGF+uZZInYud2ZgksmQWlkB+9QHWfNU0C31v5F/bYAolykpsyqJ4LZyWjzgbGnscK8h4d6w==
-      x-amz-request-id:
-      - VQ05R6KSDAG7B980
     status:
       code: 200
       message: OK
@@ -321,10 +301,6 @@ interactions:
       - Sat, 21 May 2022 14:17:49 GMT
       Server:
       - AmazonS3
-      x-amz-id-2:
-      - 2i18knG8MNpY8sfKL6bOuiCAe26I2MYrxFlIzCdRI7S2Ups09a7rapFugzCXbq96mcP6nGk2+fo=
-      x-amz-request-id:
-      - VQ02AZ7DWVVKEQ4Y
     status:
       code: 200
       message: OK
@@ -504,12 +480,6 @@ interactions:
       - Thu, 05 May 2022 15:06:22 GMT
       Server:
       - AmazonS3
-      x-amz-id-2:
-      - +frw2xmXTi+R0EyiE2YEmx6zhBcwW1dhU0lvTqbrVe5+lhhXV5Jh/4A/Dmzhtory9N/Mufqw3HUkStcbTmDMJg==
-      x-amz-meta-mtime:
-      - '1651763176.072353'
-      x-amz-request-id:
-      - VQ0CERMS9X6JRY54
     status:
       code: 200
       message: OK
@@ -585,10 +555,6 @@ interactions:
       - Sat, 21 May 2022 14:17:49 GMT
       Server:
       - AmazonS3
-      x-amz-id-2:
-      - 7FqoilcRnGHBQ24ArXUOwJSrbhmTcLt/7Y5Foa8GKprk0+FzK0nm/Dt5EtpqL6d+UkVbr4SAwFc=
-      x-amz-request-id:
-      - EWGV8FGRWTTBKX2R
     status:
       code: 200
       message: OK
@@ -781,12 +747,6 @@ interactions:
       - Thu, 05 May 2022 15:07:24 GMT
       Server:
       - AmazonS3
-      x-amz-id-2:
-      - 1k3n8Qpm+5iKa4NvDq487esehzhntvOkXAdkzVazPobeBE0SfVOsyfFT/DMAok/wPUGtCmPJMmc=
-      x-amz-meta-mtime:
-      - '1651763238.29703'
-      x-amz-request-id:
-      - EWGS3W6XGK9HDKP1
     status:
       code: 200
       message: OK
@@ -862,10 +822,6 @@ interactions:
       - Sat, 21 May 2022 14:17:49 GMT
       Server:
       - AmazonS3
-      x-amz-id-2:
-      - mWUjB+iYRk/52dBs0JulNn5C97bZ3i0Y5ZFLosji0JT6OS9yHW05C02a1eM57H6SYGLzrdqVqDs=
-      x-amz-request-id:
-      - JS39D54S4JX5NKK1
     status:
       code: 200
       message: OK
@@ -1237,12 +1193,6 @@ interactions:
       - Thu, 05 May 2022 15:07:33 GMT
       Server:
       - AmazonS3
-      x-amz-id-2:
-      - Gnwcj+Csooj8d3U6B8ks/+8ZBA+dcj/bcjKkhxxEo2J8dewgqE+kWMPb8SqXcyIBo1elcEpD/o8=
-      x-amz-meta-mtime:
-      - '1651763247.209628'
-      x-amz-request-id:
-      - 7DR2CB5P1F6X6AHD
     status:
       code: 200
       message: OK
@@ -1318,10 +1268,6 @@ interactions:
       - Sat, 21 May 2022 14:17:47 GMT
       Server:
       - AmazonS3
-      x-amz-id-2:
-      - sgKCngdYLNhYrzLfgqEe4N5EfXvj4+m3ylyXSsK2tTzx3gpyRpD11vZmf/RHOAfsfbxFuLMDp/MHDYg94DGb9A==
-      x-amz-request-id:
-      - CJ9B3MA7Q79DWK8A
     status:
       code: 200
       message: OK
@@ -1479,10 +1425,6 @@ interactions:
       - Tue, 15 Feb 2022 18:29:58 GMT
       Server:
       - AmazonS3
-      x-amz-id-2:
-      - dmRIYIN7h3wdDvuEusSNWIrND4xrPkvCPfQgqD2uSXIgFDStOnKe6V1GOiVMNoCXDu/tYBxypPI=
-      x-amz-request-id:
-      - CJ9560NGDAN9WEED
     status:
       code: 200
       message: OK
@@ -1558,10 +1500,6 @@ interactions:
       - Sat, 21 May 2022 14:17:48 GMT
       Server:
       - AmazonS3
-      x-amz-id-2:
-      - N3Z2RyyHAKVuCZUv2JwKmoP5BUoeQgP+V3w5tTnixtlV5OMUV1ihWEhyPe18ZgZSlArm8PZxOJFah+nOMM5fKizfLZxix0R0
-      x-amz-request-id:
-      - AW5XTYPEKX2YRRFK
     status:
       code: 200
       message: OK
@@ -1737,10 +1675,6 @@ interactions:
       - Tue, 15 Feb 2022 18:30:07 GMT
       Server:
       - AmazonS3
-      x-amz-id-2:
-      - O9qIJSvBHTqFf9jMKzCw+bQWiYlvXAEO8EZ70XwzwJwq9cnnorUoumwL84WqCpO9uaf6sUWasMQ=
-      x-amz-request-id:
-      - AW5WCEM9CE6D0M72
     status:
       code: 200
       message: OK
@@ -1816,10 +1750,6 @@ interactions:
       - Sat, 21 May 2022 14:17:48 GMT
       Server:
       - AmazonS3
-      x-amz-id-2:
-      - aApBndMU4XcshJ4X9yv4dFgk3wUR1eQuH0PZGqUfW953ARv76MAHSdaBnpICPp+zN3pBdrz+L3o=
-      x-amz-request-id:
-      - WY4JJ9CFHZ6MT150
     status:
       code: 200
       message: OK
@@ -2080,10 +2010,6 @@ interactions:
       - Tue, 15 Feb 2022 18:30:08 GMT
       Server:
       - AmazonS3
-      x-amz-id-2:
-      - 2sSoOebS89U8Cw4xkaD8N5y5ttTHOB9hyxR5Zf/N3sfnD8cVfkg49zMhI4f62bWS9OyptR1Afe5TZCgqMp2/yg==
-      x-amz-request-id:
-      - WY4TTY1M9BW7TQ0T
     status:
       code: 200
       message: OK
