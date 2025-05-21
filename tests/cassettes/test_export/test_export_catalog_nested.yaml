@@ -1,0 +1,2016 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://asc-jupiter.s3.us-west-2.amazonaws.com/catalog.json
+  response:
+    body:
+      string: '{"id": "usgs_jupiter_catalog", "stac_version": "1.0.0", "type": "Catalog",
+        "description": "This catalog contains Analysis Ready Data (ARD) for jupiter
+        and it''s moons. Data are organized by body, e.g., Jupiter, Europa, etc. Within
+        each body, data are organized hierarchically by observing instrument(s), map
+        projection (optionally), and then a described gridding scheme if a large number
+        data products are made available.", "links": [{"rel": "root", "href": "catalog.json",
+        "title": "Jupiter ARD catalog.", "type": "application/json"}, {"rel": "self",
+        "href": "https://asc-jupiter.s3.us-west-2.amazonaws.com/catalog.json", "title":
+        "Jupiter ARD catalog.", "type": "application/json"}, {"rel": "parent", "href":
+        "https://asc-stacbrowser.s3.us-west-2.amazonaws.com/catalog.json", "title":
+        "Root catalog listing all planetary bodies with available ARD.", "type": "application/json"},
+        {"rel": "child", "href": "europa/catalog.json", "type": "application/json",
+        "title": "Europa analysis ready data."}], "title": "Jupiter Analysis Ready
+        Data"}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '1336'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 May 2025 13:36:34 GMT
+      ETag:
+      - '"f1f2717808463a150a38396bf3041aaf"'
+      Last-Modified:
+      - Sat, 21 May 2022 14:17:47 GMT
+      Server:
+      - AmazonS3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://asc-jupiter.s3.us-west-2.amazonaws.com/europa/catalog.json
+  response:
+    body:
+      string: '{"id": "usgs_europa_catalog", "stac_version": "1.0.0", "type": "Catalog",
+        "description": "This catalog contains Analysis Ready Data (ARD) targeting
+        Europa. All data are made available as cloud optimized geotiffs for easy ingestion
+        into a GIS. They are provided in stanardized map projections for improved
+        interoperability.", "links": [{"rel": "root", "href": "../catalog.json", "title":
+        "USGS provided Jupiter analysis ready data.", "type": "application/json"},
+        {"rel": "parent", "href": "../catalog.json", "title": "USGS provided Jupiter
+        analysis ready data.", "type": "application/json"}, {"rel": "child", "href":
+        "./galileo_voyager/catalog.json", "type": "application/json", "title": "Galileo,
+        Voyager 1, and Voyager 2: Photogrammetrically controlled"}], "title": "Europa
+        Analysis Ready Data"}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '977'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 May 2025 13:36:34 GMT
+      ETag:
+      - '"70e2df3f15591cc6fa6bee87d98a7e35"'
+      Last-Modified:
+      - Sat, 21 May 2022 14:17:47 GMT
+      Server:
+      - AmazonS3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://asc-jupiter.s3.us-west-2.amazonaws.com/europa/galileo_voyager/catalog.json
+  response:
+    body:
+      string: '{"id": "usgs_galileo_catalog", "stac_version": "1.0.0", "type": "Catalog",
+        "description": "USGS-provided Europa analysis ready data observed by Voyager
+        I, Voyager II, and Galileo. Data in this catalog are photogrammetrically controlled,
+        meaning they are geometrically co-registered one another and a ground datum.",
+        "links": [{"rel": "root", "href": "../../catalog.json", "title": "Jupiter
+        analysis ready data.", "type": "application/json"}, {"rel": "parent", "href":
+        "../catalog.json", "title": "Europa analysis ready data.", "type": "application/json"},
+        {"rel": "child", "href": "./controlled_mosaics/catalog.json", "type": "application/json",
+        "title": "Galileo, Voyager 1 and Voyager 2: Controlled image mosaics"}, {"rel":
+        "child", "href": "./controlled_images/catalog.json", "type": "application/json",
+        "title": "Galileo, Voyager 1 and Voyager 2 data: Individual controlled observations"}],
+        "title": "Photogrammetrically controlled Galileo, Voyager 1, and Voyager 2
+        data."}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '1204'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 May 2025 13:36:35 GMT
+      ETag:
+      - '"54046c53457f74e201d9efac0b2564a6"'
+      Last-Modified:
+      - Sat, 21 May 2022 14:17:47 GMT
+      Server:
+      - AmazonS3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://asc-jupiter.s3.us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/catalog.json
+  response:
+    body:
+      string: '{"id": "usgs_galileo_controlled_images_catalog", "stac_version": "1.0.0",
+        "type": "Catalog", "description": "USGS-provided Europa analysis ready data
+        photogrammetrically controlled image mosaics as observed by Voyager I, Voyager
+        II, and Galileo.", "links": [{"rel": "root", "href": "../../../catalog.json",
+        "title": "Jupiter analysis ready data.", "type": "application/json"}, {"rel":
+        "parent", "href": "../catalog.json", "title": "Galileo, Voyager 1 and Voyager
+        2: Controlled image mosaics", "type": "application/json"}, {"rel": "child",
+        "href": "equi/collection.json", "type": "application/json", "title": "Equirectangular
+        Projection"}, {"rel": "child", "href": "npola/collection.json", "type": "application/json",
+        "title": "North Polar Stereographic Projection"}, {"rel": "child", "href":
+        "spola/collection.json", "type": "application/json", "title": "South Polar
+        Stereographic Projection"}], "title": "Photogrammetrically Controlled Image
+        Mosaics of Europa Captured by Galileo, Voyager 1 and Voyager 2."}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '1281'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 May 2025 13:36:35 GMT
+      ETag:
+      - '"04544b5baf6906b5d956b334521ba786"'
+      Last-Modified:
+      - Sat, 21 May 2022 14:17:49 GMT
+      Server:
+      - AmazonS3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://asc-jupiter.s3.us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/catalog.json
+  response:
+    body:
+      string: '{"id": "usgs_galileo_controlled_images_catalog", "stac_version": "1.0.0",
+        "type": "Catalog", "description": "USGS-provided Europa analysis ready data
+        individual photogrammetrically controlled images as observed by Voyager I,
+        Voyager II, and Galileo.", "links": [{"rel": "root", "href": "../../../catalog.json",
+        "title": "USGS provided Jupiter analysis ready data.", "type": "application/json"},
+        {"rel": "parent", "href": "../catalog.json", "title": "USGS provided Galileo
+        and Voyager I/II observations of Europa as analysis ready data.", "type":
+        "application/json"}, {"rel": "child", "href": "equi/collection.json", "type":
+        "application/json", "title": "Equirectangular Projection."}, {"rel": "child",
+        "href": "npola/collection.json", "type": "application/json", "title": "North
+        Polar Sterographic Projection"}, {"rel": "child", "href": "spola/collection.json",
+        "type": "application/json", "title": "South Polar Sterographic Projection"}],
+        "title": "Individual Photogrammetrically Controlled Observations of Europa
+        Captured by Galileo, Voyager 1 and Voyager 2."}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '1335'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 May 2025 13:36:35 GMT
+      ETag:
+      - '"1a4e82fe3934674435393bfaa98ab0f4"'
+      Last-Modified:
+      - Sat, 21 May 2022 14:17:47 GMT
+      Server:
+      - AmazonS3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://asc-jupiter.s3.us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/equi/collection.json
+  response:
+    body:
+      string: '{"id": "usgs_controlled_mosaics_voy1_voy2_galileo_equi", "stac_version":
+        "1.0.0", "type": "Collection", "description": "The Solid State Imager (SSI)
+        on NASA''s Galileo spacecraft acquired more than 500 images of Jupiter''s
+        moon, Europa, providing the only moderate- to high-resolution images of the
+        moon''s surface. Images were acquired as observation sequences during each
+        orbit that targeted the moon. Each of these observation sequences consists
+        of between 1 and 19 images acquired close in time, that typically overlap,
+        have consistent illumination, and similar pixel scale. The observations vary
+        from relatively low-resolution hemispherical imaging, to high-resolution targeted
+        images that cover a small portion of the surface. Here we provide average
+        mosaics of each of the individual observation sequences acquired by the Galileo
+        spacecraft. These observation mosaics were constructed from a set of 481 Galileo
+        images that were photogrammetrically controlled globally (along with 221 Voyager
+        1 and 2 images) to improve their relative locations on Europa''s surface.
+        The 92 observation mosaics provide users with nearly the entire Galileo Europa
+        imaging dataset at its native resolution and with improved relative image
+        locations.The Solid State Imager (SSI) on NASA''s Galileo spacecraft provided
+        the only moderate- to high-resolution images of Jupiter''s moon, Europa. Unfortunately,
+        uncertainty in the position and pointing of the spacecraft, as well as the
+        position and orientation of Europa, when the images were acquired resulted
+        in significant errors in image locations on the surface. The result of these
+        errors is that images acquired during different Galileo orbits, or even at
+        different times during the same orbit, are significantly misaligned (errors
+        of up to 100 km on the surface).Previous work has generated global mosaics
+        of Galileo and Voyager images that photogrammetrically control a subset of
+        the available images to correct their relative locations. However, these efforts
+        result in a \"static\" mosaic that is projected to a consistent pixel scale,
+        and only use a fraction of the dataset (e.g., high resolution images are not
+        included). The purpose of this current dataset is to increase the usability
+        of the entire Galileo image set by photogrammetrically improving the locations
+        of nearly every Europa image acquired by Galileo, and making them available
+        to the community at their native resolution and in easy-to-use regional mosaics
+        based on their acquisition time.The dataset therefore provides a set of image
+        mosaics that can be used for scientific analysis and mission planning activities.",
+        "links": [{"rel": "root", "href": "../../../../catalog.json", "type": "application/json"},
+        {"rel": "parent", "href": "../catalog.json", "type": "application/json"},
+        {"rel": "item", "href": "./10ESGLOBAL01/10ESGLOBAL01.json", "type": "application/json",
+        "title": "Observation: 10ESGLOBAL01"}], "title": "Equirectangular Projection",
+        "extent": {"spatial": {"bbox": [[-180, -90, 180, 90]]}, "temporal": {"interval":
+        [["1997-12-16T12:06:15Z", "2000-05-22T23:52:48Z"]]}}, "summaries": {"ssys:targets":
+        ["europa"], "instruments": ["Solid State Imaging System"], "missions": ["Galileo
+        Orbiter"]}, "license": "PDDL-1.0"}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '12732'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 May 2025 13:36:35 GMT
+      ETag:
+      - '"e7b71195d3669b911db3b13a39ed89a2"'
+      Last-Modified:
+      - Sat, 21 May 2022 14:17:49 GMT
+      Server:
+      - AmazonS3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://asc-jupiter.s3.us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/equi/10ESGLOBAL01/10ESGLOBAL01.json
+  response:
+    body:
+      string: '{"type": "Feature", "stac_version": "1.0.0", "id": "10ESGLOBAL01",
+        "properties": {"title": "Mosaic: 10ESGLOBAL01", "description": "The Solid
+        State Imager (SSI) on NASA''s Galileo spacecraft acquired more than 500 images
+        of Jupiter''s moon, Europa, providing the only moderate- to high-resolution
+        images of the moon''s surface. Images were acquired as observation sequences
+        during each orbit that targeted the moon. Each of these observation sequences
+        consists of between 1 and 19 images acquired close in time, that typically
+        overlap, have consistent illumination and similar pixel scale. The observations
+        vary from relatively low-resolution hemispherical imaging, to high-resolution
+        targeted images that cover a small portion of the surface. Here we provide
+        average mosaics of each of the individual observation sequences acquired by
+        the Galileo spacecraft. These observation mosaics were constructed from a
+        set of 481 Galileo images that were photogrammetrically controlled globally
+        (along with 221 Voyager 1 and 2 images) to improve their relative locations
+        on Europa''s surface. The 92 observation mosaics provide users with nearly
+        the entire Galileo Europa imaging dataset at its native resolution and with
+        improved relative image locations. The Solid State Imager (SSI) on NASA''s
+        Galileo spacecraft provided the only moderate- to high-resolution images of
+        Jupiter''s moon, Europa. Unfortunately, uncertainty in the position and pointing
+        of the spacecraft, as well as the position and orientation of Europa, when
+        the images were acquired resulted in significant errors in image locations
+        on the surface. The result of these errors is that images acquired during
+        different Galileo orbits, or even at different times during the same orbit,
+        are significantly misaligned (errors of up to 100 km on the surface). Previous
+        work has generated global mosaics of Galileo and Voyager images that photogrammetrically
+        control a subset of the available images to correct their relative locations.
+        However, these efforts result in a \"static\" mosaic that is projected to
+        a consistent pixel scale, and only use a fraction of the dataset (e.g., high
+        resolution images are not included). The purpose of this current dataset is
+        to increase the usability of the entire Galileo image set by photogrammetrically
+        improving the locations of nearly every Europa image acquired by Galileo,
+        and making them available to the community at their native resolution and
+        in easy-to-use regional mosaics based on their acquisition time. The dataset
+        therefore provides a set of image mosaics that can be used for scientific
+        analysis and mission planning activities.", "missions": ["Galileo", "Voyager
+        I", "Voyager II"], "instruments": ["Solid State Imager"], "gsd": 7346.0, "license":
+        "PDDL-1.0", "proj:epsg": null, "proj:wkt2": "\"PROJCS[\\\"Equirectangular
+        EUROPA\\\",GEOGCS[\\\"GCS_EUROPA\\\",DATUM[\\\"D_EUROPA\\\",SPHEROID[\\\"EUROPA_localRadius\\\",1560800,0]],PRIMEM[\\\"Reference_Meridian\\\",0],UNIT[\\\"degree\\\",0.0174532925199433,AUTHORITY[\\\"EPSG\\\",\\\"9122\\\"]]],PROJECTION[\\\"Equirectangular\\\"],PARAMETER[\\\"standard_parallel_1\\\",0],PARAMETER[\\\"central_meridian\\\",180],PARAMETER[\\\"false_easting\\\",0],PARAMETER[\\\"false_northing\\\",0],UNIT[\\\"metre\\\",1,AUTHORITY[\\\"EPSG\\\",\\\"9001\\\"]],AXIS[\\\"Easting\\\",EAST],AXIS[\\\"Northing\\\",NORTH]]\"",
+        "proj:projjson": {"$schema": "https://proj.org/schemas/v0.2/projjson.schema.json",
+        "type": "ProjectedCRS", "name": "unknown", "base_crs": {"name": "unknown",
+        "datum": {"type": "GeodeticReferenceFrame", "name": "unknown", "ellipsoid":
+        {"name": "unknown", "radius": 1560800}, "prime_meridian": {"name": "Reference
+        meridian", "longitude": 0}}, "coordinate_system": {"subtype": "ellipsoidal",
+        "axis": [{"name": "Longitude", "abbreviation": "lon", "direction": "east",
+        "unit": "degree"}, {"name": "Latitude", "abbreviation": "lat", "direction":
+        "north", "unit": "degree"}]}}, "conversion": {"name": "unknown", "method":
+        {"name": "Equidistant Cylindrical (Spherical)", "id": {"authority": "EPSG",
+        "code": 1029}}, "parameters": [{"name": "Latitude of 1st standard parallel",
+        "value": 0, "unit": "degree", "id": {"authority": "EPSG", "code": 8823}},
+        {"name": "Latitude of natural origin", "value": 0, "unit": "degree", "id":
+        {"authority": "EPSG", "code": 8801}}, {"name": "Longitude of natural origin",
+        "value": 180, "unit": "degree", "id": {"authority": "EPSG", "code": 8802}},
+        {"name": "False easting", "value": 0, "unit": "metre", "id": {"authority":
+        "EPSG", "code": 8806}}, {"name": "False northing", "value": 0, "unit": "metre",
+        "id": {"authority": "EPSG", "code": 8807}}]}, "coordinate_system": {"subtype":
+        "Cartesian", "axis": [{"name": "Easting", "abbreviation": "E", "direction":
+        "east", "unit": "metre"}, {"name": "Northing", "abbreviation": "N", "direction":
+        "north", "unit": "metre"}]}}, "proj:bbox": [1.076565000571064, -82.92231539159665,
+        136.17926422395294, 82.92231539159667], "proj:centroid": {"lat": 0.23279900213440724,
+        "lon": 66.87445504311434}, "proj:shape": [651, 1328], "proj:transform": [-4877744.0,
+        7346.0, 0.0, 2380104.0, 0.0, -7346.0], "cube:dimensions": {"x": {"type": "spatial",
+        "axis": "x", "extent": [1.076565000571064, 136.17926422395294]}, "y": {"type":
+        "spatial", "axis": "y", "extent": [-82.92231539159665, 82.92231539159667]}},
+        "datetime": "2021-02-18T00:00:00Z", "ssys:targets": ["Europa"]}, "geometry":
+        {"type": "MultiPolygon", "coordinates": [[[[1.076565000571064, 59.461367622266884],
+        [3.5035595973982807, 64.04569074960719], [6.739552393167928, 68.63001387694749],
+        [11.054209454194075, 72.4053388053454], [15.63853258153439, 75.10199946848675],
+        [20.222855708874704, 76.98966193268569], [24.53751276990085, 78.33799226425637],
+        [29.121835897241166, 79.41665652951292], [33.43649295826734, 80.22565472845532],
+        [36.94215182035111, 80.76498686108359], [41.256808881377275, 81.30431899371186],
+        [43.95346954451861, 81.57398506002599], [46.919796273974114, 81.84365112634013],
+        [50.425455136057884, 82.11331719265426], [54.74011219708405, 82.38298325896841],
+        [59.32443532442434, 82.38298325896841], [60.40309958968089, 82.65264932528254],
+        [64.98742271702118, 82.65264932528254], [69.5717458443615, 82.65264932528254],
+        [70.65041010961804, 82.92231539159667], [75.23473323695835, 82.92231539159667],
+        [79.81905636429865, 82.92231539159667], [84.40337949163896, 82.65264932528254],
+        [88.98770261897926, 82.65264932528254], [93.57202574631955, 82.65264932528254],
+        [98.15634887365987, 82.38298325896841], [102.74067200100016, 82.11331719265426],
+        [107.32499512834046, 81.84365112634013], [111.90931825568079, 81.30431899371186],
+        [116.49364138302107, 80.76498686108359], [121.07796451036138, 79.95598866214118],
+        [125.66228763770171, 78.33799226425637], [129.70727863241373, 73.75366913691607],
+        [131.8646071629268, 69.16934600957576], [133.21293749449748, 64.8546889485496],
+        [134.02193569343993, 61.34903008646583], [134.5612678260682, 58.113037290696205],
+        [135.10059995869648, 54.068046295984175], [135.37026602501064, 51.641051699156954],
+        [135.6399320913248, 48.40505890338733], [135.90959815763907, 44.899400041303565],
+        [136.17926422395294, 40.25955742972212], [134.291601759754, 35.56419533389952],
+        [130.51627683135612, 30.94814678699286], [127.5499501019006, 26.4193431438937],
+        [125.66228763770168, 21.882608145902942], [124.31395730613099, 17.322079083237416],
+        [123.23529304087447, 12.761550020571896], [122.69596090824618, 8.208952312797967],
+        [122.69596090824618, 3.6497907251137396], [122.69596090824628, 0.4044990994712033],
+        [123.23529304087458, -4.179824027869101], [124.04429123981694, -8.224815022581135],
+        [125.12295550507349, -12.269806017293167], [126.74095190295827, -16.584463078319338],
+        [129.1679464997855, -21.16878620565964], [132.13427322924096, -25.483443266685807],
+        [135.63993209132474, -29.52843426139784], [135.63993209132468, -34.12862009852131],
+        [135.37026602501055, -38.712943225861615], [135.10059995869642, -43.30519770809354],
+        [134.56126782606813, -47.90538354521701], [133.75226962712574, -52.49763802744893],
+        [132.94327142818332, -57.08989250968082], [131.8646071629268, -61.69800970169589],
+        [130.24661076504196, -66.32198960349419], [127.81961616821475, -70.96976356996721],
+        [124.02631350206259, -75.64133160111498], [119.61165527477824, -78.60765833057047],
+        [115.23519974022177, -80.49532079476941], [110.61092608453862, -81.57398506002598],
+        [107.88777648412652, -81.8436511263401], [104.3786436630564, -82.11331719265424],
+        [100.59204237585203, -82.38298325896838], [96.01250364646248, -82.38298325896838],
+        [95.20350544752007, -82.65264932528251], [90.61499784673696, -82.65264932528251],
+        [87.37900505096731, -82.92231539159665], [82.78538309375415, -82.92231539159665],
+        [78.20105996641384, -82.92231539159665], [73.61673683907352, -82.92231539159665],
+        [69.02448235684165, -82.92231539159665], [64.44015922950135, -82.65264932528251],
+        [59.855836102161035, -82.65264932528251], [55.26358161992913, -82.38298325896838],
+        [50.67132713769724, -82.11331719265424], [46.08700401035695, -81.57398506002598],
+        [41.50268088301663, -81.30431899371183], [36.94215182035111, -80.49532079476953],
+        [32.30230920876967, -79.95598866214115], [27.71005472653776, -78.8773243968846],
+        [23.10986888941428, -77.79866013162807], [18.493820342507608, -76.18066373374326],
+        [14.020536183649579, -73.75366913691607], [9.436213056309263, -70.51767634114644],
+        [5.121555995283092, -65.93335321380614], [2.424895332141757, -61.618696152779975],
+        [1.076565000571064, -58.65236942332448], [1.076565000571064, -54.068046295984175],
+        [1.076565000571064, -49.48372316864387], [1.076565000571064, -44.899400041303565],
+        [1.076565000571064, -40.31507691396327], [1.076565000571064, -35.730753786622955],
+        [1.076565000571064, -31.146430659282654], [1.076565000571064, -26.56210753194235],
+        [1.076565000571064, -21.977784404602044], [1.076565000571064, -17.393461277261743],
+        [1.076565000571064, -12.809138149921438], [1.076565000571064, -8.224815022581135],
+        [1.076565000571064, -3.64049189524083], [1.076565000571064, 0.9438312320994744],
+        [1.076565000571064, 5.528154359439778], [1.076565000571064, 10.112477486780083],
+        [1.076565000571064, 14.696800614120384], [1.076565000571064, 19.28112374146069],
+        [1.076565000571064, 23.865446868800994], [1.076565000571064, 28.4497699961413],
+        [1.076565000571064, 33.034093123481604], [1.076565000571064, 37.6184162508219],
+        [1.076565000571064, 42.202739378162214], [1.076565000571064, 46.78706250550252],
+        [1.076565000571064, 51.37138563284282], [1.076565000571064, 55.95570876018312],
+        [1.076565000571064, 59.461367622266884]]]]}, "links": [{"rel": "parent", "href":
+        "../collection.json", "type": "application/json"}, {"rel": "root", "href":
+        "../../../catalog.json", "type": "application/json", "title": "Photogrammetrically
+        controlled Galileo, Voyager 1, and Voyager 2 data."}], "assets": {"thumbnail":
+        {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/equi/10ESGLOBAL01/10ESGLOBAL01.jpg",
+        "type": "image/jpeg", "title": "Image Thumbnail", "key": "thumbnail", "roles":
+        ["thumbnail"]}, "image": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/equi/10ESGLOBAL01/10ESGLOBAL01.tif",
+        "type": "image/tiff; application=geotiff", "title": "Controlled Image Mosaic",
+        "key": "image", "roles": ["data"]}, "fgdc_metadata": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/equi/10ESGLOBAL01/10ESGLOBAL01.xml",
+        "type": "application/xml", "title": "FGDC Metadata", "key": "fgdc_metadata",
+        "roles": ["metadata"]}, "PAM_pds_label": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/equi/10ESGLOBAL01/10ESGLOBAL01.tif.aux.xml",
+        "type": "text/plain", "title": "Supplemental XML Metadata", "key": "PAM_pds_label",
+        "roles": ["metadata"]}, "provenance": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/equi/10ESGLOBAL01/provenance.txt",
+        "type": "text/plain", "title": "Provenance", "key": "provenance", "roles":
+        ["metadata"]}, "isis_label": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/equi/10ESGLOBAL01/10ESGLOBAL01.isis.lbl",
+        "type": "text/plain", "title": "ISIS Label", "key": "isis_label", "roles":
+        ["metadata"]}}, "bbox": [1.076565000571064, -82.92231539159665, 136.17926422395294,
+        82.92231539159667], "stac_extensions": ["https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/datacube/v1.0.0/schema.json", "https://stac-extensions.github.io/view/v1.0.0/schema.json",
+        "https://raw.githubusercontent.com/thareUSGS/ssys/main/json-schema/schema.json"]}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '20508'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 May 2025 13:36:35 GMT
+      ETag:
+      - '"5327ce7060a22a5a1ffea2339bff9ddd"'
+      Last-Modified:
+      - Thu, 05 May 2022 15:06:22 GMT
+      Server:
+      - AmazonS3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://asc-jupiter.s3.us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/npola/collection.json
+  response:
+    body:
+      string: '{"id": "usgs_controlled_mosaics_voy1_voy2_galileo_npola", "stac_version":
+        "1.0.0", "type": "Collection", "description": "The Solid State Imager (SSI)
+        on NASA''s Galileo spacecraft acquired more than 500 images of Jupiter''s
+        moon, Europa, providing the only moderate- to high-resolution images of the
+        moon''s surface. Images were acquired as observation sequences during each
+        orbit that targeted the moon. Each of these observation sequences consists
+        of between 1 and 19 images acquired close in time, that typically overlap,
+        have consistent illumination, and similar pixel scale. The observations vary
+        from relatively low-resolution hemispherical imaging, to high-resolution targeted
+        images that cover a small portion of the surface. Here we provide average
+        mosaics of each of the individual observation sequences acquired by the Galileo
+        spacecraft. These observation mosaics were constructed from a set of 481 Galileo
+        images that were photogrammetrically controlled globally (along with 221 Voyager
+        1 and 2 images) to improve their relative locations on Europa''s surface.
+        The 92 observation mosaics provide users with nearly the entire Galileo Europa
+        imaging dataset at its native resolution and with improved relative image
+        locations.The Solid State Imager (SSI) on NASA''s Galileo spacecraft provided
+        the only moderate- to high-resolution images of Jupiter''s moon, Europa. Unfortunately,
+        uncertainty in the position and pointing of the spacecraft, as well as the
+        position and orientation of Europa, when the images were acquired resulted
+        in significant errors in image locations on the surface. The result of these
+        errors is that images acquired during different Galileo orbits, or even at
+        different times during the same orbit, are significantly misaligned (errors
+        of up to 100 km on the surface).Previous work has generated global mosaics
+        of Galileo and Voyager images that photogrammetrically control a subset of
+        the available images to correct their relative locations. However, these efforts
+        result in a \"static\" mosaic that is projected to a consistent pixel scale,
+        and only use a fraction of the dataset (e.g., high resolution images are not
+        included). The purpose of this current dataset is to increase the usability
+        of the entire Galileo image set by photogrammetrically improving the locations
+        of nearly every Europa image acquired by Galileo, and making them available
+        to the community at their native resolution and in easy-to-use regional mosaics
+        based on their acquisition time.The dataset therefore provides a set of image
+        mosaics that can be used for scientific analysis and mission planning activities.",
+        "links": [{"rel": "root", "href": "../../../../catalog.json", "type": "application/json"},
+        {"rel": "parent", "href": "../catalog.json", "type": "application/json"},
+        {"rel": "item", "href": "./14ESGLOCOL01/14ESGLOCOL01.json", "type": "application/json",
+        "title": "Observation: 14ESGLOCOL01"}], "title": "North Polar Stereographic
+        Projection", "extent": {"spatial": {"bbox": [[-180, -90, 180, 90]]}, "temporal":
+        {"interval": [["1997-12-16T12:06:15Z", "2000-05-22T23:52:48Z"]]}}, "summaries":
+        {"ssys:targets": ["europa"], "instruments": ["Solid State Imaging System"],
+        "missions": ["Galileo Orbiter"]}, "license": "PDDL-1.0"}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '4388'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 May 2025 13:36:59 GMT
+      ETag:
+      - '"2c39534f54c5f92950437669de2041ba"'
+      Last-Modified:
+      - Sat, 21 May 2022 14:17:49 GMT
+      Server:
+      - AmazonS3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://asc-jupiter.s3.us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/npola/14ESGLOCOL01/14ESGLOCOL01.json
+  response:
+    body:
+      string: '{"type": "Feature", "stac_version": "1.0.0", "id": "14ESGLOCOL01",
+        "properties": {"title": "Mosaic: 14ESGLOCOL01", "description": "The Solid
+        State Imager (SSI) on NASA''s Galileo spacecraft acquired more than 500 images
+        of Jupiter''s moon, Europa, providing the only moderate- to high-resolution
+        images of the moon''s surface. Images were acquired as observation sequences
+        during each orbit that targeted the moon. Each of these observation sequences
+        consists of between 1 and 19 images acquired close in time, that typically
+        overlap, have consistent illumination and similar pixel scale. The observations
+        vary from relatively low-resolution hemispherical imaging, to high-resolution
+        targeted images that cover a small portion of the surface. Here we provide
+        average mosaics of each of the individual observation sequences acquired by
+        the Galileo spacecraft. These observation mosaics were constructed from a
+        set of 481 Galileo images that were photogrammetrically controlled globally
+        (along with 221 Voyager 1 and 2 images) to improve their relative locations
+        on Europa''s surface. The 92 observation mosaics provide users with nearly
+        the entire Galileo Europa imaging dataset at its native resolution and with
+        improved relative image locations. The Solid State Imager (SSI) on NASA''s
+        Galileo spacecraft provided the only moderate- to high-resolution images of
+        Jupiter''s moon, Europa. Unfortunately, uncertainty in the position and pointing
+        of the spacecraft, as well as the position and orientation of Europa, when
+        the images were acquired resulted in significant errors in image locations
+        on the surface. The result of these errors is that images acquired during
+        different Galileo orbits, or even at different times during the same orbit,
+        are significantly misaligned (errors of up to 100 km on the surface). Previous
+        work has generated global mosaics of Galileo and Voyager images that photogrammetrically
+        control a subset of the available images to correct their relative locations.
+        However, these efforts result in a \"static\" mosaic that is projected to
+        a consistent pixel scale, and only use a fraction of the dataset (e.g., high
+        resolution images are not included). The purpose of this current dataset is
+        to increase the usability of the entire Galileo image set by photogrammetrically
+        improving the locations of nearly every Europa image acquired by Galileo,
+        and making them available to the community at their native resolution and
+        in easy-to-use regional mosaics based on their acquisition time. The dataset
+        therefore provides a set of image mosaics that can be used for scientific
+        analysis and mission planning activities.", "missions": ["Galileo", "Voyager
+        I", "Voyager II"], "instruments": ["Solid State Imager"], "gsd": 1439.0, "license":
+        "PDDL-1.0", "proj:epsg": null, "proj:wkt2": "\"PROJCS[\\\"PolarStereographic
+        Europa\\\",GEOGCS[\\\"GCS_Europa\\\",DATUM[\\\"D_Europa\\\",SPHEROID[\\\"Europa_polarRadius\\\",1560800,0]],PRIMEM[\\\"Reference_Meridian\\\",0],UNIT[\\\"degree\\\",0.0174532925199433,AUTHORITY[\\\"EPSG\\\",\\\"9122\\\"]]],PROJECTION[\\\"Polar_Stereographic\\\"],PARAMETER[\\\"latitude_of_origin\\\",90],PARAMETER[\\\"central_meridian\\\",0],PARAMETER[\\\"scale_factor\\\",1],PARAMETER[\\\"false_easting\\\",0],PARAMETER[\\\"false_northing\\\",0],UNIT[\\\"metre\\\",1],AXIS[\\\"Easting\\\",SOUTH],AXIS[\\\"Northing\\\",SOUTH]]\"",
+        "proj:projjson": {"$schema": "https://proj.org/schemas/v0.2/projjson.schema.json",
+        "type": "ProjectedCRS", "name": "unknown", "base_crs": {"name": "unknown",
+        "datum": {"type": "GeodeticReferenceFrame", "name": "unknown", "ellipsoid":
+        {"name": "unknown", "radius": 1560800}, "prime_meridian": {"name": "Reference
+        meridian", "longitude": 0}}, "coordinate_system": {"subtype": "ellipsoidal",
+        "axis": [{"name": "Longitude", "abbreviation": "lon", "direction": "east",
+        "unit": "degree"}, {"name": "Latitude", "abbreviation": "lat", "direction":
+        "north", "unit": "degree"}]}}, "conversion": {"name": "unknown", "method":
+        {"name": "Polar Stereographic (variant A)", "id": {"authority": "EPSG", "code":
+        9810}}, "parameters": [{"name": "Latitude of natural origin", "value": 90,
+        "unit": "degree", "id": {"authority": "EPSG", "code": 8801}}, {"name": "Longitude
+        of natural origin", "value": 0, "unit": "degree", "id": {"authority": "EPSG",
+        "code": 8802}}, {"name": "Scale factor at natural origin", "value": 1, "unit":
+        "unity", "id": {"authority": "EPSG", "code": 8805}}, {"name": "False easting",
+        "value": 0, "unit": "metre", "id": {"authority": "EPSG", "code": 8806}}, {"name":
+        "False northing", "value": 0, "unit": "metre", "id": {"authority": "EPSG",
+        "code": 8807}}]}, "coordinate_system": {"subtype": "Cartesian", "axis": [{"name":
+        "Easting", "abbreviation": "E", "direction": "south", "unit": "metre"}, {"name":
+        "Northing", "abbreviation": "N", "direction": "south", "unit": "metre"}]}},
+        "proj:bbox": [118.88097333764793, 55.000777632395554, 216.58362561218433,
+        83.44416200963643], "proj:centroid": {"lat": 69.00929274439798, "lon": 170.82429165497402},
+        "proj:shape": [813, 1344], "proj:transform": [-984276.0, 1439.0, 0.0, 984276.0,
+        0.0, -1439.0], "cube:dimensions": {"x": {"type": "spatial", "axis": "x", "extent":
+        [118.88097333764793, 216.58362561218433]}, "y": {"type": "spatial", "axis":
+        "y", "extent": [55.000777632395554, 83.44416200963643]}}, "datetime": "2021-02-18T00:00:00Z",
+        "ssys:targets": ["Europa"]}, "geometry": {"type": "MultiPolygon", "coordinates":
+        [[[[207.78392641220927, 55.03360390559419], [206.35888472155233, 55.019329910130644],
+        [205.04726494597526, 55.008014360213295], [203.84765087975822, 55.004079595145285],
+        [202.5715304061799, 55.00422011288936], [201.21796957677861, 55.005484804516314],
+        [200.05109848366024, 55.000777632395554], [198.72646044936374, 55.013425570821134],
+        [197.40151076762422, 55.008506244969126], [196.26188036647292, 55.0054145423625],
+        [195.04204228013646, 55.001831407729696], [194.00576158774868, 55.00689008484893],
+        [192.9695008353825, 55.00119913774109], [191.769997672574, 55.004501150506144],
+        [190.4884261188567, 55.00218267504156], [189.4692095477584, 55.0074522168532],
+        [188.44998861827867, 55.00232318320777], [187.18217181871108, 55.00513349552125],
+        [186.50672188108118, 55.00323650358054], [185.74810400837646, 55.001620649470745],
+        [184.82277762089774, 55.00246369208339], [183.73048836444093, 55.00112888640683],
+        [182.47498033262352, 55.0401456710173], [182.0528834763873, 55.001620649470745],
+        [180.79630557258335, 55.019540802567356], [179.53896124950182, 55.02164981486347],
+        [178.28206075673685, 55.007944091672236], [177.02246329780624, 55.026430834735905],
+        [175.7620567919068, 55.02903261724272], [174.50206033296584, 55.01574498326639],
+        [173.23382517744693, 55.03430724740955], [171.9647777570263, 55.03676908383241],
+        [170.69616240627136, 55.023126218604546], [169.41383445222243, 55.040638124233865],
+        [168.13078109769745, 55.04169341048971], [166.8482883519264, 55.02629020477571],
+        [165.54673443407233, 55.040989881870075], [164.2446869167288, 55.038738709871815],
+        [162.9434897191047, 55.019540802567356], [161.61807826005278, 55.02903261724272],
+        [160.29261005632043, 55.02094679300049], [158.93840246858224, 55.0401456710173],
+        [157.58336792008365, 55.040989881870075], [156.22902112542153, 55.023477754853666],
+        [154.84127303684997, 55.03114234928629], [153.45369130819168, 55.019540802567356],
+        [152.02862460899408, 55.03114234928629], [150.60343282490243, 55.02242315943223],
+        [149.13691365966122, 55.03465892498678], [147.67026260627375, 55.0253761273628],
+        [146.15875662559532, 55.034518253422306], [145.21343999115888, 55.48242420807977],
+        [144.3316936841537, 56.01792283148075], [143.42013833726017, 56.54709130472008],
+        [142.53208430969153, 57.030903253827304], [141.6724399202321, 57.47000451363502],
+        [140.72999789387438, 57.94072765449259], [139.81839158281795, 58.36671186337287],
+        [138.88078571718492, 58.78575394351415], [137.91657601137774, 59.19745934435304],
+        [136.99149690352783, 59.56546968821703], [136.04289050703463, 59.92635158380169],
+        [135.07038790010958, 60.27976230049274], [134.07365642699574, 60.62535051097181],
+        [133.05240531704976, 60.96275674596098], [132.08299271337225, 61.25841360402831],
+        [131.09282511844617, 61.54639452735052], [130.08183932165946, 61.82640716016393],
+        [129.05002126700003, 62.09815604553321], [127.99741034407828, 62.361343366877854],
+        [127.01067323360307, 62.58568492719362], [125.91888161163052, 62.83158531899226],
+        [124.38034472384487, 63.1403972458957], [122.80579995744247, 63.430474923318094],
+        [121.19642846937674, 63.70108857957867], [119.4643800713669, 63.91612681251453],
+        [118.88097333764793, 64.76864907144241], [119.25032431283034, 65.56627318418856],
+        [119.65891339689067, 66.17026920707511], [120.16966543334377, 66.92973852179436],
+        [120.62673635918757, 67.53225587496252], [121.20524732364444, 68.29168419224635],
+        [121.72291270334502, 68.89359353712236], [122.38297940248033, 69.65195573251466],
+        [122.97456514291369, 70.25272544677446], [123.60320645246235, 70.85199755591374],
+        [124.27236724621699, 71.44951947507684], [125.13968083211988, 72.20198901945255],
+        [125.91825703780538, 72.79628854106087], [126.75230306298826, 73.38777666157505],
+        [127.64868192855685, 73.97642125037252], [128.61416031831234, 74.56174251218786],
+        [129.65643121533728, 75.14319316248812], [130.78425629677892, 75.72014609998594],
+        [132.007628607949, 76.29187952457802], [133.3379561112385, 76.85755895912244],
+        [134.7899525534724, 77.41658593771925], [136.55718546587298, 78.00306648452049],
+        [138.30633346029276, 78.54260244632964], [140.22978030199212, 79.07131663041862],
+        [142.34975637113732, 79.58732145854438], [144.93539587544993, 80.11799948803869],
+        [147.53496655890885, 80.5984649926182], [150.41517406732106, 81.05844317488528],
+        [153.91593283762546, 81.51677846937643], [157.45550526621727, 81.92027495949691],
+        [161.7240538861002, 82.30671860402462], [166.01749556681963, 82.63386728119104],
+        [171.10767216474443, 82.92459585405811], [176.5795953620934, 83.15515979039259],
+        [181.92875743777665, 83.3214727315889], [187.96015986172173, 83.41993292057732],
+        [194.096641916911, 83.44416200963643], [199.78160735488152, 83.41113966219658],
+        [205.76663644344458, 83.29148114330802], [211.5244887075744, 83.09865831203679],
+        [216.58362561218433, 82.60944622775412], [215.58049974178374, 81.79773188750019],
+        [214.56862643581434, 80.94161166009856], [213.90211607490457, 80.12774202707101],
+        [213.183038465065, 79.2699583781549], [212.71167683672468, 78.45598103006647],
+        [212.17287657707755, 77.59833689828655], [211.70427299139874, 76.74114046507871],
+        [211.40420227895072, 75.92909613842558], [211.03291253894054, 75.07365213342527],
+        [210.79986744955065, 74.26387136370009], [210.49769485248578, 73.41088750308155],
+        [210.31235971551618, 72.60391883793756], [210.0610912189353, 71.75396834000568],
+        [209.83253412939777, 70.90572468186049], [209.69818548045694, 70.1038460306595],
+        [209.50320392275967, 69.2593598942995], [209.3917928823483, 68.4613595639813],
+        [209.22319689762185, 67.6210395669217], [209.06709228098774, 66.78297605193778],
+        [208.98221528160758, 65.99148759314525], [208.8449437152562, 65.15814817782751],
+        [208.71684550711822, 64.32734118509218], [208.65081195725247, 63.54309095981187],
+        [208.53663053592408, 62.71750518024384], [208.42939768920138, 61.894698699675324],
+        [208.37716861772552, 61.118342933926094], [208.28051467658236, 60.301206258177096],
+        [208.18925999880844, 59.487071726048306], [208.14740509969658, 58.71920711596186],
+        [208.06438324732378, 57.91114896713624], [207.98564730529495, 57.10629455718721],
+        [207.9108740172811, 56.30470834761728], [207.8795557097179, 55.54905404882624],
+        [207.78392641220927, 55.03360390559419]]]]}, "links": [{"rel": "parent", "href":
+        "../collection.json", "type": "application/json"}, {"rel": "root", "href":
+        "../../../catalog.json", "type": "application/json", "title": "Photogrammetrically
+        controlled Galileo, Voyager 1, and Voyager 2 data."}], "assets": {"thumbnail":
+        {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/npola/14ESGLOCOL01/14ESGLOCOL01.jpg",
+        "type": "image/jpeg", "title": "Image Thumbnail", "key": "thumbnail", "roles":
+        ["thumbnail"]}, "image": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/npola/14ESGLOCOL01/14ESGLOCOL01.tif",
+        "type": "image/tiff; application=geotiff", "title": "Controlled Image Mosaic",
+        "key": "image", "roles": ["data"]}, "fgdc_metadata": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/npola/14ESGLOCOL01/14ESGLOCOL01.xml",
+        "type": "application/xml", "title": "FGDC Metadata", "key": "fgdc_metadata",
+        "roles": ["metadata"]}, "PAM_pds_label": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/npola/14ESGLOCOL01/14ESGLOCOL01.tif.aux.xml",
+        "type": "text/plain", "title": "Supplemental XML Metadata", "key": "PAM_pds_label",
+        "roles": ["metadata"]}, "provenance": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/npola/14ESGLOCOL01/provenance.txt",
+        "type": "text/plain", "title": "Provenance", "key": "provenance", "roles":
+        ["metadata"]}, "isis_label": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/npola/14ESGLOCOL01/14ESGLOCOL01.isis.lbl",
+        "type": "text/plain", "title": "ISIS Label", "key": "isis_label", "roles":
+        ["metadata"]}}, "bbox": [118.88097333764793, 55.000777632395554, 216.58362561218433,
+        83.44416200963643], "stac_extensions": ["https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/datacube/v1.0.0/schema.json", "https://stac-extensions.github.io/view/v1.0.0/schema.json",
+        "https://raw.githubusercontent.com/thareUSGS/ssys/main/json-schema/schema.json"]}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '22840'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 May 2025 13:36:59 GMT
+      ETag:
+      - '"7fe58f1c1fb38632f515da7cfa3b773e"'
+      Last-Modified:
+      - Thu, 05 May 2022 15:07:24 GMT
+      Server:
+      - AmazonS3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://asc-jupiter.s3.us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/spola/collection.json
+  response:
+    body:
+      string: '{"id": "usgs_controlled_mosaics_voy1_voy2_galileo_spola", "stac_version":
+        "1.0.0", "type": "Collection", "description": "The Solid State Imager (SSI)
+        on NASA''s Galileo spacecraft acquired more than 500 images of Jupiter''s
+        moon, Europa, providing the only moderate- to high-resolution images of the
+        moon''s surface. Images were acquired as observation sequences during each
+        orbit that targeted the moon. Each of these observation sequences consists
+        of between 1 and 19 images acquired close in time, that typically overlap,
+        have consistent illumination, and similar pixel scale. The observations vary
+        from relatively low-resolution hemispherical imaging, to high-resolution targeted
+        images that cover a small portion of the surface. Here we provide average
+        mosaics of each of the individual observation sequences acquired by the Galileo
+        spacecraft. These observation mosaics were constructed from a set of 481 Galileo
+        images that were photogrammetrically controlled globally (along with 221 Voyager
+        1 and 2 images) to improve their relative locations on Europa''s surface.
+        The 92 observation mosaics provide users with nearly the entire Galileo Europa
+        imaging dataset at its native resolution and with improved relative image
+        locations.The Solid State Imager (SSI) on NASA''s Galileo spacecraft provided
+        the only moderate- to high-resolution images of Jupiter''s moon, Europa. Unfortunately,
+        uncertainty in the position and pointing of the spacecraft, as well as the
+        position and orientation of Europa, when the images were acquired resulted
+        in significant errors in image locations on the surface. The result of these
+        errors is that images acquired during different Galileo orbits, or even at
+        different times during the same orbit, are significantly misaligned (errors
+        of up to 100 km on the surface).Previous work has generated global mosaics
+        of Galileo and Voyager images that photogrammetrically control a subset of
+        the available images to correct their relative locations. However, these efforts
+        result in a \"static\" mosaic that is projected to a consistent pixel scale,
+        and only use a fraction of the dataset (e.g., high resolution images are not
+        included). The purpose of this current dataset is to increase the usability
+        of the entire Galileo image set by photogrammetrically improving the locations
+        of nearly every Europa image acquired by Galileo, and making them available
+        to the community at their native resolution and in easy-to-use regional mosaics
+        based on their acquisition time.The dataset therefore provides a set of image
+        mosaics that can be used for scientific analysis and mission planning activities.",
+        "links": [{"rel": "root", "href": "../../../../catalog.json", "type": "application/json"},
+        {"rel": "parent", "href": "../catalog.json", "type": "application/json"},
+        {"rel": "item", "href": "./10ESGLOBAL01/10ESGLOBAL01.json", "type": "application/json",
+        "title": "Observation: 10ESGLOBAL01"}], "title": "South Polar Stereographic
+        Projection", "extent": {"spatial": {"bbox": [[-180, -90, 180, 90]]}, "temporal":
+        {"interval": [["1997-12-16T12:06:15Z", "2000-05-22T23:52:48Z"]]}}, "summaries":
+        {"ssys:targets": ["europa"], "instruments": ["Solid State Imaging System"],
+        "missions": ["Galileo Orbiter"]}, "license": "PDDL-1.0"}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '4896'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 May 2025 13:37:02 GMT
+      ETag:
+      - '"df3f7ca91ab378a372ced6826f3cd431"'
+      Last-Modified:
+      - Sat, 21 May 2022 14:17:49 GMT
+      Server:
+      - AmazonS3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://asc-jupiter.s3.us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/spola/10ESGLOBAL01/10ESGLOBAL01.json
+  response:
+    body:
+      string: '{"type": "Feature", "stac_version": "1.0.0", "id": "10ESGLOBAL01",
+        "properties": {"title": "Mosaic: 10ESGLOBAL01", "description": "The Solid
+        State Imager (SSI) on NASA''s Galileo spacecraft acquired more than 500 images
+        of Jupiter''s moon, Europa, providing the only moderate- to high-resolution
+        images of the moon''s surface. Images were acquired as observation sequences
+        during each orbit that targeted the moon. Each of these observation sequences
+        consists of between 1 and 19 images acquired close in time, that typically
+        overlap, have consistent illumination and similar pixel scale. The observations
+        vary from relatively low-resolution hemispherical imaging, to high-resolution
+        targeted images that cover a small portion of the surface. Here we provide
+        average mosaics of each of the individual observation sequences acquired by
+        the Galileo spacecraft. These observation mosaics were constructed from a
+        set of 481 Galileo images that were photogrammetrically controlled globally
+        (along with 221 Voyager 1 and 2 images) to improve their relative locations
+        on Europa''s surface. The 92 observation mosaics provide users with nearly
+        the entire Galileo Europa imaging dataset at its native resolution and with
+        improved relative image locations. The Solid State Imager (SSI) on NASA''s
+        Galileo spacecraft provided the only moderate- to high-resolution images of
+        Jupiter''s moon, Europa. Unfortunately, uncertainty in the position and pointing
+        of the spacecraft, as well as the position and orientation of Europa, when
+        the images were acquired resulted in significant errors in image locations
+        on the surface. The result of these errors is that images acquired during
+        different Galileo orbits, or even at different times during the same orbit,
+        are significantly misaligned (errors of up to 100 km on the surface). Previous
+        work has generated global mosaics of Galileo and Voyager images that photogrammetrically
+        control a subset of the available images to correct their relative locations.
+        However, these efforts result in a \"static\" mosaic that is projected to
+        a consistent pixel scale, and only use a fraction of the dataset (e.g., high
+        resolution images are not included). The purpose of this current dataset is
+        to increase the usability of the entire Galileo image set by photogrammetrically
+        improving the locations of nearly every Europa image acquired by Galileo,
+        and making them available to the community at their native resolution and
+        in easy-to-use regional mosaics based on their acquisition time. The dataset
+        therefore provides a set of image mosaics that can be used for scientific
+        analysis and mission planning activities.", "missions": ["Galileo", "Voyager
+        I", "Voyager II"], "instruments": ["Solid State Imager"], "gsd": 7346.0, "license":
+        "PDDL-1.0", "proj:epsg": null, "proj:wkt2": "\"PROJCS[\\\"PolarStereographic
+        Europa\\\",GEOGCS[\\\"GCS_Europa\\\",DATUM[\\\"D_Europa\\\",SPHEROID[\\\"Europa_polarRadius\\\",1560800,0]],PRIMEM[\\\"Reference_Meridian\\\",0],UNIT[\\\"degree\\\",0.0174532925199433,AUTHORITY[\\\"EPSG\\\",\\\"9122\\\"]]],PROJECTION[\\\"Polar_Stereographic\\\"],PARAMETER[\\\"latitude_of_origin\\\",-90],PARAMETER[\\\"central_meridian\\\",0],PARAMETER[\\\"scale_factor\\\",1],PARAMETER[\\\"false_easting\\\",0],PARAMETER[\\\"false_northing\\\",0],UNIT[\\\"metre\\\",1],AXIS[\\\"Easting\\\",NORTH],AXIS[\\\"Northing\\\",NORTH]]\"",
+        "proj:projjson": {"$schema": "https://proj.org/schemas/v0.2/projjson.schema.json",
+        "type": "ProjectedCRS", "name": "unknown", "base_crs": {"name": "unknown",
+        "datum": {"type": "GeodeticReferenceFrame", "name": "unknown", "ellipsoid":
+        {"name": "unknown", "radius": 1560800}, "prime_meridian": {"name": "Reference
+        meridian", "longitude": 0}}, "coordinate_system": {"subtype": "ellipsoidal",
+        "axis": [{"name": "Longitude", "abbreviation": "lon", "direction": "east",
+        "unit": "degree"}, {"name": "Latitude", "abbreviation": "lat", "direction":
+        "north", "unit": "degree"}]}}, "conversion": {"name": "unknown", "method":
+        {"name": "Polar Stereographic (variant A)", "id": {"authority": "EPSG", "code":
+        9810}}, "parameters": [{"name": "Latitude of natural origin", "value": -90,
+        "unit": "degree", "id": {"authority": "EPSG", "code": 8801}}, {"name": "Longitude
+        of natural origin", "value": 0, "unit": "degree", "id": {"authority": "EPSG",
+        "code": 8802}}, {"name": "Scale factor at natural origin", "value": 1, "unit":
+        "unity", "id": {"authority": "EPSG", "code": 8805}}, {"name": "False easting",
+        "value": 0, "unit": "metre", "id": {"authority": "EPSG", "code": 8806}}, {"name":
+        "False northing", "value": 0, "unit": "metre", "id": {"authority": "EPSG",
+        "code": 8807}}]}, "coordinate_system": {"subtype": "Cartesian", "axis": [{"name":
+        "Easting", "abbreviation": "E", "direction": "north", "unit": "metre"}, {"name":
+        "Northing", "abbreviation": "N", "direction": "north", "unit": "metre"}]}},
+        "proj:bbox": [0.0, -82.71140361982187, 360.0, -54.69128069664996], "proj:centroid":
+        {"lat": -67.43849730816629, "lon": 69.02232385626759}, "proj:shape": [268,
+        268], "proj:transform": [-984364.0, 7346.0, 0.0, 984364.0, 0.0, -7346.0],
+        "cube:dimensions": {"x": {"type": "spatial", "axis": "x", "extent": [0.0,
+        360.0]}, "y": {"type": "spatial", "axis": "y", "extent": [-82.71140361982187,
+        -54.69128069664996]}}, "datetime": "2021-02-18T00:00:00Z", "ssys:targets":
+        ["Europa"]}, "geometry": {"type": "MultiPolygon", "coordinates": [[[[0.0,
+        -55.11819906879762], [0.2145899311294102, -55.11819906879762], [0.6437457141753953,
+        -55.1163606324496], [1.0728292757915483, -55.1126841247432], [1.5017925223593238,
+        -55.10717027536064], [1.930587441167006, -55.09982017808317], [2.359166132581663,
+        -55.09063528990224], [2.787480842032039, -55.07961742983693], [3.215483991748215,
+        -55.06676877746018], [3.6431282122060225, -55.052091871136376], [4.070366373224829,
+        -55.0355896059738], [4.497151614667757, -55.01726523149592], [4.960410687562103,
+        -55.24165251087531], [5.3893117599733955, -55.21950102140019], [5.817607916892769,
+        -55.19552352642753], [6.245252678676991, -55.169724765084766], [6.672199997199414,
+        -55.14210982229818], [7.098404284158221, -55.1126841247432], [7.523820438638609,
+        -55.08145343654616], [7.948403873891721, -55.048423854745415], [8.372110543292536,
+        -55.013601804520114], [8.860720937830195, -55.21950102140019], [9.285593035275554,
+        -55.180778439969856], [9.709437408098665, -55.14026980243744], [10.132211565804766,
+        -55.09798295754255], [10.553873698269513, -55.05392606079164], [10.97438269675365,
+        -55.00810756827411], [11.478697168612882, -55.20105495499056], [11.899721136519474,
+        -55.15131175121558], [12.319445256636584, -55.09982017808317], [12.737830703874067,
+        -55.046590027970495], [13.252849542608885, -55.230574553779974], [13.671307132195807,
+        -55.17340883418], [14.088283217025264, -55.1145223177714], [14.503741720033474,
+        -55.05392606079164], [15.028505067927313, -55.228728657895665], [15.44359098218763,
+        -55.16419957824202], [15.85702201802826, -55.09798295754255], [16.26876526099187,
+        -55.030091026085145], [16.802257031147633, -55.19552352642753], [17.21318613229181,
+        -55.12371510805874], [17.622297228668288, -55.05025780246084], [18.162761894184882,
+        -55.20843190938607], [18.570720558155642, -55.13107153165369], [18.97673673583438,
+        -55.052091871136376], [19.52357371015637, -55.20289900965878], [19.92810259046462,
+        -55.12003762683526], [20.33057108153679, -55.0355896059738], [20.883158544531227,
+        -55.1789358550225], [21.283810548632857, -55.09063528990224], [21.682291613244956,
+        -55.000783607000216], [22.2399907423395, -55.13659012847957], [22.636333984526516,
+        -55.04292273716373], [23.198590513648185, -55.17340883418], [23.59256314190452,
+        -55.075945780222774], [24.159080660432664, -55.20105495499056], [24.550452389207408,
+        -55.09982017808317], [25.120925646142155, -55.21950102140019], [25.50946949202455,
+        -55.1145223177714], [25.89551494909034, -55.00810756827411], [26.46907843683175,
+        -55.12003762683526], [26.852005937311333, -55.00993885981975], [27.42874122167757,
+        -55.1163606324496], [27.80833702474058, -55.002614416621356], [28.3879196635404,
+        -55.10349498365937], [28.971021693723287, -55.20105495499056], [29.346077207205383,
+        -55.08145343654616], [29.931511840507767, -55.17340883418], [30.30268072048807,
+        -55.05025780246084], [30.89011161181645, -55.13659012847957], [31.257202260842973,
+        -55.00993885981975], [31.846291805523094, -55.09063528990224], [32.43822579304043,
+        -55.16788291391714], [32.79953127261922, -55.0355896059738], [33.392584324205075,
+        -55.10717027536064], [33.98816982835564, -55.17525105214756], [34.3431517530787,
+        -55.0374227075173], [34.93931020467704, -55.09982017808317], [35.537677791974374,
+        -55.15867549108033], [35.88582494520881, -55.015433457713826], [36.484217595649966,
+        -55.068603935660256], [37.0844875769734, -55.11819906879762], [37.68651137196832,
+        -55.16419957824202], [38.025070484003834, -55.013601804520114], [38.62636063412248,
+        -55.05392606079164], [39.229063778425655, -55.09063528990224], [39.83305108033221,
+        -55.12371510805874], [40.43819201254297, -55.153152503061115], [41.044354519615865,
+        -55.1789358550225], [41.367049260511806, -55.01726523149592], [41.971301421659405,
+        -55.0374227075173], [42.57622865588644, -55.05392606079164], [43.181697035548154,
+        -55.06676877746018], [43.78757191005508, -55.075945780222774], [44.39371808448266,
+        -55.08145343654616], [45.0, -55.083289564549766], [45.60628191551734, -55.08145343654616],
+        [46.21242808994492, -55.075945780222774], [46.818302964451846, -55.06676877746018],
+        [47.42377134411356, -55.05392606079164], [48.028698578340595, -55.0374227075173],
+        [48.632950739488194, -55.01726523149592], [49.074873149965185, -54.913274140960795],
+        [49.56180798745703, -55.153152503061115], [50.16694891966779, -55.12371510805874],
+        [50.770936221574345, -55.09063528990224], [51.37363936587752, -55.05392606079164],
+        [51.974929515996166, -55.013601804520114], [52.40541759894154, -54.8950300539099],
+        [52.9155124230266, -55.11819906879762], [53.51578240435009, -55.068603935660256],
+        [54.11417505479125, -55.015433457713826], [54.5366357584594, -54.887735760966514],
+        [55.06068979532296, -55.09982017808317], [55.6568482469213, -55.0374227075173],
+        [56.07341873171163, -54.90323841542004], [56.607415675794925, -55.10717027536064],
+        [57.20046872738078, -55.0355896059738], [57.610542003941134, -54.8950300539099],
+        [58.153708194476906, -55.09063528990224], [58.74279773915703, -55.00993885981975],
+        [59.14579549410303, -54.86313160008889], [59.69731927951193, -55.05025780246084],
+        [60.09647827915768, -54.899589956351065], [60.65392279279462, -55.08145343654616],
+        [61.0490047925332, -54.92696504780163], [61.6120803364596, -55.10349498365937],
+        [62.19166297525942, -55.002614416621356], [62.5784312105211, -54.8421896052623],
+        [63.14799406268867, -55.00993885981975], [63.530124448857975, -54.845830562278394],
+        [64.10448505090966, -55.00810756827411], [64.67409857225061, -54.89297834111878],
+        [64.86704500708663, -54.9452300610902], [65.44954761079259, -55.09982017808317],
+        [65.82089285331085, -54.92696504780163], [66.40743685809548, -55.075945780222774],
+        [66.77341936668637, -54.89958995635107], [67.36366601547348, -55.04292273716373],
+        [67.72410215174102, -54.86313160008889], [68.31770838675504, -55.000783607000216],
+        [68.87076688722186, -54.861993044112616], [69.0696409887413, -54.90597507314019],
+        [69.66942891846327, -55.0355896059738], [70.21716389687936, -54.88933122448496],
+        [70.4179391553132, -54.930617092637924], [71.02326326416562, -55.052091871136376],
+        [71.56505117707798, -54.89844991081363], [71.76750891929618, -54.93700932320197],
+        [72.37770277133177, -55.05025780246084], [72.9129384572766, -54.88933122448496],
+        [73.11685410951031, -54.925139204869005], [73.73123473900813, -55.030091026085145],
+        [74.25933546693409, -54.861993044112616], [74.67003381566053, -54.92764976974775],
+        [74.87599269168948, -54.959850699523976], [75.49625827996653, -55.05392606079164],
+        [76.01542088192411, -54.876570071778964], [76.42956561483851, -54.934954517715916],
+        [76.63718404959252, -54.963507058726464], [77.26216929612593, -55.046590027970495],
+        [77.77140926667431, -54.86017145121002], [78.18821951757047, -54.911221084925224],
+        [78.39710407724857, -54.93609605760895], [79.02561730324635, -55.00810756827411],
+        [79.52400833310571, -54.81285173109361], [79.94269108503619, -54.856528622232126],
+        [80.36246188706906, -54.89844991081363], [80.78327975160857, -54.93860761003229],
+        [80.994068343604, -54.95802269992955], [81.62788945670746, -55.013601804520114],
+        [82.11038219172019, -54.8055788897857], [82.53189925157466, -54.83832160893535],
+        [82.95423087513251, -54.86928060559229], [83.37733340461898, -54.89844991081363],
+        [83.80116268649431, -54.92582388194841], [84.22567409733671, -54.95139720701711],
+        [84.65082257047072, -54.97516490885847], [84.8636215075723, -54.986370188224214],
+        [85.50284838533224, -55.01726523149592], [85.94477079580923, -54.913274140960795],
+        [86.37042914367879, -54.929704036551435], [86.79648904680221, -54.944316525958016],
+        [87.22290389307449, -54.95710874512555], [87.64962683545127, -54.9680781829547],
+        [88.07661082248035, -54.977222683312135], [88.50380862917075, -54.98454044676097],
+        [88.93117288815, -54.99003003200788], [89.35865612105749, -54.99369035706407],
+        [89.78621077012286, -54.995520700117964], [90.21378922987714, -54.995520700117964],
+        [90.64134387894251, -54.99369035706407], [91.06882711185, -54.99003003200788],
+        [91.49619137082925, -54.98454044676097], [91.92338917751965, -54.977222683312135],
+        [92.35037316454873, -54.9680781829547], [92.77709610692551, -54.95710874512555],
+        [93.20351095319779, -54.944316525958016], [93.62957085632121, -54.929704036551435],
+        [94.05522920419077, -54.913274140960795], [94.58666687281084, -54.89018597464148],
+        [95.13637849242775, -54.986370188224214], [95.34917742952928, -54.97516490885847],
+        [95.77432590266329, -54.95139720701711], [96.19883731350569, -54.92582388194841],
+        [96.62266659538102, -54.89844991081363], [97.04576912486749, -54.86928060559229],
+        [97.46810074842534, -54.83832160893535], [97.88961780827981, -54.8055788897857],
+        [98.52027187755391, -54.75313417892042], [99.005931656396, -54.95802269992955],
+        [99.21672024839143, -54.93860761003229], [99.63753811293094, -54.89844991081363],
+        [100.05730891496381, -54.856528622232126], [100.47599166689429, -54.81285173109361],
+        [101.10188771111257, -54.744062835541854], [101.60289592275143, -54.93609605760895],
+        [101.81178048242953, -54.911221084925224], [102.22859073332569, -54.86017145121002],
+        [102.85133784200576, -54.78036589372082], [103.36281595040748, -54.963507058726464],
+        [103.57043438516149, -54.934954517715916], [103.98457911807594, -54.876570071778964],
+        [104.60299977941173, -54.785815423812274], [105.12400730831052, -54.959850699523976],
+        [105.32996618433947, -54.92764976974775], [105.74066453306591, -54.861993044112616],
+        [106.35360319918243, -54.760393374543355], [106.88314589048969, -54.925139204869005],
+        [107.0870615427234, -54.88933122448496], [107.69612274851352, -54.779457742071855],
+        [108.23249108070382, -54.93700932320197], [108.43494882292202, -54.89844991081363],
+        [109.03945395983999, -54.78036589372082], [109.5820608446868, -54.930617092637924],
+        [109.78283610312064, -54.88933122448496], [110.38212101112975, -54.763116059217154],
+        [110.9303590112587, -54.90597507314019], [111.12923311277814, -54.861993044112616],
+        [111.72265245071276, -54.7277418335947], [112.27589784825898, -54.86313160008889],
+        [112.66886360728677, -54.76947002219356], [113.22658063331363, -54.89958995635107],
+        [113.61720785413786, -54.802170397506345], [114.17910714668915, -54.92696504780163],
+        [114.56717132060135, -54.82581117515219], [115.13295499291337, -54.9452300610902],
+        [115.32590142774939, -54.89297834111878], [115.90105696922802, -54.73408775751785],
+        [116.46987555114208, -54.845830562278394], [116.8496305232286, -54.73590114329005],
+        [117.4215687894789, -54.8421896052623], [117.79804811385611, -54.728648305956746],
+        [118.55962047831986, -54.77105873877364], [118.9509952074668, -54.92696504780163],
+        [119.3230147963327, -54.807624184910075], [119.90352172084238, -54.899589956351065],
+        [120.27172419078477, -54.776733464277186], [120.85420450589703, -54.86313160008889],
+        [121.21840276434637, -54.73680788029638], [121.98288781092253, -54.752907359442816],
+        [122.38945799605887, -54.8950300539099], [122.74798134302625, -54.76311605921715],
+        [123.5134110060776, -54.7674275193436], [123.92658126828837, -54.90323841542004],
+        [124.27890372656282, -54.765839009252396], [125.04418629599218, -54.75835153514331],
+        [125.4633642415406, -54.887735760966514], [125.80898595557983, -54.74496983738199],
+        [126.57303097851934, -54.7257023782455], [127.16720443376539, -54.77469043028646],
+        [127.59458240105846, -54.8950300539099], [127.93080933610827, -54.74496983738199],
+        [128.69290806526237, -54.70939208917636], [129.28940686250036, -54.74565010808044],
+        [129.88715022011752, -54.77832259403262], [130.48601154199872, -54.807396922496736],
+        [130.92512685003481, -54.913274140960795], [131.24581620262097, -54.752226912056706],
+        [132.00295741971632, -54.69128069664996], [132.60157866590748, -54.70758042200357],
+        [133.492564241225, -54.89844991081362], [133.16226320961215, -55.4139299263095],
+        [132.84472437920851, -55.58167868296708], [132.8213199247234, -55.92973902630031],
+        [132.79740183823424, -56.27844294603523], [132.77295303258643, -56.62778557005309],
+        [132.7479556545975, -56.97776195198492], [132.7223910416659, -57.32836707080225],
+        [132.6962396753998, -57.679595830387434], [132.35237033470776, -57.84781681128537],
+        [132.32144874455673, -58.199868699513516], [132.28979689982543, -58.55252884699689],
+        [132.25738864251844, -58.9057918098474], [132.2241965512169, -59.259652062897224],
+        [132.19019186392973, -59.61410399885989], [132.15534439522662, -59.96914192742939],
+        [131.78050510314716, -60.13743449556885], [131.73983936212517, -60.493205604989825],
+        [131.69813432556498, -60.84954481476711], [131.65534968173415, -61.20644600993611],
+        [131.6114430092765, -61.56390298091682], [131.56636963754949, -61.92190942170044],
+        [131.52008249573032, -62.28045892788155], [131.10832370591925, -62.44833499934497],
+        [131.05481377096248, -62.80750958597683], [130.9998142394869, -63.16720604906315],
+        [130.9432621387051, -63.527417424115235], [130.88509090176274, -63.888136625755116],
+        [130.82523010808757, -64.24935644374844], [130.76360520094119, -64.61106953866926],
+        [130.3071374944102, -64.77792261048207], [130.23635830927378, -65.14012773828428],
+        [130.1634165542647, -65.50280032176984], [130.08821182749398, -65.86593221320021],
+        [130.0106374303578, -66.22951509066094], [129.9305798673875, -66.59354044928213],
+        [129.42780219603623, -66.7586855469016], [129.33629374197943, -67.12305678909281],
+        [129.2417398356332, -67.48783870239484], [129.14398641457103, -67.85302157421036],
+        [129.0428688852918, -68.21859542399672], [128.93821121127138, -68.5845499852995],
+        [128.8298249049704, -68.95087468583542], [128.25994390205307, -69.11334942517881],
+        [128.13630808537295, -69.47980344827403], [128.0080746533322, -69.84658510379103],
+        [127.8749836510982, -70.21368174269129], [127.73675525941542, -70.58108022713651],
+        [127.59308787150479, -70.948766888421], [126.95093829832553, -71.10764346721253],
+        [126.78721981071413, -71.47520126398555], [126.61675151907065, -71.84298907701209],
+        [126.43911042883542, -72.2109896501299], [126.25383773744477, -72.57918482296105],
+        [126.06043499684847, -72.94755543867046], [125.85835977647514, -73.3160812394454],
+        [125.1060793302646, -73.46934758255678], [124.87532834460217, -73.83731808774839],
+        [124.6336773965495, -74.20535329198886], [124.38034472384487, -74.573425631332],
+        [124.11447294534128, -74.94150553143234], [123.83511982245142, -75.30956116312001],
+        [122.95742485711503, -75.45559457727022], [122.63750758428569, -75.82252098150069],
+        [122.30041551040262, -76.18927846783399], [121.94475277620342, -76.5558205948495],
+        [121.56897112931836, -76.92209655791986], [121.17134902771983, -77.2880505779955],
+        [120.12431799836122, -77.42385431189146], [119.66671520694644, -77.78775647238233],
+        [119.18080605249986, -78.15108455905293], [118.66395711028156, -78.51375125629085],
+        [118.11320887605598, -78.87565899912775], [117.52522574374433, -79.23669831966686],
+        [116.89623696549336, -79.59674587131019], [115.55996517182382, -79.71496320183378],
+        [114.82934658814963, -80.07099342983965], [114.04422326936782, -80.42548860688778],
+        [113.19859051364818, -80.77823904048593], [112.28558764683277, -81.12900398690371],
+        [110.65891006330747, -81.2271413871109], [108.99665415548856, -81.31809055188023],
+        [107.30052719194498, -81.40161931519921], [105.57254359681025, -81.47750576472689],
+        [104.26451229807992, -81.80577498405945], [102.42594286542749, -81.86771135722972],
+        [100.56101069119637, -81.92118272324774], [98.6731740478798, -81.96601768216368],
+        [97.00126755749534, -82.26853249616116], [95.01311375503582, -82.29663035310907],
+        [93.01278750418334, -82.31542002506143], [91.00508600525416, -82.32483231844479],
+        [88.95837332399003, -82.59328932318], [86.8778695378843, -82.58353230688651],
+        [84.80557109226521, -82.56405711108823], [82.74680538727466, -82.53494064991924],
+        [80.70669140060289, -82.49629643038395], [78.27488798483495, -82.71140361982187],
+        [76.21840276434637, -82.652106531916], [74.19748604606445, -82.58353230688651],
+        [72.2161115573075, -82.50593859040453], [69.56717132060135, -82.67181833461589],
+        [67.61986494804046, -82.57378825317662], [65.72555886556052, -82.46744485249877],
+        [63.88608736970929, -82.35313954413269], [61.144338780283476, -82.46744485249877],
+        [59.38139459109061, -82.3342563072463], [57.68038349181984, -82.19410531471429],
+        [56.04094018032373, -82.04736597005616], [54.462322208025626, -81.89440235795269],
+        [51.78897457443878, -81.94805334487114], [50.31454566994478, -81.77937561008214],
+        [48.90049374238191, -81.60553025872572], [47.544804379813115, -81.42683904964724],
+        [45.0, -81.43526237801896], [43.75463573323168, -81.24360624606297], [42.56335175318986,
+        -81.04805762662158], [41.42366562500263, -80.84887434290182], [40.33314162856101,
+        -80.64629703102253], [38.01894259317021, -80.60784949361026], [37.030389605678636,
+        -80.39543791121712], [36.085073042852116, -80.18037172202501], [35.18069936124209,
+        -79.96283065567528], [33.05582281155364, -79.89137813658816], [32.24246783912332,
+        -79.66611812341326], [31.46414363086575, -79.43895672841], [30.718904264029163,
+        -79.21002361786081], [30.004920870824037, -78.97943885190003], [28.113208876055978,
+        -78.87565899912775], [27.474431626277124, -78.63938920807358], [26.861917844402683,
+        -78.40187162438504], [26.274212154727422, -78.16319134599127], [24.550452389207408,
+        -78.0366986050219], [24.026506578679175, -77.79362290643914], [23.523209020459603,
+        -77.54968472623194], [23.039435979903544, -77.30494400684243], [22.574138078648218,
+        -77.05945653351986], [21.037511025421793, -76.91117218341329], [20.623531383325258,
+        -76.66246715197583], [20.224859431168056, -76.41322410469607], [19.840698083968334,
+        -76.16348252057712], [18.434948822922024, -75.99955780105611], [18.093906544063145,
+        -75.7473484947262], [17.764853300697496, -75.49479596262385], [17.447188423282228,
+        -75.24192832818835], [17.140349304757706, -74.98877202070494], [15.8759465052226,
+        -74.80997793260103], [15.603947145056736, -74.55503306842648], [15.340890764004882,
+        -74.29990956983411], [15.086354008465094, -74.0446265581499], [14.839939161912923,
+        -73.78920211583977], [13.695876504409, -73.59822531089623], [13.477822753241298,
+        -73.3415221773463], [13.266480846583704, -73.08475689639889], [13.06155108332814,
+        -72.8279428100192], [12.002294898783703, -72.62782213650851], [11.821488340607232,
+        -72.37006964211312], [11.645974248483242, -72.11232920680408], [11.475526751423047,
+        -71.85461085202671], [11.30993247402023, -71.59692416898362], [10.341645294478894,
+        -71.38823899801764], [10.195988247286778, -71.1299264932637], [10.054335599994374,
+        -70.8716909895011], [9.916526120907236, -70.61353988424236], [9.782407031807281,
+        -70.35548030417341], [8.892548708248114, -70.13967510612054], [8.775055744479687,
+        -69.88123447367722], [8.6606036708298, -69.62291980738651], [8.54907682041869,
+        -69.36473676577188], [8.440365275506622, -69.10669083440413], [7.618546487568949,
+        -68.88495021047547], [7.523820438638609, -68.6267178734009], [7.4314079711725185,
+        -68.36864934743532], [7.341225811364154, -68.11074912204337], [7.253194612725338,
+        -67.85302157421036], [6.490771634475664, -67.62632803732144], [6.414601807339693,
+        -67.3685711872106], [6.3401917459099195, -67.1110081332794], [6.26748140484932,
+        -66.8536425667226], [5.548466293718093, -66.62293548327438], [5.48615642500431,
+        -66.36565537326446], [5.42522636842034, -66.10859020999438], [5.365630926639824,
+        -65.85174318350037], [5.307326849331162, -65.59511743017724], [4.635463426902618,
+        -65.36089272365531], [4.586098896170881, -65.10446172729111], [4.537772507906652,
+        -64.84826630593643], [4.490451921116346, -64.59230924062011], [4.4441061216526805,
+        -64.33659327408098], [3.814074834290352, -64.09946127722331], [3.7754658242898245,
+        -63.844031643071446], [3.737629543410094, -63.58885503643587], [3.7005430551783434,
+        -63.333933942608965], [3.6641843207407305, -63.07927081801041], [3.071462117070382,
+        -62.83975699233896], [3.0418421566183724, -62.5854578194535], [3.0127875041833363,
+        -62.33142673224167], [2.9842821435933615, -62.07766599580714], [2.95631065750365,
+        -61.82417785207416], [2.397028530059572, -61.58273830652679], [2.374961515761356,
+        -61.32968060346965], [2.3532968661082805, -61.07690420224142], [2.3320236816230704,
+        -60.82441119827979], [2.3111314527614013, -60.57220366719863], [1.7819605903266051,
+        -60.3292372829068], [1.7662704860090344, -60.07751769214228], [1.7508541865428242,
+        -59.826091171270406], [1.7357045889283995, -59.57495967986407], [1.7208148336728755,
+        -59.32412515956713], [1.2188752351312928, -59.07998314923488], [1.208592432026876,
+        -58.82968671823674], [1.198481650118481, -58.57969396033447], [1.1885386092088197,
+        -58.330006721804246], [1.1787591699112454, -58.08062683198462], [1.1691393279074305,
+        -57.83155610327865], [0.695865939508792, -57.586822607006035], [0.6902771978651003,
+        -57.33833818777436], [0.6847775070091302, -57.09016883317851], [0.679364755465258,
+        -56.84231627470229], [0.6740368979844789, -56.594782227323556], [0.222939651197521,
+        -56.349491050241305], [0.221218126664894, -56.10258176402089], [0.2195229852596299,
+        -55.85599628775483], [0.2178536250971774, -55.609736264645726], [0.0, -55.362112826988344],
+        [0.0, -55.236431157035554], [0.0, -55.11819906879762]]], [[[359.7854100688706,
+        -55.11819906879762], [360.0, -55.11819906879762], [360.0, -55.236431157035554],
+        [360.0, -55.362112826988344], [359.7854100688706, -55.11819906879762]]]]},
+        "links": [{"rel": "parent", "href": "../collection.json", "type": "application/json"},
+        {"rel": "root", "href": "../../../catalog.json", "type": "application/json",
+        "title": "Photogrammetrically controlled Galileo, Voyager 1, and Voyager 2
+        data."}], "assets": {"thumbnail": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/spola/10ESGLOBAL01/10ESGLOBAL01.jpg",
+        "type": "image/jpeg", "title": "Image Thumbnail", "key": "thumbnail", "roles":
+        ["thumbnail"]}, "image": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/spola/10ESGLOBAL01/10ESGLOBAL01.tif",
+        "type": "image/tiff; application=geotiff", "title": "Controlled Image Mosaic",
+        "key": "image", "roles": ["data"]}, "fgdc_metadata": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/spola/10ESGLOBAL01/10ESGLOBAL01.xml",
+        "type": "application/xml", "title": "FGDC Metadata", "key": "fgdc_metadata",
+        "roles": ["metadata"]}, "PAM_pds_label": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/spola/10ESGLOBAL01/10ESGLOBAL01.tif.aux.xml",
+        "type": "text/plain", "title": "Supplemental XML Metadata", "key": "PAM_pds_label",
+        "roles": ["metadata"]}, "provenance": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/spola/10ESGLOBAL01/provenance.txt",
+        "type": "text/plain", "title": "Provenance", "key": "provenance", "roles":
+        ["metadata"]}, "isis_label": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_mosaics/spola/10ESGLOBAL01/10ESGLOBAL01.isis.lbl",
+        "type": "text/plain", "title": "ISIS Label", "key": "isis_label", "roles":
+        ["metadata"]}}, "bbox": [0.0, -82.71140361982187, 360.0, -54.69128069664996],
+        "stac_extensions": ["https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/datacube/v1.0.0/schema.json", "https://stac-extensions.github.io/view/v1.0.0/schema.json",
+        "https://raw.githubusercontent.com/thareUSGS/ssys/main/json-schema/schema.json"]}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '54418'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 May 2025 13:37:03 GMT
+      ETag:
+      - '"8e47c3d46c6869991a7975e5fa31f9d9"'
+      Last-Modified:
+      - Thu, 05 May 2022 15:07:33 GMT
+      Server:
+      - AmazonS3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://asc-jupiter.s3.us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/equi/collection.json
+  response:
+    body:
+      string: '{"id": "usgs_controlled_images_voy1_voy2_galileo_equi", "stac_version":
+        "1.0.0", "type": "Collection", "description": "The Solid State Imager (SSI)
+        on NASA''s Galileo spacecraft acquired more than 500 images of Jupiter''s
+        moon, Europa, providing the only moderate- to high-resolution images of the
+        moon''s surface. Images were acquired as observation sequences during each
+        orbit that targeted the moon. Each of these observation sequences consists
+        of between 1 and 19 images acquired close in time, that typically overlap,
+        have consistent illumination, and similar pixel scale. The observations vary
+        from relatively low-resolution hemispherical imaging, to high-resolution targeted
+        images that cover a small portion of the surface. Here we provide average
+        mosaics of each of the individual observation sequences acquired by the Galileo
+        spacecraft. These observation mosaics were constructed from a set of 481 Galileo
+        images that were photogrammetrically controlled globally (along with 221 Voyager
+        1 and 2 images) to improve their relative locations on Europa''s surface.
+        The 92 observation mosaics provide users with nearly the entire Galileo Europa
+        imaging dataset at its native resolution and with improved relative image
+        locations.The Solid State Imager (SSI) on NASA''s Galileo spacecraft provided
+        the only moderate- to high-resolution images of Jupiter''s moon, Europa. Unfortunately,
+        uncertainty in the position and pointing of the spacecraft, as well as the
+        position and orientation of Europa, when the images were acquired resulted
+        in significant errors in image locations on the surface. The result of these
+        errors is that images acquired during different Galileo orbits, or even at
+        different times during the same orbit, are significantly misaligned (errors
+        of up to 100 km on the surface).Previous work has generated global mosaics
+        of Galileo and Voyager images that photogrammetrically control a subset of
+        the available images to correct their relative locations. However, these efforts
+        result in a \"static\" mosaic that is projected to a consistent pixel scale,
+        and only use a fraction of the dataset (e.g., high resolution images are not
+        included). The purpose of this current dataset is to increase the usability
+        of the entire Galileo image set by photogrammetrically improving the locations
+        of nearly every Europa image acquired by Galileo, and making them available
+        to the community at their native resolution and in easy-to-use regional mosaics
+        based on their acquisition time.The dataset therefore provides a set of image
+        mosaics that can be used for scientific analysis and mission planning activities.",
+        "links": [{"rel": "root", "href": "../../../../catalog.json", "type": "application/json"},
+        {"rel": "parent", "href": "../catalog.json", "type": "application/json"},
+        {"rel": "item", "href": "./s0349875100/s0349875100.json", "type": "application/json",
+        "title": "Observation: s0349875100"}], "title": "Equirectangular Projection",
+        "extent": {"spatial": {"bbox": [[-180, -90, 180, 90]]}, "temporal": {"interval":
+        [["1997-12-16T12:06:15Z", "2000-05-22T23:52:48Z"]]}}, "summaries": {"ssys:targets":
+        ["europa"], "instruments": ["Solid State Imaging System"], "missions": ["Galileo
+        Orbiter"]}, "license": "PDDL-1.0"}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '60283'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 May 2025 13:37:07 GMT
+      ETag:
+      - '"8cc93eb761a1a4d858023586a1c7ca37"'
+      Last-Modified:
+      - Sat, 21 May 2022 14:17:47 GMT
+      Server:
+      - AmazonS3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://asc-jupiter.s3.us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/equi/s0349875100/s0349875100.json
+  response:
+    body:
+      string: '{"type": "Feature", "stac_version": "1.0.0", "id": "s0349875100", "properties":
+        {"title": "Observation: s0349875100", "description": "The Solid State Imager
+        (SSI) on NASA''s Galileo spacecraft acquired more than 500 images of Jupiter''s
+        moon, Europa, providing the only moderate- to high-resolution images of the
+        moon''s surface. These images vary from relatively low-resolution hemispherical
+        imaging, to high-resolution targeted images that cover a small portion of
+        the surface. Here we provide a set of 481 minimally processed, projected (level
+        2) Galileo images with photogrammetrically improved locations on Europa''s
+        surface. These individual images were subsequently used as input into a set
+        of 92 observation mosaics that are also available through the USGS. These
+        images provide users with nearly the entire Galileo Europa imaging dataset
+        at its native resolution and with improved relative image locations. The Solid
+        State Imager (SSI) on NASA''s Galileo spacecraft provided the only moderate-
+        to high-resolution images of Jupiter''s moon, Europa. Unfortunately, uncertainty
+        in the position and pointing of the spacecraft, as well as the position and
+        orientation of Europa, when the images were acquired resulted in significant
+        errors in image locations on the surface. The result of these errors is that
+        images acquired during different Galileo orbits, or even at different times
+        during the same orbit, are significantly misaligned (errors of up to 100 km
+        on the surface). Previous work has generated global mosaics of Galileo and
+        Voyager images that photogrammetrically control a subset of the available
+        images to correct their relative locations. However, these efforts result
+        in a \"static\" mosaic that is projected to a consistent pixel scale, and
+        only use a fraction of the dataset (e.g., high resolution images are not included).
+        The purpose of this current dataset is to increase the usability of the entire
+        Galileo image set by photogrammetrically improving the locations of nearly
+        every Europa image acquired by Galileo, and making them available to the community
+        projected at their native resolution. The dataset therefore provides a set
+        of individual images that can be used for scientific analysis and mission
+        planning activities.", "missions": "Galileo Orbiter", "instruments": ["SOLID
+        STATE IMAGING SYSTEM"], "gsd": 1570.0, "license": "PDDL-1.0", "proj:epsg":
+        null, "proj:wkt2": "\"PROJCS[\\\"Equirectangular EUROPA\\\",GEOGCS[\\\"GCS_EUROPA\\\",DATUM[\\\"D_EUROPA\\\",SPHEROID[\\\"EUROPA_localRadius\\\",1560800,0]],PRIMEM[\\\"Reference_Meridian\\\",0],UNIT[\\\"degree\\\",0.0174532925199433,AUTHORITY[\\\"EPSG\\\",\\\"9122\\\"]]],PROJECTION[\\\"Equirectangular\\\"],PARAMETER[\\\"standard_parallel_1\\\",0],PARAMETER[\\\"central_meridian\\\",180],PARAMETER[\\\"false_easting\\\",0],PARAMETER[\\\"false_northing\\\",0],UNIT[\\\"metre\\\",1,AUTHORITY[\\\"EPSG\\\",\\\"9001\\\"]],AXIS[\\\"Easting\\\",EAST],AXIS[\\\"Northing\\\",NORTH]]\"",
+        "proj:projjson": {"$schema": "https://proj.org/schemas/v0.2/projjson.schema.json",
+        "type": "ProjectedCRS", "name": "unknown", "base_crs": {"name": "unknown",
+        "datum": {"type": "GeodeticReferenceFrame", "name": "unknown", "ellipsoid":
+        {"name": "unknown", "radius": 1560800}, "prime_meridian": {"name": "Reference
+        meridian", "longitude": 0}}, "coordinate_system": {"subtype": "ellipsoidal",
+        "axis": [{"name": "Longitude", "abbreviation": "lon", "direction": "east",
+        "unit": "degree"}, {"name": "Latitude", "abbreviation": "lat", "direction":
+        "north", "unit": "degree"}]}}, "conversion": {"name": "unknown", "method":
+        {"name": "Equidistant Cylindrical (Spherical)", "id": {"authority": "EPSG",
+        "code": 1029}}, "parameters": [{"name": "Latitude of 1st standard parallel",
+        "value": 0, "unit": "degree", "id": {"authority": "EPSG", "code": 8823}},
+        {"name": "Latitude of natural origin", "value": 0, "unit": "degree", "id":
+        {"authority": "EPSG", "code": 8801}}, {"name": "Longitude of natural origin",
+        "value": 180, "unit": "degree", "id": {"authority": "EPSG", "code": 8802}},
+        {"name": "False easting", "value": 0, "unit": "metre", "id": {"authority":
+        "EPSG", "code": 8806}}, {"name": "False northing", "value": 0, "unit": "metre",
+        "id": {"authority": "EPSG", "code": 8807}}]}, "coordinate_system": {"subtype":
+        "Cartesian", "axis": [{"name": "Easting", "abbreviation": "E", "direction":
+        "east", "unit": "metre"}, {"name": "Northing", "abbreviation": "N", "direction":
+        "north", "unit": "metre"}]}}, "proj:bbox": [0.0, 27.05893036634143, 360.0,
+        89.9947172886946], "proj:centroid": {"lat": 71.14064687470078, "lon": -178.41174942871754},
+        "proj:shape": [1163, 6247], "proj:transform": [-4904680.0, 1570.0, 0.0, 2452340.0,
+        0.0, -1570.0], "cube:dimensions": {"x": {"type": "spatial", "axis": "x", "extent":
+        [0.0, 360.0]}, "y": {"type": "spatial", "axis": "y", "extent": [27.05893036634143,
+        89.9947172886946]}}, "view:off_nadir": 34.040828362601, "view:azimuth": 296.79056095268,
+        "view:sun_azimuth": 222.3319575898, "ssys:targets": ["Europa"], "datetime":
+        "1996-06-28T01:43:04.667000Z"}, "geometry": {"type": "MultiPolygon", "coordinates":
+        [[[[0.0, 89.9947172886946], [9.145475887073246, 89.9947172886946], [18.309203103789514,
+        89.9947172886946], [27.472930320505725, 89.9947172886946], [36.63665753722205,
+        89.9947172886946], [45.80038475393826, 89.9947172886946], [54.96411197065453,
+        89.9947172886946], [64.1278391873708, 89.9947172886946], [73.29156640408706,
+        89.9947172886946], [82.45529362080333, 89.9947172886946], [91.6190208375196,
+        89.9947172886946], [100.78274805423587, 89.9947172886946], [109.94647527095208,
+        89.9947172886946], [119.11020248766835, 89.9947172886946], [128.2739297043846,
+        89.9947172886946], [137.43765692110088, 89.9947172886946], [146.60138413781715,
+        89.9947172886946], [155.76511135453347, 89.9947172886946], [164.92883857124968,
+        89.9947172886946], [174.0925657879659, 89.9947172886946], [183.25629300468222,
+        89.9947172886946], [192.42002022139843, 89.9947172886946], [201.58374743811464,
+        89.9947172886946], [210.74747465483097, 89.9947172886946], [219.9112018715473,
+        89.9947172886946], [229.0749290882635, 89.9947172886946], [238.2386563049797,
+        89.9947172886946], [247.40238352169604, 89.9947172886946], [256.56611073841236,
+        89.9947172886946], [265.7298379551286, 89.9947172886946], [274.8935651718448,
+        89.9947172886946], [284.0572923885611, 89.9947172886946], [293.2210196052773,
+        89.9947172886946], [302.38474682199353, 89.9947172886946], [311.54847403870986,
+        89.9947172886946], [320.7122012554262, 89.9947172886946], [329.8759284721425,
+        89.9947172886946], [339.0396556888586, 89.9947172886946], [348.2033829055749,
+        89.9947172886946], [357.40625740837174, 89.9947172886946], [348.22647266921035,
+        83.7126652973608], [339.10732034130274, 82.61762871171547], [330.01719419139295,
+        80.54282254944009], [320.8725569367376, 74.37603756712161], [311.7216382794858,
+        66.30682117210414], [302.90426187000446, 65.43682053951984], [293.7973608161358,
+        63.88671118465096], [284.7476149229742, 61.509823709556166], [275.58516722593663,
+        65.55811137745114], [266.4102032882157, 67.92108506226486], [257.2530006191796,
+        69.07375515241786], [248.09398557578788, 69.41955617946374], [239.2808931639148,
+        69.07375515241786], [230.23857698879897, 67.92108506226486], [221.14314075654352,
+        65.61574488195889], [212.00540593724452, 61.06269802585457], [204.58068967251245,
+        51.89685193029612], [195.7290358371174, 45.38638479977394], [186.60721767843756,
+        44.46424872765155], [177.4483993091086, 42.79287709692972], [168.34775987177443,
+        40.3146364031008], [159.19003235742014, 36.91425963714947], [150.09058215913308,
+        32.534113294568115], [140.9465737570556, 27.05893036634143], [131.78957347935125,
+        34.72418646585876], [122.5854303145054, 42.101275042837926], [113.43293981879378,
+        47.51882446655698], [104.27791199898434, 51.380269268569485], [95.13466461248618,
+        54.089043980428954], [87.34435468243339, 55.59875181863252], [87.7575760355071,
+        64.8088758188518], [86.95070697239998, 73.9149695310604], [77.75943166547881,
+        80.48518904493245], [68.61310324257619, 82.61762871171547], [59.453906961748885,
+        83.7126652973608], [50.292354594259336, 84.4042673514526], [41.130258514463094,
+        84.80770188300615], [31.967618722360214, 84.9806023965291], [22.804616455386167,
+        85.03823590103674], [17.09980712337307, 84.9806023965291], [8.167290736683924,
+        84.80770188300615], [0.2952894338733927, 84.5256964332769], [0.0, 89.67636346019293],
+        [0.0, 89.9947172886946]]], [[[359.981748670357, 89.9947172886946], [360.0,
+        89.9947172886946], [360.0, 89.67636346019293], [359.981748670357, 89.9947172886946]]]]},
+        "links": [{"rel": "parent", "href": "../collection.json", "type": "application/json"},
+        {"rel": "root", "href": "../../../catalog.json", "type": "application/json"}],
+        "assets": {"thumbnail": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/equi/s0349875100/s0349875100.jpg",
+        "type": "image/jpeg", "title": "Image Thumbnail", "key": "thumbnail", "roles":
+        ["thumbnail"]}, "image": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/equi/s0349875100/s0349875100.tif",
+        "type": "image/tiff; application=geotiff", "title": "Controlled Image", "key":
+        "image", "roles": ["data"]}, "photometrically_trimmed_image": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/equi/s0349875100/s0349875100.photr.tif",
+        "type": "image/tiff; application=geotiff", "title": "Photometrically Trimmed
+        Image", "key": "photometrically_trimmed_image", "roles": ["data"]}, "fgdc_metadata":
+        {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/equi/s0349875100/s0349875100.xml",
+        "type": "application/xml", "title": "FGDC Metadata", "key": "fgdc_metadata",
+        "roles": ["metadata"]}, "PAM_pds_label": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/equi/s0349875100/s0349875100.tif.aux.xml",
+        "type": "text/plain", "title": "Supplemental XML Metadata", "key": "PAM_pds_label",
+        "roles": ["metadata"]}, "provenance": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/equi/s0349875100/provenance.txt",
+        "type": "text/plain", "title": "Provenance", "key": "provenance", "roles":
+        ["metadata"]}, "isis_label": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/equi/s0349875100/s0349875100.isis.lbl",
+        "type": "text/plain", "title": "ISIS Label", "key": "isis_label", "roles":
+        ["metadata"]}, "pds3label": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/equi/s0349875100/s0349875100.lbl",
+        "type": "text/plain", "title": "PDS Label", "key": "pds3label", "roles": ["metadata"]}},
+        "bbox": [0.0, 27.05893036634143, 360.0, 89.9947172886946], "stac_extensions":
+        ["https://stac-extensions.github.io/projection/v1.0.0/schema.json", "https://stac-extensions.github.io/datacube/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/view/v1.0.0/schema.json", "https://raw.githubusercontent.com/thareUSGS/ssys/main/json-schema/schema.json"]}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '17407'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 May 2025 13:37:07 GMT
+      ETag:
+      - '"848201525c5d00808ab467b00490f8ed"'
+      Last-Modified:
+      - Tue, 15 Feb 2022 18:29:58 GMT
+      Server:
+      - AmazonS3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://asc-jupiter.s3.us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/npola/collection.json
+  response:
+    body:
+      string: '{"id": "usgs_controlled_images_voy1_voy2_galileo_npola", "stac_version":
+        "1.0.0", "type": "Collection", "description": "The Solid State Imager (SSI)
+        on NASA''s Galileo spacecraft acquired more than 500 images of Jupiter''s
+        moon, Europa, providing the only moderate- to high-resolution images of the
+        moon''s surface. Images were acquired as observation sequences during each
+        orbit that targeted the moon. Each of these observation sequences consists
+        of between 1 and 19 images acquired close in time, that typically overlap,
+        have consistent illumination, and similar pixel scale. The observations vary
+        from relatively low-resolution hemispherical imaging, to high-resolution targeted
+        images that cover a small portion of the surface. Here we provide average
+        mosaics of each of the individual observation sequences acquired by the Galileo
+        spacecraft. These observation mosaics were constructed from a set of 481 Galileo
+        images that were photogrammetrically controlled globally (along with 221 Voyager
+        1 and 2 images) to improve their relative locations on Europa''s surface.
+        The 92 observation mosaics provide users with nearly the entire Galileo Europa
+        imaging dataset at its native resolution and with improved relative image
+        locations.The Solid State Imager (SSI) on NASA''s Galileo spacecraft provided
+        the only moderate- to high-resolution images of Jupiter''s moon, Europa. Unfortunately,
+        uncertainty in the position and pointing of the spacecraft, as well as the
+        position and orientation of Europa, when the images were acquired resulted
+        in significant errors in image locations on the surface. The result of these
+        errors is that images acquired during different Galileo orbits, or even at
+        different times during the same orbit, are significantly misaligned (errors
+        of up to 100 km on the surface).Previous work has generated global mosaics
+        of Galileo and Voyager images that photogrammetrically control a subset of
+        the available images to correct their relative locations. However, these efforts
+        result in a \"static\" mosaic that is projected to a consistent pixel scale,
+        and only use a fraction of the dataset (e.g., high resolution images are not
+        included). The purpose of this current dataset is to increase the usability
+        of the entire Galileo image set by photogrammetrically improving the locations
+        of nearly every Europa image acquired by Galileo, and making them available
+        to the community at their native resolution and in easy-to-use regional mosaics
+        based on their acquisition time.The dataset therefore provides a set of image
+        mosaics that can be used for scientific analysis and mission planning activities.",
+        "links": [{"rel": "root", "href": "../../../../catalog.json", "type": "application/json"},
+        {"rel": "parent", "href": "../catalog.json", "type": "application/json"},
+        {"rel": "item", "href": "./s0349875100/s0349875100.json", "type": "application/json",
+        "title": "Observation: s0349875100"}], "title": "North Polar Stereographic
+        Projection", "extent": {"spatial": {"bbox": [[-180, -90, 180, 90]]}, "temporal":
+        {"interval": [["1997-12-16T12:06:15Z", "2000-05-22T23:52:48Z"]]}}, "summaries":
+        {"ssys:targets": ["europa"], "instruments": ["Solid State Imaging System"],
+        "missions": ["Galileo Orbiter"]}, "license": "PDDL-1.0"}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '9168'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 May 2025 13:39:31 GMT
+      ETag:
+      - '"f29748d5315eeae391b50f3e61b4d245"'
+      Last-Modified:
+      - Sat, 21 May 2022 14:17:48 GMT
+      Server:
+      - AmazonS3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://asc-jupiter.s3.us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/npola/s0349875100/s0349875100.json
+  response:
+    body:
+      string: '{"type": "Feature", "stac_version": "1.0.0", "id": "s0349875100", "properties":
+        {"title": "Observation: s0349875100", "description": "The Solid State Imager
+        (SSI) on NASA''s Galileo spacecraft acquired more than 500 images of Jupiter''s
+        moon, Europa, providing the only moderate- to high-resolution images of the
+        moon''s surface. These images vary from relatively low-resolution hemispherical
+        imaging, to high-resolution targeted images that cover a small portion of
+        the surface. Here we provide a set of 481 minimally processed, projected (level
+        2) Galileo images with photogrammetrically improved locations on Europa''s
+        surface. These individual images were subsequently used as input into a set
+        of 92 observation mosaics that are also available through the USGS. These
+        images provide users with nearly the entire Galileo Europa imaging dataset
+        at its native resolution and with improved relative image locations. The Solid
+        State Imager (SSI) on NASA''s Galileo spacecraft provided the only moderate-
+        to high-resolution images of Jupiter''s moon, Europa. Unfortunately, uncertainty
+        in the position and pointing of the spacecraft, as well as the position and
+        orientation of Europa, when the images were acquired resulted in significant
+        errors in image locations on the surface. The result of these errors is that
+        images acquired during different Galileo orbits, or even at different times
+        during the same orbit, are significantly misaligned (errors of up to 100 km
+        on the surface). Previous work has generated global mosaics of Galileo and
+        Voyager images that photogrammetrically control a subset of the available
+        images to correct their relative locations. However, these efforts result
+        in a \"static\" mosaic that is projected to a consistent pixel scale, and
+        only use a fraction of the dataset (e.g., high resolution images are not included).
+        The purpose of this current dataset is to increase the usability of the entire
+        Galileo image set by photogrammetrically improving the locations of nearly
+        every Europa image acquired by Galileo, and making them available to the community
+        projected at their native resolution. The dataset therefore provides a set
+        of individual images that can be used for scientific analysis and mission
+        planning activities.", "missions": "Galileo Orbiter", "instruments": ["SOLID
+        STATE IMAGING SYSTEM"], "gsd": 1570.0, "license": "PDDL-1.0", "proj:epsg":
+        null, "proj:wkt2": "\"PROJCS[\\\"PolarStereographic Europa\\\",GEOGCS[\\\"GCS_Europa\\\",DATUM[\\\"D_Europa\\\",SPHEROID[\\\"Europa_polarRadius\\\",1560800,0]],PRIMEM[\\\"Reference_Meridian\\\",0],UNIT[\\\"degree\\\",0.0174532925199433,AUTHORITY[\\\"EPSG\\\",\\\"9122\\\"]]],PROJECTION[\\\"Polar_Stereographic\\\"],PARAMETER[\\\"latitude_of_origin\\\",90],PARAMETER[\\\"central_meridian\\\",0],PARAMETER[\\\"scale_factor\\\",1],PARAMETER[\\\"false_easting\\\",0],PARAMETER[\\\"false_northing\\\",0],UNIT[\\\"metre\\\",1],AXIS[\\\"Easting\\\",SOUTH],AXIS[\\\"Northing\\\",SOUTH]]\"",
+        "proj:projjson": {"$schema": "https://proj.org/schemas/v0.2/projjson.schema.json",
+        "type": "ProjectedCRS", "name": "unknown", "base_crs": {"name": "unknown",
+        "datum": {"type": "GeodeticReferenceFrame", "name": "unknown", "ellipsoid":
+        {"name": "unknown", "radius": 1560800}, "prime_meridian": {"name": "Reference
+        meridian", "longitude": 0}}, "coordinate_system": {"subtype": "ellipsoidal",
+        "axis": [{"name": "Longitude", "abbreviation": "lon", "direction": "east",
+        "unit": "degree"}, {"name": "Latitude", "abbreviation": "lat", "direction":
+        "north", "unit": "degree"}]}}, "conversion": {"name": "unknown", "method":
+        {"name": "Polar Stereographic (variant A)", "id": {"authority": "EPSG", "code":
+        9810}}, "parameters": [{"name": "Latitude of natural origin", "value": 90,
+        "unit": "degree", "id": {"authority": "EPSG", "code": 8801}}, {"name": "Longitude
+        of natural origin", "value": 0, "unit": "degree", "id": {"authority": "EPSG",
+        "code": 8802}}, {"name": "Scale factor at natural origin", "value": 1, "unit":
+        "unity", "id": {"authority": "EPSG", "code": 8805}}, {"name": "False easting",
+        "value": 0, "unit": "metre", "id": {"authority": "EPSG", "code": 8806}}, {"name":
+        "False northing", "value": 0, "unit": "metre", "id": {"authority": "EPSG",
+        "code": 8807}}]}, "coordinate_system": {"subtype": "Cartesian", "axis": [{"name":
+        "Easting", "abbreviation": "E", "direction": "south", "unit": "metre"}, {"name":
+        "Northing", "abbreviation": "N", "direction": "south", "unit": "metre"}]}},
+        "proj:bbox": [55.610072650830965, 22.985060605459946, 201.02308549568045,
+        87.51305217999389], "proj:centroid": {"lat": 62.48098943608254, "lon": 142.38602173638756},
+        "proj:shape": [1254, 1254], "proj:transform": [-984390.0, 1570.0, 0.0, 984390.0,
+        0.0, -1570.0], "cube:dimensions": {"x": {"type": "spatial", "axis": "x", "extent":
+        [55.610072650830965, 201.02308549568045]}, "y": {"type": "spatial", "axis":
+        "y", "extent": [22.985060605459946, 87.51305217999389]}}, "view:off_nadir":
+        34.040828362601, "view:azimuth": 296.79056095268, "view:sun_azimuth": 222.3319575898,
+        "ssys:targets": ["Europa"], "datetime": "1996-06-28T01:43:04.667000Z"}, "geometry":
+        {"type": "MultiPolygon", "coordinates": [[[[84.46478512841067, 55.91559809690143],
+        [85.06325027207515, 57.34940156704484], [85.60732664563545, 58.765753939509246],
+        [86.1044450972136, 60.193955679282986], [86.54857383234045, 61.63590072150877],
+        [86.93163120916094, 63.09356820300242], [87.24278609770248, 64.56903535167335],
+        [87.46743131671734, 66.06448460819917], [87.58564523720331, 67.58219956350534],
+        [87.56982754228233, 69.12453925667448], [87.38095733924058, 70.6938704478851],
+        [86.96246585777607, 72.2924171553098], [86.22980236319128, 73.92194325847274],
+        [85.05185321426441, 75.58308597418129], [83.21615095282388, 77.27392344730112],
+        [80.36016811029718, 78.98675884341334], [75.82915969989048, 80.7004539924107],
+        [68.38142476343168, 82.36091121598072], [55.610072650830965, 83.83712683091714],
+        [55.8762211282909, 85.5056454478616], [80.94220985470301, 87.15001459673373],
+        [128.97209642505368, 87.51305217999389], [162.56530466637182, 86.35078562014412],
+        [176.86255959170944, 84.68127811232704], [183.81915130220028, 82.93927183686398],
+        [187.99215341032158, 81.13382615255708], [190.6901134144887, 79.34346818417065],
+        [192.57212312582305, 77.58005109666753], [193.95851078648013, 75.84803222981976],
+        [194.99267955192903, 74.20163317180359], [195.8161680577248, 72.587821625931],
+        [196.46690865330802, 71.05941730419708], [197.05549672894256, 69.42765187034246],
+        [197.5501320414114, 67.82453786712647], [197.94437340525877, 66.35886429498474],
+        [198.31700248158378, 64.78714414515194], [198.6308623074419, 63.29543681131355],
+        [198.88813166865847, 61.937970764003765], [199.14008999794422, 60.471992587352794],
+        [199.35762558800178, 59.08164010552124], [199.56437615692303, 57.63799309759081],
+        [199.73769126824843, 56.32421806875282], [199.91825273916092, 54.842517833726184],
+        [200.05859655366817, 53.602265663785076], [200.20745160882532, 52.19287351495068],
+        [200.32877147017913, 50.9657189857773], [200.45333244278223, 49.62546377924017],
+        [200.54525226208753, 48.57992927124829], [200.6422610478164, 47.42043679017544],
+        [200.69803328930468, 46.726164857598405], [200.760966738027, 45.917189644894954],
+        [200.8344995385999, 44.93596586779247], [200.9253216036684, 43.66736332337547],
+        [201.02308549568045, 42.22703840837555], [200.99278014140972, 41.56322125097464],
+        [197.9254286442795, 41.459210336008134], [195.03505658753906, 41.284931675661035],
+        [192.27797548721406, 41.049053941701686], [189.64114733227282, 40.75902163557498],
+        [187.11380224747302, 40.42095843889261], [184.68683986774852, 40.03998228772128],
+        [182.35242297107314, 39.6204256962703], [180.10369405407667, 39.16599453576804],
+        [177.93457287442013, 38.67988549487374], [175.8396086576003, 38.16487498947454],
+        [173.81387000658907, 37.62338783418768], [171.85286130628685, 37.05755123562118],
+        [169.9524580605353, 36.46923791705533], [168.10885596637652, 35.8601010419009],
+        [166.31853009939115, 35.23160284058653], [164.57820164332546, 34.58503832554594],
+        [162.88481032357512, 33.921555117770374], [161.23549120920077, 33.24217015308539],
+        [159.62755490329417, 32.54778385284555], [158.05847039421576, 31.83919220993409],
+        [156.52585002145247, 31.11709714192513], [155.0274361409467, 30.382115388916095],
+        [153.56108917037938, 29.634786176994275], [152.1247767649282, 28.87557782469179],
+        [150.71656392568573, 28.104893435724563], [149.33460388110842, 27.323075794298326],
+        [147.97712961011007, 26.53041155761832], [146.6424458963302, 25.727134822517524],
+        [145.32892181829027, 24.913430128484055], [144.03498359118765, 24.089434946944188],
+        [142.75910768350255, 23.255241695977453], [142.31664825963819, 22.985060605459946],
+        [141.38226127049103, 24.14848584769235], [140.4360456483748, 25.29953722779387],
+        [139.4702991911388, 26.44590891971687], [138.48309580735076, 27.58784377647904],
+        [137.47238036403692, 28.72554697391425], [136.43595092693317, 29.85918390545558],
+        [135.37143903192396, 30.988877342539556], [134.276287656168, 32.114703759520346],
+        [133.14772651116866, 33.23668869502532], [131.98274422602216, 34.35480098920423],
+        [130.77805692612802, 35.468945696603164], [129.53007264047102, 36.57895542561683],
+        [128.23485088811017, 37.684579794876306], [126.88805670184546, 38.785472621342926],
+        [125.48490824427662, 39.88117635995282], [124.02011705987412, 40.971103194757404],
+        [122.48781988892526, 42.054512029304036], [120.88150084984707, 43.13048042952919],
+        [119.19390268290033, 44.19787032260877], [117.41692565129699, 45.255285931885055],
+        [115.54151262993905, 46.301022006419004], [113.55751889388462, 47.33299984865068],
+        [111.45356516402201, 48.34868790449652], [109.21687257676727, 49.34500268113558],
+        [106.83307837857427, 50.318184382072424], [104.28603116144616, 51.2636397081784],
+        [101.55756397963317, 52.17574145003929], [98.6272418495901, 53.047570229664565],
+        [95.47207501699974, 53.870576996956444], [92.06617686095784, 54.634133620900386],
+        [88.38031662165218, 55.32491899025478], [84.46478512841067, 55.91559809690143]]]]},
+        "links": [{"rel": "parent", "href": "../collection.json", "type": "application/json"},
+        {"rel": "root", "href": "../../../catalog.json", "type": "application/json"}],
+        "assets": {"thumbnail": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/npola/s0349875100/s0349875100.jpg",
+        "type": "image/jpeg", "title": "Image Thumbnail", "key": "thumbnail", "roles":
+        ["thumbnail"]}, "image": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/npola/s0349875100/s0349875100.tif",
+        "type": "image/tiff; application=geotiff", "title": "Controlled Image", "key":
+        "image", "roles": ["data"]}, "photometrically_trimmed_image": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/npola/s0349875100/s0349875100.photr.tif",
+        "type": "image/tiff; application=geotiff", "title": "Photometrically Trimmed
+        Image", "key": "photometrically_trimmed_image", "roles": ["data"]}, "fgdc_metadata":
+        {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/npola/s0349875100/s0349875100.xml",
+        "type": "application/xml", "title": "FGDC Metadata", "key": "fgdc_metadata",
+        "roles": ["metadata"]}, "PAM_pds_label": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/npola/s0349875100/s0349875100.tif.aux.xml",
+        "type": "text/plain", "title": "Supplemental XML Metadata", "key": "PAM_pds_label",
+        "roles": ["metadata"]}, "provenance": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/npola/s0349875100/provenance.txt",
+        "type": "text/plain", "title": "Provenance", "key": "provenance", "roles":
+        ["metadata"]}, "isis_label": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/npola/s0349875100/s0349875100.isis.lbl",
+        "type": "text/plain", "title": "ISIS Label", "key": "isis_label", "roles":
+        ["metadata"]}, "pds3label": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/npola/s0349875100/s0349875100.lbl",
+        "type": "text/plain", "title": "PDS Label", "key": "pds3label", "roles": ["metadata"]}},
+        "bbox": [55.610072650830965, 22.985060605459946, 201.02308549568045, 87.51305217999389],
+        "stac_extensions": ["https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/datacube/v1.0.0/schema.json", "https://stac-extensions.github.io/view/v1.0.0/schema.json",
+        "https://raw.githubusercontent.com/thareUSGS/ssys/main/json-schema/schema.json"]}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '20301'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 May 2025 13:39:31 GMT
+      ETag:
+      - '"2220d2838a021dc2b0e2c912fd5507c1"'
+      Last-Modified:
+      - Tue, 15 Feb 2022 18:30:07 GMT
+      Server:
+      - AmazonS3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://asc-jupiter.s3.us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/spola/collection.json
+  response:
+    body:
+      string: '{"id": "usgs_controlled_images_voy1_voy2_galileo_spola", "stac_version":
+        "1.0.0", "type": "Collection", "description": "The Solid State Imager (SSI)
+        on NASA''s Galileo spacecraft acquired more than 500 images of Jupiter''s
+        moon, Europa, providing the only moderate- to high-resolution images of the
+        moon''s surface. Images were acquired as observation sequences during each
+        orbit that targeted the moon. Each of these observation sequences consists
+        of between 1 and 19 images acquired close in time, that typically overlap,
+        have consistent illumination, and similar pixel scale. The observations vary
+        from relatively low-resolution hemispherical imaging, to high-resolution targeted
+        images that cover a small portion of the surface. Here we provide average
+        mosaics of each of the individual observation sequences acquired by the Galileo
+        spacecraft. These observation mosaics were constructed from a set of 481 Galileo
+        images that were photogrammetrically controlled globally (along with 221 Voyager
+        1 and 2 images) to improve their relative locations on Europa''s surface.
+        The 92 observation mosaics provide users with nearly the entire Galileo Europa
+        imaging dataset at its native resolution and with improved relative image
+        locations.The Solid State Imager (SSI) on NASA''s Galileo spacecraft provided
+        the only moderate- to high-resolution images of Jupiter''s moon, Europa. Unfortunately,
+        uncertainty in the position and pointing of the spacecraft, as well as the
+        position and orientation of Europa, when the images were acquired resulted
+        in significant errors in image locations on the surface. The result of these
+        errors is that images acquired during different Galileo orbits, or even at
+        different times during the same orbit, are significantly misaligned (errors
+        of up to 100 km on the surface).Previous work has generated global mosaics
+        of Galileo and Voyager images that photogrammetrically control a subset of
+        the available images to correct their relative locations. However, these efforts
+        result in a \"static\" mosaic that is projected to a consistent pixel scale,
+        and only use a fraction of the dataset (e.g., high resolution images are not
+        included). The purpose of this current dataset is to increase the usability
+        of the entire Galileo image set by photogrammetrically improving the locations
+        of nearly every Europa image acquired by Galileo, and making them available
+        to the community at their native resolution and in easy-to-use regional mosaics
+        based on their acquisition time.The dataset therefore provides a set of image
+        mosaics that can be used for scientific analysis and mission planning activities.",
+        "links": [{"rel": "root", "href": "../../../../catalog.json", "type": "application/json"},
+        {"rel": "parent", "href": "../catalog.json", "type": "application/json"},
+        {"rel": "item", "href": "./s0360063900/s0360063900.json", "type": "application/json",
+        "title": "Observation: s0360063900"}], "title": "South Polar Stereographic
+        Projection", "extent": {"spatial": {"bbox": [[-180, -90, 180, 90]]}, "temporal":
+        {"interval": [["1997-12-16T12:06:15Z", "2000-05-22T23:52:48Z"]]}}, "summaries":
+        {"ssys:targets": ["europa"], "instruments": ["Solid State Imaging System"],
+        "missions": ["Galileo Orbiter"]}, "license": "PDDL-1.0"}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '9885'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 May 2025 13:39:46 GMT
+      ETag:
+      - '"f9c67a4a96aff49e4b9a6ce7fee80952"'
+      Last-Modified:
+      - Sat, 21 May 2022 14:17:48 GMT
+      Server:
+      - AmazonS3
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://asc-jupiter.s3.us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/spola/s0360063900/s0360063900.json
+  response:
+    body:
+      string: '{"type": "Feature", "stac_version": "1.0.0", "id": "s0360063900", "properties":
+        {"title": "Observation: s0360063900", "description": "The Solid State Imager
+        (SSI) on NASA''s Galileo spacecraft acquired more than 500 images of Jupiter''s
+        moon, Europa, providing the only moderate- to high-resolution images of the
+        moon''s surface. These images vary from relatively low-resolution hemispherical
+        imaging, to high-resolution targeted images that cover a small portion of
+        the surface. Here we provide a set of 481 minimally processed, projected (level
+        2) Galileo images with photogrammetrically improved locations on Europa''s
+        surface. These individual images were subsequently used as input into a set
+        of 92 observation mosaics that are also available through the USGS. These
+        images provide users with nearly the entire Galileo Europa imaging dataset
+        at its native resolution and with improved relative image locations. The Solid
+        State Imager (SSI) on NASA''s Galileo spacecraft provided the only moderate-
+        to high-resolution images of Jupiter''s moon, Europa. Unfortunately, uncertainty
+        in the position and pointing of the spacecraft, as well as the position and
+        orientation of Europa, when the images were acquired resulted in significant
+        errors in image locations on the surface. The result of these errors is that
+        images acquired during different Galileo orbits, or even at different times
+        during the same orbit, are significantly misaligned (errors of up to 100 km
+        on the surface). Previous work has generated global mosaics of Galileo and
+        Voyager images that photogrammetrically control a subset of the available
+        images to correct their relative locations. However, these efforts result
+        in a \"static\" mosaic that is projected to a consistent pixel scale, and
+        only use a fraction of the dataset (e.g., high resolution images are not included).
+        The purpose of this current dataset is to increase the usability of the entire
+        Galileo image set by photogrammetrically improving the locations of nearly
+        every Europa image acquired by Galileo, and making them available to the community
+        projected at their native resolution. The dataset therefore provides a set
+        of individual images that can be used for scientific analysis and mission
+        planning activities.", "missions": "Galileo Orbiter", "instruments": ["SOLID
+        STATE IMAGING SYSTEM"], "gsd": 6874.0, "license": "PDDL-1.0", "proj:epsg":
+        null, "proj:wkt2": "\"PROJCS[\\\"PolarStereographic Europa\\\",GEOGCS[\\\"GCS_Europa\\\",DATUM[\\\"D_Europa\\\",SPHEROID[\\\"Europa_polarRadius\\\",1560800,0]],PRIMEM[\\\"Reference_Meridian\\\",0],UNIT[\\\"degree\\\",0.0174532925199433,AUTHORITY[\\\"EPSG\\\",\\\"9122\\\"]]],PROJECTION[\\\"Polar_Stereographic\\\"],PARAMETER[\\\"latitude_of_origin\\\",-90],PARAMETER[\\\"central_meridian\\\",0],PARAMETER[\\\"scale_factor\\\",1],PARAMETER[\\\"false_easting\\\",0],PARAMETER[\\\"false_northing\\\",0],UNIT[\\\"metre\\\",1],AXIS[\\\"Easting\\\",NORTH],AXIS[\\\"Northing\\\",NORTH]]\"",
+        "proj:projjson": {"$schema": "https://proj.org/schemas/v0.2/projjson.schema.json",
+        "type": "ProjectedCRS", "name": "unknown", "base_crs": {"name": "unknown",
+        "datum": {"type": "GeodeticReferenceFrame", "name": "unknown", "ellipsoid":
+        {"name": "unknown", "radius": 1560800}, "prime_meridian": {"name": "Reference
+        meridian", "longitude": 0}}, "coordinate_system": {"subtype": "ellipsoidal",
+        "axis": [{"name": "Longitude", "abbreviation": "lon", "direction": "east",
+        "unit": "degree"}, {"name": "Latitude", "abbreviation": "lat", "direction":
+        "north", "unit": "degree"}]}}, "conversion": {"name": "unknown", "method":
+        {"name": "Polar Stereographic (variant A)", "id": {"authority": "EPSG", "code":
+        9810}}, "parameters": [{"name": "Latitude of natural origin", "value": -90,
+        "unit": "degree", "id": {"authority": "EPSG", "code": 8801}}, {"name": "Longitude
+        of natural origin", "value": 0, "unit": "degree", "id": {"authority": "EPSG",
+        "code": 8802}}, {"name": "Scale factor at natural origin", "value": 1, "unit":
+        "unity", "id": {"authority": "EPSG", "code": 8805}}, {"name": "False easting",
+        "value": 0, "unit": "metre", "id": {"authority": "EPSG", "code": 8806}}, {"name":
+        "False northing", "value": 0, "unit": "metre", "id": {"authority": "EPSG",
+        "code": 8807}}]}, "coordinate_system": {"subtype": "Cartesian", "axis": [{"name":
+        "Easting", "abbreviation": "E", "direction": "north", "unit": "metre"}, {"name":
+        "Northing", "abbreviation": "N", "direction": "north", "unit": "metre"}]}},
+        "proj:bbox": [0.0, -87.16526807263729, 360.0, -54.711786322972124], "proj:centroid":
+        {"lat": -70.57880064210065, "lon": 104.64057638816622}, "proj:shape": [287,
+        287], "proj:transform": [-989856.0, 6874.0, 0.0, 989856.0, 0.0, -6874.0],
+        "cube:dimensions": {"x": {"type": "spatial", "axis": "x", "extent": [0.0,
+        360.0]}, "y": {"type": "spatial", "axis": "y", "extent": [-87.16526807263729,
+        -54.711786322972124]}}, "view:off_nadir": 35.873560745512, "view:azimuth":
+        265.00239728631, "view:sun_azimuth": 29.908497074156, "ssys:targets": ["Europa"],
+        "datetime": "1996-09-07T14:43:05.915000Z"}, "geometry": {"type": "MultiPolygon",
+        "coordinates": [[[[0.0, -55.1549090469362], [0.6030911943805108, -55.1549090469362],
+        [1.8087393224920447, -55.14040519395912], [3.0127875041833363, -55.11142019517314],
+        [4.214178522734073, -55.06799931941947], [5.411869152317024, -55.01021010842804],
+        [6.65109602506368, -55.16619506287725], [7.8464621983981715, -55.079250070873115],
+        [9.09822914554752, -55.204924859040794], [10.286902285352369, -55.088897198174664],
+        [11.546690545927333, -55.1839395087684], [12.724355685422381, -55.039089704528514],
+        [13.987563972831538, -55.1033741715453], [15.255118703057803, -55.15168531360229],
+        [16.52579638992563, -55.183939508768404], [17.798355246958522, -55.20008067665337],
+        [19.071542398885526, -55.20008067665337], [20.344101255918417, -55.183939508768404],
+        [21.614778942786245, -55.151685313602286], [22.88233367301251, -55.1033741715453],
+        [24.145541960421667, -55.03908970452852], [25.57574044111493, -55.16619506287725],
+        [26.834043470774475, -55.06799931941948], [28.273523933687557, -55.156521054004536],
+        [29.521361834581626, -55.024646158919154], [30.963756532073546, -55.07442776263345],
+        [32.40961705446483, -55.10337417154529], [33.85711014166071, -55.111420195173146],
+        [35.30439007661755, -55.09854767562221], [36.74961277109452, -55.06478565519136],
+        [38.19094982038661, -55.01021010842803], [39.882685150027385, -55.111420195173146],
+        [41.31772593769472, -55.011813744206094], [43.01529688784643, -55.05996585527572],
+        [44.71635984424222, -55.079250070873115], [46.41792283145111, -55.06960629085843],
+        [48.116988599120134, -55.03106458663145], [49.55126127313963, -55.13879412234313],
+        [51.24631562099012, -55.04711713868833], [52.68844776990289, -55.10981080401001],
+        [53.81073298598494, -55.01662520615733], [55.254164677904214, -55.04230040014887],
+        [56.69893760880268, -55.04711713868833], [58.14321610919177, -55.03106458663145],
+        [59.03624346792651, -55.07442776263344], [60.478638165418374, -55.024646158919154],
+        [61.373549327050284, -55.047117138688314], [62.26946776212196, -55.06157236240832],
+        [63.165956529225525, -55.06799931941948], [64.06257701453984, -55.066392440868185],
+        [64.95889021754607, -55.056753119462385], [65.85445803957833, -55.039089704528514],
+        [66.74884456576632, -55.01341747241159], [68.0124450363038, -55.066392440868185],
+        [68.90499197479886, -55.021437500309325], [70.17096003704137, -55.04711713868832],
+        [71.4382908097503, -55.05675311946237], [72.70574561069174, -55.0503287612741],
+        [73.97208503057362, -55.02785518765819], [75.13941371122837, -54.97470323642514],
+        [75.62358202485387, -55.047117138688314], [76.78809935291866, -54.974703236425135],
+        [77.27564431457762, -55.039089704528514], [78.43542129370695, -54.947490269099866],
+        [78.92552830802987, -55.003796489328536], [80.11141030369993, -54.89643213248141],
+        [81.36036363238799, -55.013417472411575], [82.60297293049939, -54.88221755713517],
+        [83.71276998250903, -54.958750411008346], [84.58813084768298, -55.01021010842801],
+        [85.80050355977181, -54.953540854287354], [86.99772741210768, -54.99678328550968],
+        [88.19758076199673, -55.0256489406352], [89.39901736115206, -55.04009300709417],
+        [90.60098263884794, -55.040093007094164], [91.80241923800327, -55.0256489406352],
+        [93.00227258789232, -54.99678328550968], [94.19949644022819, -54.953540854287354],
+        [95.42615068770516, -54.894186368475715], [96.6709526742539, -54.93372161393318],
+        [97.85784852811457, -54.84670171401667], [99.10080487871994, -54.972128649086095],
+        [100.2810895386408, -54.856268595006476], [101.53195740594111, -54.951318264389805],
+        [102.70140649775391, -54.806874976699156], [104.0201355741948, -54.86218309988964],
+        [105.27845235255711, -54.91007695780512], [106.53982400122891, -54.9420519757935],
+        [107.80303570110107, -54.95805325733615], [109.06686194474298, -54.95805325733615],
+        [110.33007364461514, -54.942051975793504], [111.59144529328694, -54.91007695780512],
+        [112.84976207164925, -54.86218309988965], [114.1643049046848, -54.782829449273784],
+        [115.58344383989078, -54.909566543276995], [116.83195505162053, -54.81147427453203],
+        [118.26022586507048, -54.899981362994644], [119.49844935626527, -54.768518046966605],
+        [120.9864929513218, -54.79898275534196], [122.42030795297137, -54.82764416706015],
+        [123.85571499752166, -54.835610896157156], [125.29091418387435, -54.82286522097602],
+        [126.72410717292479, -54.78943548625224], [128.20549910567314, -54.711786322972124],
+        [129.8819880617168, -54.81271267650131], [131.3040990983066, -54.71337289282895],
+        [133.0347394280795, -54.73574870714798], [134.7191405853166, -54.754809829496324],
+        [136.4040272191043, -54.745277643213626], [138.13571852803074, -54.73268337443049],
+        [139.55708001750997, -54.84005997620503], [141.23682584774446, -54.748564997546424],
+        [142.67645723842855, -54.81602036365124], [143.78882796284762, -54.72317548367172],
+        [145.26296359646506, -54.76664132354181], [146.69569495841245, -54.77141065586066],
+        [148.1504373443256, -54.76358231380623], [149.0362434679265, -54.80684932889346],
+        [150.46697761531573, -54.75722516633555], [151.3895403340348, -54.79078339811025],
+        [152.2785140612035, -54.805106217729765], [153.16804494837947, -54.81147427453204],
+        [154.05770451012836, -54.80988212414798], [155.30844183652198, -54.89678703519895],
+        [155.18179069998178, -55.876736894808985], [155.21026921515727, -56.392877678477134],
+        [155.2396913696183, -56.91041827271009], [155.08818807214766, -57.64047584972312],
+        [155.11672516845556, -58.16137376192241], [155.14626444683927, -58.68361811575501],
+        [154.98310652190003, -59.420015659987236], [155.01149887810573, -59.94548472747109],
+        [154.83739020454743, -60.686087769888566], [154.86429740340998, -61.214681742238156],
+        [154.89225705335548, -61.744523783418124], [154.70285766141274, -62.49093368666587],
+        [154.7288839882749, -63.02375286632504], [154.52501182113497, -63.77394952396852],
+        [154.54854943235512, -64.309634699256], [154.57312583041016, -64.84645994848489],
+        [154.3484715349474, -65.60185624870167], [154.36976203490133, -66.14138411746472],
+        [154.12522602078707, -66.9000855282847], [154.14226819146631, -67.44219254138235],
+        [154.1601731219813, -67.98532238015473], [153.88608736970923, -68.74852548899527],
+        [153.89824691526383, -69.29405382580708], [153.59544078275667, -70.059996994333],
+        [153.60006588603312, -70.60778513555877], [153.60496547380228, -71.15646945452183],
+        [153.25756307538973, -71.92608918422114], [153.25189583707856, -72.47682991683762],
+        [153.24585452757822, -73.02838757095705], [152.84020430770352, -73.80112989473793],
+        [152.81888891452286, -74.35452208901502], [152.35402463626133, -75.1288223920554],
+        [152.31164610884662, -75.68386428853752], [152.26580949501454, -76.23957386714069],
+        [151.69924423399362, -77.0157466210282], [151.62075691389202, -77.57281756115376],
+        [151.53483785734517, -78.13045345953573], [150.81919394750014, -78.9075006026022],
+        [150.67952412241925, -79.46612414045192], [149.79676224505738, -80.24245130191458],
+        [149.57421619803876, -80.80164829769545], [149.3227199782035, -81.36112839680247],
+        [148.0918930643469, -82.13510120933098], [147.68038349181984, -82.69425038113347],
+        [147.20046872738078, -83.25330954328061], [145.30484646876607, -84.020680409214],
+        [144.46232220802563, -84.57728949991672], [141.581944655178, -85.33260093513918],
+        [139.9697407281103, -85.88237742502608], [137.86240522611172, -86.42808263042461],
+        [128.29016319224309, -86.94647902850521], [111.37062226934319, -86.88460723278543],
+        [96.84277341263095, -86.82394284231066], [83.15722658736905, -86.82394284231066],
+        [73.07248693585296, -86.96738400413822], [58.240519915187235, -86.88460723278543],
+        [38.290163192243085, -86.94647902850521], [20.854458039578276, -87.16526807263729],
+        [4.144623741104283, -87.091113998559], [0.0, -86.65441624237404], [0.0, -86.38145283371693],
+        [0.0, -85.17527044495591], [0.0, -83.96908805619489], [0.0, -82.76290566743387],
+        [0.0, -81.55672327867285], [0.0, -80.35054088991183], [0.0, -79.1443585011508],
+        [0.0, -77.93817611238978], [0.0, -76.73199372362876], [0.0, -75.52581133486774],
+        [0.0, -74.31962894610672], [0.0, -73.1134465573457], [0.0, -71.90726416858467],
+        [0.0, -70.70108177982365], [0.0, -69.49489939106263], [0.0, -68.28871700230161],
+        [0.0, -67.08253461354059], [0.0, -65.87635222477957], [0.0, -64.67016983601854],
+        [0.0, -63.46398744725752], [0.0, -62.2578050584965], [0.0, -61.05162266973548],
+        [0.0, -59.84544028097446], [0.0, -58.639257892213436], [0.0, -57.433075503452415],
+        [0.0, -56.22689311469139], [0.0, -55.1549090469362]]], [[[338.90499197479886,
+        -55.02143750030933], [340.17096003704137, -55.047117138688314], [341.4382908097503,
+        -55.05675311946238], [342.70574561069174, -55.05032876127409], [343.9720850305736,
+        -55.027855187658204], [345.1334410458155, -55.211385085257014], [345.6235820248539,
+        -55.04711713868832], [346.7940720183315, -55.211385085257014], [347.2756443145776,
+        -55.039089704528514], [348.45330945407267, -55.1839395087684], [348.92552830802987,
+        -55.003796489328536], [350.10838027317783, -55.12912965508737], [351.360363632388,
+        -55.0134174724116], [352.55128212617797, -55.10981080401001], [353.7487077630654,
+        -55.192008918786506], [354.588130847683, -55.01021010842803], [355.785821477266,
+        -55.06799931941947], [356.98721249581666, -55.11142019517314], [358.19126067750796,
+        -55.140405193959126], [359.3969088056195, -55.1549090469362], [360.0, -55.1549090469362],
+        [360.0, -56.22689311469139], [360.0, -57.433075503452415], [360.0, -58.639257892213436],
+        [360.0, -59.84544028097446], [360.0, -61.05162266973548], [360.0, -62.2578050584965],
+        [360.0, -63.46398744725752], [360.0, -64.67016983601854], [360.0, -65.87635222477957],
+        [360.0, -67.08253461354059], [360.0, -68.28871700230161], [360.0, -69.49489939106263],
+        [360.0, -70.70108177982365], [360.0, -71.90726416858467], [360.0, -73.1134465573457],
+        [360.0, -74.31962894610672], [360.0, -75.52581133486774], [360.0, -76.73199372362876],
+        [360.0, -77.93817611238978], [360.0, -79.1443585011508], [360.0, -80.35054088991183],
+        [360.0, -81.55672327867285], [360.0, -82.76290566743387], [360.0, -83.96908805619489],
+        [360.0, -85.17527044495591], [360.0, -86.38145283371693], [360.0, -86.65441624237404],
+        [354.4724598483438, -86.07200767353073], [352.30394827798347, -85.29194169699925],
+        [350.3112134396332, -84.75585577811358], [348.69006752597977, -84.21484625805435],
+        [347.82854179141253, -83.42460344546794], [346.7014296695057, -82.8786428405046],
+        [345.7354877019201, -82.33065120357823], [345.3432488842396, -81.53853878465779],
+        [344.6044507460049, -80.98889161501945], [344.3577535427913, -80.19731767810617],
+        [343.7676493388438, -79.64702088752621], [343.23744553816726, -79.09622197543419],
+        [343.1237353832888, -78.30630467791234], [342.68106156848523, -77.75578912524983],
+        [342.27676338311375, -77.20517855643334], [342.2351466993025, -76.41779535031012],
+        [341.88693419247676, -75.86804674825103], [341.565051177078, -75.31847414112357],
+        [341.565051177078, -74.5342384925155], [341.2814110213202, -73.98594139375264],
+        [341.0167829407738, -73.43802045698682], [341.0418165948938, -72.65742748426207],
+        [340.8045323999471, -72.11110831683266], [340.83675422400154, -71.33334003739843],
+        [340.62199594460697, -70.78880807325723], [340.4192883389029, -70.24490092326192],
+        [340.4633450618716, -69.47148644100949], [340.277722235553, -68.92961959152679],
+        [340.1016087138234, -68.38849935083907], [340.1531171384744, -67.61981917857568],
+        [339.9903061113248, -67.08096543342415], [339.8351675552649, -66.54296570590792],
+        [339.89130012486584, -65.77937770573924], [339.74674821262613, -65.24385052403902],
+        [339.6085028045145, -64.7092738379272], [339.66739122803403, -63.9511165277412],
+        [339.5377284765778, -63.41920222298936], [339.41333170502514, -62.88832611487016],
+        [339.4737188190447, -62.13592017448928], [339.35639125279636, -61.60788243640518],
+        [339.24352058724526, -61.0809632113182], [339.3045492659367, -60.33461210201365],
+        [339.1975817095205, -59.810694861523984], [339.0944306630845, -59.28796999594651],
+        [339.1555116452894, -58.547960150094696], [339.0573494500117, -58.028389456252675],
+        [338.96248897457826, -57.51007918711668], [339.02321579816976, -56.776680005310475],
+        [338.93261630809155, -56.26166530080225], [338.84489903292905, -55.74797371800858],
+        [338.90499197479886, -55.02143750030933]]]]}, "links": [{"rel": "parent",
+        "href": "../collection.json", "type": "application/json"}, {"rel": "root",
+        "href": "../../../catalog.json", "type": "application/json"}], "assets": {"thumbnail":
+        {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/spola/s0360063900/s0360063900.jpg",
+        "type": "image/jpeg", "title": "Image Thumbnail", "key": "thumbnail", "roles":
+        ["thumbnail"]}, "image": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/spola/s0360063900/s0360063900.tif",
+        "type": "image/tiff; application=geotiff", "title": "Controlled Image", "key":
+        "image", "roles": ["data"]}, "photometrically_trimmed_image": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/spola/s0360063900/s0360063900.photr.tif",
+        "type": "image/tiff; application=geotiff", "title": "Photometrically Trimmed
+        Image", "key": "photometrically_trimmed_image", "roles": ["data"]}, "fgdc_metadata":
+        {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/spola/s0360063900/s0360063900.xml",
+        "type": "application/xml", "title": "FGDC Metadata", "key": "fgdc_metadata",
+        "roles": ["metadata"]}, "PAM_pds_label": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/spola/s0360063900/s0360063900.tif.aux.xml",
+        "type": "text/plain", "title": "Supplemental XML Metadata", "key": "PAM_pds_label",
+        "roles": ["metadata"]}, "provenance": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/spola/s0360063900/provenance.txt",
+        "type": "text/plain", "title": "Provenance", "key": "provenance", "roles":
+        ["metadata"]}, "isis_label": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/spola/s0360063900/s0360063900.isis.lbl",
+        "type": "text/plain", "title": "ISIS Label", "key": "isis_label", "roles":
+        ["metadata"]}, "pds3label": {"href": "https://asc-jupiter.s3-us-west-2.amazonaws.com/europa/galileo_voyager/controlled_images/spola/s0360063900/s0360063900.lbl",
+        "type": "text/plain", "title": "PDS Label", "key": "pds3label", "roles": ["metadata"]}},
+        "bbox": [0.0, -87.16526807263729, 360.0, -54.711786322972124], "stac_extensions":
+        ["https://stac-extensions.github.io/projection/v1.0.0/schema.json", "https://stac-extensions.github.io/datacube/v1.0.0/schema.json",
+        "https://stac-extensions.github.io/view/v1.0.0/schema.json", "https://raw.githubusercontent.com/thareUSGS/ssys/main/json-schema/schema.json"]}'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '36307'
+      Content-Type:
+      - application/json
+      Date:
+      - Thu, 15 May 2025 13:39:46 GMT
+      ETag:
+      - '"43c0a50bc5880cb3be353e14cfe61e40"'
+      Last-Modified:
+      - Tue, 15 Feb 2022 18:30:08 GMT
+      Server:
+      - AmazonS3
+    status:
+      code: 200
+      message: OK
+version: 1

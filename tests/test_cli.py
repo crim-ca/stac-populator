@@ -47,3 +47,8 @@ def test_missing_implementation(populator_help_pattern):
     populators = re.search(populator_help_pattern, proc.stdout)
     assert "CMIP6_UofT" in implementations.__all__  # sanity check
     assert "CMIP6_UofT" not in set(populators.group(0).strip("{}").split(","))
+
+
+def test_export():
+    proc = run_cli("stac-populator", "export", "--help")
+    proc.check_returncode()

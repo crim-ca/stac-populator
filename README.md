@@ -9,6 +9,9 @@ that can be used to implement concrete populators (see [implementations](STACpop
 for populating the STAC Catalog, Collections and Items from various dataset/catalog sources, and pushed using
 STAC API on a server node.
 
+It can also be used to export data from an existing STAC API or catalog to files on disk. These can then later
+be used to populate a STAC API with the `DirectoryLoader` implementation.
+
 ## Framework
 
 The framework is centered around a Python Abstract Base Class: `STACpopulatorBase` that implements all the logic
@@ -61,6 +64,9 @@ stac-populator run --help
 
 # obtain help specifically for the execution of a STAC populator implementation
 stac-populator run [implementation] --help
+
+# obtain general help about exporting STAC catalogs to a directory on disk
+stac-populator export --help
 ```
 
 ### CMIP6 extension: extra requirements
