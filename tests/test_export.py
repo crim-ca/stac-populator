@@ -62,7 +62,7 @@ def catalog_nested_info():
         "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_mosaics_voy1_voy2_galileo_equi/collection.json",
         "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_mosaics_voy1_voy2_galileo_npola/collection.json",
         "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/catalog.json",
-        "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/catalog.json 1",
+        "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/catalog.json.1",
         "usgs_jupiter_catalog/catalog.json",
         "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_mosaics_voy1_voy2_galileo_npola/item-14ESGLOCOL01.json",
         "usgs_jupiter_catalog/usgs_europa_catalog",
@@ -85,12 +85,12 @@ def catalog_nested_info():
 def _test_file_types(tmp_path):
     for file in tmp_path.rglob("*"):
         if file.is_file():
-            file_name = file.name.split()[0]
+            file_name = file.name.rsplit(".json")[0]
             with open(file) as f:
                 data = json.load(f)
-            if file_name == "catalog.json":
+            if file_name == "catalog":
                 assert data["type"] == "Catalog"
-            elif file_name == "collection.json":
+            elif file_name == "collection":
                 assert data["type"] == "Collection"
             else:
                 assert data["type"] == "Feature"
@@ -162,10 +162,10 @@ def test_export_catalog_nested_with_many_duplicates(tmp_path, catalog_nested_inf
     )
     base_path.mkdir(parents=True)
     for i in range(1, 20):
-        (base_path / f"catalog.json {i}").touch()
+        (base_path / f"catalog.json.{i}").touch()
     with (
         requests.Session() as session,
         pytest.warns((pystac_client.warnings.FallbackToPystac, pystac_client.warnings.NoConformsTo)),
     ):
         export_catalog(tmp_path, url, session, resume=True, ignore_duplicate_ids=True)
-    assert (base_path / "catalog.json 20").exists()
+    assert (base_path / "catalog.json.20").exists()

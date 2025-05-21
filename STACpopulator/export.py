@@ -105,8 +105,8 @@ def _write_stac_data(
             )
             if ignore_duplicate_ids:
                 LOGGER.warning(msg)
-                n_duplicates = sum(1 for _ in file.parent.glob(f"{file.name} [0-9]*"))
-                file = file.parent / f"{file.name} {n_duplicates + 1}"
+                n_duplicates = sum(1 for _ in file.parent.glob(f"{file.name}.[0-9]*"))
+                file = file.parent / f"{file.name}.{n_duplicates + 1}"
             else:
                 raise DuplicateIDError(msg)
         elif not resume:
