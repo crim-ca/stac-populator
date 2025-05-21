@@ -148,3 +148,24 @@ def test_export_catalog_nested_with_duplicates(tmp_path, catalog_nested_info):
         export_catalog(tmp_path, url, session, ignore_duplicate_ids=True)
     assert expected == {str(p.relative_to(tmp_path)) for p in tmp_path.rglob("*")}
     _test_file_types(tmp_path)
+
+
+@pytest.mark.vcr("test_export_catalog_nested.yaml")
+def test_export_catalog_nested_with_many_duplicates(tmp_path, catalog_nested_info):
+    url, _ = catalog_nested_info
+    base_path = (
+        tmp_path
+        / "usgs_jupiter_catalog"
+        / "usgs_europa_catalog"
+        / "usgs_galileo_catalog"
+        / "usgs_galileo_controlled_images_catalog"
+    )
+    base_path.mkdir(parents=True)
+    for i in range(1, 20):
+        (base_path / f"catalog.json {i}").touch()
+    with (
+        requests.Session() as session,
+        pytest.warns((pystac_client.warnings.FallbackToPystac, pystac_client.warnings.NoConformsTo)),
+    ):
+        export_catalog(tmp_path, url, session, resume=True, ignore_duplicate_ids=True)
+    assert (base_path / "catalog.json 20").exists()
