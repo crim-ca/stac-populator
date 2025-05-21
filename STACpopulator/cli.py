@@ -38,6 +38,11 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     export_parser.add_argument("stac_host", help="STAC API URL")
     export_parser.add_argument("directory", type=str, help="Path to a directory to write STAC catalog contents.")
     export_parser.add_argument("-r", "--resume", action="store_true", help="Resume a partial download.")
+    export_parser.add_argument(
+        "--ignore-duplicate-ids",
+        action="store_true",
+        help="Do not raise an error if STAC items with the same ids are found in a collection.",
+    )
     add_request_options(export_parser)
     add_logging_options(export_parser)
 
@@ -68,7 +73,7 @@ def run(ns: argparse.Namespace) -> int:
     else:
         with requests.Session() as session:
             apply_request_options(session, ns)
-            return export_catalog(ns.directory, ns.stac_host, session, ns.resume) or 0
+            return export_catalog(ns.directory, ns.stac_host, session, ns.resume, ns.ignore_duplicate_ids) or 0
 
 
 def main(*args: str) -> int:

@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import pathlib
+import time
 from typing import Iterable, cast
 
 import pystac
@@ -12,6 +13,10 @@ import requests
 from pystac_client.stac_api_io import StacApiIO
 
 LOGGER = logging.getLogger(__name__)
+
+
+class DuplicateIDError(Exception):
+    """Duplicate ID Error."""
 
 
 class Client(pystac_client.Client):
@@ -74,32 +79,85 @@ class Client(pystac_client.Client):
 pystac_client.client.Client = Client
 
 
-def _export_catalog(
-    client: Client | pystac_client.CollectionClient, directory: pathlib.Path, resume: bool = False
+def _write_stac_data(
+    file: pathlib.Path,
+    data: dict,
+    start_time: int,
+    create_parent: bool = False,
+    resume: bool = False,
+    ignore_duplicate_ids: bool = False,
 ) -> None:
+    """
+    Write STAC data to a file.
+
+    If the file already exists and it hasn't been modified since the export started: raise an error or warning to tell
+    the user that the catalog or collection contains STAC objects with non-unique IDs.
+
+    If the file already exists and was created by a previous export: raise an error unless resume is True.
+
+    Warning: if the file is modified by an external process after the export has already started, we cannot determine
+    whether a file contains a non-unique STAC object (i.e. this does not attempt to lock the file).
+    """
+    if file.exists():
+        if start_time < file.stat().st_mtime:
+            msg = (
+                f"{data['type']} with ID {data['id']} already exists in directory {file.parent}. IDs should be unique!"
+            )
+            if ignore_duplicate_ids:
+                LOGGER.warning(msg)
+                n_duplicates = sum(1 for _ in file.parent.glob(f"{file.name} [0-9]"))
+                file = file.parent / f"{file.name} {n_duplicates + 1}"
+            else:
+                raise DuplicateIDError(msg)
+        elif not resume:
+            raise FileExistsError(file)
+    if create_parent:
+        file.parent.mkdir(exist_ok=True)
+    with open(file, mode="w", encoding="utf-8") as f:
+        json.dump(data, f)
+
+
+def _export_catalog(
+    client: Client | pystac_client.CollectionClient,
+    directory: pathlib.Path,
+    start_time: int,
+    resume: bool = False,
+    ignore_duplicate_ids: bool = False,
+) -> None:
+    """
+    Export a STAC catalog or collection to files on disk.
+
+    This is a recursive helper function initiated by the export_catalog function.
+    """
     directory /= client.id
     file_name = "catalog.json" if isinstance(client, Client) else "collection.json"
-    collection_type = file_name.split(".")[0].capitalize()
-    if not resume and directory.exists():
-        n_duplicates = sum(1 for _ in directory.parent.glob(f"{client.id}*/"))
-        directory = directory.parent / f"{client.id}-duplicate-id-{n_duplicates}"
-        LOGGER.warning(
-            "%s with ID %s already exists in this catalog. IDs should be unique!", collection_type, client.id
-        )
-    directory.mkdir(exist_ok=True, parents=True)
-    with open(directory / file_name, "w", encoding="utf-8") as f:
-        json.dump(client.to_dict(transform_hrefs=False), f)
+    _write_stac_data(
+        directory / file_name, client.to_dict(transform_hrefs=False), start_time, True, resume, ignore_duplicate_ids
+    )
     for item in client.get_items(recursive=False):
-        with open(directory / f"item-{item.id}.json", "w", encoding="utf-8") as f:
-            json.dump(item.to_dict(transform_hrefs=False), f)
+        _write_stac_data(
+            directory / f"item-{item.id}.json",
+            item.to_dict(transform_hrefs=False),
+            start_time,
+            False,
+            resume,
+            ignore_duplicate_ids,
+        )
     for child in client.get_children():
-        _export_catalog(child, directory, resume=resume)
+        _export_catalog(child, directory, start_time, resume, ignore_duplicate_ids)
 
 
-def export_catalog(directory: os.PathLike, stac_host: str, session: requests.Session, resume: bool = False) -> None:
+def export_catalog(
+    directory: os.PathLike,
+    stac_host: str,
+    session: requests.Session,
+    resume: bool = False,
+    ignore_duplicate_ids: bool = False,
+) -> None:
     """Export a STAC catalog to files on disk."""
     stac_api_io = StacApiIO()
     stac_api_io.session = session
     directory = pathlib.Path(directory)
     client = Client.open(stac_host, stac_io=stac_api_io)
-    _export_catalog(client, directory, resume)
+    start_time = time.time()
+    _export_catalog(client, directory, start_time, resume, ignore_duplicate_ids)
