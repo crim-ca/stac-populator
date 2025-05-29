@@ -142,6 +142,8 @@ class TestModule(_TestDirectoryLoader):
             stac_host="http://example.com/stac/",
             directory=os.path.join(request.fspath.dirname, "data/test_directory"),
             prune=prune_option,
+            collection_pattern="*",
+            item_pattern="*",
             update=True,
             stac_version=None,
         )

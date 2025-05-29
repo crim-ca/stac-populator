@@ -22,7 +22,9 @@ class THREDDSMetadata:
         ServiceType.opendap: pystac.MediaType.HTML,
         ServiceType.wcs: pystac.MediaType.XML,
         ServiceType.wms: pystac.MediaType.XML,
-        ServiceType.netcdfsubset: "application/x-netcdf",
+        ServiceType.netcdfsubset: "application/x-netcdf",  # used in THREDDS version < 5.0
+        ServiceType.netcdfsubsetgrid: "application/x-netcdf",  # used in THREDDS version > 5.0
+        ServiceType.netcdfsubsetpoint: "application/x-netcdf",  # used in THREDDS version > 5.0
     }
 
     asset_roles = {
@@ -30,7 +32,9 @@ class THREDDSMetadata:
         ServiceType.opendap: ["data"],
         ServiceType.wcs: ["data"],
         ServiceType.wms: ["visual"],
-        ServiceType.netcdfsubset: ["data"],
+        ServiceType.netcdfsubset: ["data"],  # used in THREDDS version < 5.0
+        ServiceType.netcdfsubsetgrid: ["data"],  # used in THREDDS version > 5.0
+        ServiceType.netcdfsubsetpoint: ["data"],  # used in THREDDS version > 5.0
     }
     service_type: ServiceType
 
