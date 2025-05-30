@@ -84,11 +84,19 @@ def post_stac_collection(
         if update:
             LOGGER.info(f"Collection {collection_id} already exists. Updating.")
             r = session.put(os.path.join(stac_host, "collections"), json=json_data)
-            r.raise_for_status()
+            try:
+                r.raise_for_status()
+            except requests.HTTPError as exc:
+                LOGGER.error("Could not update STAC item [%s] due to [%s]", collection_id, r.text, exc_info=exc)
+                raise
         else:
-            LOGGER.info(f"Collection {collection_id} already exists.")
+            LOGGER.warning(f"Collection {collection_id} already exists.")
     else:
-        r.raise_for_status()
+        try:
+            r.raise_for_status()
+        except requests.HTTPError as exc:
+            LOGGER.error("Could not create STAC collection [%s] due to [%s]", collection_id, r.text, exc_info=exc)
+            raise
 
 
 def post_stac_item(
@@ -126,8 +134,16 @@ def post_stac_item(
         if update:
             LOGGER.info(f"Item {item_id} already exists. Updating.", extra=extra_log_info)
             r = session.put(os.path.join(stac_host, f"collections/{collection_id}/items/{item_id}"), json=json_data)
-            r.raise_for_status()
+            try:
+                r.raise_for_status()
+            except requests.HTTPError as exc:
+                LOGGER.error("Could not update STAC item [%s] due to [%s]", item_id, r.text, exc_info=exc)
+                raise
         else:
-            LOGGER.warn(f"Item {item_id} already exists.", extra=extra_log_info)
+            LOGGER.warning(f"Item {item_id} already exists.", extra=extra_log_info)
     else:
-        r.raise_for_status()
+        try:
+            r.raise_for_status()
+        except requests.HTTPError as exc:
+            LOGGER.error("Could not create STAC item [%s] due to [%s]", item_id, r.text, exc_info=exc)
+            raise

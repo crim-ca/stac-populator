@@ -56,6 +56,12 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("directory", type=str, help="Path to a directory structure with STAC Collections and Items.")
     parser.add_argument("--update", action="store_true", help="Update collection and its items.")
     parser.add_argument(
+        "--collection-pattern", default="*", help="glob pattern used to identify files that contain STAC collections."
+    )
+    parser.add_argument(
+        "--item-pattern", default="*", help="glob pattern used to identify files that contain STAC items."
+    )
+    parser.add_argument(
         "--prune",
         action="store_true",
         help="Limit search of STAC Collections only to first top-most matches in the crawled directory structure.",
@@ -80,9 +86,11 @@ def runner(ns: argparse.Namespace) -> int:
 
     with Session() as session:
         apply_request_options(session, ns)
-        for _, collection_path, collection_json in STACDirectoryLoader(ns.directory, "collection", ns.prune):
+        for _, collection_path, collection_json in STACDirectoryLoader(
+            ns.directory, "collection", ns.collection_pattern, ns.prune
+        ):
             collection_dir = os.path.dirname(collection_path)
-            loader = STACDirectoryLoader(collection_dir, "item", prune=ns.prune)
+            loader = STACDirectoryLoader(collection_dir, "item", ns.item_pattern, prune=True)
             populator = DirectoryPopulator(ns.stac_host, loader, ns.update, collection_json, session=session)
             populator.ingest()
     return 0

@@ -18,7 +18,7 @@ from STACpopulator.api_requests import (
 )
 from STACpopulator.input import GenericLoader
 from STACpopulator.models import AnyGeometry
-from STACpopulator.stac_utils import load_config, url_validate
+from STACpopulator.stac_utils import load_config
 
 LOGGER = logging.getLogger(__name__)
 
@@ -108,8 +108,6 @@ class STACpopulatorBase(ABC):
 
     def validate_host(self, stac_host: str) -> str:
         """Validate that the given STAC host can be used to upload data to."""
-        if not url_validate(stac_host):
-            raise ValueError("stac_host URL is not appropriately formatted")
         if not stac_host_reachable(stac_host, session=self._session):
             raise RuntimeError("stac_host is not reachable")
         if not stac_version_match(stac_host, session=self._session):
