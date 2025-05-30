@@ -29,7 +29,7 @@ class GenericLoader(ABC):
         Iterate over this loader.
 
         Returns items from the input. Items return a tuple containing the object name,
-
+        path to the object, and the object data.
         """
         raise NotImplementedError
 
