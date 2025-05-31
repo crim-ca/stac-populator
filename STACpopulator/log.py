@@ -40,7 +40,10 @@ def setup_logging(logfname: str, log_level: int) -> None:
     :type log_level: str
     """
     config = logconfig
-    config["handlers"]["file"]["filename"] = logfname
+    if logfname is not None:
+        file_handler["filename"] = logfname
+        config["handlers"]["file"] = file_handler
+        config["loggers"]["root"]["handlers"].append("file")
     for handler in config["handlers"]:
         config["handlers"][handler]["level"] = logging.getLevelName(log_level)
     logging.config.dictConfig(config)
@@ -98,6 +101,12 @@ class NonErrorFilter(logging.Filter):
         return record.levelno <= logging.INFO
 
 
+file_handler = {
+    "class": "logging.FileHandler",
+    "level": "INFO",
+    "formatter": "json",
+}
+
 logconfig = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -128,14 +137,8 @@ logconfig = {
             "formatter": "simple",
             "stream": "ext://sys.stderr",
         },
-        "file": {
-            "class": "logging.FileHandler",
-            "level": "INFO",
-            "formatter": "json",
-            "filename": "__added_dynamically__",
-        },
     },
-    "loggers": {"root": {"level": "DEBUG", "handlers": ["stderr", "file"]}},
+    "loggers": {"root": {"level": "DEBUG", "handlers": ["stderr"]}},
 }
 
 
@@ -144,6 +147,5 @@ def add_logging_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--debug", action="store_const", const=logging.DEBUG, help="set logger level to debug")
     parser.add_argument(
         "--log-file",
-        default=f"stac_populator_log_{dt.datetime.now(dt.timezone.utc).isoformat() + 'Z'}.jsonl",
-        help="file to write log output to. By default logs will be written to the current directory.",
+        help="file to write log output to as well as stderr. By default logs will be written to stderr only.",
     )
