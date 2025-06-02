@@ -1,7 +1,6 @@
 import argparse
 import functools
 import importlib
-import logging
 import sys
 import warnings
 from types import ModuleType
@@ -67,7 +66,7 @@ def implementation_modules() -> dict[str, ModuleType]:
 
 def run(ns: argparse.Namespace) -> int:
     """Run a given implementation given the arguments passed on the command line."""
-    setup_logging(ns.log_file, ns.debug or logging.INFO)
+    setup_logging(ns)
     if ns.command == "run":
         return implementation_modules()[ns.populator].runner(ns) or 0
     else:
