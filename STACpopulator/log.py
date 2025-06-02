@@ -29,6 +29,13 @@ LOG_RECORD_BUILTIN_ATTRS = {
     "taskName",
 }
 
+try:
+    LOG_LEVEL_NAMES = tuple(logging.getLevelNamesMapping())
+except AttributeError:
+    # prior to python 3.11, the logging module did not have a
+    # good way to get level names. Fall back to constants
+    LOG_LEVEL_NAMES = ("CRITICAL", "FATAL", "ERROR", "WARN", "WARNING", "INFO", "DEBUG", "NOTSET")
+
 
 def setup_logging(ns: argparse.Namespace) -> None:
     """Set up the logger for the app."""
