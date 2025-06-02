@@ -7,6 +7,7 @@
 * Add an `xscen` extension demonstrating how to add properties to a STAC Item.
 * Fix mismatch between CMIP6 schema URI given to `pystac` and the actual schema URI
 * Add ability to export data from a STAC catalog or API to files on disk.
+* Remove files in the `.deprecated` folder.
 
 ## [0.7.0](https://github.com/crim-ca/stac-populator/tree/0.7.0) (2025-03-07)
 
