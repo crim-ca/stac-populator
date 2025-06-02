@@ -1,14 +1,11 @@
 import argparse
 import logging
 import os.path
-import sys
-import warnings
 from typing import Any, MutableMapping, Optional
 
 import pystac
 from requests.sessions import Session
 
-from STACpopulator import cli
 from STACpopulator.input import STACDirectoryLoader
 from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
@@ -80,21 +77,3 @@ def runner(ns: argparse.Namespace, session: Session) -> int:
         populator = DirectoryPopulator(ns.stac_host, loader, ns.update, collection_json, session=session)
         populator.ingest()
     return 0
-
-
-def main(*args: str) -> int:
-    """Call this implementation directly."""
-    warnings.warn(
-        "Calling implementation scripts directly is deprecated. Please use the 'stac-populator' CLI instead.",
-        DeprecationWarning,
-    )
-    parser = argparse.ArgumentParser()
-    add_parser_args(parser)
-    ns = parser.parse_args(args or None)
-    ns.populator = os.path.basename(os.path.dirname(__file__))
-    ns.command = "run"
-    return cli.run(ns)
-
-
-if __name__ == "__main__":
-    sys.exit(main())

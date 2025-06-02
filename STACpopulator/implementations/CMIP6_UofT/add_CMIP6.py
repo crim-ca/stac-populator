@@ -2,15 +2,12 @@ import argparse
 import json
 import logging
 import os
-import sys
-import warnings
 from typing import Any, MutableMapping, Optional, Union
 
 from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
 from requests.sessions import Session
 
-from STACpopulator import cli
 from STACpopulator.extensions.cmip6 import CMIP6Helper, CMIP6Properties
 from STACpopulator.extensions.datacube import DataCubeHelper
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
@@ -115,21 +112,3 @@ def runner(ns: argparse.Namespace, session: Session) -> int:
     c = CMIP6populator(ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config)
     c.ingest()
     return 0
-
-
-def main(*args: str) -> int:
-    """Call this implementation directly."""
-    warnings.warn(
-        "Calling implementation scripts directly is deprecated. Please use the 'stac-populator' CLI instead.",
-        DeprecationWarning,
-    )
-    parser = argparse.ArgumentParser()
-    add_parser_args(parser)
-    ns = parser.parse_args(args or None)
-    ns.populator = os.path.basename(os.path.dirname(__file__))
-    ns.command = "run"
-    return cli.run(ns)
-
-
-if __name__ == "__main__":
-    sys.exit(main())
