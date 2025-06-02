@@ -146,8 +146,8 @@ def add_logging_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "-l",
         "--log-level-stderr",
-        choices=logging.getLevelNamesMapping(),
-        default=logging.INFO,
+        choices=LOG_LEVEL_NAMES,
+        default="INFO",
         help="Level for logs written to stderr",
     )
     parser.add_argument(
@@ -162,7 +162,7 @@ def add_logging_options(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "-L",
         "--log-level-file",
-        choices=logging.getLevelNamesMapping(),
-        default=logging.INFO,
+        choices=LOG_LEVEL_NAMES,
+        default="INFO",
         help="Level for logs written to a file",
     )
