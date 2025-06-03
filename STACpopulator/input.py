@@ -165,8 +165,12 @@ class STACDirectoryLoader(GenericLoader):
 
     .. code-block:: python
 
-        for collection_path, collection_json in STACDirectoryLoader(dir_path, mode="collection", include="collection*.json"):
-            for item_path, item_json in STACDirectoryLoader(os.path.dirname(collection_path), mode="item", include="item*.json", prune=True):
+        for collection_path, collection_json in STACDirectoryLoader(
+            dir_path, mode="collection", include="collection*.json"
+        ):
+            for item_path, item_json in STACDirectoryLoader(
+                os.path.dirname(collection_path), mode="item", include="item*.json", prune=True
+            ):
                 ...  # do stuff
 
     The prune parameter can be used to search for files non-recursively. This can be used to ignore nested collections or
