@@ -4,6 +4,7 @@ import pathlib
 import queue
 from abc import ABC, abstractmethod
 from typing import Any, Iterator, Literal, MutableMapping, Optional, Tuple
+from urllib.parse import urlparse
 from xml.etree import ElementTree
 
 import pystac
@@ -66,6 +67,8 @@ class THREDDSLoader(GenericLoader):
         self.depth = depth
         self.session = session or requests.Session()
         session_manager.set_session_options(**vars(self.session))
+        if urlparse(thredds_catalog_url).query:
+            raise RuntimeError("THREDDS catalog URL should not contain any query parameters")
         try:
             self.catalog = TDSCatalog(thredds_catalog_url)
         except requests.exceptions.RequestException as exc:
@@ -132,10 +135,9 @@ class THREDDSLoader(GenericLoader):
     def extract_metadata(self, dataset: Dataset) -> MutableMapping[str, Any]:
         """Extract metadata from an NcML item."""
         attrs = {}
-        access_urls = self._get_access_urls(dataset)
-        if "NCML" in access_urls:
+        if "NCML" in dataset.access_urls:
             LOGGER.info("Requesting NcML dataset description")
-            url = access_urls["NCML"]
+            url = dataset.access_urls["NCML"]
             try:
                 r = self.session.get(url)
                 r.raise_for_status()
@@ -144,7 +146,7 @@ class THREDDSLoader(GenericLoader):
             # Convert NcML to CF-compliant dictionary
             attrs = xncml.Dataset.from_text(r.text).to_cf_dict()
             attrs["attributes"] = numpy_to_python_datatypes(attrs["attributes"])
-        attrs["access_urls"] = access_urls
+        attrs["access_urls"] = dataset.access_urls
         return attrs
 
 
@@ -152,22 +154,23 @@ class STACDirectoryLoader(GenericLoader):
     """
     Iterates through a directory structure looking for STAC Collections or Items.
 
-    For each directory that gets crawled, if a file is named ``collection.json``, it assumed to be a STAC Collection.
-    All other ``.json`` files under the directory where ``collection.json`` was found are assumed to be STAC Items.
-    These JSON STAC Items can be either at the same directory level as the STAC Collection, or under nested directories.
+    For each directory that gets crawled, all files that match the glob pattern that provided by the include parameter
+    will be read.
+
+    If the mode parameter is ``"collection"`` only STAC collection files will be processed.
+    If the mode parameter is ``"item"`` only STAC item files will be processed.
 
     Using the mode option, yielded results will be either the STAC Collections or the STAC Items.
     This allows this class to be used in conjunction (2 nested loops) to find collections and their underlying items.
 
     .. code-block:: python
 
-        for collection_path, collection_json in STACDirectoryLoader(dir_path, mode="collection"):
-            for item_path, item_json in STACDirectoryLoader(os.path.dirname(collection_path), mode="item"):
+        for collection_path, collection_json in STACDirectoryLoader(dir_path, mode="collection", include="collection*.json"):
+            for item_path, item_json in STACDirectoryLoader(os.path.dirname(collection_path), mode="item", include="item*.json", prune=True):
                 ...  # do stuff
 
-    For convenience, option ``prune`` can be used to stop crawling deeper once a STAC Collection is found.
-    Any collection files found further down the directory were a top-most match was found will not be yielded.
-    This can be useful to limit search, or to ignore nested directories using subsets of STAC Collections.
+    The prune parameter can be used to search for files non-recursively. This can be used to ignore nested collections or
+    to only yied STAC items that are in the same directory as a collection (see example above).
     """
 
     def __init__(self, path: str, mode: Literal["collection", "item"], include: str = "*", prune: bool = False) -> None:
