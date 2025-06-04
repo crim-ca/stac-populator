@@ -230,7 +230,8 @@ class STACDirectoryLoader(GenericLoader):
         :rtype: Iterator[Tuple[str, str, MutableMapping[str, Any]]]
         """
         collection_dirs = set()
-        for dirpath, dirnames, filenames in self.path.walk():
+        for dirpath, dirnames, filenames in os.walk(self.path):
+            dirpath = pathlib.Path(dirpath)  # pathlib.Path.walk is not supported for python < 3.12
             skip_items = False
             for f in filenames:
                 filepath = dirpath / f
