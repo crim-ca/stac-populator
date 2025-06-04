@@ -1,7 +1,9 @@
 import json
 import logging
+import os
 import pathlib
 import queue
+import re
 from abc import ABC, abstractmethod
 from typing import Any, Iterator, Literal, MutableMapping, Optional, Tuple
 from urllib.parse import urlparse
@@ -173,16 +175,53 @@ class STACDirectoryLoader(GenericLoader):
             ):
                 ...  # do stuff
 
-    The prune parameter can be used to search for files non-recursively. This can be used to ignore nested collections or
-    to only yied STAC items that are in the same directory as a collection (see example above).
+    The prune parameter can be used to ignore STAC items that appear in subdirectories once an initial collection
+    is found.
+    If prune is ``True`` subdirectories will not be traversed once a collection is found.
+    For example, if prune is ``True``, the ``collection2/`` and ``collection3-subdir/`` directories will be ignored
+    because they are nested under a directory that already contains a collection file.
+
+    catalog/
+    ├── collection1/
+    │   ├── collection.json
+    │   ├── item1.json
+    │   └── collection2/
+    │       ├── collection.json
+    │       └── item2.json
+    └── collection3/
+        ├── collection.json
+        ├── item3.json
+        └── collection3-subdir/
+            └── item3.json
     """
 
-    def __init__(self, path: str, mode: Literal["collection", "item"], include: str = "*", prune: bool = False) -> None:
+    def __init__(
+        self,
+        path: str,
+        mode: Literal["collection", "item"],
+        item_pattern: str | None = None,
+        collection_pattern: str | None = None,
+        prune: bool = False,
+    ) -> None:
         super().__init__()
         self.path = pathlib.Path(path)
-        self._type = "Collection" if mode == "collection" else "Feature"
-        glob_prefix = "" if prune else "**/"
-        self._include = f"{glob_prefix}{include}"
+        self.mode = mode
+        self.prune = prune
+        self.item_pattern = item_pattern or r"item.*\.(geo)?json$"
+        self.collection_pattern = collection_pattern or r"collection\.json$"
+
+    def _load_stac_file(self, path: os.PathLike) -> dict:
+        try:
+            with open(path, mode="r", encoding="utf-8") as f:
+                return json.load(f)
+        except json.JSONDecodeError as exc:
+            LOGGER.error("Could not load STAC object from file [%s] due to [%s]", path, exc, exc_info=exc)
+
+    def _check_stac_file(self, path: pathlib.Path, pattern: str, stac_type: str) -> dict | None:
+        if re.match(pattern, path.name):
+            stac_data = self._load_stac_file(path)
+            if stac_data["type"] == stac_type:
+                return stac_data
 
     def __iter__(self) -> Iterator[Tuple[str, str, MutableMapping[str, Any]]]:
         """Return a generator that walks through a directory structure looking for STAC Collections or Items.
@@ -190,15 +229,39 @@ class STACDirectoryLoader(GenericLoader):
         :yield: Returns three quantities: name of the item, location of the item, and its attributes
         :rtype: Iterator[Tuple[str, str, MutableMapping[str, Any]]]
         """
-        for path in self.path.glob(self._include):
-            if path.is_file():
-                try:
-                    with open(path, mode="r", encoding="utf-8") as f:
-                        stac_json = json.load(f)
-                except json.JSONDecodeError as exc:
-                    LOGGER.error("Could not load STAC object from file [%s] due to [%s]", path, exc, exc_info=exc)
-                if stac_json["type"] == self._type:
-                    yield path, path, stac_json
+        collection_dirs = set()
+        for dirpath, dirnames, filenames in self.path.walk():
+            skip_items = False
+            for f in filenames:
+                filepath = dirpath / f
+                data = self._check_stac_file(filepath, self.collection_pattern, "Collection")
+                if data is None:
+                    # not a real collection
+                    continue
+                if dirpath in collection_dirs:
+                    # collection already found in this directory
+                    LOGGER.warning(
+                        "Path '%s' contains multiple collection files. File '%s' will be skipped", dirpath, f
+                    )
+                    continue
+                if self.mode == "collection":
+                    path_str = str(filepath)
+                    yield path_str, path_str, data
+                elif set(dirpath.parents) & collection_dirs:
+                    # items in this directory belong to a different collection, skip them
+                    dirnames.clear()
+                    skip_items = True
+                    break
+                if self.prune:
+                    dirnames.clear()
+                collection_dirs.add(dirpath)
+            if self.mode == "item" and not skip_items:
+                for f in filenames:
+                    filepath = dirpath / f
+                    data = self._check_stac_file(filepath, self.item_pattern, "Feature")
+                    if data is not None:
+                        path_str = str(filepath)
+                        yield path_str, path_str, data
 
 
 class STACLoader(GenericLoader):

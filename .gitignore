@@ -28,7 +28,9 @@ build
 ## Exclude schemas
 !schemas/**/*.json
 
+## Exclude test files
+!tests/data/**/*.json
+
 # Old Submodule Path
 # Could be used locally
 pyessv-archive/
-

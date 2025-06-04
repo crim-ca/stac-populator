@@ -56,10 +56,12 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("directory", type=str, help="Path to a directory structure with STAC Collections and Items.")
     parser.add_argument("--update", action="store_true", help="Update collection and its items.")
     parser.add_argument(
-        "--collection-pattern", default="*", help="glob pattern used to identify files that contain STAC collections."
+        "--collection-pattern",
+        help="regex pattern used to identify files that contain STAC collections. Default is 'collection\.json$'",
     )
     parser.add_argument(
-        "--item-pattern", default="*", help="glob pattern used to identify files that contain STAC items."
+        "--item-pattern",
+        help="regex pattern used to identify files that contain STAC items. Default is 'item.*\.(geo)?json$'",
     )
     parser.add_argument(
         "--prune",
@@ -87,10 +89,10 @@ def runner(ns: argparse.Namespace) -> int:
     with Session() as session:
         apply_request_options(session, ns)
         for _, collection_path, collection_json in STACDirectoryLoader(
-            ns.directory, "collection", ns.collection_pattern, ns.prune
+            ns.directory, "collection", ns.item_pattern, ns.collection_pattern, ns.prune
         ):
             collection_dir = os.path.dirname(collection_path)
-            loader = STACDirectoryLoader(collection_dir, "item", ns.item_pattern, prune=True)
+            loader = STACDirectoryLoader(collection_dir, "item", ns.item_pattern, ns.collection_pattern, ns.prune)
             populator = DirectoryPopulator(ns.stac_host, loader, ns.update, collection_json, session=session)
             populator.ingest()
     return 0
