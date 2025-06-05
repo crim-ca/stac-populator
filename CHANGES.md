@@ -8,6 +8,7 @@
 * Fix mismatch between CMIP6 schema URI given to `pystac` and the actual schema URI
 * Add ability to export data from a STAC catalog or API to files on disk.
 * Fix code that raised warnings from dependencies.
+* Log to stderr only by default and to a file only if requested.
 
 ## [0.7.0](https://github.com/crim-ca/stac-populator/tree/0.7.0) (2025-03-07)
 
