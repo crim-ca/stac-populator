@@ -79,7 +79,7 @@
 <attribute name="nccs_service" value="https://redoak.cs.toronto.edu/twitcher/ows/proxy/thredds/ncss/datasets/CMIP6/CMIP/EC-Earth-Consortium/EC-Earth3/historical/r2i1p1f1/Amon/clt/gr/v20201215/clt_Amon_EC-Earth3_historical_r2i1p1f1_gr_185001-201412.nc/dataset.html"/>
 </group>
 <group name="dates">
-<attribute name="date" value="2023-11-03T20:43:10.555Z" type="modified"/>
+<attribute name="date" value="2023-11-03T20:43:10.555Z"/>
 </group>
 </group>
 <ncml:variable name="time_bnds" shape="time bnds" type="double">

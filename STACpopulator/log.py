@@ -29,20 +29,24 @@ LOG_RECORD_BUILTIN_ATTRS = {
     "taskName",
 }
 
+try:
+    LOG_LEVEL_NAMES = tuple(logging.getLevelNamesMapping())
+except AttributeError:
+    # prior to python 3.11, the logging module did not have a
+    # good way to get level names. Fall back to constants
+    LOG_LEVEL_NAMES = ("CRITICAL", "FATAL", "ERROR", "WARN", "WARNING", "INFO", "DEBUG", "NOTSET")
 
-def setup_logging(logfname: str, log_level: int) -> None:
-    """
-    Set up the logger for the app.
 
-    :param logfname: name of the file to which to write log outputs
-    :type logfname: str
-    :param log_level: base logging level (e.g. "INFO")
-    :type log_level: str
-    """
-    config = logconfig
-    config["handlers"]["file"]["filename"] = logfname
-    for handler in config["handlers"]:
-        config["handlers"][handler]["level"] = logging.getLevelName(log_level)
+def setup_logging(ns: argparse.Namespace) -> None:
+    """Set up the logger for the app."""
+    config = _logconfig()
+    if ns.log_file is not None:
+        config["handlers"]["file"]["filename"] = ns.log_file
+        config["handlers"]["file"]["level"] = ns.log_level_file
+        config["loggers"]["root"]["handlers"].append("file")
+    else:
+        config["handlers"].pop("file")
+    config["handlers"]["stderr"]["level"] = ns.log_level_stderr
     logging.config.dictConfig(config)
 
 
@@ -90,60 +94,75 @@ class JSONLogFormatter(logging.Formatter):
         return message
 
 
-class NonErrorFilter(logging.Filter):
-    """Log filter that filters ERROR level logs."""
+def _logconfig() -> dict:
+    """
+    Generate a log configuration dictionary.
 
-    def filter(self, record: logging.LogRecord) -> bool | logging.LogRecord:
-        """Return True iff the log level is not at ERROR level."""
-        return record.levelno <= logging.INFO
-
-
-logconfig = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "simple": {
-            "()": "colorlog.ColoredFormatter",
-            "format": "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s",
-            "datefmt": "%Y-%m-%dT%H:%M:%S%z",
-        },
-        "json": {
-            "()": f"{JSONLogFormatter.__module__}.{JSONLogFormatter.__name__}",
-            "fmt_keys": {
-                "level": "levelname",
-                "message": "message",
-                "timestamp": "timestamp",
-                "logger": "name",
-                "module": "module",
-                "function": "funcName",
-                "line": "lineno",
-                "thread_name": "threadName",
+    This is not a global constant in case logging is dynamically updated
+    after this module is loaded.
+    Currently, this is only done in tests.
+    """
+    return {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "simple": {
+                "()": "colorlog.ColoredFormatter",
+                "format": "  %(log_color)s%(levelname)s:%(reset)s %(blue)s[%(name)-30s]%(reset)s %(message)s",
+                "datefmt": "%Y-%m-%dT%H:%M:%S%z",
+            },
+            "json": {
+                "()": f"{JSONLogFormatter.__module__}.{JSONLogFormatter.__name__}",
+                "fmt_keys": {
+                    "level": "levelname",
+                    "message": "message",
+                    "timestamp": "timestamp",
+                    "logger": "name",
+                    "module": "module",
+                    "function": "funcName",
+                    "line": "lineno",
+                    "thread_name": "threadName",
+                },
             },
         },
-    },
-    "handlers": {
-        "stderr": {
-            "class": "logging.StreamHandler",
-            "level": "INFO",
-            "formatter": "simple",
-            "stream": "ext://sys.stderr",
+        "handlers": {
+            "stderr": {
+                "class": "logging.StreamHandler",
+                "formatter": "simple",
+                "stream": "ext://sys.stderr",
+            },
+            "file": {
+                "class": "logging.FileHandler",
+                "formatter": "json",
+                "filename": "__",
+            },
         },
-        "file": {
-            "class": "logging.FileHandler",
-            "level": "INFO",
-            "formatter": "json",
-            "filename": "__added_dynamically__",
-        },
-    },
-    "loggers": {"root": {"level": "DEBUG", "handlers": ["stderr", "file"]}},
-}
+        "loggers": {"root": {"level": "DEBUG", "handlers": ["stderr"]}},
+    }
 
 
 def add_logging_options(parser: argparse.ArgumentParser) -> None:
     """Add arguments to a parser to configure logging options."""
-    parser.add_argument("--debug", action="store_const", const=logging.DEBUG, help="set logger level to debug")
     parser.add_argument(
+        "-l",
+        "--log-level-stderr",
+        choices=LOG_LEVEL_NAMES,
+        default="INFO",
+        help="Level for logs written to stderr",
+    )
+    parser.add_argument(
+        "-f",
         "--log-file",
-        default=f"stac_populator_log_{dt.datetime.now(dt.timezone.utc).isoformat() + 'Z'}.jsonl",
-        help="file to write log output to. By default logs will be written to the current directory.",
+        help=(
+            "File to write log output to as well as stderr. "
+            "File logs will be written in JSONL format. "
+            "By default logs will be written to stderr only."
+        ),
+    )
+    parser.add_argument(
+        "-L",
+        "--log-level-file",
+        choices=LOG_LEVEL_NAMES,
+        default="INFO",
+        help="Level for logs written to a file",
     )

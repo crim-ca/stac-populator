@@ -6,9 +6,7 @@ from requests.sessions import Session
 
 from STACpopulator.extensions.cordex6 import Cordex6DataModel
 from STACpopulator.input import ErrorLoader, THREDDSLoader
-from STACpopulator.log import add_logging_options
 from STACpopulator.populator_base import STACpopulatorBase
-from STACpopulator.request_utils import add_request_options, apply_request_options
 
 LOGGER = logging.getLogger(__name__)
 
@@ -46,24 +44,20 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
             "By default, uses the adjacent configuration to the implementation class."
         ),
     )
-    add_request_options(parser)
-    add_logging_options(parser)
 
 
-def runner(ns: argparse.Namespace) -> int:
+def runner(ns: argparse.Namespace, session: Session) -> int:
     """Run the populator."""
     LOGGER.info(f"Arguments to call: {vars(ns)}")
 
-    with Session() as session:
-        apply_request_options(session, ns)
-        if ns.mode == "full":
-            data_loader = THREDDSLoader(ns.href, session=session)
-        else:
-            # To be implemented
-            data_loader = ErrorLoader()
+    if ns.mode == "full":
+        data_loader = THREDDSLoader(ns.href, session=session)
+    else:
+        # To be implemented
+        data_loader = ErrorLoader()
 
-        c = CORDEX_STAC_Populator(
-            ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config, log_debug=ns.debug
-        )
-        c.ingest()
+    c = CORDEX_STAC_Populator(
+        ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config, log_debug=ns.debug
+    )
+    c.ingest()
     return 0

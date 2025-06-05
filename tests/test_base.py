@@ -14,7 +14,7 @@ class ExTest(ExtensionHelper):
 
 
 # Customize the THREDDSCatalogDataModel
-class TestDataModel(BaseSTAC):
+class _TestDataModel(BaseSTAC):
     """Data model for CORDEX-CMIP6 NetCDF datasets."""
 
     ex: ExTest
@@ -26,7 +26,7 @@ class TestDataModel(BaseSTAC):
 
 def test_extension():
     geom = {"type": "Polygon", "coordinates": [[[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]]}
-    model = TestDataModel(
+    model = _TestDataModel(
         id="test", geometry=geom, bbox=[0, 0, 1, 1], datetime=dt.datetime(2021, 1, 1), ex={"f": 1.0, "n": float("nan")}
     )
 

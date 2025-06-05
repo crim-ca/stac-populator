@@ -77,7 +77,7 @@ class MockedNoSTACUpload(CMIP6populator):
 
 @pytest.mark.online
 def test_cmip6_stac_thredds_catalog_parsing():
-    url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.html"
+    url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml"
     loader = THREDDSLoader(url)
     with tempfile.NamedTemporaryFile():
         populator = MockedNoSTACUpload("https://host-dont-care.com", loader)

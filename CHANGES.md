@@ -7,6 +7,11 @@
 * Add an `xscen` extension demonstrating how to add properties to a STAC Item.
 * Fix mismatch between CMIP6 schema URI given to `pystac` and the actual schema URI
 * Add ability to export data from a STAC catalog or API to files on disk.
+* Fix code that raised warnings from dependencies.
+* Log to stderr only by default and to a file only if requested.
+* Reorganize command line arguments to ensure shared options are always applied.
+* Remove option to call implementation scripts directly from the command line.
+* Remove files in the `.deprecated` folder.
 * Add support for THREDDS services added in version 5.
 * Fix bug where session details weren't being used to access THREDDS catalogs.
 * Remove `title` from THREDDS catalog links since the content was specific to Marble.
