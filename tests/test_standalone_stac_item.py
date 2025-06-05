@@ -36,11 +36,11 @@ def test_standalone_stac_item_thredds_ncml():
     # FIXME: avoid hackish workarounds
     data = requests.get(thredds_ncml_url).text
     attrs = xncml.Dataset.from_text(data).to_cf_dict()
-    attrs["access_urls"] = {  # FIXME: all following should be automatically added, but they are not!
+    attrs["access_urls"] = {  # these ideally should be added with xncml but they're not
         "HTTPServer": f"{thredds_url}/fileServer/{thredds_path}/{thredds_nc}",
         "OPENDAP": f"{thredds_url}/dodsC/{thredds_path}/{thredds_nc}",
-        "WCS": f"{thredds_url}/wcs/{thredds_path}/{thredds_nc}?service=WCS&version=1.0.0&request=GetCapabilities",
-        "WMS": f"{thredds_url}/wms/{thredds_path}/{thredds_nc}?service=WMS&version=1.3.0&request=GetCapabilities",
+        "WCS": f"{thredds_url}/wcs/{thredds_path}/{thredds_nc}",
+        "WMS": f"{thredds_url}/wms/{thredds_path}/{thredds_nc}",
         "NetcdfSubset": f"{thredds_url}/ncss/{thredds_path}/{thredds_nc}/dataset.html",
     }
     stac_item = CMIP6Helper(attrs, GeoJSONPolygon).stac_item()
@@ -77,7 +77,7 @@ class MockedNoSTACUpload(CMIP6populator):
 
 @pytest.mark.online
 def test_cmip6_stac_thredds_catalog_parsing():
-    url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.html"
+    url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml"
     loader = THREDDSLoader(url)
     with tempfile.NamedTemporaryFile():
         populator = MockedNoSTACUpload("https://host-dont-care.com", loader)
