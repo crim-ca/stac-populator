@@ -36,7 +36,7 @@ def test_standalone_stac_item_thredds_ncml():
     # FIXME: avoid hackish workarounds
     data = requests.get(thredds_ncml_url).text
     attrs = xncml.Dataset.from_text(data).to_cf_dict()
-    attrs["access_urls"] = {
+    attrs["access_urls"] = {  # these ideally should be added with xncml but they're not
         "HTTPServer": f"{thredds_url}/fileServer/{thredds_path}/{thredds_nc}",
         "OPENDAP": f"{thredds_url}/dodsC/{thredds_path}/{thredds_nc}",
         "WCS": f"{thredds_url}/wcs/{thredds_path}/{thredds_nc}",

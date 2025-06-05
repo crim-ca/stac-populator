@@ -77,7 +77,11 @@ class THREDDSLoader(GenericLoader):
             LOGGER.error(
                 "Could not access THREDDS host. Not reachable [%s] due to [%s]", thredds_catalog_url, exc, exc_info=exc
             )
-        self.links.append(pystac.Link(rel="source", target=self.catalog.catalog_url, media_type="application/xml"))
+        self.links.append(
+            pystac.Link(
+                rel="source", target=self.catalog.catalog_url, media_type="application/xml", title="THREDDS data source"
+            )
+        )
 
     def __iter__(self) -> Iterator[Tuple[str, str, MutableMapping[str, Any]]]:
         """Return a generator walking a THREDDS data catalog for datasets.
@@ -148,6 +152,7 @@ class THREDDSLoader(GenericLoader):
             # Convert NcML to CF-compliant dictionary
             attrs = xncml.Dataset.from_text(r.text).to_cf_dict()
             attrs["attributes"] = numpy_to_python_datatypes(attrs["attributes"])
+        # access URLs should ideally be added with xncml but they're not so add them in from the siphon catalog for now.
         attrs["access_urls"] = dataset.access_urls
         return attrs
 
@@ -199,16 +204,16 @@ class STACDirectoryLoader(GenericLoader):
         self,
         path: str,
         mode: Literal["collection", "item"],
-        item_pattern: str | None = None,
-        collection_pattern: str | None = None,
+        item_pattern: str = r"item.*\.(geo)?json$",
+        collection_pattern: str = r"collection\.json$",
         prune: bool = False,
     ) -> None:
         super().__init__()
         self.path = pathlib.Path(path)
         self.mode = mode
         self.prune = prune
-        self.item_pattern = item_pattern or r"item.*\.(geo)?json$"
-        self.collection_pattern = collection_pattern or r"collection\.json$"
+        self.item_pattern = item_pattern
+        self.collection_pattern = collection_pattern
 
     def _load_stac_file(self, path: os.PathLike) -> dict:
         try:

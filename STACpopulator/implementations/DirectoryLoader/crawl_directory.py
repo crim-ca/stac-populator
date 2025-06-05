@@ -1,4 +1,5 @@
 import argparse
+import inspect
 import logging
 import os.path
 import sys
@@ -55,13 +56,16 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("stac_host", type=str, help="STAC API URL.")
     parser.add_argument("directory", type=str, help="Path to a directory structure with STAC Collections and Items.")
     parser.add_argument("--update", action="store_true", help="Update collection and its items.")
+    dirloader_init_params = inspect.signature(STACDirectoryLoader.__init__).parameters
     parser.add_argument(
         "--collection-pattern",
-        help="regex pattern used to identify files that contain STAC collections. Default is 'collection\.json$'",
+        help="regex pattern used to identify files that contain STAC collections. Default is '%(default)s'",
+        default=dirloader_init_params["collection_pattern"].default,
     )
     parser.add_argument(
         "--item-pattern",
-        help="regex pattern used to identify files that contain STAC items. Default is 'item.*\.(geo)?json$'",
+        help="regex pattern used to identify files that contain STAC items. Default is '%(default)s'",
+        default=dirloader_init_params["item_pattern"].default,
     )
     parser.add_argument(
         "--prune",
