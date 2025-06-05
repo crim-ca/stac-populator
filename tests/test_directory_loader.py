@@ -1,6 +1,7 @@
 import abc
 import argparse
 import functools
+import inspect
 import json
 import os
 from typing import Any, Callable, Generator
@@ -12,6 +13,7 @@ import responses
 from STACpopulator.cli import add_parser_args
 from STACpopulator.cli import main as cli_main
 from STACpopulator.implementations.DirectoryLoader import crawl_directory
+from STACpopulator.input import STACDirectoryLoader
 
 RequestContext = Generator[responses.RequestsMock, None, None]
 
@@ -147,6 +149,7 @@ class TestModule(_TestDirectoryLoader):
 
     @pytest.fixture
     def namespace(self, request: pytest.FixtureRequest, prune_option: bool) -> argparse.Namespace:
+        dirloader_init_params = inspect.signature(STACDirectoryLoader.__init__).parameters
         return argparse.Namespace(
             verify=False,
             cert=None,
@@ -154,8 +157,8 @@ class TestModule(_TestDirectoryLoader):
             stac_host="http://example.com/stac/",
             directory=os.path.join(request.fspath.dirname, "data/test_directory"),
             prune=prune_option,
-            collection_pattern=None,
-            item_pattern=None,
+            collection_pattern=dirloader_init_params["collection_pattern"].default,
+            item_pattern=dirloader_init_params["item_pattern"].default,
             update=True,
             stac_version=None,
         )

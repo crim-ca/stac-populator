@@ -23,7 +23,8 @@
     {
       "href": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml",
       "rel": "source",
-      "type": "application/xml"
+      "type": "application/xml",
+      "title": "THREDDS data source"
     }
   ]
 }
