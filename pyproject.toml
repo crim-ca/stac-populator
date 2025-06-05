@@ -39,7 +39,8 @@ python_files = "test*.py"
 #    "--cov-report=html",
 #]
 markers = [
-    "online"
+    "online",
+    "set_stac_version"
 ]
 
 

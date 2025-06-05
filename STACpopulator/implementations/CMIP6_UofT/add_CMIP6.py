@@ -2,24 +2,18 @@ import argparse
 import json
 import logging
 import os
-import sys
-import warnings
 from typing import Any, MutableMapping, Optional, Union
 
-import pystac
 from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
 from requests.sessions import Session
 
-from STACpopulator import cli
 from STACpopulator.extensions.cmip6 import CMIP6Helper, CMIP6Properties
 from STACpopulator.extensions.datacube import DataCubeHelper
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
 from STACpopulator.input import ErrorLoader, GenericLoader, THREDDSLoader
-from STACpopulator.log import add_logging_options
 from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
-from STACpopulator.request_utils import add_request_options, apply_request_options
 
 LOGGER = logging.getLogger(__name__)
 
@@ -103,50 +97,18 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
             "By default, uses the adjacent configuration to the implementation class."
         ),
     )
-    parser.add_argument(
-        "--stac-version",
-        help="Sets the STAC version that should be used. This must match the version used by "
-        "the STAC server that is being populated. This can also be set by setting the "
-        "'PYSTAC_STAC_VERSION_OVERRIDE' environment variable. "
-        f"Default is {pystac.get_stac_version()}",
-    )
-    add_request_options(parser)
-    add_logging_options(parser)
 
 
-def runner(ns: argparse.Namespace) -> int:
+def runner(ns: argparse.Namespace, session: Session) -> int:
     """Run the populator."""
     LOGGER.info(f"Arguments to call: {vars(ns)}")
 
-    if ns.stac_version:
-        pystac.set_stac_version(ns.stac_version)
+    if ns.mode == "full":
+        data_loader = THREDDSLoader(ns.href, session=session)
+    else:
+        # To be implemented
+        data_loader = ErrorLoader()
 
-    with Session() as session:
-        apply_request_options(session, ns)
-        if ns.mode == "full":
-            data_loader = THREDDSLoader(ns.href, session=session)
-        else:
-            # To be implemented
-            data_loader = ErrorLoader()
-
-        c = CMIP6populator(ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config)
-        c.ingest()
+    c = CMIP6populator(ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config)
+    c.ingest()
     return 0
-
-
-def main(*args: str) -> int:
-    """Call this implementation directly."""
-    warnings.warn(
-        "Calling implementation scripts directly is deprecated. Please use the 'stac-populator' CLI instead.",
-        DeprecationWarning,
-    )
-    parser = argparse.ArgumentParser()
-    add_parser_args(parser)
-    ns = parser.parse_args(args or None)
-    ns.populator = os.path.basename(os.path.dirname(__file__))
-    ns.command = "run"
-    return cli.run(ns)
-
-
-if __name__ == "__main__":
-    sys.exit(main())
