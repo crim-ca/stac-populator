@@ -21,7 +21,7 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
-    FieldValidationInfo,
+    ValidationInfo,
     field_validator,
 )
 from pydantic.fields import FieldInfo
@@ -117,20 +117,20 @@ class CMIP6Properties(BaseModel, validate_assignment=True):
 
     @field_validator("initialization_index", "physics_index", "realization_index", "forcing_index", mode="before")
     @classmethod
-    def only_item(cls, v: list[int], info: FieldValidationInfo) -> int:
+    def only_item(cls, v: list[int], info: ValidationInfo) -> int:
         """Pick single item from list."""
         assert len(v) == 1, f"{info.field_name} must have one item only."
         return v[0]
 
     @field_validator("realm", "source_type", mode="before")
     @classmethod
-    def split(cls, v: str, __info: FieldValidationInfo) -> list[str]:
+    def split(cls, v: str, __info: ValidationInfo) -> list[str]:
         """Split string into list on a single space."""
         return v.split(" ")
 
     @field_validator("version")
     @classmethod
-    def validate_version(cls, v: str, __info: FieldValidationInfo) -> bool:
+    def validate_version(cls, v: str, __info: ValidationInfo) -> bool:
         """Return True iff the given version is valid."""
         assert v[0] == "v", "Version string should begin with a lower case 'v'"
         assert v[1:].isdigit(), "All characters in version string, except first, should be digits"
