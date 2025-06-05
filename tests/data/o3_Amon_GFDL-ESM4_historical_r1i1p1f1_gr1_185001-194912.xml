@@ -93,7 +93,7 @@
       <attribute name="nccs_service" value="https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/ncss/birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc/dataset.html" />
     </group>
     <group name="dates">
-      <attribute name="date" value="2021-02-15T14:37:21.508Z" type="modified" />
+      <attribute name="date" value="2021-02-15T14:37:21.508Z" />
     </group>
   </group>
   <ncml:variable name="time_bnds" shape="time bnds" type="double">
@@ -180,4 +180,3 @@
     <ncml:attribute name="_CoordinateAxisType" value="Lon" />
   </ncml:variable>
 </ncml:netcdf>
-
