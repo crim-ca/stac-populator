@@ -11,6 +11,7 @@
 * Log to stderr only by default and to a file only if requested.
 * Reorganize command line arguments to ensure shared options are always applied.
 * Remove option to call implementation scripts directly from the command line.
+* Remove files in the `.deprecated` folder.
 
 ## [0.7.0](https://github.com/crim-ca/stac-populator/tree/0.7.0) (2025-03-07)
 
