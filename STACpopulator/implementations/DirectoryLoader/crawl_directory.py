@@ -1,19 +1,14 @@
 import argparse
 import logging
 import os.path
-import sys
-import warnings
 from typing import Any, MutableMapping, Optional
 
 import pystac
 from requests.sessions import Session
 
-from STACpopulator import cli
 from STACpopulator.input import STACDirectoryLoader
-from STACpopulator.log import add_logging_options
 from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
-from STACpopulator.request_utils import add_request_options, apply_request_options
 
 LOGGER = logging.getLogger(__name__)
 
@@ -67,40 +62,18 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
         "'PYSTAC_STAC_VERSION_OVERRIDE' environment variable. "
         f"Default is {pystac.get_stac_version()}",
     )
-    add_request_options(parser)
-    add_logging_options(parser)
 
 
-def runner(ns: argparse.Namespace) -> int:
+def runner(ns: argparse.Namespace, session: Session) -> int:
     """Run the populator."""
     LOGGER.info(f"Arguments to call: {vars(ns)}")
 
     if ns.stac_version:
         pystac.set_stac_version(ns.stac_version)
 
-    with Session() as session:
-        apply_request_options(session, ns)
-        for _, collection_path, collection_json in STACDirectoryLoader(ns.directory, "collection", ns.prune):
-            collection_dir = os.path.dirname(collection_path)
-            loader = STACDirectoryLoader(collection_dir, "item", prune=ns.prune)
-            populator = DirectoryPopulator(ns.stac_host, loader, ns.update, collection_json, session=session)
-            populator.ingest()
+    for _, collection_path, collection_json in STACDirectoryLoader(ns.directory, "collection", ns.prune):
+        collection_dir = os.path.dirname(collection_path)
+        loader = STACDirectoryLoader(collection_dir, "item", prune=ns.prune)
+        populator = DirectoryPopulator(ns.stac_host, loader, ns.update, collection_json, session=session)
+        populator.ingest()
     return 0
-
-
-def main(*args: str) -> int:
-    """Call this implementation directly."""
-    warnings.warn(
-        "Calling implementation scripts directly is deprecated. Please use the 'stac-populator' CLI instead.",
-        DeprecationWarning,
-    )
-    parser = argparse.ArgumentParser()
-    add_parser_args(parser)
-    ns = parser.parse_args(args or None)
-    ns.populator = os.path.basename(os.path.dirname(__file__))
-    ns.command = "run"
-    return cli.run(ns)
-
-
-if __name__ == "__main__":
-    sys.exit(main())

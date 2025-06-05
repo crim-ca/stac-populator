@@ -7,6 +7,7 @@ from typing import Any, Callable, Generator
 
 import pystac
 import pytest
+import requests
 import responses
 
 from STACpopulator.cli import add_parser_args
@@ -131,7 +132,8 @@ class _TestDirectoryLoader(abc.ABC):
 class TestModule(_TestDirectoryLoader):
     @pytest.fixture
     def runner(self, namespace: argparse.Namespace) -> Callable:
-        return functools.partial(crawl_directory.runner, namespace)
+        with requests.Session() as session:
+            return functools.partial(crawl_directory.runner, namespace, session)
 
     @pytest.fixture
     def namespace(self, request: pytest.FixtureRequest, prune_option: bool) -> argparse.Namespace:
@@ -160,11 +162,11 @@ class TestFromCLI(_TestDirectoryLoader):
     @pytest.fixture
     def args(self, request: pytest.FixtureRequest, prune_option: bool) -> list[str]:
         cmd_args = [
+            "--no-verify",
             "run",
             "DirectoryLoader",
             "http://example.com/stac/",
             os.path.join(request.fspath.dirname, "data/test_directory"),
-            "--no-verify",
             "--update",
         ]
         if prune_option:

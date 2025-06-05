@@ -5,6 +5,7 @@ import sys
 import warnings
 from types import ModuleType
 
+import pystac
 import requests
 
 from STACpopulator import __version__, implementations
@@ -23,10 +24,19 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
         version=f"%(prog)s {__version__}",
         help="prints the version of the library and exits",
     )
+    add_logging_options(parser)
+    add_request_options(parser)
     commands_subparser = parser.add_subparsers(
         title="command", dest="command", description="STAC populator command to execute.", required=True
     )
     run_parser = commands_subparser.add_parser("run", description="Run a STACpopulator implementation")
+    run_parser.add_argument(
+        "--stac-version",
+        help="Sets the STAC version that should be used. This must match the version used by "
+        "the STAC server that is being populated. This can also be set by setting the "
+        "'PYSTAC_STAC_VERSION_OVERRIDE' environment variable. "
+        f"Default is {pystac.get_stac_version()}",
+    )
     populators_subparser = run_parser.add_subparsers(
         title="populator", dest="populator", description="Implementation to run."
     )
@@ -42,8 +52,6 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
         action="store_true",
         help="Do not raise an error if STAC items with the same ids are found in a collection.",
     )
-    add_request_options(export_parser)
-    add_logging_options(export_parser)
 
 
 @functools.cache
@@ -67,11 +75,13 @@ def implementation_modules() -> dict[str, ModuleType]:
 def run(ns: argparse.Namespace) -> int:
     """Run a given implementation given the arguments passed on the command line."""
     setup_logging(ns)
-    if ns.command == "run":
-        return implementation_modules()[ns.populator].runner(ns) or 0
-    else:
-        with requests.Session() as session:
-            apply_request_options(session, ns)
+    with requests.Session() as session:
+        apply_request_options(session, ns)
+        if ns.command == "run":
+            if ns.stac_version:
+                pystac.set_stac_version(ns.stac_version)
+            return implementation_modules()[ns.populator].runner(ns, session) or 0
+        else:
             return export_catalog(ns.directory, ns.stac_host, session, ns.resume, ns.ignore_duplicate_ids) or 0
 
 
