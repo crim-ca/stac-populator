@@ -109,16 +109,18 @@ def test_standalone_stac_item_thredds_via_loader():
         populator.ingest()
         for call in mock.mock_calls:
             data = call.args[3]
-            assert {str(k) for k in data["access_urls"] } == set({
-                "HTTPServer",
-                "OpenDAP",
-                "NCML",
-                "UDDC",
-                "ISO",
-                "WCS",
-                "WMS",
-                "NetcdfSubsetGrid",
-                "NetcdfSubsetPoint",
-            })
+            assert {str(k) for k in data["access_urls"]} == set(
+                {
+                    "HTTPServer",
+                    "OpenDAP",
+                    "NCML",
+                    "UDDC",
+                    "ISO",
+                    "WCS",
+                    "WMS",
+                    "NetcdfSubsetGrid",
+                    "NetcdfSubsetPoint",
+                }
+            )
             assert data["access_urls"]["WCS"].endswith("?request=GetCapabilities")
             assert data["access_urls"]["WMS"].endswith("?request=GetCapabilities")
