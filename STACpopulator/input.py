@@ -96,6 +96,7 @@ class THREDDSLoader(GenericLoader):
             current_catalog: Dataset = catalogs.get()
             for item_name, dataset in current_catalog.datasets.items():
                 self._update_access_urls(current_catalog, dataset)
+                self._add_WxS_queries(dataset)
                 attrs = self.extract_metadata(dataset)
                 filename = dataset.url_path.split("/")[-1]
                 url = current_catalog.catalog_url[: current_catalog.catalog_url.rfind("/")] + filename
@@ -137,6 +138,12 @@ class THREDDSLoader(GenericLoader):
                 elif "grid" in base_components:
                     key = ServiceType.netcdfsubsetgrid
             dataset.access_urls[key] = url
+
+    def _add_WxS_queries(self, dataset: Dataset) -> None:
+        """Update access_urls for WxS services to include the GetCapabilities request parameter."""
+        for key, val in dataset.access_urls.items():
+            if re.match(r"W[CM]S", key):
+                dataset.access_urls[key] = f"{val}?request=GetCapabilities"
 
     def extract_metadata(self, dataset: Dataset) -> MutableMapping[str, Any]:
         """Extract metadata from an NcML item."""
