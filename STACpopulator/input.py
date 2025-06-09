@@ -134,9 +134,9 @@ class THREDDSLoader(GenericLoader):
             if key == "NetcdfSubset":
                 base_components = service.attrib["base"].split("/")
                 if "point" in base_components:
-                    key = ServiceType.netcdfsubsetpoint
+                    key = ServiceType.netcdfsubsetpoint.value
                 elif "grid" in base_components:
-                    key = ServiceType.netcdfsubsetgrid
+                    key = ServiceType.netcdfsubsetgrid.value
             dataset.access_urls[key] = url
 
     def _add_WxS_queries(self, dataset: Dataset) -> None:

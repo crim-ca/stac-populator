@@ -1,6 +1,7 @@
 import json
 import os
 import pathlib
+from unittest.mock import patch
 from urllib.parse import quote
 
 import pystac
@@ -10,9 +11,9 @@ import xncml
 
 from STACpopulator.extensions.cmip6 import CMIP6Helper
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
-from STACpopulator.implementations.CMIP6_UofT.add_CMIP6 import CMIP6populator
 from STACpopulator.input import THREDDSLoader
-from STACpopulator.models import GeoJSONPolygon
+from STACpopulator.models import GeoJSONPolygon, Geometry
+from STACpopulator.populator_base import STACpopulatorBase
 
 
 @pytest.fixture
@@ -58,7 +59,9 @@ def test_standalone_stac_item_thredds_ncml(cur_dir):
     assert stac_item.to_dict() == reference
 
 
-class MockedNoSTACUpload(CMIP6populator):
+class MockedNoSTACUpload(STACpopulatorBase):
+    item_geometry_model = Geometry
+
     def load_config(self):
         # bypass auto-load config
         self._collection_info = {
@@ -77,12 +80,15 @@ class MockedNoSTACUpload(CMIP6populator):
     def publish_stac_collection(self, *_) -> None:
         pass  # don't push to STAC API
 
+    def create_stac_item(self, item_name, item_data):
+        return {"id": item_name, "access_urls": item_data["access_urls"]}
 
-@pytest.mark.vcr
+
+@pytest.mark.vcr("test_cmip6_stac_thredds_catalog_parsing")
 def test_cmip6_stac_thredds_catalog_parsing(cur_dir):
     url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml"
     loader = THREDDSLoader(url)
-    populator = MockedNoSTACUpload("https://host-dont-care.com", loader)
+    populator = MockedNoSTACUpload("https://example.com", loader)
 
     result = populator.create_stac_collection()
 
@@ -91,3 +97,28 @@ def test_cmip6_stac_thredds_catalog_parsing(cur_dir):
         reference = pystac.Collection.from_dict(json.load(ff)).to_dict()
 
     assert result == reference
+
+
+@pytest.mark.vcr
+def test_standalone_stac_item_thredds_via_loader():
+    url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml"
+    loader = THREDDSLoader(url)
+    populator = MockedNoSTACUpload("https://example.com", loader)
+
+    with patch("STACpopulator.populator_base.post_stac_item") as mock:
+        populator.ingest()
+        for call in mock.mock_calls:
+            data = call.args[3]
+            assert {str(k) for k in data["access_urls"] } == set({
+                "HTTPServer",
+                "OpenDAP",
+                "NCML",
+                "UDDC",
+                "ISO",
+                "WCS",
+                "WMS",
+                "NetcdfSubsetGrid",
+                "NetcdfSubsetPoint",
+            })
+            assert data["access_urls"]["WCS"].endswith("?request=GetCapabilities")
+            assert data["access_urls"]["WMS"].endswith("?request=GetCapabilities")
