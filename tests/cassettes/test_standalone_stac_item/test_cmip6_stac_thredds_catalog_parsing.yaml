@@ -1,0 +1,80 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml
+  response:
+    body:
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<catalog xmlns=\"http://www.unidata.ucar.edu/namespaces/thredds/InvCatalog/v1.0\"
+        xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.2\">\r\n  <service
+        name=\"all\" serviceType=\"Compound\" base=\"\">\r\n    <service name=\"http\"
+        serviceType=\"HTTPServer\" base=\"/twitcher/ows/proxy/thredds/fileServer/\"
+        />\r\n    <service name=\"odap\" serviceType=\"OpenDAP\" base=\"/twitcher/ows/proxy/thredds/dodsC/\"
+        />\r\n    <service name=\"ncml\" serviceType=\"NCML\" base=\"/twitcher/ows/proxy/thredds/ncml/\"
+        />\r\n    <service name=\"uddc\" serviceType=\"UDDC\" base=\"/twitcher/ows/proxy/thredds/uddc/\"
+        />\r\n    <service name=\"iso\" serviceType=\"ISO\" base=\"/twitcher/ows/proxy/thredds/iso/\"
+        />\r\n    <service name=\"wcs\" serviceType=\"WCS\" base=\"/twitcher/ows/proxy/thredds/wcs/\"
+        />\r\n    <service name=\"wms\" serviceType=\"WMS\" base=\"/twitcher/ows/proxy/thredds/wms/\"
+        />\r\n    <service name=\"ncssGrid\" serviceType=\"NetcdfSubset\" base=\"/twitcher/ows/proxy/thredds/ncss/grid/\"
+        />\r\n    <service name=\"ncssPoint\" serviceType=\"NetcdfSubset\" base=\"/twitcher/ows/proxy/thredds/ncss/point/\"
+        />\r\n  </service>\r\n  <dataset name=\"testdata/xclim/cmip6/\">\r\n    <property
+        name=\"DatasetScan\" value=\"true\" />\r\n    <metadata inherited=\"true\">\r\n
+        \     <serviceName>all</serviceName>\r\n    </metadata>\r\n    <dataset name=\"o3_Amon_GFDL-ESM4_historical_r1i1p1f1_gr1_185001-194912.nc\"
+        ID=\"birdhouse/testdata/xclim/cmip6/o3_Amon_GFDL-ESM4_historical_r1i1p1f1_gr1_185001-194912.nc\"
+        urlPath=\"birdhouse/testdata/xclim/cmip6/o3_Amon_GFDL-ESM4_historical_r1i1p1f1_gr1_185001-194912.nc\">\r\n
+        \     <dataSize units=\"Kbytes\">865.3</dataSize>\r\n      <date type=\"modified\">2024-08-24T01:59:06.640Z</date>\r\n
+        \   </dataset>\r\n    <dataset name=\"prsn_day_CanESM5_historical_r1i1p1f1_gn_19910101-20101231.nc\"
+        ID=\"birdhouse/testdata/xclim/cmip6/prsn_day_CanESM5_historical_r1i1p1f1_gn_19910101-20101231.nc\"
+        urlPath=\"birdhouse/testdata/xclim/cmip6/prsn_day_CanESM5_historical_r1i1p1f1_gn_19910101-20101231.nc\">\r\n
+        \     <dataSize units=\"Kbytes\">424.5</dataSize>\r\n      <date type=\"modified\">2025-01-08T22:07:08.889Z</date>\r\n
+        \   </dataset>\r\n    <dataset name=\"sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc\"
+        ID=\"birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc\"
+        urlPath=\"birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc\">\r\n
+        \     <dataSize units=\"Mbytes\">3.583</dataSize>\r\n      <date type=\"modified\">2024-08-24T01:59:06.648Z</date>\r\n
+        \   </dataset>\r\n    <dataset name=\"snw_day_CanESM5_historical_r1i1p1f1_gn_19910101-20101231.nc\"
+        ID=\"birdhouse/testdata/xclim/cmip6/snw_day_CanESM5_historical_r1i1p1f1_gn_19910101-20101231.nc\"
+        urlPath=\"birdhouse/testdata/xclim/cmip6/snw_day_CanESM5_historical_r1i1p1f1_gn_19910101-20101231.nc\">\r\n
+        \     <dataSize units=\"Kbytes\">502.8</dataSize>\r\n      <date type=\"modified\">2025-01-08T22:07:08.890Z</date>\r\n
+        \   </dataset>\r\n  </dataset>\r\n</catalog>\r\n"
+    headers:
+      Access-Control-Allow-Headers:
+      - Origin, X-Requested-With, Content-Type, Accept, Authorization
+      Access-Control-Allow-Methods:
+      - GET, POST, OPTIONS
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Language:
+      - en-US
+      Content-Type:
+      - application/xml;charset=UTF-8
+      Date:
+      - Mon, 09 Jun 2025 15:19:12 GMT
+      Server:
+      - nginx/1.23.4
+      Strict-Transport-Security:
+      - max-age=0
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Robots-Tag:
+      - noindex, nofollow
+      vary:
+      - Origin
+    status:
+      code: 200
+      message: ''
+version: 1

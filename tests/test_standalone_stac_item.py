@@ -1,6 +1,6 @@
 import json
 import os
-import tempfile
+import pathlib
 from urllib.parse import quote
 
 import pystac
@@ -14,15 +14,18 @@ from STACpopulator.implementations.CMIP6_UofT.add_CMIP6 import CMIP6populator
 from STACpopulator.input import THREDDSLoader
 from STACpopulator.models import GeoJSONPolygon
 
-CUR_DIR = os.path.dirname(__file__)
+
+@pytest.fixture
+def cur_dir(request: pytest.FixtureRequest) -> pathlib.Path:
+    return request.path.parent
 
 
 def quote_none_safe(url):
     return quote(url, safe="")
 
 
-@pytest.mark.online
-def test_standalone_stac_item_thredds_ncml():
+@pytest.mark.vcr
+def test_standalone_stac_item_thredds_ncml(cur_dir):
     thredds_url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds"
     thredds_path = "birdhouse/testdata/xclim/cmip6"
     thredds_nc = "sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc"
@@ -48,7 +51,7 @@ def test_standalone_stac_item_thredds_ncml():
     thredds_ext = THREDDSExtension.ext(stac_item)
     thredds_ext.apply(services=thredds_helper.services, links=thredds_helper.links)
 
-    ref_file = os.path.join(CUR_DIR, "data/stac_item_testdata_xclim_cmip6_ncml.json")
+    ref_file = os.path.join(cur_dir, "data/stac_item_testdata_xclim_cmip6_ncml.json")
     with open(ref_file, mode="r", encoding="utf-8") as ff:
         reference = pystac.Item.from_dict(json.load(ff)).to_dict()
 
@@ -75,16 +78,15 @@ class MockedNoSTACUpload(CMIP6populator):
         pass  # don't push to STAC API
 
 
-@pytest.mark.online
-def test_cmip6_stac_thredds_catalog_parsing():
+@pytest.mark.vcr
+def test_cmip6_stac_thredds_catalog_parsing(cur_dir):
     url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml"
     loader = THREDDSLoader(url)
-    with tempfile.NamedTemporaryFile():
-        populator = MockedNoSTACUpload("https://host-dont-care.com", loader)
+    populator = MockedNoSTACUpload("https://host-dont-care.com", loader)
 
     result = populator.create_stac_collection()
 
-    ref_file = os.path.join(CUR_DIR, "data/stac_collection_testdata_xclim_cmip6_catalog.json")
+    ref_file = os.path.join(cur_dir, "data/stac_collection_testdata_xclim_cmip6_catalog.json")
     with open(ref_file, mode="r", encoding="utf-8") as ff:
         reference = pystac.Collection.from_dict(json.load(ff)).to_dict()
 
