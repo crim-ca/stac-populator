@@ -4,7 +4,6 @@ import logging
 import os.path
 from typing import Any, MutableMapping, Optional
 
-import pystac
 from requests.sessions import Session
 
 from STACpopulator.input import STACDirectoryLoader
