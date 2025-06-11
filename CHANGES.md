@@ -24,6 +24,7 @@
 * Support THREDDS datasets that don't contain an `NCML` access url.
 * Support nested collections when loading STAC objects with the `DirectoryLoader`.
 * `DirectoryLoader` now supports loading STAC objects created by the `export` command.
+* Remove redundant CLI arguments.
 
 ## [0.7.0](https://github.com/crim-ca/stac-populator/tree/0.7.0) (2025-03-07)
 
