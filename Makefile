@@ -3,7 +3,7 @@ MAKEFILE_NAME := $(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
 -include Makefile.config
 APP_ROOT    := $(abspath $(lastword $(MAKEFILE_NAME))/..)
 APP_NAME    := STACpopulator
-APP_VERSION ?= 0.7.0
+APP_VERSION ?= 0.8.0
 
 DOCKER_COMPOSE_FILES := -f "$(APP_ROOT)/docker/docker-compose.yml"
 COMPOSE_PROJECT_NAME := stac-populator

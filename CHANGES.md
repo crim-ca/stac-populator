@@ -3,6 +3,11 @@
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
 <!-- insert list items of new changes here -->
+
+## [0.8.0](https://github.com/crim-ca/stac-populator/tree/0.8.0) (2025-06-11)
+
+
+<!-- insert list items of new changes here -->
 * Add `cordex6` extension and `CORDEX-CMIP6_Ouranos` implementation. This includes a refactoring of base extension classes.
 * Add an `xscen` extension demonstrating how to add properties to a STAC Item.
 * Fix mismatch between CMIP6 schema URI given to `pystac` and the actual schema URI
