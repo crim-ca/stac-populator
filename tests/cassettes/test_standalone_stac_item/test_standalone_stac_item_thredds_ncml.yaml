@@ -1,0 +1,204 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.3
+    method: GET
+    uri: https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/ncml/birdhouse/testdata/xclim/cmip6/sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc?catalog=https%3A%2F%2Fpavics.ouranos.ca%2Ftwitcher%2Fows%2Fproxy%2Fthredds%2Fcatalog%2Fbirdhouse%2Ftestdata%2Fxclim%2Fcmip6%2Fcatalog.html&dataset=birdhouse%2Ftestdata%2Fxclim%2Fcmip6%2Fsic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc
+  response:
+    body:
+      string: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<netcdf xmlns=\"http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2\"
+        location=\"Not provided because of security concerns.\">\r\n  <attribute name=\"CCCma_model_hash\"
+        value=\"fc4bb7db954c862d023b546e19aec6c588bc0552\" />\r\n  <attribute name=\"CCCma_parent_runid\"
+        value=\"p2-his13\" />\r\n  <attribute name=\"CCCma_pycmor_hash\" value=\"26c970628162d607fffd14254956ebc6dd3b6f49\"
+        />\r\n  <attribute name=\"CCCma_runid\" value=\"p2-s4513\" />\r\n  <attribute
+        name=\"Conventions\" value=\"CF-1.7 CMIP-6.2\" />\r\n  <attribute name=\"YMDH_branch_time_in_child\"
+        value=\"2015:01:01:00\" />\r\n  <attribute name=\"YMDH_branch_time_in_parent\"
+        value=\"2015:01:01:00\" />\r\n  <attribute name=\"activity_id\" value=\"ScenarioMIP\"
+        />\r\n  <attribute name=\"branch_method\" value=\"Spin-up documentation\"
+        />\r\n  <attribute name=\"branch_time_in_child\" type=\"double\" value=\"60225.0\"
+        />\r\n  <attribute name=\"branch_time_in_parent\" type=\"double\" value=\"60225.0\"
+        />\r\n  <attribute name=\"contact\" value=\"ec.cccma.info-info.ccmac.ec@canada.ca\"
+        />\r\n  <attribute name=\"creation_date\" value=\"2019-09-25T23:01:33Z\" />\r\n
+        \ <attribute name=\"data_specs_version\" value=\"01.00.30\" />\r\n  <attribute
+        name=\"experiment\" value=\"update of RCP4.5 based on SSP2\" />\r\n  <attribute
+        name=\"experiment_id\" value=\"ssp245\" />\r\n  <attribute name=\"external_variables\"
+        value=\"areacello\" />\r\n  <attribute name=\"forcing_index\" type=\"int\"
+        value=\"1\" />\r\n  <attribute name=\"frequency\" value=\"mon\" />\r\n  <attribute
+        name=\"further_info_url\" value=\"https://furtherinfo.es-doc.org/CMIP6.CCCma.CanESM5.ssp245.none.r13i1p2f1\"
+        />\r\n  <attribute name=\"grid\" value=\"ORCA1 tripolar grid, 1 deg with refinement
+        to 1/3 deg within 20 degrees of the equator; 361 x 290 longitude/latitude;
+        45 vertical levels; top grid cell 0-6.19 m\" />\r\n  <attribute name=\"grid_label\"
+        value=\"gn\" />\r\n  <attribute name=\"history\" value=\"2019-09-25T23:01:33Z
+        ;rewrote data to be consistent with ScenarioMIP for variable siconc found
+        in table SImon.\" />\r\n  <attribute name=\"initialization_index\" type=\"int\"
+        value=\"1\" />\r\n  <attribute name=\"institution\" value=\"Canadian Centre
+        for Climate Modelling and Analysis, Environment and Climate Change Canada,
+        Victoria, BC V8P 5C2, Canada\" />\r\n  <attribute name=\"institution_id\"
+        value=\"CCCma\" />\r\n  <attribute name=\"mip_era\" value=\"CMIP6\" />\r\n
+        \ <attribute name=\"nominal_resolution\" value=\"100 km\" />\r\n  <attribute
+        name=\"parent_activity_id\" value=\"CMIP\" />\r\n  <attribute name=\"parent_experiment_id\"
+        value=\"historical\" />\r\n  <attribute name=\"parent_mip_era\" value=\"CMIP6\"
+        />\r\n  <attribute name=\"parent_source_id\" value=\"CanESM5\" />\r\n  <attribute
+        name=\"parent_time_units\" value=\"days since 1850-01-01 0:0:0.0\" />\r\n
+        \ <attribute name=\"parent_variant_label\" value=\"r13i1p2f1\" />\r\n  <attribute
+        name=\"physics_index\" type=\"int\" value=\"2\" />\r\n  <attribute name=\"product\"
+        value=\"model-output\" />\r\n  <attribute name=\"realization_index\" type=\"int\"
+        value=\"13\" />\r\n  <attribute name=\"realm\" value=\"seaIce\" />\r\n  <attribute
+        name=\"references\" value=\"Geophysical Model Development Special issue on
+        CanESM5 (https://www.geosci-model-dev.net/special_issue989.html)\" />\r\n
+        \ <attribute name=\"source\" value=\"CanESM5 (2019): &#xA;aerosol: interactive&#xA;atmos:
+        CanAM5 (T63L49 native atmosphere, T63 Linear Gaussian Grid; 128 x 64 longitude/latitude;
+        49 levels; top level 1 hPa)&#xA;atmosChem: specified oxidants for aerosols&#xA;land:
+        CLASS3.6/CTEM1.2&#xA;landIce: specified ice sheets&#xA;ocean: NEMO3.4.1 (ORCA1
+        tripolar grid, 1 deg with refinement to 1/3 deg within 20 degrees of the equator;
+        361 x 290 longitude/latitude; 45 vertical levels; top grid cell 0-6.19 m)&#xA;ocnBgchem:
+        Canadian Model of Ocean Carbon (CMOC); NPZD ecosystem with OMIP prescribed
+        carbonate chemistry&#xA;seaIce: LIM2\" />\r\n  <attribute name=\"source_id\"
+        value=\"CanESM5\" />\r\n  <attribute name=\"source_type\" value=\"AOGCM\"
+        />\r\n  <attribute name=\"sub_experiment\" value=\"none\" />\r\n  <attribute
+        name=\"sub_experiment_id\" value=\"none\" />\r\n  <attribute name=\"table_id\"
+        value=\"SImon\" />\r\n  <attribute name=\"table_info\" value=\"Creation Date:(09
+        May 2019) MD5:38ea1fbdf3f31659e83c719fb4c48428\" />\r\n  <attribute name=\"title\"
+        value=\"CanESM5 output prepared for CMIP6\" />\r\n  <attribute name=\"variable_id\"
+        value=\"siconc\" />\r\n  <attribute name=\"variant_label\" value=\"r13i1p2f1\"
+        />\r\n  <attribute name=\"version\" value=\"v20190429\" />\r\n  <attribute
+        name=\"license\" value=\"CMIP6 model data produced by The Government of Canada
+        (Canadian Centre for Climate Modelling and Analysis, Environment and Climate
+        Change Canada) is licensed under a Creative Commons Attribution ShareAlike
+        4.0 International License (https://creativecommons.org/licenses). Consult
+        https://pcmdi.llnl.gov/CMIP6/TermsOfUse for terms of use governing CMIP6 output,
+        including citation requirements and proper acknowledgment. Further information
+        about this data, including some limitations, can be found via the further_info_url
+        (recorded as a global attribute in this file) and at https:///pcmdi.llnl.gov/.
+        The data producers and data providers make no warranty, either express or
+        implied, including, but not limited to, warranties of merchantability and
+        fitness for a particular purpose. All liabilities arising from the supply
+        of the information (including any liability arising in negligence) are excluded
+        to the fullest extent permitted by law.\" />\r\n  <attribute name=\"cmor_version\"
+        value=\"3.5.0\" />\r\n  <attribute name=\"tracking_id\" value=\"hdl:21.14100/9e4f804b-c161-44fa-acd1-c2e94e220c95\"
+        />\r\n  <attribute name=\"DODS.strlen\" type=\"int\" value=\"7\" />\r\n  <attribute
+        name=\"DODS.dimName\" value=\"strlen\" />\r\n  <attribute name=\"DODS_EXTRA.Unlimited_Dimension\"
+        value=\"time\" />\r\n  <attribute name=\"_NCProperties\" value=\"version=2,netcdf=4.7.4,hdf5=1.10.6\"
+        />\r\n  <attribute name=\"_CoordSysBuilder\" value=\"ucar.nc2.internal.dataset.conv.CF1Convention\"
+        />\r\n  <dimension name=\"time\" length=\"12\" isUnlimited=\"true\" />\r\n
+        \ <dimension name=\"bnds\" length=\"2\" />\r\n  <dimension name=\"vertices\"
+        length=\"4\" />\r\n  <dimension name=\"maxStrlen64\" length=\"64\" />\r\n
+        \ <dimension name=\"j\" length=\"291\" />\r\n  <dimension name=\"i\" length=\"360\"
+        />\r\n  <group name=\"CFMetadata\">\r\n    <attribute name=\"geospatial_lon_min\"
+        value=\".0498\" type=\"float\" />\r\n    <attribute name=\"geospatial_lat_min\"
+        value=\"-78.3935\" type=\"float\" />\r\n    <attribute name=\"geospatial_lon_max\"
+        value=\"359.99493\" type=\"float\" />\r\n    <attribute name=\"geospatial_lat_max\"
+        value=\"89.74177\" type=\"float\" />\r\n    <attribute name=\"geospatial_lon_units\"
+        value=\"degrees_east\" />\r\n    <attribute name=\"geospatial_lat_units\"
+        value=\"degrees_north\" />\r\n    <attribute name=\"geospatial_lon_resolution\"
+        value=\"0.0034359351726440477\" />\r\n    <attribute name=\"geospatial_lat_resolution\"
+        value=\"0.0016049720708009724\" />\r\n    <attribute name=\"time_coverage_start\"
+        value=\"2019-12-06T12:00:00Z\" />\r\n    <attribute name=\"time_coverage_end\"
+        value=\"2020-11-04T12:00:00Z\" />\r\n    <attribute name=\"time_coverage_units\"
+        value=\"seconds\" />\r\n    <attribute name=\"time_coverage_resolution\" value=\"2623418.0\"
+        />\r\n    <attribute name=\"time_coverage_duration\" value=\"P0Y0M334DT0H0M0.000S\"
+        />\r\n  </group>\r\n  <group name=\"NCISOMetadata\">\r\n    <attribute name=\"metadata_creation\"
+        value=\"2025-06-09\" />\r\n    <attribute name=\"nciso_version\" value=\"2.4.6\"
+        />\r\n  </group>\r\n  <variable name=\"time_bnds\" shape=\"time bnds\" type=\"double\">\r\n
+        \   <attribute name=\"_FillValue\" type=\"double\" value=\"NaN\" />\r\n    <attribute
+        name=\"_ChunkSizes\" type=\"uint\" value=\"1 2\" />\r\n    <attribute name=\"coordinates\"
+        value=\"type\" />\r\n  </variable>\r\n  <variable name=\"vertices_latitude\"
+        shape=\"j i vertices\" type=\"double\">\r\n    <attribute name=\"_FillValue\"
+        type=\"double\" value=\"NaN\" />\r\n    <attribute name=\"_ChunkSizes\" type=\"uint\"
+        value=\"291 360 4\" />\r\n    <attribute name=\"coordinates\" value=\"longitude
+        latitude type\" />\r\n  </variable>\r\n  <variable name=\"vertices_longitude\"
+        shape=\"j i vertices\" type=\"double\">\r\n    <attribute name=\"_FillValue\"
+        type=\"double\" value=\"NaN\" />\r\n    <attribute name=\"_ChunkSizes\" type=\"uint\"
+        value=\"291 360 4\" />\r\n    <attribute name=\"coordinates\" value=\"longitude
+        latitude type\" />\r\n  </variable>\r\n  <variable name=\"siconc\" shape=\"time
+        j i\" type=\"float\">\r\n    <attribute name=\"_FillValue\" type=\"float\"
+        value=\"NaN\" />\r\n    <attribute name=\"standard_name\" value=\"sea_ice_area_fraction\"
+        />\r\n    <attribute name=\"long_name\" value=\"Sea-Ice Area Percentage (Ocean
+        Grid)\" />\r\n    <attribute name=\"comment\" value=\"Percentage of grid cell
+        covered by sea ice\" />\r\n    <attribute name=\"units\" value=\"%\" />\r\n
+        \   <attribute name=\"original_name\" value=\"soicecov\" />\r\n    <attribute
+        name=\"history\" value=\"mltby100_ocn 2019-09-25T23:01:33Z altered by CMOR:
+        Treated scalar dimension: 'type'.\" />\r\n    <attribute name=\"cell_methods\"
+        value=\"area: mean where sea time: mean\" />\r\n    <attribute name=\"cell_measures\"
+        value=\"area: areacello\" />\r\n    <attribute name=\"_ChunkSizes\" type=\"uint\"
+        value=\"1 291 360\" />\r\n    <attribute name=\"coordinates\" value=\"type
+        latitude longitude\" />\r\n  </variable>\r\n  <variable name=\"areacello\"
+        shape=\"j i\" type=\"float\">\r\n    <attribute name=\"_FillValue\" type=\"float\"
+        value=\"1.0E20\" />\r\n    <attribute name=\"standard_name\" value=\"cell_area\"
+        />\r\n    <attribute name=\"long_name\" value=\"Grid-Cell Area for Ocean Variables\"
+        />\r\n    <attribute name=\"comment\" value=\"Horizontal area of ocean grid
+        cells\" />\r\n    <attribute name=\"units\" value=\"m2\" />\r\n    <attribute
+        name=\"original_name\" value=\"areacello\" />\r\n    <attribute name=\"cell_methods\"
+        value=\"area: sum\" />\r\n    <attribute name=\"_ChunkSizes\" type=\"int\"
+        value=\"291 360\" />\r\n    <attribute name=\"coordinates\" value=\"latitude
+        longitude\" />\r\n    <attribute name=\"missing_value\" type=\"float\" value=\"1.0E20\"
+        />\r\n  </variable>\r\n  <variable name=\"time\" shape=\"time\" type=\"double\">\r\n
+        \   <attribute name=\"_FillValue\" type=\"double\" value=\"NaN\" />\r\n    <attribute
+        name=\"bounds\" value=\"time_bnds\" />\r\n    <attribute name=\"axis\" value=\"T\"
+        />\r\n    <attribute name=\"long_name\" value=\"time\" />\r\n    <attribute
+        name=\"standard_name\" value=\"time\" />\r\n    <attribute name=\"_ChunkSizes\"
+        type=\"uint\" value=\"512\" />\r\n    <attribute name=\"units\" value=\"days
+        since 1850-01-01\" />\r\n    <attribute name=\"calendar\" value=\"365_day\"
+        />\r\n    <attribute name=\"_CoordinateAxisType\" value=\"Time\" />\r\n  </variable>\r\n
+        \ <variable name=\"j\" shape=\"j\" type=\"int\">\r\n    <attribute name=\"units\"
+        value=\"1\" />\r\n    <attribute name=\"long_name\" value=\"cell index along
+        second dimension\" />\r\n  </variable>\r\n  <variable name=\"i\" shape=\"i\"
+        type=\"int\">\r\n    <attribute name=\"units\" value=\"1\" />\r\n    <attribute
+        name=\"long_name\" value=\"cell index along first dimension\" />\r\n  </variable>\r\n
+        \ <variable name=\"type\" shape=\"maxStrlen64\" type=\"char\">\r\n    <attribute
+        name=\"long_name\" value=\"Sea Ice area type\" />\r\n    <attribute name=\"standard_name\"
+        value=\"area_type\" />\r\n  </variable>\r\n  <variable name=\"latitude\" shape=\"j
+        i\" type=\"double\">\r\n    <attribute name=\"_FillValue\" type=\"double\"
+        value=\"1.0E20\" />\r\n    <attribute name=\"standard_name\" value=\"latitude\"
+        />\r\n    <attribute name=\"long_name\" value=\"latitude\" />\r\n    <attribute
+        name=\"units\" value=\"degrees_north\" />\r\n    <attribute name=\"bounds\"
+        value=\"vertices_latitude\" />\r\n    <attribute name=\"_ChunkSizes\" type=\"int\"
+        value=\"291 360\" />\r\n    <attribute name=\"missing_value\" type=\"double\"
+        value=\"1.0E20\" />\r\n    <attribute name=\"_CoordinateAxisType\" value=\"Lat\"
+        />\r\n  </variable>\r\n  <variable name=\"longitude\" shape=\"j i\" type=\"double\">\r\n
+        \   <attribute name=\"_FillValue\" type=\"double\" value=\"1.0E20\" />\r\n
+        \   <attribute name=\"standard_name\" value=\"longitude\" />\r\n    <attribute
+        name=\"long_name\" value=\"longitude\" />\r\n    <attribute name=\"units\"
+        value=\"degrees_east\" />\r\n    <attribute name=\"bounds\" value=\"vertices_longitude\"
+        />\r\n    <attribute name=\"_ChunkSizes\" type=\"int\" value=\"291 360\" />\r\n
+        \   <attribute name=\"missing_value\" type=\"double\" value=\"1.0E20\" />\r\n
+        \   <attribute name=\"_CoordinateAxisType\" value=\"Lon\" />\r\n  </variable>\r\n</netcdf>\r\n"
+    headers:
+      Access-Control-Allow-Headers:
+      - Origin, X-Requested-With, Content-Type, Accept, Authorization
+      Access-Control-Allow-Methods:
+      - GET, POST, OPTIONS
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/xml;charset=UTF-8
+      Date:
+      - Mon, 09 Jun 2025 15:18:37 GMT
+      Server:
+      - nginx/1.23.4
+      Strict-Transport-Security:
+      - max-age=0
+      Transfer-Encoding:
+      - chunked
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Robots-Tag:
+      - noindex, nofollow
+      vary:
+      - Origin
+    status:
+      code: 200
+      message: ''
+version: 1

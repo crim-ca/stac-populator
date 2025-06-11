@@ -1,6 +1,7 @@
 import json
 import os
-import tempfile
+import pathlib
+from unittest.mock import patch
 from urllib.parse import quote
 
 import pystac
@@ -10,19 +11,22 @@ import xncml
 
 from STACpopulator.extensions.cmip6 import CMIP6Helper
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
-from STACpopulator.implementations.CMIP6_UofT.add_CMIP6 import CMIP6populator
 from STACpopulator.input import THREDDSLoader
-from STACpopulator.models import GeoJSONPolygon
+from STACpopulator.models import GeoJSONPolygon, Geometry
+from STACpopulator.populator_base import STACpopulatorBase
 
-CUR_DIR = os.path.dirname(__file__)
+
+@pytest.fixture
+def cur_dir(request: pytest.FixtureRequest) -> pathlib.Path:
+    return request.path.parent
 
 
 def quote_none_safe(url):
     return quote(url, safe="")
 
 
-@pytest.mark.online
-def test_standalone_stac_item_thredds_ncml():
+@pytest.mark.vcr
+def test_standalone_stac_item_thredds_ncml(cur_dir):
     thredds_url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds"
     thredds_path = "birdhouse/testdata/xclim/cmip6"
     thredds_nc = "sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc"
@@ -36,11 +40,11 @@ def test_standalone_stac_item_thredds_ncml():
     # FIXME: avoid hackish workarounds
     data = requests.get(thredds_ncml_url).text
     attrs = xncml.Dataset.from_text(data).to_cf_dict()
-    attrs["access_urls"] = {  # FIXME: all following should be automatically added, but they are not!
+    attrs["access_urls"] = {  # these ideally should be added with xncml but they're not
         "HTTPServer": f"{thredds_url}/fileServer/{thredds_path}/{thredds_nc}",
         "OPENDAP": f"{thredds_url}/dodsC/{thredds_path}/{thredds_nc}",
-        "WCS": f"{thredds_url}/wcs/{thredds_path}/{thredds_nc}?service=WCS&version=1.0.0&request=GetCapabilities",
-        "WMS": f"{thredds_url}/wms/{thredds_path}/{thredds_nc}?service=WMS&version=1.3.0&request=GetCapabilities",
+        "WCS": f"{thredds_url}/wcs/{thredds_path}/{thredds_nc}",
+        "WMS": f"{thredds_url}/wms/{thredds_path}/{thredds_nc}",
         "NetcdfSubset": f"{thredds_url}/ncss/{thredds_path}/{thredds_nc}/dataset.html",
     }
     stac_item = CMIP6Helper(attrs, GeoJSONPolygon).stac_item()
@@ -48,14 +52,16 @@ def test_standalone_stac_item_thredds_ncml():
     thredds_ext = THREDDSExtension.ext(stac_item)
     thredds_ext.apply(services=thredds_helper.services, links=thredds_helper.links)
 
-    ref_file = os.path.join(CUR_DIR, "data/stac_item_testdata_xclim_cmip6_ncml.json")
+    ref_file = os.path.join(cur_dir, "data/stac_item_testdata_xclim_cmip6_ncml.json")
     with open(ref_file, mode="r", encoding="utf-8") as ff:
         reference = pystac.Item.from_dict(json.load(ff)).to_dict()
 
     assert stac_item.to_dict() == reference
 
 
-class MockedNoSTACUpload(CMIP6populator):
+class MockedNoSTACUpload(STACpopulatorBase):
+    item_geometry_model = Geometry
+
     def load_config(self):
         # bypass auto-load config
         self._collection_info = {
@@ -74,18 +80,47 @@ class MockedNoSTACUpload(CMIP6populator):
     def publish_stac_collection(self, *_) -> None:
         pass  # don't push to STAC API
 
+    def create_stac_item(self, item_name, item_data):
+        return {"id": item_name, "access_urls": item_data["access_urls"]}
 
-@pytest.mark.online
-def test_cmip6_stac_thredds_catalog_parsing():
-    url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.html"
+
+@pytest.mark.vcr("test_cmip6_stac_thredds_catalog_parsing")
+def test_cmip6_stac_thredds_catalog_parsing(cur_dir):
+    url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml"
     loader = THREDDSLoader(url)
-    with tempfile.NamedTemporaryFile():
-        populator = MockedNoSTACUpload("https://host-dont-care.com", loader)
+    populator = MockedNoSTACUpload("https://example.com", loader)
 
     result = populator.create_stac_collection()
 
-    ref_file = os.path.join(CUR_DIR, "data/stac_collection_testdata_xclim_cmip6_catalog.json")
+    ref_file = os.path.join(cur_dir, "data/stac_collection_testdata_xclim_cmip6_catalog.json")
     with open(ref_file, mode="r", encoding="utf-8") as ff:
         reference = pystac.Collection.from_dict(json.load(ff)).to_dict()
 
     assert result == reference
+
+
+@pytest.mark.vcr
+def test_standalone_stac_item_thredds_via_loader():
+    url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml"
+    loader = THREDDSLoader(url)
+    populator = MockedNoSTACUpload("https://example.com", loader)
+
+    with patch("STACpopulator.populator_base.post_stac_item") as mock:
+        populator.ingest()
+        for call in mock.mock_calls:
+            data = call.args[3]
+            assert {str(k) for k in data["access_urls"]} == set(
+                {
+                    "HTTPServer",
+                    "OpenDAP",
+                    "NCML",
+                    "UDDC",
+                    "ISO",
+                    "WCS",
+                    "WMS",
+                    "NetcdfSubsetGrid",
+                    "NetcdfSubsetPoint",
+                }
+            )
+            assert data["access_urls"]["WCS"].endswith("?request=GetCapabilities")
+            assert data["access_urls"]["WMS"].endswith("?request=GetCapabilities")

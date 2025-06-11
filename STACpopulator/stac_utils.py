@@ -1,6 +1,5 @@
 import logging
 import os
-import re
 from enum import Enum
 from typing import Any, Literal, MutableMapping, Type, Union
 
@@ -9,30 +8,6 @@ import pystac
 import yaml
 
 LOGGER = logging.getLogger(__name__)
-
-
-def url_validate(target: str) -> bool:
-    """Validate whether a supplied URL is reliably written.
-
-    Parameters
-    ----------
-    target : str
-
-    References
-    ----------
-    https://stackoverflow.com/a/7160778/7322852
-    """
-    url_regex = re.compile(
-        r"^(?:http|ftp)s?://"  # http:// or https://
-        # domain...
-        r"(?:(?:[A-Z\d](?:[A-Z\d-]{0,61}[A-Z\d])?\.)+(?:[A-Z]{2,6}\.?|[A-Z\d-]{2,}\.?)|"
-        r"localhost|"  # localhost...
-        r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"  # ...or ip
-        r"(?::\d+)?"  # optional port
-        r"(?:/?|[/?]\S+)$",
-        re.IGNORECASE,
-    )
-    return True if re.match(url_regex, target) else False
 
 
 def load_config(
@@ -174,7 +149,9 @@ class ServiceType(Enum):
     dods = "DODS"  # same as OpenDAP
     opendap = "OpenDAP"
     opendapg = "OpenDAPG"
-    netcdfsubset = "NetcdfSubset"
+    netcdfsubset = "NetcdfSubset"  # used in THREDDS version < 5.0
+    netcdfsubsetgrid = "NetcdfSubsetGrid"  # used in THREDDS version > 5.0
+    netcdfsubsetpoint = "NetcdfSubsetPoint"  # used in THREDDS version > 5.0
     cdmremote = "CdmRemote"
     cdmfeature = "CdmFeature"
     ncjson = "ncJSON"

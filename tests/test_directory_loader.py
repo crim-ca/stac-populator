@@ -1,6 +1,7 @@
 import abc
 import argparse
 import functools
+import inspect
 import json
 import os
 from typing import Any, Callable, Generator
@@ -13,6 +14,7 @@ import responses
 from STACpopulator.cli import add_parser_args
 from STACpopulator.cli import main as cli_main
 from STACpopulator.implementations.DirectoryLoader import crawl_directory
+from STACpopulator.input import STACDirectoryLoader
 
 RequestContext = Generator[responses.RequestsMock, None, None]
 
@@ -26,6 +28,8 @@ def file_id_map() -> dict[str, str]:
         "nested/collection.json": "EuroSAT-subset-test",
         "nested/item-0.json": "EuroSAT-subset-test-sample-0-class-AnnualCrop",
         "nested/item-1.json": "EuroSAT-subset-test-sample-1-class-AnnualCrop",
+        "nested2/item-2.json": "EuroSAT-subset-train-sample-2-class-AnnualCrop",
+        "nested2/item-3.json": "EuroSAT-subset-train-sample-3-class-AnnualCrop",
     }
 
 
@@ -85,9 +89,23 @@ class _TestDirectoryLoader(abc.ABC):
         request_mock: RequestContext,
         runner: Callable,
     ):
+        """
+        This test is designed to read files from the data/test_directory.
+
+        That directory contains files that are valid STAC items and collections
+        and others that are not. Please see the "description" field of each file
+        that contains "not-an-item" or "not-a-collection" in the file name to see
+        what condition each file is testing.
+
+        Also see the description in data/test_directory/nested2/collection.json
+        which is a valid collection file name but with an invalid type.
+
+        This test assumes that the default values for the collection_pattern and
+        item_pattern arguments are used.
+        """
         runner()
 
-        assert len(request_mock.calls) == (4 if prune_option else 7)
+        assert len(request_mock.calls) == (4 if prune_option else 9)
         assert request_mock.calls[0].request.url == namespace.stac_host
 
         base_col = file_id_map["collection.json"]
@@ -95,11 +113,11 @@ class _TestDirectoryLoader(abc.ABC):
         assert request_mock.calls[1].request.body == file_contents["collection.json"]
 
         # NOTE:
-        #   Because directory crawler users 'os.walk', loading order is OS-dependant.
+        #   Because directory crawler uses 'os.walk', loading order is OS-dependant.
         #   Since the order does not actually matter, consider item indices interchangeably.
-        req0_json = json.loads(request_mock.calls[2].request.body.decode())
-        req0_item = req0_json["id"]
-        item0_idx, item1_idx = (2, 3) if "sample-0" in req0_item else (3, 2)
+        req3_json = json.loads(request_mock.calls[2].request.body.decode())
+        req3_item = req3_json["id"]
+        item0_idx, item1_idx = (2, 3) if "sample-0" in req3_item else (3, 2)
 
         assert request_mock.calls[item0_idx].request.path_url == f"/stac/collections/{base_col}/items"
         assert request_mock.calls[item0_idx].request.body == file_contents["item-0.json"]
@@ -108,19 +126,29 @@ class _TestDirectoryLoader(abc.ABC):
         assert request_mock.calls[item1_idx].request.body == file_contents["item-1.json"]
 
         if not prune_option:
+            req5_json = json.loads(request_mock.calls[4].request.body.decode())
+            req5_item = req5_json["id"]
+            item2_idx, item3_idx = (4, 5) if "sample-2" in req5_item else (5, 4)
+
+            assert request_mock.calls[item2_idx].request.path_url == f"/stac/collections/{base_col}/items"
+            assert request_mock.calls[item2_idx].request.body == file_contents["nested2/item-2.json"]
+
+            assert request_mock.calls[item3_idx].request.path_url == f"/stac/collections/{base_col}/items"
+            assert request_mock.calls[item3_idx].request.body == file_contents["nested2/item-3.json"]
+
             # test that previous validation calls were cached properly
-            assert request_mock.calls[4].request.url != namespace.stac_host
+            assert request_mock.calls[6].request.url != namespace.stac_host
 
             nested_col = file_id_map["nested/collection.json"]
-            assert request_mock.calls[4].request.path_url == "/stac/collections"
-            assert request_mock.calls[4].request.body == file_contents["nested/collection.json"]
+            assert request_mock.calls[6].request.path_url == "/stac/collections"
+            assert request_mock.calls[6].request.body == file_contents["nested/collection.json"]
 
             # NOTE:
             #   Because directory crawler users 'os.walk', loading order is OS-dependant.
             #   Since the order does not actually matter, consider item indices interchangeably.
-            req0_json = json.loads(request_mock.calls[5].request.body.decode())
-            req0_item = req0_json["id"]
-            item0_idx, item1_idx = (5, 6) if "sample-0" in req0_item else (6, 5)
+            req8_json = json.loads(request_mock.calls[7].request.body.decode())
+            req8_item = req8_json["id"]
+            item0_idx, item1_idx = (7, 8) if "sample-0" in req8_item else (8, 7)
 
             assert request_mock.calls[item0_idx].request.path_url == f"/stac/collections/{nested_col}/items"
             assert request_mock.calls[item0_idx].request.body == file_contents["nested/item-0.json"]
@@ -137,6 +165,7 @@ class TestModule(_TestDirectoryLoader):
 
     @pytest.fixture
     def namespace(self, request: pytest.FixtureRequest, prune_option: bool) -> argparse.Namespace:
+        dirloader_init_params = inspect.signature(STACDirectoryLoader.__init__).parameters
         return argparse.Namespace(
             verify=False,
             cert=None,
@@ -144,6 +173,8 @@ class TestModule(_TestDirectoryLoader):
             stac_host="http://example.com/stac/",
             directory=os.path.join(request.fspath.dirname, "data/test_directory"),
             prune=prune_option,
+            collection_pattern=dirloader_init_params["collection_pattern"].default,
+            item_pattern=dirloader_init_params["item_pattern"].default,
             update=True,
             stac_version=None,
         )

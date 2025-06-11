@@ -1,17 +1,21 @@
 import json
 import logging
 import os
+import pathlib
+import queue
+import re
 from abc import ABC, abstractmethod
-from typing import Any, Iterator, Literal, MutableMapping, Optional, Tuple, Union
+from typing import Any, Iterator, Literal, MutableMapping, Optional, Tuple
+from urllib.parse import urlparse
+from xml.etree import ElementTree
 
 import pystac
 import requests
-import siphon
 import xncml
 from requests.sessions import Session
-from siphon.catalog import TDSCatalog, session_manager
+from siphon.catalog import Dataset, TDSCatalog, session_manager
 
-from STACpopulator.stac_utils import numpy_to_python_datatypes, url_validate
+from STACpopulator.stac_utils import ServiceType, numpy_to_python_datatypes
 
 LOGGER = logging.getLogger(__name__)
 
@@ -23,18 +27,13 @@ class GenericLoader(ABC):
         self.links = []
 
     @abstractmethod
-    def __iter__(self) -> Iterator:
+    def __iter__(self) -> Iterator[Tuple[str, str, MutableMapping[str, Any]]]:
         """
         Iterate over this loader.
 
-        Returns items from the input. Items may be anything depending on the specific concrete
-        implementation of this abstract class.
+        Returns items from the input. Items return a tuple containing the object name,
+        path to the object, and the object data.
         """
-        raise NotImplementedError
-
-    @abstractmethod
-    def reset(self) -> None:
-        """Reset the internal state of the generator."""
         raise NotImplementedError
 
 
@@ -47,34 +46,6 @@ class ErrorLoader(GenericLoader):
     def __iter__(self) -> Iterator:
         """Iterate over this loader."""
         raise NotImplementedError
-
-    def reset(self) -> None:
-        """Reset the internal state of the generator."""
-        raise NotImplementedError
-
-
-class THREDDSCatalog(TDSCatalog):
-    """
-    Patch to apply a custom request session.
-
-    Because of how :class:`TDSCatalog` automatically loads and parses right away from ``__init__`` call,
-    we need to hack around how the ``session`` attribute gets defined.
-    """
-
-    def __init__(self, catalog_url: str, session: Optional[Session] = None) -> None:
-        self._session = session
-        super().__init__(catalog_url)
-
-    @property
-    def session(self) -> Session:
-        """Return the current session or a new one if one does not exist."""
-        if self._session is None:
-            self._session = session_manager.create_session()
-        return self._session
-
-    @session.setter
-    def session(self, session: Session) -> None:
-        pass  # ignore to bypass TDSCatalog.__init__ enforcing create_session !
 
 
 class THREDDSLoader(GenericLoader):
@@ -91,53 +62,26 @@ class THREDDSLoader(GenericLoader):
         :param thredds_catalog_url: the URL to the THREDDS catalog to ingest
         :type thredds_catalog_url: str
         :param depth: Maximum recursive depth for the class's generator. Setting 0 will return only datasets within the
-          top-level catalog. If None, depth is set to 1000, defaults to None
+          top-level catalog. If None, depth is unlimited.
         :type depth: int, optional
         """
         super().__init__()
-        self._max_depth = depth if depth is not None else 1000
-        self._depth = 0
-
-        self.thredds_catalog_URL = self.validate_catalog_url(thredds_catalog_url)
-
-        self.catalog = TDSCatalog(self.thredds_catalog_URL)
-        self.catalog_head = self.catalog
-        self.links.append(self.magpie_collection_link())
-
-    def validate_catalog_url(self, url: str) -> str:
-        """Validate the user-provided catalog URL.
-
-        :param url: URL to the THREDDS catalog
-        :type url: str
-        :raises RuntimeError: if URL is invalid or contains query parameters.
-        :return: a valid URL
-        :rtype: str
-        """
-        if url_validate(url):
-            if "?" in url:
-                raise RuntimeError("THREDDS catalog URL should not contain query parameter")
-        else:
-            raise RuntimeError("Invalid URL")
-
-        return url.replace(".html", ".xml") if url.endswith(".html") else url
-
-    def magpie_collection_link(self) -> pystac.Link:
-        """Create a PySTAC Link for the collection that is used by Cowbird and Magpie.
-
-        :return: A PySTAC Link
-        :rtype: pystac.Link
-        """
-        url = self.thredds_catalog_URL
-        parts = url.split("/")
-        i = parts.index("catalog")
-        service = parts[i - 1]
-        path = "/".join(parts[i + 1 : -1])
-        title = f"{service}:{path}"
-        return pystac.Link(rel="source", target=url, media_type="text/xml", title=title)
-
-    def reset(self) -> None:
-        """Reset the generator."""
-        self.catalog_head = self.catalog
+        self.depth = depth
+        self.session = session or requests.Session()
+        session_manager.set_session_options(**vars(self.session))
+        if urlparse(thredds_catalog_url).query:
+            raise RuntimeError("THREDDS catalog URL should not contain any query parameters")
+        try:
+            self.catalog = TDSCatalog(thredds_catalog_url)
+        except requests.exceptions.RequestException as exc:
+            LOGGER.error(
+                "Could not access THREDDS host. Not reachable [%s] due to [%s]", thredds_catalog_url, exc, exc_info=exc
+            )
+        self.links.append(
+            pystac.Link(
+                rel="source", target=self.catalog.catalog_url, media_type="application/xml", title="THREDDS data source"
+            )
+        )
 
     def __iter__(self) -> Iterator[Tuple[str, str, MutableMapping[str, Any]]]:
         """Return a generator walking a THREDDS data catalog for datasets.
@@ -145,35 +89,78 @@ class THREDDSLoader(GenericLoader):
         :yield: Returns three quantities: name of the item, location of the item, and its attributes
         :rtype: Iterator[Tuple[str, str, MutableMapping[str, Any]]]
         """
-        if self._depth > self._max_depth:
-            return
+        catalogs = queue.SimpleQueue()
+        catalogs.put(self.catalog)
 
-        if self.catalog_head.datasets.items():
-            for item_name, ds in self.catalog_head.datasets.items():
-                attrs = self.extract_metadata(ds)
-                filename = ds.url_path[ds.url_path.rfind("/") :]
-                url = self.catalog_head.catalog_url[: self.catalog_head.catalog_url.rfind("/")] + filename
+        while not catalogs.empty():
+            current_catalog: Dataset = catalogs.get()
+            for item_name, dataset in current_catalog.datasets.items():
+                self._update_access_urls(current_catalog, dataset)
+                self._add_WxS_queries(dataset)
+                attrs = self.extract_metadata(dataset)
+                filename = dataset.url_path.split("/")[-1]
+                url = current_catalog.catalog_url[: current_catalog.catalog_url.rfind("/")] + filename
+                url = f"{current_catalog.catalog_url}?dataset={dataset.id}"
                 yield item_name, url, attrs
 
-        for name, ref in self.catalog_head.catalog_refs.items():
-            self.catalog_head = ref.follow()
-            self._depth -= 1
-            yield from self
-            self._depth += 1
+            for ref in current_catalog.catalog_refs:
+                catalogs.put(ref.follow())
 
     def __getitem__(self, dataset: str) -> dict:
         """Return the given dataset."""
         return self.catalog.datasets[dataset]
 
-    def extract_metadata(self, ds: siphon.catalog.Dataset) -> MutableMapping[str, Any]:
+    def _update_access_urls(self, catalog: TDSCatalog, dataset: Dataset) -> None:
+        """
+        Update access_urls for the given dataset to include missing urls.
+
+        This method is only required until https://github.com/Unidata/siphon/issues/932
+        is resolved. After it is resolved additional updates may be needed depending on
+        how the fix is implemented.
+        """
+        dataset_xml_path = f"{catalog.catalog_url}?dataset={dataset.url_path}"
+        resp = self.session.get(dataset_xml_path)
+        try:
+            resp.raise_for_status()
+        except requests.HTTPError as exc:
+            LOGGER.warning(
+                "Could not update access_urls for dataset [%s] due to [%s]", dataset.url_path, resp.text, exc_info=exc
+            )
+        root = ElementTree.fromstring(resp.content)
+        dataset.access_urls.clear()
+        for service in root.iterfind(".//{*}service[@serviceType!='Compound']"):
+            url = catalog.base_tds_url + service.attrib["base"] + dataset.url_path
+            key = service.attrib["serviceType"]
+            if key == "NetcdfSubset":
+                base_components = service.attrib["base"].split("/")
+                if "point" in base_components:
+                    key = ServiceType.netcdfsubsetpoint.value
+                elif "grid" in base_components:
+                    key = ServiceType.netcdfsubsetgrid.value
+            dataset.access_urls[key] = url
+
+    def _add_WxS_queries(self, dataset: Dataset) -> None:
+        """Update access_urls for WxS services to include the GetCapabilities request parameter."""
+        for key, val in dataset.access_urls.items():
+            if re.match(r"W[CM]S", key):
+                dataset.access_urls[key] = f"{val}?request=GetCapabilities"
+
+    def extract_metadata(self, dataset: Dataset) -> MutableMapping[str, Any]:
         """Extract metadata from an NcML item."""
-        LOGGER.info("Requesting NcML dataset description")
-        url = ds.access_urls["NCML"]
-        r = requests.get(url)
-        # Convert NcML to CF-compliant dictionary
-        attrs = xncml.Dataset.from_text(r.text).to_cf_dict()
-        attrs["attributes"] = numpy_to_python_datatypes(attrs["attributes"])
-        attrs["access_urls"] = ds.access_urls
+        attrs = {}
+        if "NCML" in dataset.access_urls:
+            LOGGER.info("Requesting NcML dataset description")
+            url = dataset.access_urls["NCML"]
+            try:
+                r = self.session.get(url)
+                r.raise_for_status()
+            except requests.exceptions.RequestException as exc:
+                LOGGER.error("Could not access THREDDS dataset. Not reachable [%s] due to [%s]", url, exc, exc_info=exc)
+            # Convert NcML to CF-compliant dictionary
+            attrs = xncml.Dataset.from_text(r.text).to_cf_dict()
+            attrs["attributes"] = numpy_to_python_datatypes(attrs["attributes"])
+        # access URLs should ideally be added with xncml but they're not so add them in from the siphon catalog for now.
+        attrs["access_urls"] = dataset.access_urls
         return attrs
 
 
@@ -181,70 +168,113 @@ class STACDirectoryLoader(GenericLoader):
     """
     Iterates through a directory structure looking for STAC Collections or Items.
 
-    For each directory that gets crawled, if a file is named ``collection.json``, it assumed to be a STAC Collection.
-    All other ``.json`` files under the directory where ``collection.json`` was found are assumed to be STAC Items.
-    These JSON STAC Items can be either at the same directory level as the STAC Collection, or under nested directories.
+    For each directory that gets crawled, all files that match the glob pattern that provided by the include parameter
+    will be read.
+
+    If the mode parameter is ``"collection"`` only STAC collection files will be processed.
+    If the mode parameter is ``"item"`` only STAC item files will be processed.
 
     Using the mode option, yielded results will be either the STAC Collections or the STAC Items.
     This allows this class to be used in conjunction (2 nested loops) to find collections and their underlying items.
 
     .. code-block:: python
 
-        for collection_path, collection_json in STACDirectoryLoader(dir_path, mode="collection"):
-            for item_path, item_json in STACDirectoryLoader(os.path.dirname(collection_path), mode="item"):
+        for collection_path, collection_json in STACDirectoryLoader(
+            dir_path, mode="collection", include="collection*.json"
+        ):
+            for item_path, item_json in STACDirectoryLoader(
+                os.path.dirname(collection_path), mode="item", include="item*.json", prune=True
+            ):
                 ...  # do stuff
 
-    For convenience, option ``prune`` can be used to stop crawling deeper once a STAC Collection is found.
-    Any collection files found further down the directory were a top-most match was found will not be yielded.
-    This can be useful to limit search, or to ignore nested directories using subsets of STAC Collections.
+    The prune parameter can be used to ignore STAC items that appear in subdirectories once an initial collection
+    is found.
+    If prune is ``True`` subdirectories will not be traversed once a collection is found.
+    For example, if prune is ``True``, the ``collection2/`` and ``collection3-subdir/`` directories will be ignored
+    because they are nested under a directory that already contains a collection file.
+
+    catalog/
+    ├── collection1/
+    │   ├── collection.json
+    │   ├── item1.json
+    │   └── collection2/
+    │       ├── collection.json
+    │       └── item2.json
+    └── collection3/
+        ├── collection.json
+        ├── item3.json
+        └── collection3-subdir/
+            └── item3.json
     """
 
-    def __init__(self, path: str, mode: Literal["collection", "item"], prune: bool = False) -> None:
+    def __init__(
+        self,
+        path: str,
+        mode: Literal["collection", "item"],
+        item_pattern: str = r"item.*\.(geo)?json$",
+        collection_pattern: str = r"collection\.json$",
+        prune: bool = False,
+    ) -> None:
         super().__init__()
-        self.path = path
-        self.iter = None
+        self.path = pathlib.Path(path)
+        self.mode = mode
         self.prune = prune
-        self.reset()
-        self._collection_mode = mode == "collection"
-        self._collection_name = "collection.json"
+        self.item_pattern = item_pattern
+        self.collection_pattern = collection_pattern
+
+    def _load_stac_file(self, path: os.PathLike) -> dict:
+        try:
+            with open(path, mode="r", encoding="utf-8") as f:
+                return json.load(f)
+        except json.JSONDecodeError as exc:
+            LOGGER.error("Could not load STAC object from file [%s] due to [%s]", path, exc, exc_info=exc)
+
+    def _check_stac_file(self, path: pathlib.Path, pattern: str, stac_type: str) -> dict | None:
+        if re.match(pattern, path.name):
+            stac_data = self._load_stac_file(path)
+            if stac_data["type"] == stac_type:
+                return stac_data
 
     def __iter__(self) -> Iterator[Tuple[str, str, MutableMapping[str, Any]]]:
-        """Return a generator that walks through a directory structure looking for sTAC Collections or Items.
+        """Return a generator that walks through a directory structure looking for STAC Collections or Items.
 
         :yield: Returns three quantities: name of the item, location of the item, and its attributes
         :rtype: Iterator[Tuple[str, str, MutableMapping[str, Any]]]
         """
-        is_root = True
-        for root, dirs, files in self.iter:
-            # since there can ever be only one 'collection' file name in a same directory
-            # directly retrieve it instead of looping through all other files
-            if self._collection_mode and self._collection_name in files:
-                if self.prune:  # stop recursive search if requested
-                    del dirs[:]
-                col_path = os.path.join(root, self._collection_name)
-                yield self._collection_name, col_path, self._load_json(col_path)
-            # if a collection is found deeper when not expected for items parsing
-            # drop the nested directories to avoid over-crawling nested collections
-            elif not self._collection_mode and not is_root and self._collection_name in files:
-                del dirs[:]
-                continue
-            is_root = False  # for next loop
-            for name in files:
-                if not self._collection_mode and self._is_item(name):
-                    item_path = os.path.join(root, name)
-                    yield self._collection_name, item_path, self._load_json(item_path)
-
-    def _is_item(self, path: Union[os.PathLike[str], str]) -> bool:
-        name = os.path.split(path)[-1]
-        return name != self._collection_name and os.path.splitext(name)[-1] in [".json", ".geojson"]
-
-    def _load_json(self, path: Union[os.PathLike[str], str]) -> MutableMapping[str, Any]:
-        with open(path, mode="r", encoding="utf-8") as file:
-            return json.load(file)
-
-    def reset(self) -> None:
-        """Reset the internal state of the generator."""
-        self.iter = os.walk(self.path)
+        collection_dirs = set()
+        for dirpath, dirnames, filenames in os.walk(self.path):
+            dirpath = pathlib.Path(dirpath)  # pathlib.Path.walk is not supported for python < 3.12
+            skip_items = False
+            for f in filenames:
+                filepath = dirpath / f
+                data = self._check_stac_file(filepath, self.collection_pattern, "Collection")
+                if data is None:
+                    # not a real collection
+                    continue
+                if dirpath in collection_dirs:
+                    # collection already found in this directory
+                    LOGGER.warning(
+                        "Path '%s' contains multiple collection files. File '%s' will be skipped", dirpath, f
+                    )
+                    continue
+                if self.mode == "collection":
+                    path_str = str(filepath)
+                    yield path_str, path_str, data
+                elif set(dirpath.parents) & collection_dirs:
+                    # items in this directory belong to a different collection, skip them
+                    dirnames.clear()
+                    skip_items = True
+                    break
+                if self.prune:
+                    dirnames.clear()
+                collection_dirs.add(dirpath)
+            if self.mode == "item" and not skip_items:
+                for f in filenames:
+                    filepath = dirpath / f
+                    data = self._check_stac_file(filepath, self.item_pattern, "Feature")
+                    if data is not None:
+                        path_str = str(filepath)
+                        yield path_str, path_str, data
 
 
 class STACLoader(GenericLoader):
@@ -257,10 +287,6 @@ class STACLoader(GenericLoader):
         """Iterate over this loader."""
         raise NotImplementedError
 
-    def reset(self) -> None:
-        """Reset the internal state of the generator."""
-        raise NotImplementedError
-
 
 class GeoServerLoader(GenericLoader):
     """Data loader from a Geoserver instance."""
@@ -270,8 +296,4 @@ class GeoServerLoader(GenericLoader):
 
     def __iter__(self) -> Iterator:
         """Iterate over this loader."""
-        raise NotImplementedError
-
-    def reset(self) -> None:
-        """Reset the internal state of the generator."""
         raise NotImplementedError
