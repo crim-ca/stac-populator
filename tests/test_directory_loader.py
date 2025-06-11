@@ -89,6 +89,20 @@ class _TestDirectoryLoader(abc.ABC):
         request_mock: RequestContext,
         runner: Callable,
     ):
+        """
+        This test is designed to read files from the data/test_directory.
+
+        That directory contains files that are valid STAC items and collections
+        and others that are not. Please see the "description" field of each file
+        that contains "not-an-item" or "not-a-collection" in the file name to see
+        what condition each file is testing.
+
+        Also see the description in data/test_directory/nested2/collection.json
+        which is a valid collection file name but with an invalid type.
+
+        This test assumes that the default values for the collection_pattern and
+        item_pattern arguments are used.
+        """
         runner()
 
         assert len(request_mock.calls) == (4 if prune_option else 9)
