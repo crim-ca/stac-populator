@@ -8,12 +8,10 @@ from typing import Any, Callable, Generator
 
 import pystac
 import pytest
-import requests
 import responses
 
-from STACpopulator.cli import add_parser_args
+from STACpopulator.cli import add_parser_args, run
 from STACpopulator.cli import main as cli_main
-from STACpopulator.implementations.DirectoryLoader import crawl_directory
 from STACpopulator.input import STACDirectoryLoader
 
 RequestContext = Generator[responses.RequestsMock, None, None]
@@ -160,8 +158,7 @@ class _TestDirectoryLoader(abc.ABC):
 class TestModule(_TestDirectoryLoader):
     @pytest.fixture
     def runner(self, namespace: argparse.Namespace) -> Callable:
-        with requests.Session() as session:
-            return functools.partial(crawl_directory.runner, namespace, session)
+        return functools.partial(run, namespace)
 
     @pytest.fixture
     def namespace(self, request: pytest.FixtureRequest, prune_option: bool) -> argparse.Namespace:
@@ -177,6 +174,10 @@ class TestModule(_TestDirectoryLoader):
             item_pattern=dirloader_init_params["item_pattern"].default,
             update=True,
             stac_version=None,
+            log_file=None,
+            log_level_stderr=None,
+            command="run",
+            populator="DirectoryLoader",
         )
 
     def test_set_stac_version(self, namespace, runner):
@@ -207,7 +208,7 @@ class TestFromCLI(_TestDirectoryLoader):
                 stac_version = "1.1.0"
             else:
                 stac_version = "1.0.0"
-            cmd_args.extend(["--stac-version", stac_version])
+            cmd_args.insert(2, f"--stac-version={stac_version}")
         return cmd_args
 
     @pytest.fixture
