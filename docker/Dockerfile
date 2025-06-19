@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
         netbase \
         git \
-    && mkdir -p /home/stac/.esdoc/ \
+    && mkdir -p "$(dirname "${PYESSV_ARCHIVE_HOME}")" \
     && git clone "https://github.com/ES-DOC/pyessv-archive" "${PYESSV_ARCHIVE_HOME}" \
     && pip install --no-cache-dir ${APP_DIR} \
     && apt-get remove -y \
