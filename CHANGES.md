@@ -2,6 +2,7 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
+* Include `PYESSV_ARCHIVE_HOME` environment variable in Dockerfile.
 * Remove redundant CLI arguments.
 
 ## [0.8.0](https://github.com/crim-ca/stac-populator/tree/0.8.0) (2025-06-11)
