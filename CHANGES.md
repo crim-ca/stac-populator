@@ -4,6 +4,10 @@
 
 * Include `PYESSV_ARCHIVE_HOME` environment variable in Dockerfile.
 * Remove redundant CLI arguments.
+* Fix bug in `THREDDSLoader` iterator introduced in 0.8.0. 
+* Remove `log_debug` option from CORDEX-CMIP6_Ouranos' runner. 
+* Add attributes to CORDEX IDs to avoid duplicate IDs in the STAC catalog.
+* Update CORDEX-CMIP6_Ouranos' test data. 
 
 ## [0.8.0](https://github.com/crim-ca/stac-populator/tree/0.8.0) (2025-06-11)
 
