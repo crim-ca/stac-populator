@@ -1,38 +1,5 @@
-import json
-
 from STACpopulator.extensions.cordex6 import Cordex6DataModel, Cordex6DataModelNcML
-
-
-def get_first_item_attrs(url):
-    import requests
-    import xncml
-    from siphon.catalog import TDSCatalog
-
-    from STACpopulator.stac_utils import np2py
-
-    cat = TDSCatalog(url)
-
-    if cat.datasets.items():
-        for item_name, ds in cat.datasets.items():
-            r = requests.get(ds.access_urls["NCML"])
-            attrs = xncml.Dataset.from_text(r.text).to_cf_dict()
-            attrs["access_urls"] = ds.access_urls
-            return np2py(attrs)
-
-
-def make_test_data():
-    """Fetches attribute data from the PAVICS THREDDS catalog and stores it in the data/ directory as a json."""
-    # Raw CORDEX data
-    url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/disk2/ouranos/CORDEX/CMIP6/DD/NAM-12/OURANOS/MPI-ESM1-2-LR/ssp370/r1i1p1f1/CRCM5/v1-r1/day/tas/v20231208/catalog.html"
-    attrs = get_first_item_attrs(url)
-    with open("data/cordex6_raw.json", "w") as f:
-        json.dump(attrs, f, indent=2)
-
-    # NcML CORDEX data
-    url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/datasets/simulations/RCM-CMIP6/CORDEX/NAM-12/day/catalog.html"
-    attrs = get_first_item_attrs(url)
-    with open("data/cordex6_ncml.json", "w") as f:
-        json.dump(attrs, f, indent=2)
+import json
 
 
 def test_item_raw():

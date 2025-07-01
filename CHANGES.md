@@ -8,6 +8,10 @@
 * Remove `log_debug` option from CORDEX-CMIP6_Ouranos' runner. 
 * Add attributes to CORDEX IDs to avoid duplicate IDs in the STAC catalog.
 * Update CORDEX-CMIP6_Ouranos' test data. 
+* Add default `create_uid` to `THREDDSCatalogDataModel`.
+* Fix bug in `DataCubeHelper` for vertical coordinate extents.
+* Split and clean script to update test data. 
+* Add tests for RDPS and HRDPS attributes with no custom extension. 
 
 ## [0.8.0](https://github.com/crim-ca/stac-populator/tree/0.8.0) (2025-06-11)
 

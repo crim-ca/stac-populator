@@ -209,6 +209,13 @@ class THREDDSCatalogDataModel(BaseSTAC):
         data["thredds"] = THREDDSHelper(data["data"]["access_urls"])
         return data
 
+    def create_uid(self) -> str:
+        """Return a unique ID from the server location.
+
+        For datasets with a DRS, it might might more sense to use the dataset's metadata instead."""
+        location = self.data["access_urls"]["HTTPServer"].split("/fileServer/")[1]
+        return location
+
 
 # TODO: Validate services links exist ?
 # @field_validator("access_urls")
