@@ -4,10 +4,10 @@
 
 * Include `PYESSV_ARCHIVE_HOME` environment variable in Dockerfile.
 * Remove redundant CLI arguments.
-* Fix bug in `THREDDSLoader` iterator introduced in 0.8.0. 
-* Remove `log_debug` option from CORDEX-CMIP6_Ouranos' runner. 
+* Fix bug in `THREDDSLoader` iterator introduced in 0.8.0. Simple iteration over `catalog_refs` returns the catalog names (strings), whereas we want an object with a `follow` method. 
+* Remove `log_debug` option from the `CORDEXCMIP6_Ouranos` runner. 
 * Add attributes to CORDEX IDs to avoid duplicate IDs in the STAC catalog.
-* Update CORDEX-CMIP6_Ouranos' test data. 
+* Update test data for `CORDEXCMIP6_Ouranos`.
 * Add default `create_uid` to `THREDDSCatalogDataModel`.
 * Fix bug in `DataCubeHelper` for vertical coordinate extents.
 * Split and clean script to update test data. 

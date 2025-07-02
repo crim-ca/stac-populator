@@ -1,5 +1,6 @@
-from STACpopulator.extensions.cordex6 import Cordex6DataModel, Cordex6DataModelNcML
 import json
+
+from STACpopulator.extensions.cordex6 import Cordex6DataModel, Cordex6DataModelNcML
 
 
 def test_item_raw():

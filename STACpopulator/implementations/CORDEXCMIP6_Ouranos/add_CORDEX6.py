@@ -57,7 +57,11 @@ def runner(ns: argparse.Namespace, session: Session) -> int:
         data_loader = ErrorLoader()
 
     c = CORDEX_STAC_Populator(
-        ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config,
+        ns.stac_host,
+        data_loader,
+        update=ns.update,
+        session=session,
+        config_file=ns.config,
     )
     c.ingest()
     return 0
