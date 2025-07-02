@@ -39,6 +39,7 @@
     "version_realization": "v1-r1",
     "institution": "Ouranos Consortium on Regional Climatology and Adaptation to Climate Change",
     "NCO": "netCDF Operators version 5.1.8 (Homepage = http://nco.sf.net, Code = http://github.com/nco/nco, Citation = 10.1016/j.envsoft.2008.03.004)",
+    "futher_info_url": "https://zenodo.org/doi/10.5281/zenodo.11061924",
     "abstract": "Ouranos produces operational regional climate simulations over the Cordex North American domain, at 0.11\u00b0 resolution. The current ensemble uses the fifth version of the CRCM, developed at UQAM's ESCER center in collaboration with ECCC. Pilot data for the simulations come from the CMIP6 ensemble, except for those in hindcast mode, which use ERA5.",
     "dataset_id": "CRCM5-CMIP6",
     "license_type": "permissive",
@@ -87,7 +88,7 @@
     },
     "NCISOMetadata": {
       "attributes": {
-        "metadata_creation": "2025-03-06",
+        "metadata_creation": "2025-06-25",
         "nciso_version": "2.4.6"
       }
     }
@@ -111,6 +112,9 @@
         "axis": "Y",
         "standard_name": "grid_latitude",
         "bounds": "rlat_bounds",
+        "_ChunkSizes": [
+          628
+        ],
         "_CoordinateAxisType": "GeoY"
       }
     },
@@ -132,6 +136,9 @@
         "standard_name": "grid_longitude",
         "bounds": "rlon_bounds",
         "units": "degrees",
+        "_ChunkSizes": [
+          655
+        ],
         "_CoordinateAxisType": "GeoX"
       }
     },
@@ -146,6 +153,9 @@
         ],
         "units": "days since 1950-01-01",
         "calendar": "standard",
+        "_ChunkSizes": [
+          512
+        ],
         "_CoordinateAxisType": "Time"
       }
     },
@@ -180,7 +190,12 @@
         "_FillValue": [
           NaN
         ],
-        "coordinates": "lat lon"
+        "coordinates": "lat lon",
+        "_ChunkSizes": [
+          628,
+          655,
+          2
+        ]
       }
     },
     "vertices_longitude": {
@@ -194,7 +209,12 @@
         "_FillValue": [
           NaN
         ],
-        "coordinates": "lat lon"
+        "coordinates": "lat lon",
+        "_ChunkSizes": [
+          628,
+          655,
+          2
+        ]
       }
     },
     "tas": {
@@ -217,7 +237,12 @@
         ],
         "units": "K",
         "grid_mapping": "crs",
-        "coordinates": "height lat lon"
+        "coordinates": "height lat lon",
+        "_ChunkSizes": [
+          250,
+          50,
+          50
+        ]
       }
     },
     "pr": {
@@ -240,7 +265,12 @@
         ],
         "units": "kg m-2 s-1",
         "grid_mapping": "crs",
-        "coordinates": "lat lon"
+        "coordinates": "lat lon",
+        "_ChunkSizes": [
+          250,
+          50,
+          50
+        ]
       }
     },
     "time_bnds": {
@@ -252,6 +282,90 @@
       "attributes": {
         "_FillValue": [
           NaN
+        ],
+        "_ChunkSizes": [
+          1,
+          2
+        ]
+      }
+    },
+    "quantization_info": {
+      "shape": [
+        ""
+      ],
+      "type": "char",
+      "attributes": {
+        "algorithm": "bitround",
+        "implementation": "NCO version 5.3.2"
+      }
+    },
+    "prsn": {
+      "shape": [
+        "time",
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "long_name": "Snowfall Flux",
+        "_FillValue": [
+          1.0000000200408773e+20
+        ],
+        "standard_name": "snowfall_flux",
+        "cell_measures": "area: areacella",
+        "cell_methods": "area: time: mean",
+        "missing_value": [
+          1.0000000200408773e+20
+        ],
+        "units": "kg m-2 s-1",
+        "grid_mapping": "crs",
+        "coordinates": "lat lon",
+        "quantization": "quantization_info",
+        "quantization_nsb": [
+          12
+        ],
+        "quantization_maximum_relative_error": [
+          0.0001220703125
+        ],
+        "_ChunkSizes": [
+          250,
+          50,
+          50
+        ]
+      }
+    },
+    "snw": {
+      "shape": [
+        "time",
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "long_name": "Surface Snow Amount",
+        "_FillValue": [
+          1.0000000200408773e+20
+        ],
+        "standard_name": "surface_snow_amount",
+        "cell_measures": "area: areacella",
+        "cell_methods": "area: mean where land time: point",
+        "missing_value": [
+          1.0000000200408773e+20
+        ],
+        "units": "kg m-2",
+        "grid_mapping": "crs",
+        "coordinates": "lat lon",
+        "quantization": "quantization_info",
+        "quantization_nsb": [
+          12
+        ],
+        "quantization_maximum_relative_error": [
+          0.0001220703125
+        ],
+        "_ChunkSizes": [
+          250,
+          50,
+          50
         ]
       }
     },
@@ -275,6 +389,11 @@
         "coordinates": "height lat lon",
         "missing_value": [
           1.0000000200408773e+20
+        ],
+        "_ChunkSizes": [
+          250,
+          50,
+          50
         ]
       }
     },
@@ -298,6 +417,11 @@
         "coordinates": "height lat lon",
         "missing_value": [
           1.0000000200408773e+20
+        ],
+        "_ChunkSizes": [
+          250,
+          50,
+          50
         ]
       }
     },
@@ -333,6 +457,10 @@
         "standard_name": "latitude",
         "units": "degrees_north",
         "bounds": "vertices_latitude",
+        "_ChunkSizes": [
+          628,
+          655
+        ],
         "_CoordinateAxisType": "Lat"
       }
     },
@@ -350,6 +478,10 @@
         "standard_name": "longitude",
         "units": "degrees_east",
         "bounds": "vertices_longitude",
+        "_ChunkSizes": [
+          628,
+          655
+        ],
         "_CoordinateAxisType": "Lon"
       }
     }

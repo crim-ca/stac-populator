@@ -81,7 +81,7 @@
     },
     "NCISOMetadata": {
       "attributes": {
-        "metadata_creation": "2025-03-06",
+        "metadata_creation": "2025-06-25",
         "nciso_version": "2.4.6"
       }
     }
@@ -105,6 +105,9 @@
         "long_name": "latitude in rotated pole grid",
         "standard_name": "grid_latitude",
         "bounds": "rlat_bounds",
+        "_ChunkSizes": [
+          628
+        ],
         "_CoordinateAxisType": "GeoY"
       }
     },
@@ -126,6 +129,9 @@
         "standard_name": "grid_longitude",
         "bounds": "rlon_bounds",
         "units": "degrees",
+        "_ChunkSizes": [
+          655
+        ],
         "_CoordinateAxisType": "GeoX"
       }
     },
@@ -140,6 +146,9 @@
         ],
         "units": "days since 1950-01-01",
         "calendar": "standard",
+        "_ChunkSizes": [
+          512
+        ],
         "_CoordinateAxisType": "Time"
       }
     },
@@ -183,7 +192,12 @@
         ],
         "units": "K",
         "grid_mapping": "crs",
-        "coordinates": "height lat lon"
+        "coordinates": "height lat lon",
+        "_ChunkSizes": [
+          250,
+          50,
+          50
+        ]
       }
     },
     "vertices_latitude": {
@@ -197,7 +211,12 @@
         "_FillValue": [
           NaN
         ],
-        "coordinates": "lat lon"
+        "coordinates": "lat lon",
+        "_ChunkSizes": [
+          628,
+          655,
+          2
+        ]
       }
     },
     "vertices_longitude": {
@@ -211,7 +230,12 @@
         "_FillValue": [
           NaN
         ],
-        "coordinates": "lat lon"
+        "coordinates": "lat lon",
+        "_ChunkSizes": [
+          628,
+          655,
+          2
+        ]
       }
     },
     "height": {
@@ -246,6 +270,10 @@
         "long_name": "latitude",
         "units": "degrees_north",
         "bounds": "vertices_latitude",
+        "_ChunkSizes": [
+          628,
+          655
+        ],
         "_CoordinateAxisType": "Lat"
       }
     },
@@ -263,6 +291,10 @@
         "long_name": "longitude",
         "units": "degrees_east",
         "bounds": "vertices_longitude",
+        "_ChunkSizes": [
+          628,
+          655
+        ],
         "_CoordinateAxisType": "Lon"
       }
     }
