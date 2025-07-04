@@ -215,7 +215,7 @@ class THREDDSCatalogDataModel(BaseSTAC):
         For datasets with a DRS, it might might more sense to use the dataset's metadata instead.
         """
         location = self.data["access_urls"]["HTTPServer"].split("/fileServer/")[1]
-        return location
+        return location.replace("/", "__")
 
 
 # TODO: Validate services links exist ?

@@ -10,7 +10,7 @@ def test_rdps():
     model = THREDDSCatalogDataModel.from_data(attrs)
     item = model.stac_item()
     assert set(model._helpers) == {"thredds", "datacube"}
-    assert item["id"] == "birdhouse/testdata/HRDPS/RDPS_sample/2024010100_000.nc"
+    assert item["id"] == "birdhouse__testdata__HRDPS__RDPS_sample__2024010100_000.nc"
     assert "TD" in item["properties"]["cube:variables"]
 
 
