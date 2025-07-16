@@ -214,7 +214,14 @@ class THREDDSCatalogDataModel(BaseSTAC):
 
         For datasets with a DRS, it might might more sense to use the dataset's metadata instead.
         """
-        location = self.data["access_urls"]["HTTPServer"].split("/fileServer/")[1]
+        if "HTTPServer" in self.data["access_urls"]:
+            location = self.data["access_urls"]["HTTPServer"].split("/fileServer/")[1]
+        elif "OpenDAP" in self.data["access_urls"]:
+            location = self.data["access_urls"]["OPENDAP"].split("/dodsC/")[1]
+        elif "NCML" in self.data["access_urls"]:
+            location = self.data["access_urls"]["NCML"].split("/ncml/")[1]
+        else:
+            raise ValueError("No valid access URL found in data.")
         return location.replace("/", "__")
 
 
