@@ -65,8 +65,10 @@ class Cordex6DataModel(THREDDSCatalogDataModel):
             "source_id",
             "driving_experiment_id",
             "driving_variant_label",
+            "version_realization",
             "variable_id",
             "domain_id",
+            "frequency",
         ]
         values = [getattr(self.cordex6, k) for k in keys]
         values.append(self.start_datetime.strftime("%Y%m%d"))
