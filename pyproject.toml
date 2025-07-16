@@ -136,7 +136,7 @@ dependencies = [
     "pydantic~=2.10",
     "pyessv~=0.9",
     "requests~=2.32",
-    "lxml~=5.3",
+    "lxml~=6.0",
 ]
 readme = "README.md"
 license = { file = "LICENSE" }
