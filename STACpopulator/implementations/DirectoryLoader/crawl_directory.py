@@ -25,9 +25,20 @@ class DirectoryPopulator(STACpopulatorBase):
         update: bool,
         collection: dict[str, Any],
         session: Optional[Session] = None,
+        extra_item_parsers: Optional[list[str]] = None,
+        extra_collection_parsers: Optional[list[str]] = None,
+        extra_parser_arguments: Optional[dict[str, str] | list[tuple[str, str]]] = None,
     ) -> None:
         self._collection = collection
-        super().__init__(stac_host, loader, update=update, session=session)
+        super().__init__(
+            stac_host,
+            loader,
+            update=update,
+            session=session,
+            extra_item_parsers=extra_item_parsers,
+            extra_collection_parsers=extra_collection_parsers,
+            extra_parser_arguments=extra_parser_arguments,
+        )
 
     def load_config(self) -> MutableMapping[str, Any]:
         """Load configuration options."""
