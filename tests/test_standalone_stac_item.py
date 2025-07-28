@@ -113,14 +113,7 @@ def test_cmip6_stac_thredds_catalog_parsing_with_extra_collection_parser(request
             "collection_parsers:update_keywords_kwargs",
             "collection_parsers:update_keywords_vkwargs",
         ],
-        extra_parser_arguments={
-            "arg1": "a",
-            "arg2": "b",
-            "kw1": "c",
-            "kw2": "d",
-            "kw3": "e",
-            "kw4": "f"
-        }
+        extra_parser_arguments={"arg1": "a", "arg2": "b", "kw1": "c", "kw2": "d", "kw3": "e", "kw4": "f"},
     )
 
     result = populator.create_stac_collection()
