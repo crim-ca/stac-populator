@@ -1,8 +1,7 @@
 import argparse
 import json
 import logging
-import os
-from typing import Any, MutableMapping, Optional, Union
+from typing import Any, MutableMapping, Union
 
 from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
@@ -11,7 +10,7 @@ from requests.sessions import Session
 from STACpopulator.extensions.cmip6 import CMIP6Helper, CMIP6Properties
 from STACpopulator.extensions.datacube import DataCubeHelper
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
-from STACpopulator.input import ErrorLoader, GenericLoader, THREDDSLoader
+from STACpopulator.input import ErrorLoader, THREDDSLoader
 from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
 
@@ -23,16 +22,6 @@ class CMIP6populator(STACpopulatorBase):
 
     item_properties_model = CMIP6Properties
     item_geometry_model = GeoJSONPolygon
-
-    def __init__(
-        self,
-        stac_host: str,
-        data_loader: GenericLoader,
-        update: Optional[bool] = False,
-        session: Optional[Session] = None,
-        config_file: Optional[Union[os.PathLike[str], str]] = None,
-    ) -> None:
-        super().__init__(stac_host, data_loader, update=update, session=session, config_file=config_file)
 
     def create_stac_item(
         self, item_name: str, item_data: MutableMapping[str, Any]
@@ -109,6 +98,15 @@ def runner(ns: argparse.Namespace, session: Session) -> int:
         # To be implemented
         data_loader = ErrorLoader()
 
-    c = CMIP6populator(ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config)
+    c = CMIP6populator(
+        ns.stac_host,
+        data_loader,
+        update=ns.update,
+        session=session,
+        config_file=ns.config,
+        extra_item_parsers=ns.extra_item_parsers,
+        extra_collection_parsers=ns.extra_collection_parsers,
+        extra_parser_arguments=ns.extra_parser_arguments,
+    )
     c.ingest()
     return 0

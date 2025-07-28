@@ -7,7 +7,8 @@
 * Fix bug in `THREDDSLoader` iterator introduced in 0.8.0. Simple iteration over `catalog_refs` returns the catalog names (strings), whereas we want an object with a `follow` method. 
 * Remove `log_debug` option from the `CORDEXCMIP6_Ouranos` runner. 
 * Add attributes to CORDEX IDs to avoid duplicate IDs in the STAC catalog.
-* Update test data for `CORDEXCMIP6_Ouranos`. 
+* Update test data for `CORDEXCMIP6_Ouranos`.
+* Add option to supply additional custom parsers for items and collections.
 
 ## [0.8.0](https://github.com/crim-ca/stac-populator/tree/0.8.0) (2025-06-11)
 
