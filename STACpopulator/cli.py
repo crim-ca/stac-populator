@@ -1,9 +1,11 @@
 import argparse
 import functools
 import importlib
+import inspect
 import sys
 import warnings
 from types import ModuleType
+from typing import get_args
 
 import pystac
 import requests
@@ -12,6 +14,7 @@ from STACpopulator import __version__, implementations
 from STACpopulator.exceptions import STACPopulatorError
 from STACpopulator.export import export_catalog
 from STACpopulator.log import add_logging_options, setup_logging
+from STACpopulator.populator_base import STACpopulatorBase
 from STACpopulator.request_utils import add_request_options, apply_request_options
 
 
@@ -43,6 +46,13 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     for implementation_module_name, module in implementation_modules().items():
         implementation_parser = populators_subparser.add_parser(implementation_module_name)
         module.add_parser_args(implementation_parser)
+        implementation_parser.add_argument(
+            "--update-collection",
+            choices=get_args(inspect.signature(STACpopulatorBase.__init__).parameters["update_collection"].annotation),
+            default="none",
+            help="Update collection information based on new items created or updated by this populator. "
+            "Only applies if --update is also set.",
+        )
     export_parser = commands_subparser.add_parser("export", description="Export a STAC catalog to JSON files on disk.")
     export_parser.add_argument("stac_host", help="STAC API URL")
     export_parser.add_argument("directory", type=str, help="Path to a directory to write STAC catalog contents.")

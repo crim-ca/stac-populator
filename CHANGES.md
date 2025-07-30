@@ -8,6 +8,7 @@
 * Remove `log_debug` option from the `CORDEXCMIP6_Ouranos` runner. 
 * Add attributes to CORDEX IDs to avoid duplicate IDs in the STAC catalog.
 * Update test data for `CORDEXCMIP6_Ouranos`. 
+* Add option to automatically update collection extents and summaries based on ingested items.
 
 ## [0.8.0](https://github.com/crim-ca/stac-populator/tree/0.8.0) (2025-06-11)
 
