@@ -53,6 +53,9 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
             help="Update collection information based on new items created or updated by this populator. "
             "Only applies if --update is also set.",
         )
+        implementation_parser.add_argument(
+            "--exclude-summary", nargs="*", help="Exclude these properties when updating collection summaries. "
+        )
     export_parser = commands_subparser.add_parser("export", description="Export a STAC catalog to JSON files on disk.")
     export_parser.add_argument("stac_host", help="STAC API URL")
     export_parser.add_argument("directory", type=str, help="Path to a directory to write STAC catalog contents.")

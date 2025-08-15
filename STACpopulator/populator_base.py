@@ -5,7 +5,7 @@ import logging
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Dict, List, Literal, MutableMapping, Optional, Type, Union
+from typing import Any, Dict, Iterable, List, Literal, MutableMapping, Optional, Type, Union
 
 import pystac
 from requests.sessions import Session
@@ -34,6 +34,7 @@ class STACpopulatorBase(ABC):
         session: Optional[Session] = None,
         config_file: Optional[Union[os.PathLike[str], str]] = "collection_config.yml",
         update_collection: Literal["extents", "summaries", "all", "none"] = "none",
+        exclude_summaries: Iterable[str] = (),
     ) -> None:
         """Initialize the STAC populator.
 
@@ -52,6 +53,10 @@ class STACpopulatorBase(ABC):
         self._stac_host = self.validate_host(stac_host)
         self.update = update
         self.update_collection = update_collection
+
+        # the STAC spec does not recommend repeating summaries that are covered by the extent already
+        self.exclude_summaries = ["datetime", "start_datetime", "end_datetime"]
+        self.exclude_summaries.extend(exclude_summaries)
 
         LOGGER.info("Initialization complete")
         LOGGER.info(f"Collection {self.collection_name} is assigned ID {self.collection_id}")
@@ -203,19 +208,37 @@ class STACpopulatorBase(ABC):
                     stac_object_id,
                 )
 
+    @staticmethod
+    def _sorted_bbox(bbox: list[int | float]) -> list[int | float]:
+        return [
+            a for b in zip(*(sorted(axis) for axis in zip(bbox[: len(bbox) // 2], bbox[len(bbox) // 2 :]))) for a in b
+        ]
+
     def _update_collection_bbox(self, stac_item: dict[str, Any]) -> None:
-        item_bbox = stac_item["bbox"]
+        item_bbox = stac_item.get("bbox")
+        if item_bbox is None:
+            # bbox can be missing if there is no geometry
+            return
+        sorted_bbox = self._sorted_bbox(item_bbox)
+        if item_bbox != sorted_bbox:
+            LOGGER.warning(
+                "STAC item with id [%s] contains a bbox with unsorted values: %s should be %s",
+                stac_item.get("id"),
+                item_bbox,
+                sorted_bbox,
+            )
+            item_bbox = sorted_bbox
         self._check_wgs84_compliance(item_bbox, "item", stac_item.get("id"))
         collection_bboxes = self._collection["extent"]["spatial"]["bbox"]
         if collection_bboxes:
             collection_bbox = collection_bboxes[0]
             if len(item_bbox) == 4 and len(collection_bbox) == 6:
                 # collection bbox has a z axis and item bbox does not
-                item_bbox = [*item_bbox[:2], 0, item_bbox[2:], 0]
+                item_bbox = [*item_bbox[:2], collection_bbox[2], item_bbox[2:], collection_bbox[5]]
             elif len(item_bbox) == 6 and len(collection_bbox) == 4:
                 # item bbox has a z axis and collection bbox does not
-                collection_bbox.insert(2, 0)
-                collection_bbox.append(0)
+                collection_bbox.insert(2, item_bbox[2])
+                collection_bbox.append(item_bbox[5])
             for i in range(len(item_bbox) // 2):
                 if item_bbox[i] < collection_bbox[i]:
                     collection_bbox[i] = item_bbox[i]
@@ -238,6 +261,8 @@ class STACpopulatorBase(ABC):
                 collection_interval[0] = item_interval[0]
             if collection_interval[1] is not None and item_interval[1] > collection_interval[1]:
                 collection_interval[1] = item_interval[1]
+        else:
+            collection_intervals.append(item_interval)
 
     def _update_collection_summaries(self, stac_item: dict[str, Any]) -> None:
         """
@@ -253,8 +278,7 @@ class STACpopulatorBase(ABC):
         summaries = self._collection["summaries"]
         for name, value in stac_item["properties"].items():
             summary = summaries.get(name)
-            if name in ("datetime", "start_datetime", "end_datetime"):
-                # the STAC spec does not recommend repeating summaries that are covered by the extent already
+            if name in self.exclude_summaries:
                 continue
             elif isinstance(value, bool):
                 if summary is None:
@@ -282,6 +306,7 @@ class STACpopulatorBase(ABC):
                 if summary is None:
                     summaries[name] = {"minimum": value, "maximum": value}
                 elif isinstance(summary, list):
+                    # this property does not necessarily contain all numeric values
                     if value not in summary:
                         summary.append(value)
                 elif summary.get("minimum") is not None and summary.get("maximum") is not None:
@@ -293,9 +318,19 @@ class STACpopulatorBase(ABC):
     def _update_collection(self, stac_item: dict[str, Any]) -> None:
         if self.update:
             if self.update_collection in ("extents", "all"):
+                LOGGER.info(
+                    "Updating collection extents [%s] with data from item [%s]",
+                    self._collection.get("id"),
+                    stac_item.get("id"),
+                )
                 self._update_collection_bbox(stac_item)
                 self._update_collection_interval(stac_item)
             if self.update_collection in ("summaries", "all"):
+                LOGGER.info(
+                    "Updating collection summaries [%s] with data from item [%s]",
+                    self._collection.get("id"),
+                    stac_item.get("id"),
+                )
                 self._update_collection_summaries(stac_item)
 
     def ingest(self) -> None:

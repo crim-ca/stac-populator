@@ -2,7 +2,7 @@ import argparse
 import json
 import logging
 import os
-from typing import Any, Literal, MutableMapping, Optional, Union
+from typing import Any, Iterable, Literal, MutableMapping, Optional, Union
 
 from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
@@ -32,6 +32,7 @@ class CMIP6populator(STACpopulatorBase):
         session: Optional[Session] = None,
         config_file: Optional[Union[os.PathLike[str], str]] = None,
         update_collection: Literal["extents", "summaries", "all", "none"] = "none",
+        exclude_summaries: Iterable[str] = (),
     ) -> None:
         super().__init__(
             stac_host,
@@ -40,6 +41,7 @@ class CMIP6populator(STACpopulatorBase):
             session=session,
             config_file=config_file,
             update_collection=update_collection,
+            exclude_summaries=exclude_summaries,
         )
 
     def create_stac_item(

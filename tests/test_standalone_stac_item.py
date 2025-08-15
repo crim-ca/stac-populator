@@ -147,11 +147,14 @@ def test_standalone_stac_item_thredds_via_loader():
 
 
 @pytest.mark.parametrize("update_collection", ["none", "extents", "summaries", "all"])
+@pytest.mark.parametrize("exclude_summaries", [(), ("ducks"), ("ducks", "another_date")])
 @pytest.mark.vcr("test_standalone_stac_item_thredds_via_loader.yaml")
-def test_standalone_stac_item_update_collection(update_collection):
+def test_standalone_stac_item_update_collection(update_collection, exclude_summaries):
     url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml"
     loader = THREDDSLoader(url)
-    populator = MockedNoSTACUpload("https://example.com", loader, update_collection=update_collection, update=True)
+    populator = MockedNoSTACUpload(
+        "https://example.com", loader, update_collection=update_collection, exclude_summaries=exclude_summaries, update=True
+    )
 
     with patch("STACpopulator.populator_base.post_stac_item"):
         populator.ingest()
@@ -160,10 +163,13 @@ def test_standalone_stac_item_update_collection(update_collection):
             assert data["extent"]["spatial"]["bbox"][0] == [-11, -20, 56, 50]
             assert data["extent"]["temporal"]["interval"][0] == ["1066-05-01", None]
         if update_collection in ("summaries", "all"):
-            assert data["summaries"] == {
+            summaries = {
                 "another_date": {"maximum": "2222-04-11", "minimum": "1893-02-18"},
                 "ducks": ["Alabio", "Blekinge", "Muscovy", "Rouen"],
             }
+            for exclude in exclude_summaries:
+                summaries.pop(exclude, None)
+            assert data["summaries"] == summaries
         if update_collection in ("extents", "none"):
             assert data["summaries"] == {"needs_summaries_update": ["true"]}
         if update_collection in ("summaries", "none"):
