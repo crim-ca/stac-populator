@@ -120,19 +120,6 @@ Alternatively, you can also use your own STAC server accessible from any remote 
 
 To run the STAC populator, follow the steps from [Installation and Execution](#installation-and-execution).
 
-Alternatively, you can call the relevant populator Python scripts individually.
-For example, using the [CMIP6_UofT][CMIP6_UofT] implementation, the script can be run as:
-
-```shell
-python STACpopulator/implementations/CMIP6_UofT/add_CMIP6.py \
-    "http://localhost:8880/stac/" \
-    "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.html" \
-    --config "STACpopulator/implementations/CMIP6_UofT/collection_config.yml"
-```
-
-*Note*: <br>
-In the script above, a sample THREDDS catalog URL is employed and not one relevant to the global scale CMIP6 data.
-
 For more tests validation, you can also run the test suite with coverage analysis.
 
 ```shell
@@ -163,3 +150,13 @@ You can also set up pre-commit hooks that will run these checks before you creat
 ```sh
 pre-commit install
 ```
+
+### Writing tests
+
+Unit tests use the [pytest-recording](https://github.com/kiwicom/pytest-recording) package to cache 
+network responses. This allows the tests to be run offline and allows them to reliably pass regardless of 
+whether a remote resource is available or not.
+
+Whenever you're writing tests that make a request to an external resource, please use the `@pytest.mark.vcr`
+decorator and record a new cassette (response cache) which can be committed to version control with the new
+tests.
