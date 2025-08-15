@@ -153,7 +153,11 @@ def test_standalone_stac_item_update_collection(update_collection, exclude_summa
     url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml"
     loader = THREDDSLoader(url)
     populator = MockedNoSTACUpload(
-        "https://example.com", loader, update_collection=update_collection, exclude_summaries=exclude_summaries, update=True
+        "https://example.com",
+        loader,
+        update_collection=update_collection,
+        exclude_summaries=exclude_summaries,
+        update=True,
     )
 
     with patch("STACpopulator.populator_base.post_stac_item"):
