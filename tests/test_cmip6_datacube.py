@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import pystac
+import pytest
 import xncml
 from pystac.extensions.datacube import DatacubeExtension
 from pystac.validation import validate_dict
@@ -12,6 +13,7 @@ from STACpopulator.models import GeoJSONPolygon
 DIR = Path(__file__).parent
 
 
+@pytest.mark.vcr
 def test_datacube_helper():
     # Create item
     file_path = DIR / "data" / "o3_Amon_GFDL-ESM4_historical_r1i1p1f1_gr1_185001-194912.xml"

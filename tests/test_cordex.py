@@ -1,5 +1,7 @@
 import json
 
+import pytest
+
 from STACpopulator.extensions.cordex6 import Cordex6DataModel, Cordex6DataModelNcML
 
 
@@ -35,6 +37,7 @@ def make_test_data():
         json.dump(attrs, f, indent=2)
 
 
+@pytest.mark.vcr("test_item_raw.yaml")
 def test_item_raw():
     attrs = json.load(open("tests/data/cordex6_raw.json"))
     model = Cordex6DataModel.from_data(attrs)
@@ -46,6 +49,7 @@ def test_item_raw():
     assert item["id"].startswith("DD_")
 
 
+@pytest.mark.vcr("test_item_raw.yaml")
 def test_item_ncml():
     attrs = json.load(open("tests/data/cordex6_ncml.json"))
     model = Cordex6DataModelNcML.from_data(attrs)
