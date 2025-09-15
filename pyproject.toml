@@ -188,7 +188,7 @@ Changelog = "https://github.com/crim-ca/stac-populator/blob/master/CHANGES.md"
 [project.optional-dependencies]
 dev = [
     "pytest~=8.3",
-    "pytest-cov~=6.0",
+    "pytest-cov~=7.0",
     "coverage~=7.6",
     "responses~=0.25",
     "bump-my-version~=1.0",
