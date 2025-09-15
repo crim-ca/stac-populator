@@ -193,9 +193,8 @@ dev = [
     "responses~=0.25",
     "bump-my-version~=1.0",
     "jsonschema~=4.23",
-    "pystac[validation]~=1.13.0",
+    "pystac[validation]",
     "ruff~=0.9",
     "pre-commit~=4.1",
     "pytest-recording~=0.13"
 ]
-
