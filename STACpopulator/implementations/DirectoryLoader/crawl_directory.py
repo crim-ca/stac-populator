@@ -2,7 +2,7 @@ import argparse
 import inspect
 import logging
 import os.path
-from typing import Any, MutableMapping, Optional
+from typing import Any, Iterable, Literal, MutableMapping, Optional
 
 from requests.sessions import Session
 
@@ -25,9 +25,18 @@ class DirectoryPopulator(STACpopulatorBase):
         update: bool,
         collection: dict[str, Any],
         session: Optional[Session] = None,
+        update_collection: Literal["extents", "summaries", "all", "none"] = "none",
+        exclude_summaries: Iterable[str] = (),
     ) -> None:
         self._collection = collection
-        super().__init__(stac_host, loader, update=update, session=session)
+        super().__init__(
+            stac_host,
+            loader,
+            update=update,
+            session=session,
+            update_collection=update_collection,
+            exclude_summaries=exclude_summaries,
+        )
 
     def load_config(self) -> MutableMapping[str, Any]:
         """Load configuration options."""
