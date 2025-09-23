@@ -82,8 +82,6 @@ class RDPSpopulator(STACpopulatorBase):
         except STACValidationError as e:
             raise Exception("Failed to validate STAC item") from e
         """
-
-        # print(json.dumps(item.to_dict()))
         return json.loads(json.dumps(item.to_dict()))
 
 
