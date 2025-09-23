@@ -1,0 +1,197 @@
+{
+  "@location": "Not provided because of security concerns.",
+  "@xmlns": {
+    "": "http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2"
+  },
+  "attributes": {
+    "_NCProperties": "version=2,netcdf=4.9.2,hdf5=1.14.2",
+    "Remarks": "Variable names are following the convention <Product>_<Type:A=Analysis,P=Prediction>_<ECCC name>_<Level/Tile/Category>. Variables with level '10000' are at surface level. The height [m] of variables with level '0XXXX' needs to be inferrred using the corresponding fields of geopotential height (GZ_0XXXX-GZ_10000). The variables UUC, VVC, UVC, and WDC are not modelled but inferred from UU and VV for convenience of the users. Precipitation (PR) is reported as 6-hr accumulations for CaPA_fine and CaPA_coarse. Precipitation (PR) are accumulations since beginning of the forecast for GEPS, GDPS, REPS, RDPS, HRDPS, and CaLDAS. The re-analysis product RDRS_v2 contains two variables for precipitation: 'RDRS_v2_P_PR0_SFC' is the model precipitation (trial field used by CaPA) and 'RDRS_v2_A_PR0_SFC' is precipitations adjusted with CaPA 24h precipitation (as in 'RDRS_P_PR0_SFC'). Please be aware that the baseflow 'O1' of the current version of WCPS is not reliable during the spring melt period.",
+    "License": "These data are provided by the Canadian Surface Prediction Archive CaSPar. You should have received a copy of the License agreement with the data. Otherwise you can find them under http://caspar-data.ca/doc/caspar_license.txt or email caspar.data@uwaterloo.ca.",
+    "product": "HRDPS",
+    "Conventions": "CF-1.6",
+    "_CoordSysBuilder": "ucar.nc2.internal.dataset.conv.CF1Convention"
+  },
+  "dimensions": {
+    "rlon": 2540,
+    "rlat": 1290,
+    "time": 13
+  },
+  "groups": {
+    "CFMetadata": {
+      "attributes": {
+        "geospatial_lon_min": [
+          -152.7306365966797
+        ],
+        "geospatial_lat_min": [
+          27.284589767456055
+        ],
+        "geospatial_lon_max": [
+          -40.708560943603516
+        ],
+        "geospatial_lat_max": [
+          70.61150360107422
+        ],
+        "geospatial_lon_units": "degrees_east",
+        "geospatial_lat_units": "degrees_north",
+        "geospatial_lon_resolution": "3.418852275416474E-5",
+        "geospatial_lat_resolution": "1.3223137054096467E-5",
+        "time_coverage_start": "2024-01-01T00:00:00Z",
+        "time_coverage_end": "2024-01-01T12:00:00Z",
+        "time_coverage_units": "seconds",
+        "time_coverage_resolution": "3600.0",
+        "time_coverage_duration": "P0Y0M0DT12H0M0.000S"
+      }
+    },
+    "NCISOMetadata": {
+      "attributes": {
+        "metadata_creation": "2025-07-01",
+        "nciso_version": "2.4.6"
+      }
+    }
+  },
+  "variables": {
+    "rlon": {
+      "shape": [
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "long_name": "longitude in rotated pole grid",
+        "units": "degrees",
+        "eccc_grid_definition": "grtyp: E, ig1: 1430, ig2: 500, ig3: 56000, ig4: 44000",
+        "standard_name": "grid_longitude",
+        "axis": "X",
+        "_ChunkSizes": [
+          2540
+        ],
+        "_CoordinateAxisType": "GeoX"
+      }
+    },
+    "rlat": {
+      "shape": [
+        "rlat"
+      ],
+      "type": "float",
+      "attributes": {
+        "long_name": "latitude in rotated pole grid",
+        "units": "degrees",
+        "eccc_grid_definition": "grtyp: E, ig1: 1430, ig2: 500, ig3: 56000, ig4: 44000",
+        "standard_name": "grid_latitude",
+        "axis": "Y",
+        "_ChunkSizes": [
+          1290
+        ],
+        "_CoordinateAxisType": "GeoY"
+      }
+    },
+    "time": {
+      "shape": [
+        "time"
+      ],
+      "type": "int",
+      "attributes": {
+        "long_name": "time",
+        "units": "hours since 2024-01-01 00:00:00",
+        "calendar": "gregorian",
+        "standard_name": "time",
+        "axis": "T",
+        "_ChunkSizes": [
+          1024
+        ],
+        "_CoordinateAxisType": "Time"
+      }
+    },
+    "HRDPS_P_PR_SFC": {
+      "shape": [
+        "time",
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "long_name": "Forecast: Quantity of precipitation",
+        "units": "m",
+        "coordinates": "lon lat",
+        "grid_mapping": "rotated_pole",
+        "_ChunkSizes": [
+          1,
+          1290,
+          2540
+        ]
+      }
+    },
+    "rotated_pole": {
+      "shape": [
+        ""
+      ],
+      "type": "float",
+      "attributes": {
+        "grid_north_pole_longitude": [
+          65.3051528930664
+        ],
+        "north_pole_grid_longitude": [
+          0.0
+        ],
+        "longitude_of_prime_meridian": [
+          0.0
+        ],
+        "grid_north_pole_latitude": [
+          36.088523864746094
+        ],
+        "earth_radius": [
+          6371220.0
+        ],
+        "long_name": "coordinates of the rotated North Pole",
+        "grid_mapping_name": "rotated_latitude_longitude",
+        "_CoordinateTransformType": "Projection",
+        "_CoordinateAxisTypes": "GeoX GeoY"
+      }
+    },
+    "lon": {
+      "shape": [
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "long_name": "longitude",
+        "units": "degrees_east",
+        "eccc_grid_definition": "grtyp: Z, ig1: 76826, ig2: 74520, ig3: 1, ig4: 0",
+        "standard_name": "longitude",
+        "_ChunkSizes": [
+          1290,
+          2540
+        ],
+        "_CoordinateAxisType": "Lon"
+      }
+    },
+    "lat": {
+      "shape": [
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "long_name": "latitude",
+        "units": "degrees_north",
+        "eccc_grid_definition": "grtyp: Z, ig1: 76826, ig2: 74520, ig3: 1, ig4: 0",
+        "standard_name": "latitude",
+        "_ChunkSizes": [
+          1290,
+          2540
+        ],
+        "_CoordinateAxisType": "Lat"
+      }
+    }
+  },
+  "access_urls": {
+    "HTTPServer": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/fileServer/birdhouse/testdata/HRDPS/HRDPS_sample/HRDPS_P_PR_SFC/2024010100.nc",
+    "OpenDAP": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/dodsC/birdhouse/testdata/HRDPS/HRDPS_sample/HRDPS_P_PR_SFC/2024010100.nc",
+    "NCML": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/ncml/birdhouse/testdata/HRDPS/HRDPS_sample/HRDPS_P_PR_SFC/2024010100.nc",
+    "UDDC": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/uddc/birdhouse/testdata/HRDPS/HRDPS_sample/HRDPS_P_PR_SFC/2024010100.nc",
+    "ISO": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/iso/birdhouse/testdata/HRDPS/HRDPS_sample/HRDPS_P_PR_SFC/2024010100.nc",
+    "WCS": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/wcs/birdhouse/testdata/HRDPS/HRDPS_sample/HRDPS_P_PR_SFC/2024010100.nc",
+    "WMS": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/wms/birdhouse/testdata/HRDPS/HRDPS_sample/HRDPS_P_PR_SFC/2024010100.nc",
+    "NetcdfSubset": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/ncss/point/birdhouse/testdata/HRDPS/HRDPS_sample/HRDPS_P_PR_SFC/2024010100.nc"
+  }
+}

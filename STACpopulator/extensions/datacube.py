@@ -166,7 +166,7 @@ class DataCubeHelper(Helper):
                                 elif key in ["T", "time"]:
                                     extent = self.temporal_extent()
                                 else:
-                                    extent = ["", ""]
+                                    extent = [None, None]
 
                             properties = dict(
                                 type=type_.value,
