@@ -132,8 +132,6 @@ class RDPSHelper:
             },
             datetime=None,
         )
-        item_rdps = RDPSExtension.ext(item, add_if_missing=True)
-        item_rdps.apply(self.properties)
         return item
 
 
