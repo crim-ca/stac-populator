@@ -1,5 +1,7 @@
-import hashlib
+"""RPDS Extension Module."""
+
 import json
+import os
 from datetime import datetime
 from typing import (
     Any,
@@ -15,7 +17,6 @@ from typing import (
     get_args,
 )
 
-import numpy as np
 import pystac
 from pydantic import BaseModel, ConfigDict, ValidationInfo, field_validator
 from pydantic.fields import FieldInfo
@@ -37,29 +38,9 @@ SCHEMA_URI: str = "STACpopulator/extensions/schemas/rdps/rdps-global-attrs-schem
 PREFIX = f"{get_args(SchemaName)[0]}:"
 
 
-class NumpyJSONEncoder(json.JSONEncoder):
-    """Encoder for numpy values in JSON objects."""
-
-    def default(self, obj: Any) -> Any:
-        """Return encoded value."""
-        if isinstance(obj, (np.integer,)):
-            return int(obj)
-        elif isinstance(obj, (np.floating,)):
-            return float(obj)
-        elif isinstance(obj, (np.ndarray,)):
-            return obj.tolist()
-        return super().default(obj)
-
-
 def add_ext_prefix(name: str) -> str:
     """Return the given name prefixed with this extension's prefix."""
     return PREFIX + name if "datetime" not in name else name
-
-
-def hash_dict(d: dict) -> str:
-    """Return the unique sha256 of the input dictionnary."""
-    dict_str = json.dumps(d, sort_keys=True, separators=(",", ":"), cls=NumpyJSONEncoder)
-    return hashlib.sha256(dict_str.encode("utf-8")).hexdigest()
 
 
 class RDPSProperties(BaseModel, validate_assignment=True):
@@ -92,7 +73,10 @@ class RDPSHelper:
     @property
     def uid(self) -> str:
         """Return a unique ID for RDPS data item."""
-        return hash_dict(self.cfmeta)
+        item_url = self.attrs["access_urls"]["HTTPServer"]
+        item_filename = os.path.basename(item_url)
+        _uid, _ = os.path.splitext(item_filename)
+        return _uid  # filename without extension
 
     @property
     def geometry(self) -> AnyGeometry:
