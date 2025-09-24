@@ -4,6 +4,7 @@ import logging
 import os
 from typing import Any, MutableMapping, Optional, Union
 
+from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
 from requests.sessions import Session
 
@@ -76,12 +77,11 @@ class RDPSpopulator(STACpopulatorBase):
         except Exception as e:
             raise Exception("Failed to add THREDDS extension") from e
 
-        """
         try:
             item.validate()
         except STACValidationError as e:
             raise Exception("Failed to validate STAC item") from e
-        """
+
         return json.loads(json.dumps(item.to_dict()))
 
 
