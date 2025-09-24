@@ -34,7 +34,7 @@ from STACpopulator.stac_utils import ServiceType, ncattrs_to_bbox, ncattrs_to_ge
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
 
 SchemaName = Literal["rdps"]
-SCHEMA_URI: str = "STACpopulator/extensions/schemas/rdps/rdps-global-attrs-schema.json"  # FIXME: To be defined
+SCHEMA_URI: str = "https://gist.githubusercontent.com/henriaidasso/a8546268004d5d3a748556994cfaadb4/raw/6dd71326241e29773f24e0329dc0bf9906d96f22/rdps-global-attrs-schema.json"  # FIXME: To be defined
 PREFIX = f"{get_args(SchemaName)[0]}:"
 
 
