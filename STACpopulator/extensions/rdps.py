@@ -113,7 +113,8 @@ class RDPSHelper:
             properties={
                 "start_datetime": self.start_datetime,
                 "end_datetime": self.end_datetime,
-            },
+            }
+            | self.properties.model_dump(),
             datetime=None,
         )
         return item
