@@ -5,4 +5,4 @@
 #       - adds additional arguments to the given parser needed to run this implementation
 #  - def runner(ns: argparse.Namespace) -> int:
 #       - runs the implementation given a namespace constructed from the parser arguments supplied
-__all__ = ["CMIP6_UofT", "DirectoryLoader", "CORDEXCMIP6_Ouranos", "RDPS_CRIM"]
+__all__ = ["CMIP6_UofT", "DirectoryLoader", "CORDEXCMIP6_Ouranos", "RDPS_CRIM", "HRDPS_CRIM"]
