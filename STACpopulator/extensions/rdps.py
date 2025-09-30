@@ -34,7 +34,7 @@ from STACpopulator.stac_utils import ServiceType, ncattrs_to_bbox, ncattrs_to_ge
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
 
 SchemaName = Literal["rdps"]
-SCHEMA_URI: str = "https://gist.githubusercontent.com/henriaidasso/a8546268004d5d3a748556994cfaadb4/raw/6dd71326241e29773f24e0329dc0bf9906d96f22/rdps-global-attrs-schema.json"  # FIXME: To be defined
+SCHEMA_URI: str = "https://gist.githubusercontent.com/henriaidasso/a8546268004d5d3a748556994cfaadb4/raw/ba3884140b5a85585b3afa385ea05996db6414bf/rdps-global-attrs-schema.json"  # FIXME: To be defined
 PREFIX = f"{get_args(SchemaName)[0]}:"
 
 
@@ -106,15 +106,17 @@ class RDPSHelper:
 
     def stac_item(self) -> "pystac.Item":
         """Return a pystac Item."""
+        properties = {
+            "start_datetime": self.start_datetime,
+            "end_datetime": self.end_datetime,
+        }
+        properties = properties | self.properties.model_dump()
+
         item = pystac.Item(
             id=self.uid,
             geometry=self.geometry.model_dump(),
             bbox=self.bbox,
-            properties={
-                "start_datetime": self.start_datetime,
-                "end_datetime": self.end_datetime,
-            }
-            | self.properties.model_dump(),
+            properties=properties,
             datetime=None,
         )
         return item

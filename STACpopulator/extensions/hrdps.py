@@ -15,7 +15,7 @@ from STACpopulator.extensions.rdps import RDPSHelper, RDPSProperties
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
 
 SchemaName = Literal["hrdps"]
-SCHEMA_URI: str = "STACpopulator/extensions/schemas/rdps/hrdps-global-attrs-schema.json"  # FIXME: To be defined
+SCHEMA_URI: str = "https://gist.githubusercontent.com/henriaidasso/a8546268004d5d3a748556994cfaadb4/raw/ba3884140b5a85585b3afa385ea05996db6414bf/rdps-global-attrs-schema.json"  # FIXME: To be defined
 PREFIX = f"{get_args(SchemaName)[0]}:"
 
 
