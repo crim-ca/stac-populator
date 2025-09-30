@@ -3,7 +3,7 @@ LABEL description.short="STAC Populator"
 LABEL description.long="Utility to populate STAC Catalog, Collections and Items from various dataset/catalog sources."
 LABEL maintainer="Francis Charette-Migneault <francis.charette-migneault@crim.ca>"
 LABEL vendor="CRIM"
-LABEL version="0.8.0"
+LABEL version="0.9.0"
 
 # setup paths
 ENV APP_DIR=/opt/local/src/stac-populator

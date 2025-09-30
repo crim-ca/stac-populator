@@ -2,6 +2,11 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
+<!-- insert list items of new changes here -->
+
+## [0.9.0](https://github.com/crim-ca/stac-populator/tree/0.9.0) (2025-08-26)
+
+
 * Include `PYESSV_ARCHIVE_HOME` environment variable in Dockerfile.
 * Remove redundant CLI arguments.
 * Fix bug in `THREDDSLoader` iterator introduced in 0.8.0. Simple iteration over `catalog_refs` returns the catalog names (strings), whereas we want an object with a `follow` method. 
@@ -12,6 +17,7 @@
 * Fix bug in `DataCubeHelper` for vertical coordinate extents.
 * Split and clean script to update test data. 
 * Add tests for RDPS and HRDPS attributes with no custom extension. 
+* Make sure that all tests will pass even when not connected to the internet.
 
 ## [0.8.0](https://github.com/crim-ca/stac-populator/tree/0.8.0) (2025-06-11)
 
