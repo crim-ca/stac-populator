@@ -1,5 +1,7 @@
 """RPDS Extension Module."""
 
+from __future__ import annotations
+
 import json
 import os
 from datetime import datetime
@@ -34,7 +36,7 @@ from STACpopulator.stac_utils import ServiceType, ncattrs_to_bbox, ncattrs_to_ge
 T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
 
 SchemaName = Literal["rdps"]
-SCHEMA_URI: str = "https://gist.githubusercontent.com/henriaidasso/a8546268004d5d3a748556994cfaadb4/raw/ba3884140b5a85585b3afa385ea05996db6414bf/rdps-global-attrs-schema.json"  # FIXME: To be defined
+SCHEMA_URI: str = "STACpopulator/extensions/schemas/rdps/rdps-global-attrs-schema.json"  # FIXME: To be defined
 PREFIX = f"{get_args(SchemaName)[0]}:"
 
 
@@ -110,8 +112,6 @@ class RDPSHelper:
             "start_datetime": self.start_datetime,
             "end_datetime": self.end_datetime,
         }
-        properties = properties | self.properties.model_dump()
-
         item = pystac.Item(
             id=self.uid,
             geometry=self.geometry.model_dump(),
@@ -119,6 +119,8 @@ class RDPSHelper:
             properties=properties,
             datetime=None,
         )
+        item_rdps = RDPSExtension.ext(item, add_if_missing=True)
+        item_rdps.apply(self.properties)
         return item
 
 
@@ -160,7 +162,7 @@ class RDPSExtension(
         return obj.stac_extensions is not None and any(uri == ext_uri for uri in obj.stac_extensions)
 
     @classmethod
-    def ext(cls, obj: T, add_if_missing: bool = False) -> "RDPSExtension[T]":
+    def ext(cls, obj: T, add_if_missing: bool = False) -> RDPSExtension[T]:
         """Extend the given STAC Object with properties from the :stac-ext:`RDPS Extension <rdps>`.
 
         This extension can be applied to instances of :class:`~pystac.Item` or

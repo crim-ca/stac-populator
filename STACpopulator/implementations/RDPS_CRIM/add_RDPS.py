@@ -8,8 +8,9 @@ from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
 from requests.sessions import Session
 
+from STACpopulator.extensions.cf import CFHelper, CFItemExtension
 from STACpopulator.extensions.datacube import DataCubeHelper
-from STACpopulator.extensions.rdps import RDPSExtension, RDPSHelper, RDPSProperties
+from STACpopulator.extensions.rdps import RDPSHelper, RDPSProperties
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
 from STACpopulator.input import ErrorLoader, GenericLoader, THREDDSLoader
 from STACpopulator.models import GeoJSONPolygon
@@ -56,12 +57,10 @@ class RDPSpopulator(STACpopulatorBase):
         try:
             rdps_helper = RDPSHelper(item_data, self.item_geometry_model)
             item = rdps_helper.stac_item()
-            rdps_ext = RDPSExtension.ext(item, add_if_missing=True)
-            rdps_ext.apply(rdps_helper.properties)
         except Exception as e:
             raise Exception("Failed to add RDPS extension") from e
 
-        # Add datacube extension
+        # Add DataCube Extension
         try:
             datacube_helper = DataCubeHelper(item_data)
             datacube_ext = DatacubeExtension.ext(item, add_if_missing=True)
@@ -72,6 +71,7 @@ class RDPSpopulator(STACpopulatorBase):
         except Exception as e:
             raise Exception("Failed to add Datacube extension") from e
 
+        # Add THREDDS Extension
         try:
             thredds_helper = THREDDSHelper(item_data["access_urls"])
             thredds_ext = THREDDSExtension.ext(item)
@@ -79,9 +79,18 @@ class RDPSpopulator(STACpopulatorBase):
         except Exception as e:
             raise Exception("Failed to add THREDDS extension") from e
 
+        # Add CF Extension
+        try:
+            cf_helper = CFHelper(item_data["variables"])
+            cf_extension = CFItemExtension.ext(item, add_if_missing=True)
+            cf_extension.apply(cf_helper.cf_parameters)
+        except Exception as e:
+            raise Exception("Failed to add CF extension") from e
+
         try:
             item.validate()
         except STACValidationError as e:
+            print(json.dumps(item.to_dict()))
             raise Exception("Failed to validate STAC item") from e
 
         return json.loads(json.dumps(item.to_dict()))
