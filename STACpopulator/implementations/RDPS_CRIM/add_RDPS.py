@@ -9,7 +9,7 @@ from pystac.extensions.datacube import DatacubeExtension
 from requests.sessions import Session
 
 from STACpopulator.extensions.datacube import DataCubeHelper
-from STACpopulator.extensions.rdps import RDPSHelper, RDPSProperties
+from STACpopulator.extensions.rdps import RDPSExtension, RDPSHelper, RDPSProperties
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
 from STACpopulator.input import ErrorLoader, GenericLoader, THREDDSLoader
 from STACpopulator.models import GeoJSONPolygon
@@ -56,6 +56,8 @@ class RDPSpopulator(STACpopulatorBase):
         try:
             rdps_helper = RDPSHelper(item_data, self.item_geometry_model)
             item = rdps_helper.stac_item()
+            rdps_ext = RDPSExtension.ext(item, add_if_missing=True)
+            rdps_ext.apply(rdps_helper.properties)
         except Exception as e:
             raise Exception("Failed to add RDPS extension") from e
 

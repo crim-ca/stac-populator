@@ -1,17 +1,25 @@
 title: RDPS
 id: RDPS_CRIM
 description: Regional Deterministic Prediction System
-keywords: ['RDPS', 'Climate Change']
-license: "CC-BY-4.0"
+keywords: ["RDPS", "Climate Change"]
+license: "other"
 spatialextent: [-180, -90, 180, 90]
-temporalextent: ['1850-01-01', '2500-01-01']
-
+temporalextent: ["1850-01-01", "2500-01-01"]
+providers:
+  - name: NRCAN
+    description: Natural Resources Canada
+    roles: 
+      - producer
+    url: https://github.com/julemai/CaSPAr/wiki/Available-products
 links:
-    - rel: about
-      title : Project homepage
-      target : https://open.canada.ca/data/en/dataset/a9f2828c-0d78-5eb6-a4c7-1fc1219f1e3d
-      media_type: text/html
-    - rel: license
-      title : License
-      target : https://open.canada.ca/en/open-government-licence-canada
-      media_type: text/plain
+  - rel: about
+    title: Project homepage
+    target: https://open.canada.ca/data/en/dataset/a9f2828c-0d78-5eb6-a4c7-1fc1219f1e3d
+    media_type: text/html
+  - rel: license
+    title: License
+    target: https://open.canada.ca/en/open-government-licence-canada
+    media_type: text/plain
+stac_extensions:
+  - DatacubeExtension
+  - THREDDSExtension
