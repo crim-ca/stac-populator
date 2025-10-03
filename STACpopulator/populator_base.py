@@ -143,8 +143,9 @@ class STACpopulatorBase(ABC):
         self._collection_info["assets"] = self.__make_collection_assets()
 
         # Cast providers to pystac objects
-        providers = self._collection_info["providers"]
-        self._collection_info["providers"] = [pystac.Provider(**provider) for provider in providers]
+        if "providers" in self._collection_info:
+            providers = self._collection_info["providers"]
+            self._collection_info["providers"] = [pystac.Provider(**provider) for provider in providers]
 
         # Construct links if provided in the config. This needs to be done before constructing a collection object.
         collection_links = self.__make_collection_links()
