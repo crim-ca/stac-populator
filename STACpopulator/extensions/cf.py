@@ -92,16 +92,16 @@ class CFItemExtension(PropertiesExtension, ExtensionManagementMixin):
     def apply(self, parameters: List[CFParameter], apply_to_properties: bool = True) -> None:
         """Add cf:parameter array to assets (requirement) and optionally to item properties (informative)."""
         if not self.item.assets:
-            return  # FIXME: Explicitly raise the issue that THREDSExtension should be called before to populate assets.
+            return  # FIXME: Raise that THREDDSExtension should be called before to populate assets.
 
-        for _, asset in self.item.assets.items():
-            # Add CF extension URI to asset's stac_extensions
-            if "stac_extensions" not in asset.extra_fields:
-                asset.extra_fields["stac_extensions"] = []
-            if SCHEMA_URI not in asset.extra_fields["stac_extensions"]:
-                asset.extra_fields["stac_extensions"].append(SCHEMA_URI)
-            # Add cf:parameter array to asset extra_fields
-            asset.extra_fields["cf:parameter"] = [p.to_dict() for p in parameters]
+        # FIXME: This is temporary fix to validate the item. Normally, add cf:parameter to properties should be enough.
+        asset = self.item.assets["HTTPServer"]
+        if "stac_extensions" not in asset.extra_fields:
+            asset.extra_fields["stac_extensions"] = []
+        if SCHEMA_URI not in asset.extra_fields["stac_extensions"]:
+            asset.extra_fields["stac_extensions"].append(SCHEMA_URI)
+        # Add cf:parameter array to asset extra_fields
+        asset.extra_fields["cf:parameter"] = [p.to_dict() for p in parameters]
 
         if apply_to_properties:
             self.cf_parameters = parameters

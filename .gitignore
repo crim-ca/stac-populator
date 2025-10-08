@@ -34,3 +34,6 @@ build
 # Old Submodule Path
 # Could be used locally
 pyessv-archive/
+
+# Temp files downloaded
+temp_files/

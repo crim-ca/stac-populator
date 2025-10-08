@@ -6,10 +6,12 @@ from typing import Any, MutableMapping, Optional, Union
 
 from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
+from pystac.extensions.file import AssetFileExtension
 from requests.sessions import Session
 
 from STACpopulator.extensions.cf import CFHelper, CFItemExtension
 from STACpopulator.extensions.datacube import DataCubeHelper
+from STACpopulator.extensions.file import FileHelper
 from STACpopulator.extensions.rdps import RDPSHelper, RDPSProperties
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
 from STACpopulator.input import ErrorLoader, GenericLoader, THREDDSLoader
@@ -82,10 +84,25 @@ class RDPSpopulator(STACpopulatorBase):
         # Add CF Extension
         try:
             cf_helper = CFHelper(item_data["variables"])
-            cf_extension = CFItemExtension.ext(item, add_if_missing=True)
-            cf_extension.apply(cf_helper.cf_parameters)
+            cf_ext = CFItemExtension.ext(item, add_if_missing=True)
+            cf_ext.apply(cf_helper.cf_parameters)
         except Exception as e:
             raise Exception("Failed to add CF extension") from e
+
+        try:
+            asset = item.assets["HTTPServer"]
+            file_helper = FileHelper(asset.get_absolute_href())
+            file_ext = AssetFileExtension.ext(asset, add_if_missing=True)
+            file_ext.apply(
+                byte_order=file_helper.byte_order,
+                checksum=file_helper.checksum,  # FIXME: Displayed as n/a on browser
+                header_size=0,  # FIXME: clarify expected value here
+                size=file_helper.size,
+                values=None,  # NOTE: deprecated
+                local_path=None,  # FIXME: clarify expected value here
+            )
+        except Exception as e:
+            raise Exception("Failed to add Asset File extension") from e
 
         try:
             item.validate()

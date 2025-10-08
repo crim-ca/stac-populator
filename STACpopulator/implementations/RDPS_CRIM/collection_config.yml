@@ -21,7 +21,7 @@ links:
   - rel: license
     title: License
     target: https://open.canada.ca/en/open-government-licence-canada
-    media_type: text/plain
+    media_type: text/html
 
 contacts:
   - organization: Computer Research Institute of Montreal (CRIM)
