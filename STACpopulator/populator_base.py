@@ -19,6 +19,7 @@ from STACpopulator.api_requests import (
 from STACpopulator.input import GenericLoader
 from STACpopulator.models import AnyGeometry
 from STACpopulator.stac_utils import load_config
+from STACpopulator.utils.contact import Contact
 
 LOGGER = logging.getLogger(__name__)
 
@@ -143,9 +144,11 @@ class STACpopulatorBase(ABC):
         self._collection_info["assets"] = self.__make_collection_assets()
 
         # Cast providers to pystac objects
-        if "providers" in self._collection_info:
-            providers = self._collection_info["providers"]
-            self._collection_info["providers"] = [pystac.Provider(**provider) for provider in providers]
+        self._collection_info["providers"] = self.__make_collection_providers()
+
+        # Add contacts as extra_field
+        self._collection_info["extra_fields"] = {}
+        self._collection_info["extra_fields"]["contacts"] = self.__make_collection_contacts()
 
         # Construct links if provided in the config. This needs to be done before constructing a collection object.
         collection_links = self.__make_collection_links()
@@ -182,6 +185,31 @@ class STACpopulatorBase(ABC):
             for asset_name, asset_info in self._collection_info["assets"].items():
                 pystac_assets[asset_name] = pystac.Asset(**asset_info)
         return pystac_assets
+
+    def __make_collection_providers(self) -> List[pystac.Provider]:
+        """Create collection level providers based on data read in from the configuration file.
+
+        :return: List of pystac Provider objects
+        :rtype: List[pystac.Provider]
+        """
+        pystac_providers = []
+        if "providers" in self._collection_info:
+            providers = self._collection_info.pop("providers")
+            pystac_providers = [pystac.Provider(**provider) for provider in providers]
+        return pystac_providers
+
+    def __make_collection_contacts(self) -> List[Dict]:
+        """Create collection level contacts based on data read in from the configuration file.
+
+        :return: List of Contact objects
+        :rtype: List[Contact]
+        """
+        contacts = []
+        if "contacts" in self._collection_info:
+            contacts = self._collection_info.pop("contacts")
+            # FIXME: Collection should support Contact or implement to_dict of Objects in extra_fields
+            contacts = [Contact(**contact).to_dict() for contact in contacts]
+        return contacts
 
     def publish_stac_collection(self, collection_data: dict[str, Any]) -> None:
         """Publish this collection by uploading it to the STAC catalog at self.stac_host."""
