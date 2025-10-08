@@ -16,10 +16,10 @@ from STACpopulator.api_requests import (
     stac_host_reachable,
     stac_version_match,
 )
+from STACpopulator.extensions.contact import Contact
 from STACpopulator.input import GenericLoader
 from STACpopulator.models import AnyGeometry
 from STACpopulator.stac_utils import load_config
-from STACpopulator.utils.contact import Contact
 
 LOGGER = logging.getLogger(__name__)
 

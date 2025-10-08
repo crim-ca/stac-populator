@@ -6,10 +6,10 @@ from typing import Any, MutableMapping, Optional, Union
 
 from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
-from pystac.extensions.file import AssetFileExtension
+from pystac.extensions.file import FileExtension
 from requests.sessions import Session
 
-from STACpopulator.extensions.cf import CFHelper, CFItemExtension
+from STACpopulator.extensions.cf import CFExtension, CFHelper
 from STACpopulator.extensions.datacube import DataCubeHelper
 from STACpopulator.extensions.file import FileHelper
 from STACpopulator.extensions.rdps import RDPSHelper, RDPSProperties
@@ -81,18 +81,21 @@ class RDPSpopulator(STACpopulatorBase):
         except Exception as e:
             raise Exception("Failed to add THREDDS extension") from e
 
+        asset = item.assets["HTTPServer"]
         # Add CF Extension
         try:
             cf_helper = CFHelper(item_data["variables"])
-            cf_ext = CFItemExtension.ext(item, add_if_missing=True)
-            cf_ext.apply(cf_helper.cf_parameters)
+            cf_item_ext = CFExtension.ext(item, add_if_missing=True)
+            cf_item_ext.apply(cf_helper.parameters)
+
+            cf_asset_ext = CFExtension.ext(asset, add_if_missing=True)
+            cf_asset_ext.apply(cf_helper.parameters)
         except Exception as e:
             raise Exception("Failed to add CF extension") from e
 
         try:
-            asset = item.assets["HTTPServer"]
             file_helper = FileHelper(asset.get_absolute_href())
-            file_ext = AssetFileExtension.ext(asset, add_if_missing=True)
+            file_ext = FileExtension.ext(asset, add_if_missing=True)
             file_ext.apply(
                 byte_order=file_helper.byte_order,
                 checksum=file_helper.checksum,  # FIXME: Displayed as n/a on browser
