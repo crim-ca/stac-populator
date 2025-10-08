@@ -147,8 +147,9 @@ class STACpopulatorBase(ABC):
         self._collection_info["providers"] = self.__make_collection_providers()
 
         # Add contacts as extra_field
-        self._collection_info["extra_fields"] = {}
-        self._collection_info["extra_fields"]["contacts"] = self.__make_collection_contacts()
+        if "contacts" in self._collection_info:
+            self._collection_info["extra_fields"] = {}
+            self._collection_info["extra_fields"]["contacts"] = self.__make_collection_contacts()
 
         # Construct links if provided in the config. This needs to be done before constructing a collection object.
         collection_links = self.__make_collection_links()
