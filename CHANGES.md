@@ -16,7 +16,7 @@
 * Add default `create_uid` to `THREDDSCatalogDataModel`.
 * Fix bug in `DataCubeHelper` for vertical coordinate extents.
 * Split and clean script to update test data. 
-* Add tests for RDPS and HRDPS attributes with no custom extension.
+* Add tests for RDPS and HRDPS attributes with no custom extension. 
 * Make sure that all tests will pass even when not connected to the internet.
 
 ## [0.8.0](https://github.com/crim-ca/stac-populator/tree/0.8.0) (2025-06-11)
