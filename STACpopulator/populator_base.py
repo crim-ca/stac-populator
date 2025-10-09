@@ -16,7 +16,6 @@ from STACpopulator.api_requests import (
     stac_host_reachable,
     stac_version_match,
 )
-from STACpopulator.extensions.contact import Contact
 from STACpopulator.input import GenericLoader
 from STACpopulator.models import AnyGeometry
 from STACpopulator.stac_utils import load_config
@@ -208,8 +207,6 @@ class STACpopulatorBase(ABC):
         contacts = []
         if "contacts" in self._collection_info:
             contacts = self._collection_info.pop("contacts")
-            # FIXME: Collection should support Contact or implement to_dict of Objects in extra_fields
-            contacts = [Contact(**contact).to_dict() for contact in contacts]
         return contacts
 
     def publish_stac_collection(self, collection_data: dict[str, Any]) -> None:
