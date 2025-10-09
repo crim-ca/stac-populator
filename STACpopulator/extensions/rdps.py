@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
 from datetime import datetime
 from typing import (
     Any,
@@ -74,11 +73,19 @@ class RDPSHelper:
 
     @property
     def uid(self) -> str:
-        """Return a unique ID for RDPS data item."""
-        item_url = self.attrs["access_urls"]["HTTPServer"]
-        item_filename = os.path.basename(item_url)
-        _uid, _ = os.path.splitext(item_filename)
-        return _uid  # filename without extension
+        """Return a unique ID from the server location.
+
+        For datasets with a DRS, it might might more sense to use the dataset's metadata instead.
+        """
+        if "HTTPServer" in self.attrs["access_urls"]:
+            location = self.attrs["access_urls"]["HTTPServer"].split("/fileServer/")[1]
+        elif "OpenDAP" in self.attrs["access_urls"]:
+            location = self.attrs["access_urls"]["OPENDAP"].split("/dodsC/")[1]
+        elif "NCML" in self.attrs["access_urls"]:
+            location = self.attrs["access_urls"]["NCML"].split("/ncml/")[1]
+        else:
+            raise ValueError("No valid access URL found in data.")
+        return location.replace("/", "__")
 
     @property
     def geometry(self) -> AnyGeometry:
