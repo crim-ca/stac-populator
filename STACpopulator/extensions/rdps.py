@@ -17,5 +17,5 @@ class RDPSDataModel(THREDDSCatalogDataModel):
     @classmethod
     def cf_helper(cls, data: dict) -> dict:
         """Instantiate the cf helper."""
-        data["cf"] = CFHelper(data["data"]["variables"])
+        data["cf"] = CFHelper(variables=data["data"]["variables"])
         return data

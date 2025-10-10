@@ -5,6 +5,7 @@ from __future__ import annotations
 import functools
 from typing import (
     Any,
+    Dict,
     Generic,
     Iterable,
     List,
@@ -34,10 +35,8 @@ PARAMETER_PROP = PREFIX + "parameter"
 class CFParameter(BaseModel):
     """CFParameter."""
 
-    def __init__(self, name: str, unit: Optional[str]) -> None:
-        """CFParameter object init."""
-        self.name = name
-        self.unit = unit
+    name: str
+    unit: Optional[str]
 
     def __repr__(self) -> str:
         """Return string repr."""
@@ -47,11 +46,8 @@ class CFParameter(BaseModel):
 class CFHelper(ExtensionHelper):
     """CFHelper."""
 
-    _prefix = "cf"
-
-    def __init__(self, variables: dict[str, any]) -> None:
-        """Take a STAC item variables to identify CF parameters metadata."""
-        self.variables = variables
+    _prefix: str = "cf"
+    variables: Dict[str, Any]
 
     @functools.cached_property
     def parameters(self) -> List[CFParameter]:
@@ -108,7 +104,7 @@ class CFExtension(
     ) -> None:
         """Apply CF Extension properties to the extended :class:`~pystac.Item` or :class:`~pystac.Asset`."""
         if not isinstance(parameters[0], dict):
-            parameters = [p.to_dict() for p in parameters]
+            parameters = [p.model_dump() for p in parameters]
         self.parameter = parameters
 
     @classmethod
