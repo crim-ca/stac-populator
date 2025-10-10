@@ -31,11 +31,6 @@ PREFIX = f"{get_args(SchemaName)[0]}:"
 PARAMETER_PROP = PREFIX + "parameter"
 
 
-def add_ext_prefix(name: str) -> str:
-    """Return the given name prefixed with this extension's prefix."""
-    return PREFIX + name if "datetime" not in name else name
-
-
 class CFParameter(BaseModel):
     """CFParameter."""
 
@@ -51,6 +46,8 @@ class CFParameter(BaseModel):
 
 class CFHelper(ExtensionHelper):
     """CFHelper."""
+
+    _prefix = "cf"
 
     def __init__(self, variables: dict[str, any]) -> None:
         """Take a STAC item variables to identify CF parameters metadata."""
@@ -80,7 +77,7 @@ class CFHelper(ExtensionHelper):
         # It should be remove once the PR is integrated since applying on the item should be enough
         asset = item.assets["HTTPServer"]
         cf_asset_ext = CFExtension.ext(asset, add_if_missing=True)
-        cf_asset_ext.apply(self.parameters)
+        cf_asset_ext.apply(parameters=self.parameters)
         return item
 
 
@@ -178,7 +175,7 @@ class ItemCFExtension(CFExtension[pystac.Item]):
         return {
             key: asset
             for key, asset in self.item.get_assets().items()
-            if (service_type is ServiceType and service_type.value in asset.extra_fields)
+            if (service_type in ServiceType and service_type.value in asset.extra_fields)
             or any(ServiceType.from_value(field, default=None) is ServiceType for field in asset.extra_fields)
         }
 
