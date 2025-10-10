@@ -198,11 +198,11 @@ class STACpopulatorBase(ABC):
             pystac_providers = [pystac.Provider(**provider) for provider in providers]
         return pystac_providers
 
-    def __make_collection_contacts(self) -> List[Dict]:
+    def __make_collection_contacts(self) -> List[dict]:
         """Create collection level contacts based on data read in from the configuration file.
 
-        :return: List of Contact objects
-        :rtype: List[Contact]
+        :return: List of dictionnary contact objects
+        :rtype: List[dict]
         """
         contacts = []
         if "contacts" in self._collection_info:
