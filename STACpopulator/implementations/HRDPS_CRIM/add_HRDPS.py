@@ -1,16 +1,11 @@
 import argparse
-import json
 import logging
 import os
 from typing import Any, MutableMapping, Optional, Union
 
-from pystac import STACValidationError
-from pystac.extensions.datacube import DatacubeExtension
 from requests.sessions import Session
 
-from STACpopulator.extensions.datacube import DataCubeHelper
-from STACpopulator.extensions.hrdps import HRDPSHelper, HRDPSProperties
-from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
+from STACpopulator.extensions.hrdps import HRDPSDataModel
 from STACpopulator.input import ErrorLoader, GenericLoader, THREDDSLoader
 from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
@@ -21,7 +16,7 @@ LOGGER = logging.getLogger(__name__)
 class HRDPSpopulator(STACpopulatorBase):
     """Populator that creates STAC objects representing HRDPS data from a THREDDS catalog."""
 
-    item_properties_model = HRDPSProperties
+    data_model = HRDPSDataModel
     item_geometry_model = GeoJSONPolygon
 
     def __init__(
@@ -52,37 +47,11 @@ class HRDPSpopulator(STACpopulatorBase):
         :return: _description_
         :rtype: MutableMapping[str, Any]
         """
-        # Add HRDPS extension
         try:
-            hrdps_helper = HRDPSHelper(item_data, self.item_geometry_model)
-            item = hrdps_helper.stac_item()
+            self.data_model = HRDPSDataModel.from_data(item_data)
+            return self.data_model.stac_item()
         except Exception as e:
             raise Exception("Failed to add HRDPS extension") from e
-
-        # Add datacube extension
-        try:
-            datacube_helper = DataCubeHelper(item_data)
-            datacube_ext = DatacubeExtension.ext(item, add_if_missing=True)
-            datacube_ext.apply(
-                dimensions=datacube_helper.dimensions,
-                variables=datacube_helper.variables,
-            )
-        except Exception as e:
-            raise Exception("Failed to add Datacube extension") from e
-
-        try:
-            thredds_helper = THREDDSHelper(item_data["access_urls"])
-            thredds_ext = THREDDSExtension.ext(item)
-            thredds_ext.apply(thredds_helper.services, thredds_helper.links)
-        except Exception as e:
-            raise Exception("Failed to add THREDDS extension") from e
-
-        try:
-            item.validate()
-        except STACValidationError as e:
-            raise Exception("Failed to validate STAC item") from e
-
-        return json.loads(json.dumps(item.to_dict()))
 
 
 def add_parser_args(parser: argparse.ArgumentParser) -> None:
