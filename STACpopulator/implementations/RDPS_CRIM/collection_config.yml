@@ -1,0 +1,45 @@
+id: RDPS_CRIM
+title: RDPS
+description: Regional Deterministic Prediction System
+keywords: ["RDPS", "Climate Change"]
+license: "other"
+spatialextent: [-180, -90, 180, 90]
+temporalextent: ["1850-01-01", "2500-01-01"]
+
+providers:
+  - name: NRCAN
+    description: Natural Resources Canada
+    roles:
+      - licensor
+      - producer
+    url: https://github.com/julemai/CaSPAr/wiki/Available-products
+  - name: Ouranos
+    description: Ouranos
+    roles:
+      - host
+
+links:
+  - rel: about
+    title: Project homepage
+    target: https://open.canada.ca/data/en/dataset/a9f2828c-0d78-5eb6-a4c7-1fc1219f1e3d
+    media_type: text/html
+  - rel: license
+    title: License
+    target: https://open.canada.ca/en/open-government-licence-canada
+    media_type: text/html
+
+contacts:
+  - organization: Computer Research Institute of Montreal (CRIM)
+    identifier: CRIM
+    position: Support
+    emails:
+      - value: support-geo@crim.ca
+        roles: ["support"]
+    logo:
+      href: https://www.crim.ca/wp-content/uploads/2020/10/logo-color.png
+      rel: icon
+      type: image/png
+      title: Logo CRIM
+
+stac_extensions:
+  - DatacubeExtension
