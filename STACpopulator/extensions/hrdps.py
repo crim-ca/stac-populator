@@ -5,6 +5,6 @@ from STACpopulator.extensions.rdps import RDPSDataModel
 
 # Customize the THREDDSCatalogDataModel
 class HRDPSDataModel(RDPSDataModel):
-    """Data model for RDPS NetCDF datasets."""
+    """Data model for HRDPS NetCDF datasets."""
 
     pass
