@@ -1,32 +1,39 @@
 import hashlib
 from pathlib import Path
-from typing import Optional
+from typing import Optional, TypeVar
 
 import pystac
 import requests
 from netCDF4 import Dataset
+from pystac.extensions.file import FileExtension
 
-from STACpopulator.extensions.base import Helper
+from STACpopulator.extensions.base import ExtensionHelper
+
+T = TypeVar("T", pystac.Asset, pystac.Link)
 
 
-class FileHelper(Helper):
+class FileHelper(ExtensionHelper):
     """Helper to handle file info from elements of types Asset and Link."""
 
-    def __init__(self, href: str, download_dir: str = "temp_files") -> None:
+    def __init__(self, href: str) -> None:
         """Initialize the FileHelper object."""
         self.href = href
-        self.download_dir = Path(download_dir)
-        self.download_dir.mkdir(exist_ok=True)
-        self.local_path = self.download_dir / Path(href).name
-        self.download_file()  # Download the file
+        self.local_file = None
 
-        # Compute properties
-        self.size = self.local_path.stat().st_size
-        self.checksum = self.calculate_checksum()
-        #     self.header_size = self.get_netcdf_header_size(self.local_path)
-        self.byte_order = self.find_byte_order()
+    def apply(self, asset: T, add_if_missing: bool = True) -> T:
+        """Apply the FileExtension to an asset."""
+        self.load_file()
+        file_ext = FileExtension.ext(asset, add_if_missing=add_if_missing)
+        file_ext.apply(
+            byte_order=self.byte_order,
+            checksum=self.checksum,  # FIXME: Displayed as n/a on browser
+            header_size=0,  # FIXME: clarify expected value here
+            size=self.size,
+            values=None,  # NOTE: deprecated
+            local_path=None,  # FIXME: clarify expected value here
+        )
 
-    def download_file(self) -> None:
+    def load_file(self) -> None:
         """Download the current file into temporary directory."""
         if self.local_path.exists():
             return

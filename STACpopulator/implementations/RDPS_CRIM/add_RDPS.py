@@ -1,21 +1,12 @@
 import argparse
-import json
 import logging
 import os
 from typing import Any, MutableMapping, Optional, Union
 
-from pystac import STACValidationError
-from pystac.extensions.datacube import DatacubeExtension
-from pystac.extensions.file import FileExtension
 from requests.sessions import Session
 
-from STACpopulator.extensions.cf import CFExtension, CFHelper
-from STACpopulator.extensions.datacube import DataCubeHelper
-from STACpopulator.extensions.file import FileHelper
-from STACpopulator.extensions.rdps import RDPSHelper, RDPSProperties
-from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
+from STACpopulator.extensions.rdps import RDPSDataModel
 from STACpopulator.input import ErrorLoader, GenericLoader, THREDDSLoader
-from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
 
 LOGGER = logging.getLogger(__name__)
@@ -24,8 +15,8 @@ LOGGER = logging.getLogger(__name__)
 class RDPSpopulator(STACpopulatorBase):
     """Populator that creates STAC objects representing RDPS data from a THREDDS catalog."""
 
-    item_properties_model = RDPSProperties
-    item_geometry_model = GeoJSONPolygon
+    data_model = RDPSDataModel
+    item_geometry_model = None  # Unnecessary, but kept for consistency
 
     def __init__(
         self,
@@ -55,65 +46,11 @@ class RDPSpopulator(STACpopulatorBase):
         :return: _description_
         :rtype: MutableMapping[str, Any]
         """
-        # Add RDPS extension
         try:
-            rdps_helper = RDPSHelper(item_data, self.item_geometry_model)
-            item = rdps_helper.stac_item()
+            self.data_model = RDPSDataModel.from_data(item_data)
+            return self.data_model.stac_item()
         except Exception as e:
             raise Exception("Failed to add RDPS extension") from e
-
-        # Add DataCube Extension
-        try:
-            datacube_helper = DataCubeHelper(item_data)
-            datacube_ext = DatacubeExtension.ext(item, add_if_missing=True)
-            datacube_ext.apply(
-                dimensions=datacube_helper.dimensions,
-                variables=datacube_helper.variables,
-            )
-        except Exception as e:
-            raise Exception("Failed to add Datacube extension") from e
-
-        # Add THREDDS Extension
-        try:
-            thredds_helper = THREDDSHelper(item_data["access_urls"])
-            thredds_ext = THREDDSExtension.ext(item)
-            thredds_ext.apply(thredds_helper.services, thredds_helper.links)
-        except Exception as e:
-            raise Exception("Failed to add THREDDS extension") from e
-
-        asset = item.assets["HTTPServer"]
-        # Add CF Extension
-        try:
-            cf_helper = CFHelper(item_data["variables"])
-            cf_item_ext = CFExtension.ext(item, add_if_missing=True)
-            cf_item_ext.apply(cf_helper.parameters)
-
-            cf_asset_ext = CFExtension.ext(asset, add_if_missing=True)
-            cf_asset_ext.apply(cf_helper.parameters)
-        except Exception as e:
-            raise Exception("Failed to add CF extension") from e
-
-        try:
-            file_helper = FileHelper(asset.get_absolute_href())
-            file_ext = FileExtension.ext(asset, add_if_missing=True)
-            file_ext.apply(
-                byte_order=file_helper.byte_order,
-                checksum=file_helper.checksum,  # FIXME: Displayed as n/a on browser
-                header_size=0,  # FIXME: clarify expected value here
-                size=file_helper.size,
-                values=None,  # NOTE: deprecated
-                local_path=None,  # FIXME: clarify expected value here
-            )
-        except Exception as e:
-            raise Exception("Failed to add Asset File extension") from e
-
-        try:
-            item.validate()
-        except STACValidationError as e:
-            print(json.dumps(item.to_dict()))
-            raise Exception("Failed to validate STAC item") from e
-
-        return json.loads(json.dumps(item.to_dict()))
 
 
 def add_parser_args(parser: argparse.ArgumentParser) -> None:

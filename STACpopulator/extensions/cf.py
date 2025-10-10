@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import functools
-from dataclasses import dataclass
 from typing import (
     Any,
     Generic,
@@ -18,13 +17,14 @@ from typing import (
 )
 
 import pystac
-from dataclasses_json import dataclass_json
+from pydantic import BaseModel
 from pystac.extensions import item_assets
-from pystac.extensions.base import ExtensionManagementMixin, PropertiesExtension, S
+from pystac.extensions.base import ExtensionManagementMixin, PropertiesExtension
 
+from STACpopulator.extensions.base import ExtensionHelper
 from STACpopulator.stac_utils import ServiceType
 
-T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset, item_assets.AssetDefinition)
+T = TypeVar("T", pystac.Collection, pystac.Item, pystac.Asset)
 SchemaName = Literal["cf"]
 SCHEMA_URI = "https://stac-extensions.github.io/cf/v0.2.0/schema.json"
 PREFIX = f"{get_args(SchemaName)[0]}:"
@@ -36,20 +36,20 @@ def add_ext_prefix(name: str) -> str:
     return PREFIX + name if "datetime" not in name else name
 
 
-@dataclass_json
-@dataclass
-class CFParameter:
+class CFParameter(BaseModel):
     """CFParameter."""
 
-    name: str
-    unit: Optional[str]
+    def __init__(self, name: str, unit: Optional[str]) -> None:
+        """CFParameter object init."""
+        self.name = name
+        self.unit = unit
 
     def __repr__(self) -> str:
         """Return string repr."""
         return f"<CFParameter name={self.name}, unit={self.unit}>"
 
 
-class CFHelper:
+class CFHelper(ExtensionHelper):
     """CFHelper."""
 
     def __init__(self, variables: dict[str, any]) -> None:
@@ -65,13 +65,23 @@ class CFHelper:
             attrs = var.get("attributes", {})
             name = attrs.get("standard_name")  # Get the required standard name
             if not name:
-                # Skip if no valid name
-                continue
-
+                continue  # Skip if no valid name
             unit = attrs.get("units") or ""
             parameters.append(CFParameter(name=name, unit=unit))
 
         return parameters
+
+    def apply(self, item: T, add_if_missing: bool = True) -> T:
+        """Apply the Datacube extension to an item."""
+        ext = CFExtension.ext(item, add_if_missing=add_if_missing)
+        ext.apply(parameters=self.parameters)
+
+        # FIXME: This temporary workaround has been added to comply with the (most certainly buggy) validation schema for CF extension
+        # It should be remove once the PR is integrated since applying on the item should be enough
+        asset = item.assets["HTTPServer"]
+        cf_asset_ext = CFExtension.ext(asset, add_if_missing=True)
+        cf_asset_ext.apply(self.parameters)
+        return item
 
 
 class CFExtension(
@@ -108,15 +118,6 @@ class CFExtension(
     def get_schema_uri(cls) -> str:
         """Return this extension's schema URI."""
         return SCHEMA_URI
-
-    @classmethod
-    def has_extension(cls, obj: S) -> bool:
-        """Return True iff the object has an extension for that matches this class' schema URI."""
-        # FIXME: this override should be removed once an official and versioned schema is released
-        # ignore the original implementation logic for a version regex
-        # since in our case, the VERSION_REGEX is not fulfilled (ie: using 'main' branch, no tag available...)
-        ext_uri = cls.get_schema_uri()
-        return obj.stac_extensions is not None and any(uri == ext_uri for uri in obj.stac_extensions)
 
     @classmethod
     def ext(cls, obj: T, add_if_missing: bool = False) -> CFExtension[T]:
