@@ -31,10 +31,20 @@ links:
     title: Project homepage
     target: https://open.canada.ca/data/en/dataset/a9f2828c-0d78-5eb6-a4c7-1fc1219f1e3d
     media_type: text/html
+    extra_fields:
+      hreflang:  https://eccc-msc.github.io/open-data/readme_en
+      describedby: https://eccc-msc.github.io/open-data/msc-data/nwp_rdps/readme_rdps_en
+  - rel: about
+    title: Page d'acceuil du projet
+    target: https://open.canada.ca/data/fr/dataset/a9f2828c-0d78-5eb6-a4c7-1fc1219f1e3d
+    media_type: text/html
+    extra_fields:
+      hreflang:  https://eccc-msc.github.io/open-data/readme_fr
+      describedby: https://eccc-msc.github.io/open-data/msc-data/nwp_rdps/readme_rdps_fr
   - rel: license
     title: License
     target: https://open.canada.ca/en/open-government-licence-canada
-    media_type: text/html
+    media_type: text/plain
 
 contacts:
   - organization: Computer Research Institute of Montreal (CRIM)
@@ -47,7 +57,4 @@ contacts:
       href: https://www.crim.ca/wp-content/uploads/2020/10/logo-color.png
       rel: icon
       type: image/png
-      title: Logo CRIM
-
-stac_extensions:
-  - DatacubeExtension
+      title: CRIM
