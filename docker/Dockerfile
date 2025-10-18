@@ -1,4 +1,4 @@
-FROM python:3.13.5-slim
+FROM python:3.14.0-slim
 LABEL description.short="STAC Populator"
 LABEL description.long="Utility to populate STAC Catalog, Collections and Items from various dataset/catalog sources."
 LABEL maintainer="Francis Charette-Migneault <francis.charette-migneault@crim.ca>"
