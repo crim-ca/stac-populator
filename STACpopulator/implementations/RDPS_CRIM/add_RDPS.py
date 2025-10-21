@@ -1,12 +1,11 @@
 import argparse
 import logging
-import os
-from typing import Any, MutableMapping, Optional, Union
+from typing import Any
 
 from requests.sessions import Session
 
 from STACpopulator.extensions.rdps import RDPSDataModel
-from STACpopulator.input import ErrorLoader, GenericLoader, THREDDSLoader
+from STACpopulator.input import ErrorLoader, THREDDSLoader
 from STACpopulator.populator_base import STACpopulatorBase
 
 LOGGER = logging.getLogger(__name__)
@@ -18,39 +17,10 @@ class RDPSpopulator(STACpopulatorBase):
     data_model = RDPSDataModel
     item_geometry_model = None  # Unnecessary, but kept for consistency
 
-    def __init__(
-        self,
-        stac_host: str,
-        data_loader: GenericLoader,
-        update: Optional[bool] = False,
-        session: Optional[Session] = None,
-        config_file: Optional[Union[os.PathLike[str], str]] = None,
-    ) -> None:
-        super().__init__(
-            stac_host,
-            data_loader,
-            update=update,
-            session=session,
-            config_file=config_file,
-        )
-
-    def create_stac_item(
-        self, item_name: str, item_data: MutableMapping[str, Any]
-    ) -> Union[None, MutableMapping[str, Any]]:
-        """Create a STAC item.
-
-        :param item_name: name of the STAC item. Interpretation of name is left to the input loader implementation
-        :type item_name: str
-        :param item_data: dictionary like representation of all information on the item
-        :type item_data: MutableMapping[str, Any]
-        :return: _description_
-        :rtype: MutableMapping[str, Any]
-        """
-        try:
-            self.data_model = RDPSDataModel.from_data(item_data)
-            return self.data_model.stac_item()
-        except Exception as e:
-            raise Exception("Failed to add RDPS extension") from e
+    def create_stac_item(self, item_name: str, item_data: dict[str, Any]) -> dict[str, Any]:
+        """Return a STAC item."""
+        dm = self.data_model.from_data(item_data)
+        return dm.stac_item()
 
 
 def add_parser_args(parser: argparse.ArgumentParser) -> None:
