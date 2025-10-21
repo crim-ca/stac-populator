@@ -190,7 +190,8 @@ class BaseSTAC(BaseModel):
     @model_validator(mode="after")
     def find_helpers(self) -> "BaseSTAC":
         """Populate the list of extensions."""
-        for key, field in self.model_fields.items():
+        # Access model fields from class. From obj will be removed in pydantic v3
+        for key, field in self.__class__.model_fields.items():
             if isinstance(field.annotation, type) and issubclass(field.annotation, Helper):
                 self._helpers.append(key)
         return self
