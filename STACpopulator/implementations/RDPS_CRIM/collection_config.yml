@@ -35,7 +35,7 @@ links:
       hreflang:  https://eccc-msc.github.io/open-data/readme_en
       describedby: https://eccc-msc.github.io/open-data/msc-data/nwp_rdps/readme_rdps_en
   - rel: about
-    title: Page d'acceuil du projet
+    title: Page d'accueil du projet
     target: https://open.canada.ca/data/fr/dataset/a9f2828c-0d78-5eb6-a4c7-1fc1219f1e3d
     media_type: text/html
     extra_fields:
