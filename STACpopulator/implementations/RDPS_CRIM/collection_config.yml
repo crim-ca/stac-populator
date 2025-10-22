@@ -54,7 +54,7 @@ contacts:
       - value: support-geo@crim.ca
         roles: ["support"]
     logo:
-      href: https://www.crim.ca/wp-content/uploads/2020/10/logo-color.png
+      href: https://raw.githubusercontent.com/henriaidasso/image-store/refs/heads/main/img/crim.png
       rel: icon
       type: image/png
       title: CRIM
