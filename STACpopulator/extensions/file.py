@@ -4,6 +4,7 @@ import functools
 from typing import Dict, Optional, TypeVar
 
 import pystac
+import requests
 from pystac.extensions.file import FileExtension
 from requests import Session
 
@@ -29,7 +30,7 @@ class FileHelper(ExtensionHelper):
         access_urls : dict
             Dictionary of catalog access URLs.
         session : requests.Session, optional
-            Requests session object to use for HTTP requests. Can be specified post init.
+            Requests session object to use for HTTP requests. Defaults to requests.Session().
         """
         super().__init__(access_urls=access_urls, _session=session)
 
@@ -40,9 +41,9 @@ class FileHelper(ExtensionHelper):
         asset = item.assets[HTTP_SERVER_ASSET_KEY]
         file_ext = FileExtension.ext(asset, add_if_missing=add_if_missing)
         file_ext.apply(
-            byte_order=None,  # NOTE: Appears to be variable-related. Unclear what would be the value for the whole file.
-            header_size=self.header_size,
             size=self.size,
+            byte_order=None,  # NOTE: Appears to be variable-related. Unclear what would be the value for the whole file.
+            header_size=None,  # NOTE: No utility yet available. Might not be relevant.
             checksum=None,  # NOTE: Should be made available in the metadata on THREDDS catalog
             values=None,  # NOTE: Deprecated field
             local_path=None,  # NOTE: Seems to be irrelevant
@@ -52,7 +53,8 @@ class FileHelper(ExtensionHelper):
     def session(self) -> Session:
         """Get requests session."""
         if self._session is None:
-            raise ValueError("Please set a valid `session` or provide a default requests.Session().")
+            # Initialize only on first call to allow setting value post init.
+            self._session = requests.Session()
         return self._session
 
     @session.setter
@@ -68,22 +70,3 @@ class FileHelper(ExtensionHelper):
         res = self.session.head(self.access_urls[HTTP_SERVER_ASSET_KEY])
         res.raise_for_status()
         return int(res.headers.get("Content-Length", None))
-
-    @functools.cached_property
-    def header_size(self) -> int:
-        """Return the header size of the netCDF file in bytes."""
-        # FIXME: Implementation to be discussed to confirm compliance with header size definition
-        if OPEN_DAP_ASSET_KEY not in self.access_urls:
-            return 0
-
-        header_size = 0
-        # <url>.dds returns variable and dimension structure
-        # <url>.das returns attributes and metadata
-        for end in [".dds", ".das"]:
-            url = self.access_urls[OPEN_DAP_ASSET_KEY] + end
-            res = self.session.get(url, stream=True)
-            res.raise_for_status()
-
-            bytes_count: int = sum(len(chunk) for chunk in res.iter_content(chunk_size=8192))
-            header_size += bytes_count
-        return header_size
