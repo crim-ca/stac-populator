@@ -18,13 +18,13 @@ class FileHelper(ExtensionHelper):
     """Helper to handle file info from elements of types Asset and Link."""
 
     access_urls: Dict[str, str]
-    asset_key: str
-    _session: Optional[Session]
+    asset_key: str = "HTTPServer"
+    _session: Optional[Session] = None
 
     def __init__(
         self,
         access_urls: dict[str, str],
-        asset_key: Optional[str] = "HTTPServer",
+        asset_key: str = "HTTPServer",
         session: Optional[Session] = None,
     ) -> None:
         """Initialize the file helper.
@@ -33,7 +33,7 @@ class FileHelper(ExtensionHelper):
         ----------
         access_urls : dict[str, str]
             Dictionary of catalog access URLs.
-        asset_key : str, optional.
+        asset_key : str.
             Asset key matching main file in access_urls. Defaults to `HTTPServer`.
         session : requests.Session, optional
             Requests session object to use for HTTP requests. Defaults to `requests.Session()`.
