@@ -1,11 +1,11 @@
 """FileHelper module."""
 
 import functools
-from typing import Dict, TypeVar
+from typing import Dict, Optional, TypeVar
 
 import pystac
-import requests
 from pystac.extensions.file import FileExtension
+from requests import Session
 
 from STACpopulator.extensions.base import ExtensionHelper
 
@@ -19,7 +19,19 @@ class FileHelper(ExtensionHelper):
     """Helper to handle file info from elements of types Asset and Link."""
 
     access_urls: Dict[str, str]
-    _session = requests.Session()
+    _session: Optional[Session] = None
+
+    def __init__(self, access_urls: dict[str, str], session: Optional[Session] = None) -> None:
+        """Initialize the file helper.
+
+        Parameters
+        ----------
+        access_urls : dict
+            Dictionary of catalog access URLs.
+        session : requests.Session, optional
+            Requests session object to use for HTTP requests. Can be specified post init.
+        """
+        super().__init__(access_urls=access_urls, _session=session)
 
     def apply(self, item: pystac.Item, add_if_missing: bool = True) -> T:
         """Apply the FileExtension to an asset."""
@@ -36,12 +48,24 @@ class FileHelper(ExtensionHelper):
             local_path=None,  # NOTE: Seems to be irrelevant
         )
 
+    @property
+    def session(self) -> Session:
+        """Get requests session."""
+        if self._session is None:
+            raise ValueError("Please set a valid `session` or provide a default requests.Session().")
+        return self._session
+
+    @session.setter
+    def session(self, value: Session) -> None:
+        """Set requests session."""
+        self._session = value
+
     @functools.cached_property
     def size(self) -> int:
         """Return file size in bytes."""
         if HTTP_SERVER_ASSET_KEY not in self.access_urls:
             return 0
-        res = self._session.head(self.access_urls[HTTP_SERVER_ASSET_KEY])
+        res = self.session.head(self.access_urls[HTTP_SERVER_ASSET_KEY])
         res.raise_for_status()
         return int(res.headers.get("Content-Length", None))
 
@@ -57,7 +81,7 @@ class FileHelper(ExtensionHelper):
         # <url>.das returns attributes and metadata
         for end in [".dds", ".das"]:
             url = self.access_urls[OPEN_DAP_ASSET_KEY] + end
-            res = self._session.get(url, stream=True)
+            res = self.session.get(url, stream=True)
             res.raise_for_status()
 
             bytes_count: int = sum(len(chunk) for chunk in res.iter_content(chunk_size=8192))

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pydantic import model_validator
+from requests import Session
 
 from STACpopulator.extensions.cf import CFHelper
 from STACpopulator.extensions.file import FileHelper
@@ -28,3 +29,7 @@ class RDPSDataModel(THREDDSCatalogDataModel):
         """Instantiate the file helper."""
         data["file"] = FileHelper(access_urls=data["data"]["access_urls"])
         return data
+
+    def set_session(self, session: Session) -> None:
+        """Set session parameter to helper(s)."""
+        self.file.session = session
