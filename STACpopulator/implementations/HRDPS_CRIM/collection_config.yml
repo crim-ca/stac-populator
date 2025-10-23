@@ -1,17 +1,89 @@
 title: HRDPS
 id: HRDPS_CRIM
 description: High Resolution Deterministic Prediction System
-keywords: ['HRDPS', 'Climate Change']
-license: "CC-BY-4.0"
-spatialextent: [-180, -90, 180, 90]
-temporalextent: ['1850-01-01', '2500-01-01']
+keywords:
+  [
+    "HRDPS",
+    "ECCC",
+    "MSC",
+    "Climate Change",
+    "Prediction",
+    "High resolution",
+    "Deterministic",
+    "Meteorological data",
+    "Weather and Climate",
+    "Meteorological Service of Canada",
+    "Environment and Climate Change Canada",
+    "Weather and Environmental Operations",
+  ]
+license: other
+spatialextent: [-152.7685268, 27.2840148, -40.6938032, 70.6164825]
+temporalextent: ["2014-11-18", "2025-04-01"]
+
+providers:
+  - name: ECCC
+    description: Environment and Climate Change Canada (ECCC)
+    roles:
+      - licensor
+      - processor
+      - producer
+    url: https://github.com/julemai/CaSPAr/wiki/Available-products
+  - name: MSC
+    description: Meteorological Service of Canada (MSC)
+    roles:
+      - processor
+    url: https://eccc-msc.github.io/open-data
+  - name: Ouranos
+    description: Ouranos
+    roles:
+      - processor
+      - host
+    url: https://www.ouranos.ca
 
 links:
     - rel: about
       title : Project homepage
       target : https://open.canada.ca/data/en/dataset/5b401fa0-6c29-57f0-b3d5-749f301d829d
       media_type: text/html
+      extra_fields:
+        hreflang: https://eccc-msc.github.io/open-data/readme_en
+        describedby: https://eccc-msc.github.io/open-data/msc-data/nwp_hrdps/readme_hrdps_en
+    - rel: about
+      title : Page d'accueil du projet
+      target : https://open.canada.ca/data/en/dataset/5b401fa0-6c29-57f0-b3d5-749f301d829d
+      media_type: text/html
+      extra_fields:
+        hreflang: https://eccc-msc.github.io/open-data/readme_fr
+        describedby: https://eccc-msc.github.io/open-data/msc-data/nwp_hrdps/readme_hrdps_fr
     - rel: license
-      title : License
+      title : Open Government Licence - Canada
       target : https://open.canada.ca/en/open-government-licence-canada
-      media_type: text/plain
+      media_type: text/html
+
+contacts:
+  - organization: Computer Research Institute of Montreal (CRIM)
+    identifier: CRIM
+    position: Support
+    emails:
+      - value: support-geo@crim.ca
+        roles: ["work"]
+    logo:
+      href: https://raw.githubusercontent.com/henriaidasso/image-store/refs/heads/main/img/crim.png
+      rel: icon
+      type: image/png
+      title: CRIM
+  - organization: Environment and Climate Change Canada (ECCC)
+    identifier: ECCC
+    position: Support
+    emails:
+      - value: ECWeather-Meteo@ec.gc.ca
+        roles: ["work"]
+    phones:
+      - value: +18199972800
+        roles: ["work"]
+    addresses:
+      - deliveryPoint: 77 Westmorland Street, suite 260
+        city: Fredericton
+        administrativeArea: New Brunswick
+        postalCode: E3B 6Z4
+        country: Canada
