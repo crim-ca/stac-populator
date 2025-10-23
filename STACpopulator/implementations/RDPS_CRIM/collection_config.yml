@@ -1,10 +1,23 @@
 id: RDPS_CRIM
 title: RDPS
 description: Regional Deterministic Prediction System (RDPS)
-keywords: ["RDPS", "Climate Change", "ECCC"]
+keywords:
+  [
+    "RDPS",
+    "ECCC",
+    "MSC",
+    "Climate Change",
+    "Prediction",
+    "Deterministic",
+    "Meteorological data",
+    "Weather and Climate",
+    "Meteorological Service of Canada",
+    "Environment and Climate Change Canada",
+    "Weather and Environmental Operations",
+  ]
 license: "other"
-spatialextent: [-180, -90, 180, 90]
-temporalextent: ["1850-01-01", "2500-01-01"]
+spatialextent: [-152.7685268, 27.2840148, -40.6938032, 70.6164825]
+temporalextent: ["2014-11-18", "2025-04-01"]
 
 providers:
   - name: ECCC
@@ -32,19 +45,19 @@ links:
     target: https://open.canada.ca/data/en/dataset/a9f2828c-0d78-5eb6-a4c7-1fc1219f1e3d
     media_type: text/html
     extra_fields:
-      hreflang:  https://eccc-msc.github.io/open-data/readme_en
+      hreflang: https://eccc-msc.github.io/open-data/readme_en
       describedby: https://eccc-msc.github.io/open-data/msc-data/nwp_rdps/readme_rdps_en
   - rel: about
     title: Page d'accueil du projet
     target: https://open.canada.ca/data/fr/dataset/a9f2828c-0d78-5eb6-a4c7-1fc1219f1e3d
     media_type: text/html
     extra_fields:
-      hreflang:  https://eccc-msc.github.io/open-data/readme_fr
+      hreflang: https://eccc-msc.github.io/open-data/readme_fr
       describedby: https://eccc-msc.github.io/open-data/msc-data/nwp_rdps/readme_rdps_fr
   - rel: license
     title: License
     target: https://open.canada.ca/en/open-government-licence-canada
-    media_type: text/plain
+    media_type: text/html
 
 contacts:
   - organization: Computer Research Institute of Montreal (CRIM)
