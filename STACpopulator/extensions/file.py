@@ -12,33 +12,39 @@ from STACpopulator.extensions.base import ExtensionHelper
 
 # Constants
 T = TypeVar("T", pystac.Asset, pystac.Link)
-HTTP_SERVER_ASSET_KEY = "HTTPServer"
-OPEN_DAP_ASSET_KEY = "OpenDAP"
 
 
 class FileHelper(ExtensionHelper):
     """Helper to handle file info from elements of types Asset and Link."""
 
     access_urls: Dict[str, str]
-    _session: Optional[Session] = None
+    asset_key: str
+    _session: Optional[Session]
 
-    def __init__(self, access_urls: dict[str, str], session: Optional[Session] = None) -> None:
+    def __init__(
+        self,
+        access_urls: dict[str, str],
+        asset_key: Optional[str] = "HTTPServer",
+        session: Optional[Session] = None,
+    ) -> None:
         """Initialize the file helper.
 
         Parameters
         ----------
-        access_urls : dict
+        access_urls : dict[str, str]
             Dictionary of catalog access URLs.
+        asset_key : str, optional.
+            Asset key matching main file in access_urls. Defaults to `HTTPServer`.
         session : requests.Session, optional
-            Requests session object to use for HTTP requests. Defaults to requests.Session().
+            Requests session object to use for HTTP requests. Defaults to `requests.Session()`.
         """
-        super().__init__(access_urls=access_urls, _session=session)
+        super().__init__(access_urls=access_urls, asset_key=asset_key, _session=session)
 
     def apply(self, item: pystac.Item, add_if_missing: bool = True) -> T:
         """Apply the FileExtension to an asset."""
         # FIXME: This extension is applicable to Assets and Links.
-        # Currently only applied to the HTTPServer asset to avoid heavy load during populator run
-        asset = item.assets[HTTP_SERVER_ASSET_KEY]
+        # Currently applied to the HTTPServer asset by default to avoid heavy load during populator run
+        asset = item.assets[self.asset_key]
         file_ext = FileExtension.ext(asset, add_if_missing=add_if_missing)
         file_ext.apply(
             size=self.size,
@@ -65,8 +71,8 @@ class FileHelper(ExtensionHelper):
     @functools.cached_property
     def size(self) -> int:
         """Return file size in bytes."""
-        if HTTP_SERVER_ASSET_KEY not in self.access_urls:
+        if self.asset_key not in self.access_urls:
             return 0
-        res = self.session.head(self.access_urls[HTTP_SERVER_ASSET_KEY])
+        res = self.session.head(self.access_urls[self.asset_key])
         res.raise_for_status()
         return int(res.headers.get("Content-Length", None))
