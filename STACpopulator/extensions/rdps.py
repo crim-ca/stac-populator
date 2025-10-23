@@ -8,7 +8,6 @@ from STACpopulator.extensions.file import FileHelper
 from STACpopulator.extensions.thredds import THREDDSCatalogDataModel
 
 
-# Customize the THREDDSCatalogDataModel
 class RDPSDataModel(THREDDSCatalogDataModel):
     """Data model for RDPS NetCDF datasets."""
 
@@ -20,15 +19,23 @@ class RDPSDataModel(THREDDSCatalogDataModel):
     @classmethod
     def cf_helper(cls, data: dict) -> dict:
         """Instantiate the cf helper."""
-        data["cf"] = CFHelper(variables=data["data"]["variables"])
+        field = "cf"
+        data[field] = cls.helper_class(field)(variables=data["data"]["variables"])
         return data
 
     @model_validator(mode="before")
     @classmethod
     def file_helper(cls, data: dict) -> dict:
         """Instantiate the file helper."""
-        data["file"] = FileHelper(access_urls=data["data"]["access_urls"])
+        field = "file"
+        data[field] = cls.helper_class(field)(access_urls=data["data"]["access_urls"])
         return data
+
+    @classmethod
+    def helper_class(cls, field_name: str) -> type[any]:
+        """Return type annotation of a model field."""
+        # TODO: Should maybe be moved to parent for reuse?
+        return cls.model_fields[field_name].annotation
 
     def set_session(self, session: Session) -> None:
         """Set session parameter to helper(s)."""
