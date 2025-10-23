@@ -180,7 +180,7 @@ class THREDDSCatalogDataModel(BaseSTAC):
     model_config = ConfigDict(populate_by_name=True, extra="ignore", arbitrary_types_allowed=True)
 
     @classmethod
-    def from_data(cls, data: dict) -> None:
+    def from_data(cls, data: dict) -> "THREDDSCatalogDataModel":
         """
         Instantiate class from data provided by THREDDS Loader.
 
