@@ -1,6 +1,7 @@
 """FileHelper module."""
 
 import functools
+import logging
 from typing import Dict, Optional, TypeVar
 
 import pystac
@@ -12,6 +13,7 @@ from STACpopulator.extensions.base import ExtensionHelper
 
 # Constants
 T = TypeVar("T", pystac.Asset, pystac.Link)
+logger = logging.getLogger(__name__)
 
 
 class FileHelper(ExtensionHelper):
@@ -69,10 +71,11 @@ class FileHelper(ExtensionHelper):
         self._session = value
 
     @functools.cached_property
-    def size(self) -> int:
-        """Return file size in bytes."""
+    def size(self) -> Optional[int]:
+        """Return file size in bytes, None if asset_key not in access URLs dictionnary."""
         if self.asset_key not in self.access_urls:
-            return 0
+            logger.warning("Asset key %s is not present in access URLs.", self.asset_key)
+            return None
         res = self.session.head(self.access_urls[self.asset_key])
         res.raise_for_status()
         return int(res.headers.get("Content-Length", None))
