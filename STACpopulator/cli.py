@@ -62,8 +62,10 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
             "--extra-collection-parsers",
             action="append",
             help="Functions that may modify collections before upload. "
-            "Should be specified in the form 'module:function_name'"
-            "and have the signature function(collection: dict, **kw)",
+            "Should be specified in the form 'module:function_name' or " \
+            "path/to/python/file.py:function_name. Functions should "
+            "have the signature function(collection: dict, **kw) -> None "
+            "and should modify the collection dict in place.",
         )
         implementation_parser.add_argument(
             "-a",
@@ -71,7 +73,7 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
             action="append",
             type=_extra_parser_argument,
             help="Extra keyword arguments that should be passed to extra "
-            "item and collection funciton as "
+            "item and collection function as "
             "keyword arguments. "
             "Should be specified in the form 'key=value'",
         )

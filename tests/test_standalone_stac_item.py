@@ -177,3 +177,33 @@ def test_standalone_stac_item_thredds_via_loader_with_extra_item_parser(request)
             assert data["properties"]["a"] == "b"
             assert data["properties"]["c"] == "d"
             assert data["properties"]["e"] == "f"
+
+@pytest.mark.vcr("test_standalone_stac_item_thredds_via_loader.yaml")
+def test_standalone_stac_item_thredds_via_loader_with_extra_item_parsers_from_file(request):
+    url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml"
+    loader = THREDDSLoader(url)
+    item_parsers_file = request.path.parent / "extra_functions" / "item_parsers.py"
+    populator = MockedNoSTACUpload(
+        "https://example.com",
+        loader,
+        extra_item_parsers=[
+            f"{item_parsers_file}:extra_property_args",
+            f"{item_parsers_file}:extra_property_kwargs",
+            f"{item_parsers_file}:extra_property_vkwargs",
+        ],
+        extra_parser_arguments={
+            "args_name": "a",
+            "args_value": "b",
+            "kwargs_name": "c",
+            "kwargs_value": "d",
+            "vkwargs_name": "e",
+            "vkwargs_value": "f",
+        },
+    )
+    with patch("STACpopulator.populator_base.post_stac_item") as mock:
+        populator.ingest()
+        for call in mock.mock_calls:
+            data = call.args[3]
+            assert data["properties"]["a"] == "b"
+            assert data["properties"]["c"] == "d"
+            assert data["properties"]["e"] == "f"

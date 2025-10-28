@@ -1,9 +1,11 @@
 import functools
 import importlib
+import importlib.util
 import inspect
 import json
 import logging
 import os
+import re
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any, Callable, Dict, List, MutableMapping, Optional, Type, Union
@@ -58,6 +60,11 @@ class STACpopulatorBase(ABC):
             self._load_extra_parser(parser, extra_parser_arguments) for parser in (extra_collection_parsers or [])
         ]
 
+        if extra_parser_arguments and not (self._extra_collection_parsers or self._extra_item_parsers):
+            LOGGER.warning(
+                "extra_parser_arguments will be ignored because no extra collection or item parsers are specified."
+            )
+
         self.load_config()
 
         self._ingest_pipeline = data_loader
@@ -72,10 +79,19 @@ class STACpopulatorBase(ABC):
     def _load_extra_parser(func_str: str, extra_kwargs: dict[str, str]) -> Callable:
         if ":" in func_str:
             mod, func = func_str.split(":", 1)
-            try:
-                function_ns = importlib.import_module(mod)
-            except ModuleNotFoundError as e:
-                raise FunctionLoadError(f"Unable to load module '{mod}'") from e
+            if mod.endswith(".py"):
+                mod_name = re.sub(r"\W", "_", os.path.splitext(os.path.basename(mod))[0])
+                mod_spec = importlib.util.spec_from_file_location(mod_name, mod)
+                function_ns = importlib.util.module_from_spec(mod_spec)
+                try:
+                    mod_spec.loader.exec_module(function_ns)
+                except FileNotFoundError as e:
+                    raise FunctionLoadError(f"Unable to load python module from file: '{mod}'") from e
+            else:
+                try:
+                    function_ns = importlib.import_module(mod)
+                except ModuleNotFoundError as e:
+                    raise FunctionLoadError(f"Unable to load module '{mod}'") from e
             try:
                 callable_func = getattr(function_ns, func)
             except AttributeError as e:
