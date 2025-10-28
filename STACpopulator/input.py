@@ -103,7 +103,7 @@ class THREDDSLoader(GenericLoader):
                 url = f"{current_catalog.catalog_url}?dataset={dataset.id}"
                 yield item_name, url, attrs
 
-            for name, ref in current_catalog.catalog_refs.items():
+            for ref in current_catalog.catalog_refs.values():
                 catalogs.put(ref.follow())
 
     def __getitem__(self, dataset: str) -> dict:

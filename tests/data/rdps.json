@@ -1,0 +1,489 @@
+{
+  "@location": "Not provided because of security concerns.",
+  "@xmlns": {
+    "": "http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2"
+  },
+  "attributes": {
+    "Conventions": "CF-1.6",
+    "_NCProperties": "version=2,netcdf=4.9.2,hdf5=1.14.2",
+    "_CoordSysBuilder": "ucar.nc2.internal.dataset.conv.CF1Convention"
+  },
+  "dimensions": {
+    "pres": 4,
+    "rlat": 1076,
+    "rlon": 1102
+  },
+  "groups": {
+    "CFMetadata": {
+      "attributes": {
+        "geospatial_lon_min": [
+          0.0002899999963119626
+        ],
+        "geospatial_lat_min": [
+          -7.749110221862793
+        ],
+        "geospatial_lon_max": [
+          359.99951171875
+        ],
+        "geospatial_lat_max": [
+          89.96572875976562
+        ],
+        "geospatial_lon_units": "degrees_east",
+        "geospatial_lat_units": "degrees_north",
+        "geospatial_lon_resolution": "3.036044005049318E-4",
+        "geospatial_lat_resolution": "8.240755029254131E-5",
+        "time_coverage_start": "2024-01-01T00:00:00Z",
+        "time_coverage_end": "2024-01-01T00:00:00Z",
+        "time_coverage_units": "seconds",
+        "time_coverage_resolution": "0.0",
+        "time_coverage_duration": "P0Y0M0DT0H0M0.000S"
+      }
+    },
+    "NCISOMetadata": {
+      "attributes": {
+        "metadata_creation": "2025-07-01",
+        "nciso_version": "2.4.6"
+      }
+    }
+  },
+  "variables": {
+    "time": {
+      "shape": [
+        "time"
+      ],
+      "type": "double",
+      "attributes": {
+        "standard_name": "time",
+        "long_name": "Validity time",
+        "axis": "T",
+        "units": "hours since 2024-01-01 00:00:00",
+        "calendar": "gregorian",
+        "_ChunkSizes": [
+          512
+        ],
+        "_CoordinateAxisType": "Time"
+      }
+    },
+    "pres": {
+      "shape": [
+        "pres"
+      ],
+      "type": "float",
+      "attributes": {
+        "axis": "Z",
+        "standard_name": "air_pressure",
+        "units": "hPa",
+        "positive": "down",
+        "_CoordinateAxisType": "Pressure",
+        "_CoordinateZisPositive": "down"
+      }
+    },
+    "rlat": {
+      "shape": [
+        "rlat"
+      ],
+      "type": "float",
+      "attributes": {
+        "long_name": "latitude in rotated pole grid",
+        "standard_name": "grid_latitude",
+        "units": "degrees",
+        "axis": "Y",
+        "_CoordinateAxisType": "GeoY"
+      }
+    },
+    "rlon": {
+      "shape": [
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "long_name": "longitude in rotated pole grid",
+        "standard_name": "grid_longitude",
+        "units": "degrees",
+        "axis": "X",
+        "_CoordinateAxisType": "GeoX"
+      }
+    },
+    "level": {
+      "shape": [
+        "level"
+      ],
+      "type": "float",
+      "attributes": {
+        "axis": "Z",
+        "positive": "down",
+        "standard_name": "atmosphere_hybrid_sigma_ln_pressure_coordinate",
+        "formula": "p = exp(a+b*log(ps/pref)) / 100.0",
+        "formula_terms": "a: a b: b ps: P0 pref: pref",
+        "coordinates": "a b",
+        "_CoordinateAxisType": "GeoZ",
+        "_CoordinateZisPositive": "down"
+      }
+    },
+    "GZ": {
+      "shape": [
+        "time",
+        "pres",
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "_FillValue": [
+          1.0000000150474662e+30
+        ],
+        "coordinates": "lon lat",
+        "grid_mapping": "rotated_pole",
+        "_ChunkSizes": [
+          1,
+          1,
+          1076,
+          1102
+        ]
+      }
+    },
+    "rotated_pole": {
+      "shape": [
+        ""
+      ],
+      "type": "char",
+      "attributes": {
+        "grid_mapping_name": "rotated_latitude_longitude",
+        "earth_radius": [
+          6370997.0
+        ],
+        "grid_north_pole_latitude": [
+          31.758312454493154
+        ],
+        "grid_north_pole_longitude": [
+          87.59703130293302
+        ],
+        "north_pole_grid_longitude": [
+          0.0
+        ],
+        "_CoordinateTransformType": "Projection",
+        "_CoordinateAxisTypes": "GeoX GeoY"
+      }
+    },
+    "HU": {
+      "shape": [
+        "time",
+        "pres",
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "grid_mapping": "rotated_pole",
+        "_FillValue": [
+          1.0000000150474662e+30
+        ],
+        "coordinates": "lon lat",
+        "_ChunkSizes": [
+          1,
+          1,
+          1076,
+          1102
+        ]
+      }
+    },
+    "PC": {
+      "shape": [
+        "time",
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "_FillValue": [
+          1.0000000150474662e+30
+        ],
+        "coordinates": "lon lat",
+        "grid_mapping": "rotated_pole",
+        "_ChunkSizes": [
+          1,
+          1076,
+          1102
+        ]
+      }
+    },
+    "PN": {
+      "shape": [
+        "time",
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "_FillValue": [
+          1.0000000150474662e+30
+        ],
+        "coordinates": "lon lat",
+        "grid_mapping": "rotated_pole",
+        "_ChunkSizes": [
+          1,
+          1076,
+          1102
+        ]
+      }
+    },
+    "PR": {
+      "shape": [
+        "time",
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "_FillValue": [
+          1.0000000150474662e+30
+        ],
+        "coordinates": "lon lat",
+        "grid_mapping": "rotated_pole",
+        "_ChunkSizes": [
+          1,
+          1076,
+          1102
+        ]
+      }
+    },
+    "TD": {
+      "shape": [
+        "time",
+        "level",
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "_FillValue": [
+          1.0000000150474662e+30
+        ],
+        "coordinates": "lon lat",
+        "grid_mapping": "rotated_pole",
+        "_ChunkSizes": [
+          1,
+          1,
+          1076,
+          1102
+        ]
+      }
+    },
+    "pref": {
+      "shape": [
+        ""
+      ],
+      "type": "double",
+      "attributes": {
+        "units": "hPa"
+      }
+    },
+    "TT_pressure_levels": {
+      "shape": [
+        "time",
+        "pres",
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "_FillValue": [
+          1.0000000150474662e+30
+        ],
+        "coordinates": "lon lat",
+        "grid_mapping": "rotated_pole",
+        "_ChunkSizes": [
+          1,
+          1,
+          1076,
+          1102
+        ]
+      }
+    },
+    "TT_model_levels": {
+      "shape": [
+        "time",
+        "level",
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "_FillValue": [
+          1.0000000150474662e+30
+        ],
+        "coordinates": "lon lat",
+        "grid_mapping": "rotated_pole",
+        "_ChunkSizes": [
+          1,
+          1,
+          1076,
+          1102
+        ]
+      }
+    },
+    "UU_pressure_levels": {
+      "shape": [
+        "time",
+        "pres",
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "_FillValue": [
+          1.0000000150474662e+30
+        ],
+        "coordinates": "lon lat",
+        "grid_mapping": "rotated_pole",
+        "_ChunkSizes": [
+          1,
+          1,
+          1076,
+          1102
+        ]
+      }
+    },
+    "UU_model_levels": {
+      "shape": [
+        "time",
+        "level",
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "_FillValue": [
+          1.0000000150474662e+30
+        ],
+        "coordinates": "lon lat",
+        "grid_mapping": "rotated_pole",
+        "_ChunkSizes": [
+          1,
+          1,
+          1076,
+          1102
+        ]
+      }
+    },
+    "VV_pressure_levels": {
+      "shape": [
+        "time",
+        "pres",
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "_FillValue": [
+          1.0000000150474662e+30
+        ],
+        "coordinates": "lon lat",
+        "grid_mapping": "rotated_pole",
+        "_ChunkSizes": [
+          1,
+          1,
+          1076,
+          1102
+        ]
+      }
+    },
+    "VV_model_levels": {
+      "shape": [
+        "time",
+        "level",
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "_FillValue": [
+          1.0000000150474662e+30
+        ],
+        "coordinates": "lon lat",
+        "grid_mapping": "rotated_pole",
+        "_ChunkSizes": [
+          1,
+          1,
+          1076,
+          1102
+        ]
+      }
+    },
+    "leadtime": {
+      "shape": [
+        "time"
+      ],
+      "type": "float",
+      "attributes": {
+        "standard_name": "forecast_period",
+        "long_name": "Lead time (since forecast_reference_time)",
+        "units": "hours",
+        "_ChunkSizes": [
+          1024
+        ],
+        "_CoordinateAxisType": "TimeOffset"
+      }
+    },
+    "reftime": {
+      "shape": [
+        ""
+      ],
+      "type": "double",
+      "attributes": {
+        "standard_name": "forecast_reference_time",
+        "units": "hours since 2024-01-01 00:00:00",
+        "calendar": "gregorian",
+        "_CoordinateAxisType": "RunTime"
+      }
+    },
+    "lon": {
+      "shape": [
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "units": "degrees_east",
+        "standard_name": "longitude",
+        "long_name": "longitude",
+        "_CoordinateAxisType": "Lon"
+      }
+    },
+    "lat": {
+      "shape": [
+        "rlat",
+        "rlon"
+      ],
+      "type": "float",
+      "attributes": {
+        "long_name": "latitude",
+        "standard_name": "latitude",
+        "units": "degrees_north",
+        "_CoordinateAxisType": "Lat"
+      }
+    },
+    "a": {
+      "shape": [
+        "level"
+      ],
+      "type": "double"
+    },
+    "b": {
+      "shape": [
+        "level"
+      ],
+      "type": "double"
+    }
+  },
+  "access_urls": {
+    "HTTPServer": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/fileServer/birdhouse/testdata/HRDPS/RDPS_sample/2024010100_000.nc",
+    "OpenDAP": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/dodsC/birdhouse/testdata/HRDPS/RDPS_sample/2024010100_000.nc",
+    "NCML": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/ncml/birdhouse/testdata/HRDPS/RDPS_sample/2024010100_000.nc",
+    "UDDC": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/uddc/birdhouse/testdata/HRDPS/RDPS_sample/2024010100_000.nc",
+    "ISO": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/iso/birdhouse/testdata/HRDPS/RDPS_sample/2024010100_000.nc",
+    "WCS": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/wcs/birdhouse/testdata/HRDPS/RDPS_sample/2024010100_000.nc",
+    "WMS": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/wms/birdhouse/testdata/HRDPS/RDPS_sample/2024010100_000.nc",
+    "NetcdfSubset": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/ncss/point/birdhouse/testdata/HRDPS/RDPS_sample/2024010100_000.nc"
+  }
+}
