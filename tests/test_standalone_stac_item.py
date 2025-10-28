@@ -178,6 +178,7 @@ def test_standalone_stac_item_thredds_via_loader_with_extra_item_parser(request)
             assert data["properties"]["c"] == "d"
             assert data["properties"]["e"] == "f"
 
+
 @pytest.mark.vcr("test_standalone_stac_item_thredds_via_loader.yaml")
 def test_standalone_stac_item_thredds_via_loader_with_extra_item_parsers_from_file(request):
     url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml"
