@@ -14,8 +14,6 @@
 * Fix return type of from_data in THREDDSCatalogDataModel
 * Update RDPS and HRDPS tests.
 
-
-
 ## [0.9.0](https://github.com/crim-ca/stac-populator/tree/0.9.0) (2025-08-26)
 
 
