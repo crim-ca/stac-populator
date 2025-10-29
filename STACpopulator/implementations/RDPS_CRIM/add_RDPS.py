@@ -19,8 +19,7 @@ class RDPSpopulator(STACpopulatorBase):
 
     def create_stac_item(self, item_name: str, item_data: dict[str, Any]) -> dict[str, Any]:
         """Return a STAC item."""
-        dm: RDPSDataModel = self.data_model.from_data(item_data)
-        dm.set_session(self._session)
+        dm = self.data_model.from_data(item_data, session=self._session)
         return dm.stac_item()
 
 

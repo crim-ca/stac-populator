@@ -7,5 +7,5 @@ from STACpopulator.extensions.rdps import RDPSDataModel
 class HRDPSDataModel(RDPSDataModel):
     """Data model for HRDPS NetCDF datasets."""
 
-    # FIXME: No specific props beyond RPDS. Maybe delete and only keep the RDPS impl.?
+    # FIXME: No specific props beyond RPDS. Kept to facilitate evolution.
     pass

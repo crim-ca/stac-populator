@@ -141,6 +141,15 @@ class DataCubeHelper(Helper):
             },
         }
 
+    @classmethod
+    def from_data(
+        cls,
+        data: dict[str, Any],
+        **kwargs,
+    ) -> "DataCubeHelper":
+        """Create a DataCubeHelper instance from raw data."""
+        return cls(attrs=data["data"])
+
     @property
     @functools.cache
     def dimensions(self) -> dict[str, Dimension]:

@@ -64,6 +64,15 @@ class CFHelper(ExtensionHelper):
 
         return parameters
 
+    @classmethod
+    def from_data(
+        cls,
+        data: dict[str, Any],
+        **kwargs,
+    ) -> "CFHelper":
+        """Create a CFHelper instance from raw data."""
+        return cls(variables=data["data"]["variables"], **kwargs)
+
     def apply(self, item: T, add_if_missing: bool = True) -> T:
         """Apply the Datacube extension to an item."""
         ext = CFExtension.ext(item, add_if_missing=add_if_missing)

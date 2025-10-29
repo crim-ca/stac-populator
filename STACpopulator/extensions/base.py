@@ -64,6 +64,16 @@ LOGGER = logging.getLogger(__name__)
 class Helper:
     """Class to be subclassed by extension helpers."""
 
+    @classmethod
+    @abstractmethod
+    def from_data(
+        cls,
+        data: dict[str, Any],
+        **kwargs,
+    ) -> "Helper":
+        """Create a Helper instance from raw data."""
+        pass
+
 
 class ExtensionHelper(BaseModel, Helper):
     """Base class for dataset properties going into the catalog.
