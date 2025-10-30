@@ -8,6 +8,7 @@ from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
 from requests.sessions import Session
 
+from STACpopulator.collection_update import UpdateModes
 from STACpopulator.extensions.cmip6 import CMIP6Helper, CMIP6Properties
 from STACpopulator.extensions.datacube import DataCubeHelper
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
@@ -31,7 +32,7 @@ class CMIP6populator(STACpopulatorBase):
         update: Optional[bool] = False,
         session: Optional[Session] = None,
         config_file: Optional[Union[os.PathLike[str], str]] = None,
-        update_collection: Literal["extents", "summaries", "all", "none"] = "none",
+        update_collection: UpdateModes | Literal["none"] = "none",
         exclude_summaries: Iterable[str] = (),
     ) -> None:
         super().__init__(

@@ -6,6 +6,7 @@ from typing import Any, Iterable, Literal, MutableMapping, Optional
 
 from requests.sessions import Session
 
+from STACpopulator.collection_update import UpdateModes
 from STACpopulator.input import STACDirectoryLoader
 from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
@@ -25,7 +26,7 @@ class DirectoryPopulator(STACpopulatorBase):
         update: bool,
         collection: dict[str, Any],
         session: Optional[Session] = None,
-        update_collection: Literal["extents", "summaries", "all", "none"] = "none",
+        update_collection: UpdateModes | Literal["none"] = "none",
         exclude_summaries: Iterable[str] = (),
     ) -> None:
         self._collection = collection
