@@ -2,7 +2,7 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
-<!-- insert list items of new changes here -->
+* Add option to automatically update collection extents and summaries based on ingested items.
 
 ## [0.9.0](https://github.com/crim-ca/stac-populator/tree/0.9.0) (2025-08-26)
 
@@ -18,7 +18,6 @@
 * Split and clean script to update test data. 
 * Add tests for RDPS and HRDPS attributes with no custom extension. 
 * Make sure that all tests will pass even when not connected to the internet.
-* Add option to automatically update collection extents and summaries based on ingested items.
 
 ## [0.8.0](https://github.com/crim-ca/stac-populator/tree/0.8.0) (2025-06-11)
 

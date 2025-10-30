@@ -86,6 +86,14 @@ def runner(ns: argparse.Namespace, session: Session) -> int:
     ):
         collection_dir = os.path.dirname(collection_path)
         loader = STACDirectoryLoader(collection_dir, "item", ns.item_pattern, ns.collection_pattern, ns.prune)
-        populator = DirectoryPopulator(ns.stac_host, loader, ns.update, collection_json, session=session)
+        populator = DirectoryPopulator(
+            ns.stac_host,
+            loader,
+            ns.update,
+            collection_json,
+            session=session,
+            update_collection=ns.update_collection,
+            exclude_summaries=ns.exclude_summary,
+        )
         populator.ingest()
     return 0

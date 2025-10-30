@@ -12,6 +12,10 @@ STAC API on a server node.
 It can also be used to export data from an existing STAC API or catalog to files on disk. These can then later
 be used to populate a STAC API with the `DirectoryLoader` implementation.
 
+It can also be used to update a STAC collection's extents and/or summaries based on the STAC items that already
+are part of the collection. It does this by iterating through the items in the collection and updating the
+relevant collection properties accordingly.
+
 ## Framework
 
 The framework is centered around a Python Abstract Base Class: `STACpopulatorBase` that implements all the logic
@@ -67,6 +71,9 @@ stac-populator run [implementation] --help
 
 # obtain general help about exporting STAC catalogs to a directory on disk
 stac-populator export --help
+
+# obtain general help about updating STAC collections based on their items
+stac-populator update-collection --help
 ```
 
 ### CMIP6 extension: extra requirements

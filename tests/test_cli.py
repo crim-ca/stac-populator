@@ -52,3 +52,8 @@ def test_missing_implementation(populator_help_pattern):
 def test_export():
     proc = run_cli("stac-populator", "export", "--help")
     proc.check_returncode()
+
+
+def test_update_collection():
+    proc = run_cli("stac-populator", "update-collection", "--help")
+    proc.check_returncode()

@@ -119,6 +119,14 @@ def runner(ns: argparse.Namespace, session: Session) -> int:
         # To be implemented
         data_loader = ErrorLoader()
 
-    c = CMIP6populator(ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config)
+    c = CMIP6populator(
+        ns.stac_host,
+        data_loader,
+        update=ns.update,
+        session=session,
+        config_file=ns.config,
+        update_collection=ns.update_collection,
+        exclude_summaries=ns.exclude_summary,
+    )
     c.ingest()
     return 0
