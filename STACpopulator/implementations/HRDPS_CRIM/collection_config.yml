@@ -41,25 +41,55 @@ providers:
     url: https://www.ouranos.ca
 
 links:
-    - rel: about
-      title : Project homepage
-      target : https://open.canada.ca/data/en/dataset/5b401fa0-6c29-57f0-b3d5-749f301d829d
-      media_type: text/html
-      extra_fields:
-        hreflang: https://eccc-msc.github.io/open-data/readme_en
-        describedby: https://eccc-msc.github.io/open-data/msc-data/nwp_hrdps/readme_hrdps_en
-    - rel: about
-      title : Page d'accueil du projet
-      target : https://open.canada.ca/data/en/dataset/5b401fa0-6c29-57f0-b3d5-749f301d829d
-      media_type: text/html
-      extra_fields:
-        hreflang: https://eccc-msc.github.io/open-data/readme_fr
-        describedby: https://eccc-msc.github.io/open-data/msc-data/nwp_hrdps/readme_hrdps_fr
-    - rel: license
-      title : Open Government Licence - Canada
-      target : https://open.canada.ca/en/open-government-licence-canada
-      media_type: text/html
-
+  - rel: about
+    title : Project homepage
+    target : https://open.canada.ca/data/en/dataset/5b401fa0-6c29-57f0-b3d5-749f301d829d
+    media_type: text/html
+    extra_fields:
+      hreflang: en-CA
+  - rel: about
+    title : Page d'accueil du projet
+    target : https://open.canada.ca/data/en/dataset/5b401fa0-6c29-57f0-b3d5-749f301d829d
+    media_type: text/html
+    extra_fields:
+      hreflang: fr-CA
+  - rel: author
+    title: Environment and Climate Change Canada (ECCC)
+    target: https://www.canada.ca/en/environment-climate-change.html
+    media_type: text/html
+    extra_fields:
+      hreflang: en-CA
+  - rel: author
+    title: Environnement et Changement Climatique Canada (ECCC)
+    target: https://www.canada.ca/fr/environnement-changement-climatique.html
+    media_type: text/html
+    extra_fields:
+      hreflang: fr-CA
+  - rel: describedby
+    title: Data and Products of the High Resolution Deterministic Prediction System (HRDPS)
+    target: https://eccc-msc.github.io/open-data/msc-data/nwp_hrdps/readme_hrdps_en
+    media_type: text/html
+    extra_fields:
+      hreflang: en-CA
+  - rel: describedby
+    title: Données et Produits du Système à haute résolution de prévision déterministe (SHRPD)
+    target: https://eccc-msc.github.io/open-data/msc-data/nwp_hrdps/readme_hrdps_fr
+    media_type: text/html
+    extra_fields:
+      hreflang: fr-CA
+  - rel: license
+    title : Open Government Licence - Canada
+    target : https://open.canada.ca/en/open-government-licence-canada
+    media_type: text/html
+    extra_fields:
+      hreflang: en-CA
+  - rel: license
+    title: Licence du gouvernement ouvert – Canada
+    target: https://ouvert.canada.ca/fr/licence-du-gouvernement-ouvert-canada
+    media_type: text/html
+    extra_fields:
+      hreflang: fr-CA
+    
 contacts:
   - organization: Computer Research Institute of Montreal (CRIM)
     identifier: CRIM

@@ -47,19 +47,49 @@ links:
     target: https://open.canada.ca/data/en/dataset/a9f2828c-0d78-5eb6-a4c7-1fc1219f1e3d
     media_type: text/html
     extra_fields:
-      hreflang: https://eccc-msc.github.io/open-data/readme_en
-      describedby: https://eccc-msc.github.io/open-data/msc-data/nwp_rdps/readme_rdps_en
+      hreflang: en-CA
   - rel: about
     title: Page d'accueil du projet
     target: https://open.canada.ca/data/fr/dataset/a9f2828c-0d78-5eb6-a4c7-1fc1219f1e3d
     media_type: text/html
     extra_fields:
-      hreflang: https://eccc-msc.github.io/open-data/readme_fr
-      describedby: https://eccc-msc.github.io/open-data/msc-data/nwp_rdps/readme_rdps_fr
+      hreflang: fr-CA
+  - rel: author
+    title: Environment and Climate Change Canada (ECCC)
+    target: https://www.canada.ca/en/environment-climate-change.html
+    media_type: text/html
+    extra_fields:
+      hreflang: en-CA
+  - rel: author
+    title: Environnement et Changement Climatique Canada (ECCC)
+    target: https://www.canada.ca/fr/environnement-changement-climatique.html
+    media_type: text/html
+    extra_fields:
+      hreflang: fr-CA
+  - rel: describedby
+    title: Data and products of the Regional Deterministic Prediction System (RDPS)
+    target: https://eccc-msc.github.io/open-data/msc-data/nwp_rdps/readme_rdps_en
+    media_type: text/html
+    extra_fields:
+      hreflang: en-CA
+  - rel: describedby
+    title: Données et produits du Système régional de prévision déterministe (SRPD)
+    target: https://eccc-msc.github.io/open-data/msc-data/nwp_rdps/readme_rdps_fr/
+    media_type: text/html
+    extra_fields:
+      hreflang: fr-CA
   - rel: license
     title: Open Government Licence - Canada
     target: https://open.canada.ca/en/open-government-licence-canada
     media_type: text/html
+    extra_fields:
+      hreflang: en-CA
+  - rel: license
+    title: Licence du gouvernement ouvert – Canada
+    target: https://ouvert.canada.ca/fr/licence-du-gouvernement-ouvert-canada
+    media_type: text/html
+    extra_fields:
+      hreflang: fr-CA
 
 contacts:
   - organization: Computer Research Institute of Montreal (CRIM)
