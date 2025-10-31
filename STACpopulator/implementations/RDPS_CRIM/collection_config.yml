@@ -95,26 +95,55 @@ contacts:
   - organization: Computer Research Institute of Montreal (CRIM)
     identifier: CRIM
     position: Support
+    roles:
+      - processor
     emails:
       - value: support-geo@crim.ca
-        roles: ["work"]
+        roles: 
+          - work
     logo:
       href: https://raw.githubusercontent.com/henriaidasso/image-store/refs/heads/main/img/crim.png
       rel: icon
       type: image/png
       title: CRIM
+    links:
+      - rel: about
+        title: Site web
+        target: https://www.crim.ca/fr/
+        media_type: text/html
+        extra_fields:
+          hreflang: fr-CA
   - organization: Environment and Climate Change Canada (ECCC)
     identifier: ECCC
     position: Support
+    roles:
+      - licensor
+      - processor
+      - producer
     emails:
       - value: ECWeather-Meteo@ec.gc.ca
-        roles: ["work"]
+        roles:
+          - work
     phones:
       - value: +18199972800
-        roles: ["work"]
+        roles:
+          - work
     addresses:
       - deliveryPoint: 77 Westmorland Street, suite 260
         city: Fredericton
         administrativeArea: New Brunswick
         postalCode: E3B 6Z4
         country: Canada
+    links:
+      - rel: about
+        title: Web page
+        target: https://www.canada.ca/en/environment-climate-change.html
+        media_type: text/html
+        extra_fields:
+          hreflang: en-CA
+      - rel: about
+        title: Site web
+        target: https://www.canada.ca/fr/environnement-changement-climatique.html
+        media_type: text/html
+        extra_fields:
+          hreflang: fr-CA
