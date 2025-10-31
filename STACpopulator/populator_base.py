@@ -5,7 +5,7 @@ import logging
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Dict, Iterable, List, Literal, MutableMapping, Optional, Type, Union
+from typing import Any, Dict, Iterable, List, MutableMapping, Optional, Type, Union
 
 import pystac
 from requests.sessions import Session
@@ -16,7 +16,7 @@ from STACpopulator.api_requests import (
     stac_host_reachable,
     stac_version_match,
 )
-from STACpopulator.collection_update import UpdateModes, update_collection
+from STACpopulator.collection_update import UpdateModesOptional, update_collection
 from STACpopulator.input import GenericLoader
 from STACpopulator.models import AnyGeometry
 from STACpopulator.stac_utils import load_config
@@ -34,7 +34,7 @@ class STACpopulatorBase(ABC):
         update: bool = False,
         session: Optional[Session] = None,
         config_file: Optional[Union[os.PathLike[str], str]] = "collection_config.yml",
-        update_collection: UpdateModes | Literal["none"] = "none",
+        update_collection: UpdateModesOptional = "none",
         exclude_summaries: Iterable[str] = (),
     ) -> None:
         """Initialize the STAC populator.

@@ -1,7 +1,7 @@
 import logging
 from collections.abc import Iterable
 from datetime import datetime
-from typing import Literal
+from typing import Literal, TypeAlias
 
 import pystac
 import requests
@@ -11,7 +11,8 @@ from STACpopulator.api_requests import post_stac_collection
 
 LOGGER = logging.getLogger(__name__)
 
-UpdateModes = Literal["extents", "summaries", "all"]
+UpdateModes: TypeAlias = Literal["extents", "summaries", "all"]
+UpdateModesOptional = Literal["extents", "summaries", "all", "none"]
 
 
 def check_wgs84_compliance(bbox: list[int | float], stac_object_type: str, stac_object_id: str | None) -> None:

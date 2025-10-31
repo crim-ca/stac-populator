@@ -2,11 +2,11 @@ import argparse
 import inspect
 import logging
 import os.path
-from typing import Any, Iterable, Literal, MutableMapping, Optional
+from typing import Any, Iterable, MutableMapping, Optional
 
 from requests.sessions import Session
 
-from STACpopulator.collection_update import UpdateModes
+from STACpopulator.collection_update import UpdateModesOptional
 from STACpopulator.input import STACDirectoryLoader
 from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
@@ -26,7 +26,7 @@ class DirectoryPopulator(STACpopulatorBase):
         update: bool,
         collection: dict[str, Any],
         session: Optional[Session] = None,
-        update_collection: UpdateModes | Literal["none"] = "none",
+        update_collection: UpdateModesOptional = "none",
         exclude_summaries: Iterable[str] = (),
     ) -> None:
         self._collection = collection

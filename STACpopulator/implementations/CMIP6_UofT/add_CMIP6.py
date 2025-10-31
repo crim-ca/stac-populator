@@ -2,13 +2,13 @@ import argparse
 import json
 import logging
 import os
-from typing import Any, Iterable, Literal, MutableMapping, Optional, Union
+from typing import Any, Iterable, MutableMapping, Optional, Union
 
 from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
 from requests.sessions import Session
 
-from STACpopulator.collection_update import UpdateModes
+from STACpopulator.collection_update import UpdateModesOptional
 from STACpopulator.extensions.cmip6 import CMIP6Helper, CMIP6Properties
 from STACpopulator.extensions.datacube import DataCubeHelper
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
@@ -32,7 +32,7 @@ class CMIP6populator(STACpopulatorBase):
         update: Optional[bool] = False,
         session: Optional[Session] = None,
         config_file: Optional[Union[os.PathLike[str], str]] = None,
-        update_collection: UpdateModes | Literal["none"] = "none",
+        update_collection: UpdateModesOptional = "none",
         exclude_summaries: Iterable[str] = (),
     ) -> None:
         super().__init__(
