@@ -40,6 +40,11 @@ providers:
       - processor
       - host
     url: https://www.ouranos.ca
+  - name: CRIM
+    description: Computer Research Institute of Montreal
+    roles:
+      - indexer
+    url: https://crim.ca
 
 links:
   - rel: about
@@ -96,7 +101,7 @@ contacts:
     identifier: CRIM
     position: Support
     roles:
-      - processor
+      - indexer
     emails:
       - value: support-geo@crim.ca
         roles: 
