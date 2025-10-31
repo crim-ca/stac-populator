@@ -4,12 +4,13 @@ import importlib
 import sys
 import warnings
 from types import ModuleType
+from typing import get_args
 
 import pystac
 import requests
 
 from STACpopulator import __version__, implementations
-from STACpopulator.collection_update import update_api_collection
+from STACpopulator.collection_update import UpdateModes, update_api_collection
 from STACpopulator.exceptions import STACPopulatorError
 from STACpopulator.export import export_catalog
 from STACpopulator.log import add_logging_options, setup_logging
@@ -47,7 +48,7 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
         implementation_parser.add_argument(
             "--update-collection-mode",
             dest="update_collection",
-            choices=["extents", "summaries", "all", "none"],
+            choices=get_args(UpdateModes) + ("none",),
             default="none",
             help="Update collection information based on new items created or updated by this populator. "
             "Only applies if --update is also set.",
@@ -65,7 +66,7 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     update_parser.add_argument("stac-collection-uri", help="URI of collection to update from a STAC API instance")
     update_parser.add_argument(
         "--mode",
-        choices=["extents", "summaries", "all"],
+        choices=get_args(UpdateModes),
         default="all",
         help="Choose whether to update summaries, extents, or all (both).",
     )
