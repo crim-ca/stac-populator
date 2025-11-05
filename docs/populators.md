@@ -1,6 +1,8 @@
 # Adding New and Custom Implementations
 
-This documentation covers defining a new populator implementation in the `stac-populator` CLI tool. While it focuses on data properties integration from a THREDDS Catalog, other types of catalogs follow a pretty similar pattern. We illustrate our tutorial with the `RDPSpopulator` implementation.
+This documentation describes how to create a new STAC populator implementation.
+
+This tutorial uses the `RDPSpopulator` implementation as an example which integrates data properties from a THREDDS Catalog. The process of integrating data from other sources is similar.
 
 ## Resources
 
@@ -30,7 +32,7 @@ In summary, it is essential to identify all relevant extensions that need to be 
 
 In `stac-populator`, an extension is typically applied using an associated helper. A helper extends the [`Helper`](../STACpopulator/extensions/base.py#L64) abstract class and implements methods for retrieving or computing the data properties to be applied by the extension. For convenience an [`ExtensionHelper`]((../STACpopulator/extensions/base.py#L78)) class extends both `Helper` and the pydantic `BaseModel` classes to provide default constructor and validation mechanisms for defined attributes. 
 
-**A concrete helper** should extends `ExtensionHelper` and implement the following:
+**A concrete helper** should extend `ExtensionHelper` and implement the following:
 
 1. Define property methods typically annotated with `@functools.cached_property`.
 2. Redefine as needed the `def apply(...)` method where data properties are applied using the corresponding STAC extension.
