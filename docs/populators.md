@@ -164,8 +164,6 @@ __all__ = [..., "RDPS_CRIM", "IMPLEMENTATION_AUTHOR"]
 
 ## 5. Collection-level Extensions
 
-Currently, collection-level extensions are manually defined in a `collection_config.yml` file in populator's directory. It describes general metadata related to the collection such as its `name`, `keywords`, `license`, and `providers`. 
-
 Collection-level extensions are currently specified in a `collection_config.yml` file under the populator’s directory. This file defines general metadata associated with the collection, including fields such as `name`, `keywords`, `license`, `providers`, etc. For an example, refer to the [`RDPS_CRIM/collection_config.yml`](../STACpopulator/implementations/RDPS_CRIM/collection_config.yml) file in the RDPS implementation.
 
 Note that programatic integration of collection-level extensions (similar to how item extensions are handled) is currently under active development and will be available soon.
