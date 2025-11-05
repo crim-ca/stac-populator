@@ -6,24 +6,19 @@ This documentation covers defining a new populator implementation in the `stac-p
 
 - [PySTAC Docs](https://pystac.readthedocs.io/en/stable/)
 - [STAC Extensions](https://stac-extensions.github.io/)
-
-## Requirements
-
-Here are listed the minimal information and running applications required to proceed. More information on the setup are available in the [STAC Populator](https://github.com/crim-ca/stac-populator/tree/master) README and the [Birdhouse](https://birdhouse-deploy.readthedocs.io/en/latest/index.html) platform documentation. 
-
-- `URL` of the data source THREDDS Catalog (e.g., [RDPS Catalog URL](https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/HRDPS/RDPS_sample/catalog.html))
-- `stac-api` API component used to integrate data.
-- `stac-db` database component where data is stored.
-- `stac-browser` UI component for convenient data access and browsing.
+- [STAC API](https://github.com/radiantearth/stac-api-spec)
+- [THREDDS Catalog](https://docs.unidata.ucar.edu/tds/current/userguide/)
 
 
 ## Implementing a new populator
 
-`STAC populator` builds on STAC Extensions and is structured into multiple class layers that handle data property preprocessing and integration. The following sections describe each layer’s purpose and implementation, presented in order of their dependency hierarchy: `Extensions`, `Helpers`, `Data Model`, and `Populator`.
+A `STAC populator` implementation extracts data from a source (e.g., a THREDDS Catalog) and processes it into STAC Items and Collections before uploading them to a STAC API instance. It uses STAC Extensions to describe the structure of the Item and Collection properties.
+
+An implementation integrates several python classes that each handle metadata extraction, processing, integration, and upload. The following sections describe each class's purpose and implementation: `Extensions`, `Helpers`, `Data Model`, and `Populator`.
 
 ## 1. Extensions
 
-An extension defines methods to extend the STAC Catalog with additional relevant attributes describing specific properties of the dataset. For instance, the [`FileExtension`](https://github.com/stac-utils/pystac/blob/main/pystac/extensions/file.py) defines attributes that can be extracted from `Asset` and `Link` objects to describe the associated files. 
+An extension defines methods to extend STAC items and collections with additional relevant attributes describing specific properties of the dataset. For instance, the [`FileExtension`](https://github.com/stac-utils/pystac/blob/main/pystac/extensions/file.py) defines attributes that can be extracted from [`Asset`](https://pystac.readthedocs.io/en/stable/api/asset.html) and [`Link`](https://pystac.readthedocs.io/en/stable/api/item.html) objects to describe the associated files. 
 
 Be aware that there are different [levels of extension maturity](https://github.com/radiantearth/stac-spec/blob/master/extensions/README.md#extension-maturity) in the STAC ecosystem. Typically, an existing extension has at least a clear specification such as [this one](https://github.com/stac-extensions/file) for the `FileExtension`. An extension maturity can go as far as being integrated into a stable version of the [pystac](https://github.com/stac-utils/pystac/tree/main) Python library. For instance, `FileExtension` is available in `pystac`, while `ContactExtension` specified [here](https://github.com/stac-extensions/contacts) in not yet included in `pystac` as of version 1.14.1.
 
@@ -111,11 +106,13 @@ class RDPSDataModel(THREDDSCatalogDataModel):
 
 ## 4. Populator
 
-Populators are defined in a specific directory created under `STACpopulator/implementations/`, to which we will refer in the following as the populator's directory. The name of this newly created directory must follow the naming convention: `STACpopulator/implementations/IMPLEMENTATION_AUTHOR/`. For instance, `STACpopulator/implementations/RDPS_CRIM/` for the RDPS populator.
+Populators are defined in a specific directory created under `STACpopulator/implementations/`, to which we will refer in the following as the populator's package. To maintain consistency, the name of this newly created directory should follow the naming convention: `STACpopulator/implementations/IMPLEMENTATION_AUTHOR/`. 
+
+For instance, we create `STACpopulator/implementations/RDPS_CRIM/` for the RDPS populator, with `RDPS_CRIM` being the package name.
 
 ### 4.1. Creating the populator class
 
-A populator class inherits from the [`STACpopulatorBase`](../STACpopulator/populator_base.py#L26) abstract class and represents the final data layer in a `stac-populator` implementation. It specifies the corresponding `DataModel` type and implements the abstract method `create_stac_item(...)`, which creates a data model instance for each STAC item while applying the relevant extensions described earlier. A populator class also inherits the `def ingest(...)` method, which is called when the command associated with the populator implementation is executed, triggering the data ingestion process.
+A populator class inherits from the [`STACpopulatorBase`](../STACpopulator/populator_base.py#L26) abstract class and represents the final data layer in a `stac-populator` implementation. It must specify the corresponding `DataModel` type and implement the abstract method `create_stac_item(...)`, which creates a data model instance for each STAC item while applying the relevant extensions described earlier. A populator class also inherits the `def ingest(...)` method, which is called when the command associated with the populator implementation is executed, triggering the data ingestion process.
 
 The example below shows the [`RDPSpopulator`](../STACpopulator/implementations/RDPS_CRIM/add_RDPS.py#L14) class. 
 
@@ -131,7 +128,6 @@ class RDPSpopulator(STACpopulatorBase):
     """Populator that creates STAC objects representing RDPS data from a THREDDS catalog."""
 
     data_model = RDPSDataModel
-    item_geometry_model = None  # Unnecessary, but kept for consistency
 
     def create_stac_item(self, item_name: str, item_data: dict[str, Any]) -> dict[str, Any]:
         """Return a STAC item."""
@@ -159,6 +155,7 @@ __all__ = ["add_parser_args", "runner"]
 
 ```python
 __all__ = [..., "RDPS_CRIM", "IMPLEMENTATION_AUTHOR"]
+# Replace IMPLEMENTATION_AUTHOR with the name of your new implementation's package name
 ```
 
 
