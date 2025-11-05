@@ -1,6 +1,8 @@
 # Adding New and Custom Implementations
 
-This documentation covers defining a new populator implementation in the `stac-populator` CLI tool. While it focuses on data properties integration from a THREDDS Catalog, other types of catalogs follow a pretty similar pattern. We illustrate our tutorial with the `RDPSpopulator` implementation.
+This documentation describes how to create a new STAC populator implementation.
+
+This tutorial uses the `RDPSpopulator` implementation as an example which integrates data properties from a THREDDS Catalog. The process of integrating data from other sources is similar.
 
 ## Resources
 
