@@ -20,7 +20,7 @@ STACpopulator = ["**/collection_config.yml", "extensions/schemas/**/*.json"]
 
 
 
-[tool.pytest.ini_options]
+[tool.pytest]
 norecursedirs = [
     ".*",
     "build",
@@ -31,7 +31,7 @@ norecursedirs = [
     "requirements*",
     "lib",
 ]
-python_files = "test*.py"
+python_files = ["test*.py"]
 # these break debugger breakpoints
 # add them manually with 'make test-cov'
 #addopts = [
