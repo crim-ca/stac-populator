@@ -1,4 +1,4 @@
-# Adding New and Custom Implementations
+# Adding New Implementations
 
 This documentation describes how to create a new STAC populator implementation.
 
@@ -21,7 +21,7 @@ An implementation integrates several python classes that each handle metadata ex
 
 An extension defines methods to extend STAC Items and Collections with additional relevant attributes describing specific properties of the dataset. For instance, the [`FileExtension`](https://github.com/stac-utils/pystac/blob/main/pystac/extensions/file.py) defines attributes that can be extracted from [`Asset`](https://pystac.readthedocs.io/en/stable/api/asset.html) and [`Link`](https://pystac.readthedocs.io/en/stable/api/item.html) objects to describe the associated files.
 
-Be aware that there are different [levels of extension maturity](https://github.com/radiantearth/stac-spec/blob/master/extensions/README.md#extension-maturity) in the STAC ecosystem. Typically, an existing extension has at least a clear specification such as the [FileExtension specification](https://github.com/stac-extensions/file) . An extension maturity can go as far as being integrated into a stable version of the [pystac](https://github.com/stac-utils/pystac/tree/main) Python library. For instance, `FileExtension` is available in `pystac`, while `ContactExtension` specified [here](https://github.com/stac-extensions/contacts) in not yet included in `pystac` as of version 1.14.1.
+Be aware that there are different [levels of extension maturity](https://github.com/radiantearth/stac-spec/blob/master/extensions/README.md#extension-maturity) in the STAC ecosystem. Typically, an existing extension has at least a clear specification such as the [FileExtension specification](https://github.com/stac-extensions/file) . An extension maturity can go as far as being integrated into a stable version of the [pystac](https://github.com/stac-utils/pystac/tree/main) Python library. For instance, `FileExtension` is available in `pystac`, while `ContactExtension` specified in the [ContactExtension specification](https://github.com/stac-extensions/contacts) in not yet included in `pystac` as of version 1.14.1.
 
 It is therefore still common to manually implement certain extensions based on their official specifications and the [PySTAC guidelines](https://pystac.readthedocs.io/en/latest/tutorials/adding-new-and-custom-extensions.html). In such a case, we recommend adding the new extension implementation under the `STACpopulator/extensions/` directory, and then submitting a pull request (PR) to the `pystac` repository for its official integration. See for instance this [PR for CFExtension integration](https://github.com/stac-utils/pystac/pull/1592/files) implemented based on the [CFExtension specification](https://github.com/stac-extensions/cf).
 
@@ -31,13 +31,13 @@ In summary, it is essential to identify all relevant extensions that need to be 
 
 In `stac-populator`, an extension is typically applied using an associated helper. A helper extends the [`Helper`](../STACpopulator/extensions/base.py#L64) abstract class and implements methods for retrieving or computing the data properties to be applied by the extension. For convenience an [`ExtensionHelper`](<(../STACpopulator/extensions/base.py#L78)>) class extends both `Helper` and the pydantic `BaseModel` classes to provide default constructor and validation mechanisms for defined attributes.
 
-**A concrete helper** should extend `ExtensionHelper` and implement the following:
+**A concrete helper** must extend the `Helper` class (it is recommended to extend `ExtensionHelper` that itself inherits from `Helper`) and implement the following:
 
 1. Define property methods typically annotated with `@functools.cached_property`.
 2. Redefine as needed the `def apply(...)` method where data properties are applied using the corresponding STAC extension.
-3. Implement a `def from_data(...)` method to enable static initialization of the helper with extra kwargs.
+3. Implement a concrete `def from_data(...)` method to enable static initialization of the helper with extra kwargs.
 
-The example below shows an excerpt of the concrete `FileHelper` class. In addition to the required `data` field to compute the `file:size` property, additional keyword arguments such as the http `session` can be passed in for initialization through `from_data(..., **kwargs)`. In particular, this static method facilitates instantiation of helpers at the next layer, i.e. in the `DataModel` associated with the populator implementation.
+The example below shows an excerpt of the concrete `FileHelper` class. In addition to the required `data` field to compute the `file:size` property, optional keyword arguments such as the HTTP `session` can be passed in for initialization via `from_data(..., **kwargs)`. In particular, this static method facilitates instantiation of helpers at the next layer, i.e. in the `DataModel` associated with the populator implementation.
 
 ```python
 import pystac
