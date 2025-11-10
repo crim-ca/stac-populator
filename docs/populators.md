@@ -2,7 +2,7 @@
 
 This documentation describes how to create a new STAC populator implementation.
 
-This tutorial uses the `RDPSpopulator` implementation as an example which integrates data properties from a THREDDS Catalog. The process of integrating data from other sources is similar.
+For illustration purpose, this tutorial shows the steps for implementing the `RDPSpopulator` which integrates data properties from a THREDDS Catalog. The process of integrating data from other sources is similar.
 
 ## Resources
 
