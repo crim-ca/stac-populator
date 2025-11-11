@@ -84,7 +84,7 @@ class FileHelper(ExtensionHelper):
 
 ## 3. Data Model
 
-Inheriting from the [`BaseSTAC`](../STACpopulator/extensions/base.py#L159) class, a `DataModel` is the main data management class associated with a `Populator` implementation in `stac-populator`. It holds [Helper][helper-class] objects as attributes, which it uses to apply multiple extensions to STAC entities (i.e., [Item][pystac-item], [Asset][pystac-asset], [Link][pystac-link], or [Collection][pystac-collection]).
+Inheriting from the [`BaseSTAC`][base-stac-class] class, a `DataModel` is the main data management class associated with a `Populator` implementation in `stac-populator`. It holds [Helper][helper-class] objects as attributes, which it uses to apply multiple extensions to STAC entities (i.e., [Item][pystac-item], [Asset][pystac-asset], [Link][pystac-link], or [Collection][pystac-collection]).
 
 In `stac-populator`, the [`THREDDSCatalogDataModel`][thredds-catalog-datamodel-class] class defines the basic `DataModel` class to preprocess and integrate data properties from a THREDDS Catalog. It defines and uses two helper classes: [`THREDDSHelper`][thredds-helper], which adds general THREDDS properties from the catalog (i.e., THREDDS `services` and `links`), and [`DataCubeHelper`][datacube-helper] which adds datacube-related properties (e.g., `dimensions`, `variables`, `bounds`).
 
@@ -94,7 +94,7 @@ In `stac-populator`, the [`THREDDSCatalogDataModel`][thredds-catalog-datamodel-c
 
 **Instantiation and kwargs.** `DataModel` instances should be created using their `def from_data(...)` factory method (inherited from [THREDDSCatalogDataModel][thredds-catalog-datamodel-class]). In addition to the data dictionary, this static method accepts optional keyword arguments, which are forwarded to the constructors of the concrete [Helper][helper-class] classes through their own `def from_data(...)` factory methods. The keyword arguments are dispatched to the appropriate [Helper][helper-class] classes based on their constructor signatures (e.g., variable `session` required to instantiate a [FileHelper][file-helper]), allowing the `DataModel` to accept all required parameters (typically `Populator` variables) in a single place. The instantiated [Helper][helper-class] objects are later automatically applied (using their `def apply(...)` methods) to extend the `DataModel` before the data properties are integrated.
 
-The example below shows the [`RDPSDataModel`](../STACpopulator/extensions/rdps.py#L8). 
+The example below shows the [`RDPSDataModel`][rdps-datamodel-class]. 
 
 In addition to the default [THREDDSHelper][thredds-helper] and [DataCubeHelper][datacube-helper] inherited from `THREDDSCatalogDataModel`, this data model defines the [`CFHelper`][cf-helper] and the [`FileHelper`][file-helper], which respectively apply the `CFExtension` and `FileExtension`.
 
@@ -123,7 +123,7 @@ A `Populator` is the final stage of implementation in `stac-populator`. It consi
 
 A `Populator` class inherits from the abstract [`STACpopulatorBase`][populator-base-class] class. It must specify the corresponding `DataModel` type and implement the abstract method `def create_stac_item(...)`, which creates a data model instance for each STAC Item while applying the relevant extensions described earlier. A populator class also inherits the `def ingest(...)` method, which is called when the command associated with the populator implementation is executed, triggering the data ingestion process.
 
-The example below shows the [`RDPSpopulator`](../STACpopulator/implementations/RDPS_CRIM/add_RDPS.py#L14) class.
+The example below shows the [`RDPSpopulator`][rdps-populator-class] class.
 
 ```python
 from typing import Any
@@ -150,7 +150,7 @@ class RDPSpopulator(STACpopulatorBase):
 
 To be able to invoke the populator from the CLI, following updates must be performed.
 
-1. Copy the `def add_parser_args(...)` and `def runner(...)` methods from the [`STACpopulator/implementations/RDPS_CRIM/add_RDPS.py`](../STACpopulator/implementations/RDPS_CRIM/add_RDPS.py) module.
+1. Copy the `def add_parser_args(...)` and `def runner(...)` methods from the [`STACpopulator/implementations/RDPS_CRIM/add_RDPS.py`][add-rdps-module] module.
 2. Update the Python docstrings and CLI help strings to reflect the new populator’s name and specific behavior.
 3. Export these methods in the `__init__.py` file of the populator's directory.
 
@@ -162,7 +162,7 @@ from .add_RDPS import add_parser_args, runner
 __all__ = ["add_parser_args", "runner"]
 ```
 
-4. Register the new populator implementation in [`STACpopulator/implementations/__init__.py`](../STACpopulator/implementations/__init__.py)
+4. Register the new populator implementation in [`STACpopulator/implementations/__init__.py`][populators-impl-init]
 
 ```python
 __all__ = [..., "RDPS_CRIM", "IMPLEMENTATION_AUTHOR"]
@@ -171,7 +171,7 @@ __all__ = [..., "RDPS_CRIM", "IMPLEMENTATION_AUTHOR"]
 
 ## 5. Collection-level Extensions
 
-Collection-level extensions are currently specified in a `collection_config.yml` file under the populator’s directory. This file defines general metadata associated with the collection, including fields such as `name`, `keywords`, `license`, `providers`, etc. For an example, refer to the [`RDPS_CRIM/collection_config.yml`](../STACpopulator/implementations/RDPS_CRIM/collection_config.yml) file in the RDPS implementation.
+Collection-level extensions are currently specified in a `collection_config.yml` file under the populator’s directory. This file defines general metadata associated with the collection, including fields such as `name`, `keywords`, `license`, `providers`, etc. For an example, refer to the [`RDPS_CRIM/collection_config.yml`][rdps-collection-config] file in the RDPS implementation.
 
 🚨 **IMPORTANT** - Note that programatic integration of collection-level extensions (similar to how item-level extensions are handled) is currently under active development and will be available soon.
 
@@ -184,11 +184,17 @@ Collection-level extensions are currently specified in a `collection_config.yml`
 [pystac-github]: https://github.com/stac-utils/pystac/tree/main
 [stac-api]: https://github.com/radiantearth/stac-api-spec
 [stac-extensions]: https://stac-extensions.github.io/
-[helper-class]: ../STACpopulator/extensions/base.py#L64
-[extension-helper-class]: ../STACpopulator/extensions/base.py#L78
-[file-helper]: ../STACpopulator/extensions/file.py#L20
-[cf-helper]: ../STACpopulator/extensions/cf.py#L46
-[thredds-helper]: ../STACpopulator/extensions/thredds.py#L133
-[datacube-helper]: ../STACpopulator/extensions/datacube.py#L13
-[thredds-catalog-datamodel-class]: ../STACpopulator/extensions/thredds.py#L173
-[populator-base-class]: ../STACpopulator/populator_base.py#L26
+[helper-class]: https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/extensions/base.py#L64
+[extension-helper-class]: https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/extensions/base.py#L78
+[file-helper]: https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/extensions/file.py#L20
+[cf-helper]: https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/extensions/cf.py#L46
+[thredds-helper]: https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/extensions/thredds.py#L133
+[datacube-helper]: https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/extensions/datacube.py#L13
+[thredds-catalog-datamodel-class]: https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/extensions/thredds.py#L173
+[populator-base-class]: https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/populator_base.py#L26
+[base-stac-class]: https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/extensions/base.py#L159
+[rdps-collection-config]: https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/implementations/RDPS_CRIM/collection_config.yml
+[add-rdps-module]: https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/implementations/RDPS_CRIM/add_RDPS.py
+[rdps-populator-class]: https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/implementations/RDPS_CRIM/add_RDPS.py#L14
+[rdps-datamodel-class]: https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/extensions/rdps.py#L8
+[populators-impl-init]: https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/implementations/__init__.py
