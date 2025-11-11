@@ -29,7 +29,7 @@ In summary, it is essential to identify all relevant extensions from the availab
 
 ## 2. Helpers
 
-In the `stac-populator` tool, an extension is typically applied using an associated helper. A helper extends the [`Helper`][helper-class] abstract class and implements methods for retrieving or computing the data properties to be applied by the extension. For convenience, an [`ExtensionHelper`][extension-helper-class] class extends both the [Helper][helper-class] and the pydantic [BaseModel](https://docs.pydantic.dev/latest/api/base_model/) classes to provide default constructor and validation mechanisms for defined attributes.
+In the `stac-populator` tool, an extension is typically applied using an associated helper. A helper extends the [`Helper`][helper-class] abstract class and implements methods for retrieving or computing the data properties to be applied by the extension. For convenience, an [`ExtensionHelper`][extension-helper-class] class extends both the [Helper][helper-class] and the Pydantic [BaseModel](https://docs.pydantic.dev/latest/api/base_model/) classes to provide default constructor and validation mechanisms for defined attributes.
 
 **A concrete helper** must extend the [Helper][helper-class] class (it is recommended to extend [ExtensionHelper][extension-helper-class] that itself inherits from [Helper][helper-class]) and implement the following:
 
