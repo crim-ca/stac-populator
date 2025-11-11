@@ -33,9 +33,8 @@ In the `stac-populator` tool, an extension is typically applied using an associa
 
 **A concrete helper** must extend the [Helper][helper-class] class (it is recommended to extend [ExtensionHelper][extension-helper-class] that itself inherits from [Helper][helper-class]) and implement the following:
 
-1. Define property methods typically annotated with `@functools.cached_property`.
-2. Redefine as needed the `def apply(...)` method where data properties are applied using the corresponding STAC Extension.
-3. Implement a concrete `def from_data(...)` method to enable static initialization of the helper with extra kwargs.
+1. Redefine as needed the `def apply(...)` method where data properties are applied using the corresponding STAC Extension.
+2. Implement a concrete `def from_data(...)` method to enable static initialization of the helper with extra kwargs.
 
 The example below shows an excerpt of the concrete [`FileHelper`][file-helper] class. 
 
