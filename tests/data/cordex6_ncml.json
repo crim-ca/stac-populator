@@ -4,6 +4,9 @@
     "": "http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2"
   },
   "attributes": {
+    "type": "simulation",
+    "title": "CRCM5-CMIP6 : Canadian Regional Climate Model v.5 - CMIP6 : daily",
+    "license": "https://cordex.org/data-access/cordex-cmip6-data/cordex-cmip6-terms-of-use",
     "Conventions": "CF-1.11",
     "activity_id": "DD",
     "comment": "CRCM5 v3331 0.11 deg AMNO11d1 L56 S17-15m CNRM-ESM2-1 membre1  PILSPEC PS3",
@@ -22,14 +25,12 @@
     "product": "model-output",
     "project_id": "CORDEX",
     "source_type": "ARCM",
-    "title": "CRCM5-CMIP6 : Canadian Regional Climate Model v.5 - CMIP6 : daily",
     "external_variables": "areacella",
     "frequency": "day",
     "variable_id": "tas",
     "history": "Mon Sep  2 04:57:10 2024: ncks --cmp=dfl,6 CORDEX/CMIP6/DD/NAM-12/OURANOS/CNRM-ESM2-1/historical/r1i1p1f2/CRCM5/v1-r1/day/tas/v20240201/tas_NAM-12_CNRM-ESM2-1_historical_r1i1p1f2_OURANOS_CRCM5_v1-r1_day_20060101-20101231.nc CORDEX/CMIP6/DD/NAM-12/OURANOS/CNRM-ESM2-1/historical/r1i1p1f2/CRCM5/v1-r1/day/tas/v20240201/tas_NAM-12_CNRM-ESM2-1_historical_r1i1p1f2_OURANOS_CRCM5_v1-r1_day_20060101-20101231.nc.comp\nTue Feb 13 04:34:52 2024: Metadata converted to CORDEX specifications.Monthly files merged by chunks of 5 years. Data resampled from H to D.\nMon Apr 25 14:01:17 2022: ncks -O --chunk_policy g3d --cnk_dmn plev,1 --cnk_dmn rlon,50 --cnk_dmn rlat,50 --cnk_dmn time,250 /home/michel/scratch/arch/caw/200601/nc4c_tas_caw_200601_se.nc /home/michel/scratch/arch/caw/200601/tas_caw_200601_se.nc\nMon Apr 25 13:59:27 2022: ncks -O --fl_fmt=netcdf4_classic -L 6 /home/michel/scratch/arch/caw/200601/trim_tas_caw_200601_se.nc /home/michel/scratch/arch/caw/200601/nc4c_tas_caw_200601_se.nc\nMon Apr 25 13:59:22 2022: ncks -O -d time,2006-01-01 00:00:00,2006-01-31 23:59:59 /home/michel/postprod/caw/transit2/200601/tas_caw_200601_se.nc /home/michel/scratch/arch/caw/200601/trim_tas_caw_200601_se.nc",
     "tracking_id": "hdl:21.14100/7f3a6ac4-1848-46bd-a958-eaeed5eca504",
     "coordinates": "vertices_latitude vertices_longitude crs",
-    "license": "https://cordex.org/data-access/cordex-cmip6-data/cordex-cmip6-terms-of-use",
     "source": "Canadian Regional Climate Model version 5",
     "source_id": "CRCM5-SN",
     "source_name": "CRCM5",
@@ -40,11 +41,10 @@
     "institution": "Ouranos Consortium on Regional Climatology and Adaptation to Climate Change",
     "NCO": "netCDF Operators version 5.1.8 (Homepage = http://nco.sf.net, Code = http://github.com/nco/nco, Citation = 10.1016/j.envsoft.2008.03.004)",
     "futher_info_url": "https://zenodo.org/doi/10.5281/zenodo.11061924",
-    "abstract": "Ouranos produces operational regional climate simulations over the Cordex North American domain, at 0.11\u00b0 resolution. The current ensemble uses the fifth version of the CRCM, developed at UQAM's ESCER center in collaboration with ECCC. Pilot data for the simulations come from the CMIP6 ensemble, except for those in hindcast mode, which use ERA5.",
+    "abstract": "Ouranos produces operational regional climate simulations over the Cordex North American domain, at 0.11° resolution. The current ensemble uses the fifth version of the CRCM, developed at UQAM's ESCER center in collaboration with ECCC. Pilot data for the simulations come from the CMIP6 ensemble, except for those in hindcast mode, which use ERA5.",
     "dataset_id": "CRCM5-CMIP6",
     "license_type": "permissive",
     "modeling_realm": "atmos",
-    "type": "simulation",
     "processing_level": "raw",
     "_CoordSysBuilder": "ucar.nc2.internal.dataset.conv.CF1Convention"
   },
@@ -95,10 +95,10 @@
   },
   "variables": {
     "rlat": {
+      "type": "double",
       "shape": [
         "rlat"
       ],
-      "type": "double",
       "attributes": {
         "long_name": "latitude in rotated pole grid",
         "_FillValue": [
@@ -119,10 +119,10 @@
       }
     },
     "rlon": {
+      "type": "double",
       "shape": [
         "rlon"
       ],
-      "type": "double",
       "attributes": {
         "long_name": "longitude in rotated pole grid",
         "actual_range": [
@@ -143,10 +143,10 @@
       }
     },
     "time": {
+      "type": "double",
       "shape": [
         "time"
       ],
-      "type": "double",
       "attributes": {
         "_FillValue": [
           NaN
@@ -160,10 +160,10 @@
       }
     },
     "crs": {
+      "type": "char",
       "shape": [
         ""
       ],
-      "type": "char",
       "attributes": {
         "grid_mapping_name": "rotated_latitude_longitude",
         "grid_north_pole_latitude": [
@@ -180,12 +180,12 @@
       }
     },
     "vertices_latitude": {
+      "type": "double",
       "shape": [
         "rlat",
         "rlon",
         "bounds"
       ],
-      "type": "double",
       "attributes": {
         "_FillValue": [
           NaN
@@ -199,12 +199,12 @@
       }
     },
     "vertices_longitude": {
+      "type": "double",
       "shape": [
         "rlat",
         "rlon",
         "bounds"
       ],
-      "type": "double",
       "attributes": {
         "_FillValue": [
           NaN
@@ -218,12 +218,12 @@
       }
     },
     "tas": {
+      "type": "float",
       "shape": [
         "time",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "long_name": "Near-Surface Air Temperature",
         "_FillValue": [
@@ -246,12 +246,12 @@
       }
     },
     "pr": {
+      "type": "float",
       "shape": [
         "time",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "long_name": "Precipitation",
         "_FillValue": [
@@ -274,11 +274,11 @@
       }
     },
     "time_bnds": {
+      "type": "double",
       "shape": [
         "time",
         "bnds"
       ],
-      "type": "double",
       "attributes": {
         "_FillValue": [
           NaN
@@ -290,22 +290,22 @@
       }
     },
     "quantization_info": {
+      "type": "char",
       "shape": [
         ""
       ],
-      "type": "char",
       "attributes": {
         "algorithm": "bitround",
         "implementation": "NCO version 5.3.2"
       }
     },
     "prsn": {
+      "type": "float",
       "shape": [
         "time",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "long_name": "Snowfall Flux",
         "_FillValue": [
@@ -335,12 +335,12 @@
       }
     },
     "snw": {
+      "type": "float",
       "shape": [
         "time",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "long_name": "Surface Snow Amount",
         "_FillValue": [
@@ -370,12 +370,12 @@
       }
     },
     "tasmax": {
+      "type": "float",
       "shape": [
         "time",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "long_name": "Daily Maximum Near-Surface Air Temperature",
         "_FillValue": [
@@ -398,12 +398,12 @@
       }
     },
     "tasmin": {
+      "type": "float",
       "shape": [
         "time",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "long_name": "Daily Minimum Near-Surface Air Temperature",
         "_FillValue": [
@@ -426,10 +426,10 @@
       }
     },
     "height": {
+      "type": "double",
       "shape": [
         ""
       ],
-      "type": "double",
       "attributes": {
         "long_name": "height",
         "_FillValue": [
@@ -444,11 +444,11 @@
       }
     },
     "lat": {
+      "type": "double",
       "shape": [
         "rlat",
         "rlon"
       ],
-      "type": "double",
       "attributes": {
         "long_name": "latitude",
         "_FillValue": [
@@ -465,11 +465,11 @@
       }
     },
     "lon": {
+      "type": "double",
       "shape": [
         "rlat",
         "rlon"
       ],
-      "type": "double",
       "attributes": {
         "long_name": "longitude",
         "_FillValue": [
