@@ -174,15 +174,18 @@ class DataCubeHelper(Helper):
                                     extent = bbox[1], bbox[3]
                                 elif key in ["T", "time"]:
                                     extent = self.temporal_extent()
+                                elif key == "Z":
+                                    extent is None
                                 else:
                                     extent = [None, None]
 
                             properties = dict(
                                 type=type_.value,
-                                extent=extent,
                                 description=v.get("description", v.get("long_name", criteria["standard_name"][0]))
                                 or "",
                             )
+                            if extent is not None:  # omit extent for Z axis
+                                properties["extent"] = extent
                             if type_ == DimensionType.SPATIAL:
                                 properties["axis"] = axis
 
@@ -222,9 +225,11 @@ class DataCubeHelper(Helper):
             else:
                 dtype = VariableType.DATA.value
 
+            dimensions = meta.get("shape", [])
+
             variables[name] = Variable(
                 properties=dict(
-                    dimensions=meta["shape"],
+                    dimensions=[] if dimensions == [""] else dimensions,
                     type=dtype,
                     description=attrs.get("description", attrs.get("long_name", "")),
                     unit=attrs.get("units", ""),
