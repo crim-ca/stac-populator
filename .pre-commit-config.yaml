@@ -10,7 +10,12 @@ repos:
       - id: check-toml
       - id: check-json
       - id: pretty-format-json
-        args: [--autofix, --indent 2, --no-ensure-ascii, --no-sort-keys, --top-keys 'stac_version,stac_extensions,type,id,title,description,summaries,extent,properties']
+        args: 
+          - --autofix
+          - --indent 2
+          - --no-ensure-ascii
+          - --no-sort-keys
+          - --top-keys stac_version,stac_extensions,type,id,title,description,summaries,extent,properties
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
       - id: end-of-file-fixer
