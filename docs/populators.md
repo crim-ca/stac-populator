@@ -39,7 +39,9 @@ In the `stac-populator` tool, an extension is typically applied using an associa
 
 The example below shows an excerpt of the concrete [`FileHelper`][file-helper] class. 
 
-In addition to the required `data` field to compute the `file:size` property, optional keyword arguments such as the HTTP `session` can be passed in for initialization via `from_data(..., **kwargs)`. In particular, this static method facilitates instantiation of [Helper][helper-class] objects at the next layer, i.e. in the `DataModel` associated with the `Populator` implementation.
+📝 **NOTE** - In addition to the required `data` field to compute the `file:size` property, optional keyword arguments such as the HTTP `session` can be passed in for initialization via `from_data(..., **kwargs)`. In particular, this static method facilitates instantiation of [Helper][helper-class] objects at the next layer, i.e. in the `DataModel` associated with the `Populator` implementation.
+
+🚨 **IMPORTANT** - Variables intended to be passed via `kwargs` (e.g., `session`) should be defined using Pydantic’s [Field](https://docs.pydantic.dev/latest/api/fields/#pydantic.fields.Field) function so they are included in the class constructor. Avoid using [PrivateAttr](https://docs.pydantic.dev/latest/api/fields/#pydantic.fields.PrivateAttr), as it excludes the variable from the constructor.
 
 ```python
 import pystac
@@ -90,7 +92,7 @@ In `stac-populator`, the [`THREDDSCatalogDataModel`][thredds-catalog-datamodel-c
 
 📝 **NOTE** - As a best practice, helper variables should be named following the same prefix as the STAC Extension they handle. For instance, `datacube` for [DataCubeHelper][datacube-helper], `thredds` for [THREDDSHelper][thredds-helper], etc.
 
-**Instantiation and kwargs.** `DataModel` instances should be created using their `def from_data(...)` factory method (inherited from [THREDDSCatalogDataModel][thredds-catalog-datamodel-class]). In addition to the data dictionary, this static method accepts optional keyword arguments, which are forwarded to the constructors of the concrete [Helper][helper-class] classes through their own `def from_data(...)` factory methods. The keyword arguments are dispatched to the appropriate [Helper][helper-class] classes based on their constructor signatures, allowing the `DataModel` to accept all required parameters (typically `Populator` variables) in a single place. The instantiated [Helper][helper-class] objects are later automatically applied (using their `def apply(...)` methods) to extend the `DataModel` before the data properties are integrated.
+**Instantiation and kwargs.** `DataModel` instances should be created using their `def from_data(...)` factory method (inherited from [THREDDSCatalogDataModel][thredds-catalog-datamodel-class]). In addition to the data dictionary, this static method accepts optional keyword arguments, which are forwarded to the constructors of the concrete [Helper][helper-class] classes through their own `def from_data(...)` factory methods. The keyword arguments are dispatched to the appropriate [Helper][helper-class] classes based on their constructor signatures (e.g., variable `session` required to instantiate a [FileHelper][file-helper]), allowing the `DataModel` to accept all required parameters (typically `Populator` variables) in a single place. The instantiated [Helper][helper-class] objects are later automatically applied (using their `def apply(...)` methods) to extend the `DataModel` before the data properties are integrated.
 
 The example below shows the [`RDPSDataModel`](../STACpopulator/extensions/rdps.py#L8). 
 
