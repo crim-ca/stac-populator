@@ -121,6 +121,14 @@ convention = "numpy"
 [tool.ruff.lint.per-file-ignores]
 "tests/**.py" = ["D", "ANN"]
 
+
+[tool.markdownlint]
+# invoke via pre-commit
+# config options: https://github.com/DavidAnson/markdownlint/tree/main/doc
+MD013.line_length = 120
+MD033.allowed_elements = ["br"]
+
+
 [project]
 name = "STACpopulator"
 version = "0.9.0"

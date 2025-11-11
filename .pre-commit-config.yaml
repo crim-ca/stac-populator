@@ -1,7 +1,12 @@
 default_language_version:
   python: python3
-default_stages: [commit, push]
+default_stages: [pre-commit, pre-push]
 repos:
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.45.0
+    hooks:
+      - id: markdownlint
+        args: [--fix, --config, pyproject.toml, --configPointer, /tool/markdownlint, "**/*.md"]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
@@ -10,12 +15,13 @@ repos:
       - id: check-toml
       - id: check-json
       - id: pretty-format-json
-        args: 
+        args:
           - --autofix
-          - --indent 2
+          - --indent=2
           - --no-ensure-ascii
           - --no-sort-keys
-          - --top-keys stac_version,stac_extensions,type,id,title,description,summaries,extent,properties
+          # note: keys are a mixture of STAC collection/items/links
+          - --top-keys=$schema,$id,stac_version,stac_extensions,href,type,id,title,description,keywords,license,version,experimental,extent,bbox,geometry,summaries,collection,properties,assets,links
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md]
       - id: end-of-file-fixer
