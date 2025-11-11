@@ -133,9 +133,9 @@ classes: [`THREDDSHelper`][thredds-helper], which adds general THREDDS propertie
 **A custom THREDDS data model class** should extend the [THREDDSCatalogDataModel][thredds-catalog-datamodel-class] aand
 only needs to define (as its variables) the additional concrete [Helper][helper-class] classes it will use.
 
-📝 **NOTE** - As a best practice, helper variables should be named following the same prefix as the STAC Extension they
-handle. For instance, `datacube` for [DataCubeHelper][datacube-helper], `thredds` for [THREDDSHelper][thredds-helper],
-etc.
+📝 **NOTE** - As a best practice, variables of concrete [Helper][helper-class] types should be named after the prefix of
+the STAC Extension they manage. For instance, use `datacube` for [DataCubeHelper][datacube-helper], `thredds` for
+[THREDDSHelper][thredds-helper], etc.
 
 **Instantiation and kwargs.** `DataModel` instances should be created using their `def from_data(...)` factory method
 (inherited from [THREDDSCatalogDataModel][thredds-catalog-datamodel-class]). In addition to the data dictionary, this
@@ -217,7 +217,7 @@ determine which variables are required to instantiate each helper and provide th
 
 ### 4.2. Adding populator CLI command
 
-To be able to invoke the populator from the CLI, following updates must be performed.
+To be able to invoke the populator from the CLI, the following updates must be performed.
 
 1. Copy the `def add_parser_args(...)` and `def runner(...)` methods from the
    [`STACpopulator/implementations/RDPS_CRIM/add_RDPS.py`][add-rdps-module] module.
