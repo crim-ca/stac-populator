@@ -33,7 +33,8 @@
 * Add support for THREDDS services added in version 5.
 * Fix bug where session details weren't being used to access THREDDS catalogs.
 * Remove `title` from THREDDS catalog links since the content was specific to Marble.
-* Change link `type` from THREDDS catalog link from `text/xml` to `application/xml` (STAC API doesn't support `text/xml` anymore).
+* Change link `type` from THREDDS catalog link from `text/xml` to `application/xml`
+  (STAC API doesn't support `text/xml` anymore).
 * Support THREDDS datasets that don't contain an `NCML` access url.
 * Support nested collections when loading STAC objects with the `DirectoryLoader`.
 * `DirectoryLoader` now supports loading STAC objects created by the `export` command.

@@ -126,6 +126,7 @@ convention = "numpy"
 # invoke via pre-commit
 # config options: https://github.com/DavidAnson/markdownlint/tree/main/doc
 MD013.line_length = 120
+MD013.tables = false
 MD033.allowed_elements = ["br"]
 
 
