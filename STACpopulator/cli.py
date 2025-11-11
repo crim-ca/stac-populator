@@ -1,6 +1,7 @@
 import argparse
 import functools
 import importlib
+import pkgutil
 import sys
 import warnings
 from types import ModuleType
@@ -8,7 +9,8 @@ from types import ModuleType
 import pystac
 import requests
 
-from STACpopulator import __version__, implementations
+import STACpopulator.implementations
+from STACpopulator import __version__
 from STACpopulator.exceptions import STACPopulatorError
 from STACpopulator.export import export_catalog
 from STACpopulator.log import add_logging_options, setup_logging
@@ -42,7 +44,7 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     )
     for implementation_module_name, module in implementation_modules().items():
         implementation_parser = populators_subparser.add_parser(implementation_module_name)
-        module.add_parser_args(implementation_parser)
+        module.Populator.update_parser_args(implementation_parser)
     export_parser = commands_subparser.add_parser("export", description="Export a STAC catalog to JSON files on disk.")
     export_parser.add_argument("stac_host", help="STAC API URL")
     export_parser.add_argument("directory", type=str, help="Path to a directory to write STAC catalog contents.")
@@ -62,13 +64,11 @@ def implementation_modules() -> dict[str, ModuleType]:
     If one fails (i.e. due to missing dependencies) continue loading others.
     """
     modules = {}
-    for implementation_module_name in implementations.__all__:
+    for module_info in pkgutil.iter_modules(STACpopulator.implementations.__path__):
         try:
-            modules[implementation_module_name] = importlib.import_module(
-                f".{implementation_module_name}", implementations.__package__
-            )
+            modules[module_info.name] = importlib.import_module(f"STACpopulator.implementations.{module_info.name}")
         except STACPopulatorError as e:
-            warnings.warn(f"Could not load extension {implementation_module_name} because of error {e}")
+            warnings.warn(f"Could not load extension {module_info.name} because of error {e}")
     return modules
 
 
@@ -80,7 +80,7 @@ def run(ns: argparse.Namespace) -> int:
         if ns.command == "run":
             if ns.stac_version:
                 pystac.set_stac_version(ns.stac_version)
-            return implementation_modules()[ns.populator].runner(ns, session) or 0
+            return implementation_modules()[ns.populator].Populator.run(ns, session) or 0
         else:
             return export_catalog(ns.directory, ns.stac_host, session, ns.resume, ns.ignore_duplicate_ids) or 0
 

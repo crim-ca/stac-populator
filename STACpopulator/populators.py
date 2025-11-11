@@ -1,3 +1,4 @@
+import argparse
 import functools
 import inspect
 import json
@@ -8,6 +9,7 @@ from datetime import datetime
 from typing import Any, Dict, List, MutableMapping, Optional, Type, Union
 
 import pystac
+import requests
 from requests.sessions import Session
 
 from STACpopulator.api_requests import (
@@ -16,7 +18,7 @@ from STACpopulator.api_requests import (
     stac_host_reachable,
     stac_version_match,
 )
-from STACpopulator.input import GenericLoader
+from STACpopulator.input import ErrorLoader, GenericLoader, THREDDSLoader
 from STACpopulator.models import AnyGeometry
 from STACpopulator.stac_utils import load_config
 
@@ -226,3 +228,53 @@ class STACpopulatorBase(ABC):
 
             counter += 1
             LOGGER.info(f"Processed {counter} data items. {failures} failures")
+
+    @classmethod
+    def update_parser_args(cls, parser: argparse.ArgumentParser) -> None:
+        """Add additional CLI arguments to the argument parser."""
+        parser.add_argument("stac_host", help="STAC API URL")
+        parser.add_argument("--update", action="store_true", help="Update collection and its items")
+
+    @classmethod
+    @abstractmethod
+    def run(cls, ns: argparse.Namespace, session: requests.Session) -> int:
+        """Run the populator given the arguments from the command line."""
+        raise NotImplementedError
+
+
+class THREDDSPopulator(STACpopulatorBase):
+    """Base class for populators that get data from a THREDDS catalog."""
+
+    @classmethod
+    def update_parser_args(cls, parser: argparse.ArgumentParser) -> None:
+        """Add additional CLI arguments to the argument parser."""
+        super().update_parser_args(parser)
+        parser.add_argument("href", help="URL to a THREDDS catalog or a NCML XML with CMIP6 metadata.")
+        parser.add_argument(
+            "--mode",
+            choices=["full", "single"],
+            default="full",
+            help="Operation mode, processing the full dataset or only the single reference.",
+        )
+        parser.add_argument(
+            "--config",
+            type=str,
+            help=(
+                "Override configuration file for the populator. "
+                "By default, uses the adjacent configuration to the implementation class."
+            ),
+        )
+
+    @classmethod
+    def run(cls, ns: argparse.Namespace, session: requests.Session) -> int:
+        """Run the populator given the arguments from the command line."""
+        LOGGER.info(f"Arguments to call: {vars(ns)}")
+
+        if ns.mode == "full":
+            data_loader = THREDDSLoader(ns.href, session=session)
+        else:
+            # To be implemented
+            data_loader = ErrorLoader()
+
+        cls(ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config).ingest()
+        return 0
