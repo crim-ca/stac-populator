@@ -2,10 +2,11 @@ import argparse
 import inspect
 import logging
 import os.path
-from typing import Any, MutableMapping, Optional
+from typing import Any, Iterable, MutableMapping, Optional
 
 from requests.sessions import Session
 
+from STACpopulator.collection_update import UpdateModesOptional
 from STACpopulator.input import STACDirectoryLoader
 from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
@@ -25,9 +26,18 @@ class DirectoryPopulator(STACpopulatorBase):
         update: bool,
         collection: dict[str, Any],
         session: Optional[Session] = None,
+        update_collection: UpdateModesOptional = "none",
+        exclude_summaries: Iterable[str] = (),
     ) -> None:
         self._collection = collection
-        super().__init__(stac_host, loader, update=update, session=session)
+        super().__init__(
+            stac_host,
+            loader,
+            update=update,
+            session=session,
+            update_collection=update_collection,
+            exclude_summaries=exclude_summaries,
+        )
 
     def load_config(self) -> MutableMapping[str, Any]:
         """Load configuration options."""
@@ -77,6 +87,14 @@ def runner(ns: argparse.Namespace, session: Session) -> int:
     ):
         collection_dir = os.path.dirname(collection_path)
         loader = STACDirectoryLoader(collection_dir, "item", ns.item_pattern, ns.collection_pattern, ns.prune)
-        populator = DirectoryPopulator(ns.stac_host, loader, ns.update, collection_json, session=session)
+        populator = DirectoryPopulator(
+            ns.stac_host,
+            loader,
+            ns.update,
+            collection_json,
+            session=session,
+            update_collection=ns.update_collection,
+            exclude_summaries=ns.exclude_summary,
+        )
         populator.ingest()
     return 0

@@ -2,12 +2,13 @@ import argparse
 import json
 import logging
 import os
-from typing import Any, MutableMapping, Optional, Union
+from typing import Any, Iterable, MutableMapping, Optional, Union
 
 from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
 from requests.sessions import Session
 
+from STACpopulator.collection_update import UpdateModesOptional
 from STACpopulator.extensions.cmip6 import CMIP6Helper, CMIP6Properties
 from STACpopulator.extensions.datacube import DataCubeHelper
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
@@ -31,8 +32,18 @@ class CMIP6populator(STACpopulatorBase):
         update: Optional[bool] = False,
         session: Optional[Session] = None,
         config_file: Optional[Union[os.PathLike[str], str]] = None,
+        update_collection: UpdateModesOptional = "none",
+        exclude_summaries: Iterable[str] = (),
     ) -> None:
-        super().__init__(stac_host, data_loader, update=update, session=session, config_file=config_file)
+        super().__init__(
+            stac_host,
+            data_loader,
+            update=update,
+            session=session,
+            config_file=config_file,
+            update_collection=update_collection,
+            exclude_summaries=exclude_summaries,
+        )
 
     def create_stac_item(
         self, item_name: str, item_data: MutableMapping[str, Any]
@@ -109,6 +120,14 @@ def runner(ns: argparse.Namespace, session: Session) -> int:
         # To be implemented
         data_loader = ErrorLoader()
 
-    c = CMIP6populator(ns.stac_host, data_loader, update=ns.update, session=session, config_file=ns.config)
+    c = CMIP6populator(
+        ns.stac_host,
+        data_loader,
+        update=ns.update,
+        session=session,
+        config_file=ns.config,
+        update_collection=ns.update_collection,
+        exclude_summaries=ns.exclude_summary,
+    )
     c.ingest()
     return 0

@@ -70,8 +70,8 @@ class MockedNoSTACUpload(STACpopulatorBase):
             "description": "test",
             "keywords": ["test"],
             "license": "MIT",
-            "spatialextent": [-180, -90, 180, 90],
-            "temporalextent": ["1850-01-01", None],
+            "spatialextent": [0, 0, 0, 0],
+            "temporalextent": ["2020-01-01", None],
         }
 
     def validate_host(self, stac_host: str) -> str:
@@ -81,10 +81,30 @@ class MockedNoSTACUpload(STACpopulatorBase):
         pass  # don't push to STAC API
 
     def create_stac_item(self, item_name, item_data):
-        return {"id": item_name, "access_urls": item_data["access_urls"]}
+        self._count = getattr(self, "_count", -1) + 1
+        bboxes = [[-10, -20, 10, 30], [-11, 2, 9, 50], [0, 0, 2, 4], [22, -1, 56, 11]]
+        datetimes = [
+            ("1845-12-04", "1893-02-18"),
+            ("1992-05-12", "2222-04-11"),
+            ("1066-05-01", "2045-09-20"),
+            ("2000-01-01", "2045-01-01"),
+        ]
+        # random trivia to add to the stac item
+        ducks = ["Alabio", "Blekinge", "Muscovy", "Rouen"]
+        return {
+            "id": item_name,
+            "access_urls": item_data["access_urls"],
+            "bbox": bboxes[self._count],
+            "properties": {
+                "start_datetime": datetimes[self._count][0],
+                "end_datetime": datetimes[self._count][1],
+                "ducks": ducks[self._count],
+                "another_date": datetimes[self._count][1],
+            },
+        }
 
 
-@pytest.mark.vcr("test_cmip6_stac_thredds_catalog_parsing")
+@pytest.mark.vcr("test_cmip6_stac_thredds_catalog_parsing.yaml")
 def test_cmip6_stac_thredds_catalog_parsing(cur_dir):
     url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml"
     loader = THREDDSLoader(url)
@@ -99,7 +119,7 @@ def test_cmip6_stac_thredds_catalog_parsing(cur_dir):
     assert result == reference
 
 
-@pytest.mark.vcr
+@pytest.mark.vcr("test_standalone_stac_item_thredds_via_loader.yaml")
 def test_standalone_stac_item_thredds_via_loader():
     url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml"
     loader = THREDDSLoader(url)
@@ -124,3 +144,38 @@ def test_standalone_stac_item_thredds_via_loader():
             )
             assert data["access_urls"]["WCS"].endswith("?request=GetCapabilities")
             assert data["access_urls"]["WMS"].endswith("?request=GetCapabilities")
+
+
+@pytest.mark.parametrize("update_collection", ["none", "extents", "summaries", "all"])
+@pytest.mark.parametrize("exclude_summaries", [(), ("ducks"), ("ducks", "another_date")])
+@pytest.mark.vcr("test_standalone_stac_item_thredds_via_loader.yaml")
+def test_standalone_stac_item_update_collection(update_collection, exclude_summaries):
+    url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml"
+    loader = THREDDSLoader(url)
+    populator = MockedNoSTACUpload(
+        "https://example.com",
+        loader,
+        update_collection=update_collection,
+        exclude_summaries=exclude_summaries,
+        update=True,
+    )
+
+    with patch("STACpopulator.populator_base.post_stac_item"):
+        populator.ingest()
+        data = populator._collection
+        if update_collection in ("extents", "all"):
+            assert data["extent"]["spatial"]["bbox"][0] == [-11, -20, 56, 50]
+            assert data["extent"]["temporal"]["interval"][0] == ["1066-05-01", None]
+        if update_collection in ("summaries", "all"):
+            summaries = {
+                "another_date": {"maximum": "2222-04-11", "minimum": "1893-02-18"},
+                "ducks": ["Alabio", "Blekinge", "Muscovy", "Rouen"],
+            }
+            for exclude in exclude_summaries:
+                summaries.pop(exclude, None)
+            assert data["summaries"] == summaries
+        if update_collection in ("extents", "none"):
+            assert data["summaries"] == {"needs_summaries_update": ["true"]}
+        if update_collection in ("summaries", "none"):
+            assert data["extent"]["spatial"]["bbox"][0] == [0, 0, 0, 0]
+            assert data["extent"]["temporal"]["interval"][0] == ["2020-01-01T00:00:00Z", None]
