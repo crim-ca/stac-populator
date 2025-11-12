@@ -8,7 +8,7 @@ import os
 import re
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Callable, Dict, List, MutableMapping, Optional, Type, Union
+from typing import Any, Callable, Dict, Iterable, List, MutableMapping, Optional, Type, Union
 
 import pystac
 from requests.sessions import Session
@@ -19,6 +19,7 @@ from STACpopulator.api_requests import (
     stac_host_reachable,
     stac_version_match,
 )
+from STACpopulator.collection_update import UpdateModesOptional, update_collection
 from STACpopulator.exceptions import FunctionLoadError
 from STACpopulator.input import GenericLoader
 from STACpopulator.models import AnyGeometry
@@ -40,6 +41,8 @@ class STACpopulatorBase(ABC):
         extra_item_parsers: Optional[list[str]] = None,
         extra_collection_parsers: Optional[list[str]] = None,
         extra_parser_arguments: Optional[dict[str, str] | list[tuple[str, str]]] = None,
+        update_collection: UpdateModesOptional = "none",
+        exclude_summaries: Iterable[str] = (),
     ) -> None:
         """Initialize the STAC populator.
 
@@ -70,10 +73,12 @@ class STACpopulatorBase(ABC):
         self._ingest_pipeline = data_loader
         self._stac_host = self.validate_host(stac_host)
         self.update = update
+        self.update_collection = update_collection
+        self.exclude_summaries = exclude_summaries
 
         LOGGER.info("Initialization complete")
         LOGGER.info(f"Collection {self.collection_name} is assigned ID {self.collection_id}")
-        self.create_stac_collection()
+        self._collection = self.create_stac_collection()
 
     @staticmethod
     def _load_extra_parser(func_str: str, extra_kwargs: dict[str, str]) -> Callable:
@@ -166,9 +171,6 @@ class STACpopulatorBase(ABC):
 
         return stac_host
 
-    # FIXME: should provide a way to update after item generation
-    #   STAC collections are supposed to include 'summaries' with
-    #   an aggregation of all supported 'properties' by its child items
     @functools.cache
     def create_stac_collection(self) -> dict[str, Any]:
         """
@@ -235,6 +237,10 @@ class STACpopulatorBase(ABC):
         """Publish this collection by uploading it to the STAC catalog at self.stac_host."""
         post_stac_collection(self.stac_host, collection_data, self.update, session=self._session)
 
+    def _update_collection(self, stac_item: dict[str, Any]) -> None:
+        if self.update and self.update_collection != "none":
+            update_collection(self.update_collection, self._collection, stac_item, self.exclude_summaries)
+
     def ingest(self) -> None:
         """Ingest data."""
         counter = 0
@@ -253,7 +259,8 @@ class STACpopulatorBase(ABC):
                 )
                 failures += 1
                 stac_item = None
-
+            else:
+                self._update_collection(stac_item)
             if stac_item:
                 try:
                     post_stac_item(
@@ -281,3 +288,5 @@ class STACpopulatorBase(ABC):
 
             counter += 1
             LOGGER.info(f"Processed {counter} data items. {failures} failures")
+        if self.update and self.update_collection != "none":
+            self.publish_stac_collection(self._collection)

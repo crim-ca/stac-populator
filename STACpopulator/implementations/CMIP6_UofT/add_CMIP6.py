@@ -107,6 +107,8 @@ def runner(ns: argparse.Namespace, session: Session) -> int:
         extra_item_parsers=ns.extra_item_parsers,
         extra_collection_parsers=ns.extra_collection_parsers,
         extra_parser_arguments=ns.extra_parser_arguments,
+        update_collection=ns.update_collection,
+        exclude_summaries=ns.exclude_summary,
     )
     c.ingest()
     return 0
