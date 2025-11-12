@@ -1,9 +1,9 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "cmip6-cordex-global-attrs-schema.json#",
+  "type": "object",
   "title": "CORDEX-CMIP6 metadata schema for global attributes",
   "description": "JSON schema for global attributes of CORDEX-CMIP6 datasets. This schema is automatically generated from the CVs. Manual edits will be overwritten.",
-  "type": "object",
   "properties": {
     "cordex6:activity_id": {
       "enum": [
