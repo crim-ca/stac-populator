@@ -1,3 +1,3 @@
-from .add_CMIP6 import add_parser_args, runner
+from .add_CMIP6 import CMIP6populator as Populator
 
-__all__ = ["add_parser_args", "runner"]
+__all__ = ["Populator"]

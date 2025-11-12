@@ -1,4 +1,5 @@
 import os
+import pkgutil
 import re
 import subprocess
 import tempfile
@@ -14,8 +15,13 @@ def run_cli(*args: str, **kwargs: Mapping) -> subprocess.CompletedProcess:
 
 
 @pytest.fixture(scope="session")
-def populator_help_pattern():
-    name_options = ",?|".join([imp.replace(".", "\\.") for imp in implementations.__all__])
+def populator_names():
+    return {m.name for m in pkgutil.iter_modules(implementations.__path__)}
+
+
+@pytest.fixture(scope="session")
+def populator_help_pattern(populator_names):
+    name_options = ",?|".join([imp.replace(".", "\\.") for imp in populator_names])
     return re.compile(f"{{({name_options},?)+}}")
 
 
@@ -25,7 +31,7 @@ def test_help():
     proc.check_returncode()
 
 
-def test_run_implementation(populator_help_pattern):
+def test_run_implementation(populator_help_pattern, populator_names):
     """
     Test that all implementations can be loaded from the command line
 
@@ -35,17 +41,18 @@ def test_run_implementation(populator_help_pattern):
     proc = run_cli("stac-populator", "run", "--help")
     proc.check_returncode()
     populators = re.search(populator_help_pattern, proc.stdout)
-    assert set(implementations.__all__) == set(populators.group(0).strip("{}").split(","))
+    assert populator_names == set(populators.group(0).strip("{}").split(","))
 
 
-def test_missing_implementation(populator_help_pattern):
+def test_missing_implementation(populator_help_pattern, populator_names):
     """Test that implementations that can't load are missing from the options"""
     with tempfile.TemporaryDirectory() as dirname:
         pass  # this allows us to get a dirname that does not exist
     proc = run_cli("stac-populator", "run", "--help", env={**os.environ, "PYESSV_ARCHIVE_HOME": dirname})
+    print(proc.stderr)
     proc.check_returncode()
     populators = re.search(populator_help_pattern, proc.stdout)
-    assert "CMIP6_UofT" in implementations.__all__  # sanity check
+    assert "CMIP6_UofT" in populator_names  # sanity check
     assert "CMIP6_UofT" not in set(populators.group(0).strip("{}").split(","))
 
 
