@@ -89,7 +89,7 @@ links:
     media_type: text/html
     extra_fields:
       hreflang: fr-CA
-    
+
 contacts:
   - organization: Computer Research Institute of Montreal (CRIM)
     identifier: CRIM

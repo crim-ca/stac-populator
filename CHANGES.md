@@ -17,10 +17,6 @@
 
 ## [0.9.0](https://github.com/crim-ca/stac-populator/tree/0.9.0) (2025-08-26)
 
-<!-- insert list items of new changes here -->
-
-## [0.9.0](https://github.com/crim-ca/stac-populator/tree/0.9.0) (2025-08-26)
-
 * Include `PYESSV_ARCHIVE_HOME` environment variable in Dockerfile.
 * Remove redundant CLI arguments.
 * Fix bug in `THREDDSLoader` iterator introduced in 0.8.0. Simple iteration over `catalog_refs` returns the
