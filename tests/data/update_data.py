@@ -7,10 +7,10 @@ from siphon.catalog import TDSCatalog
 from STACpopulator.stac_utils import np2py
 
 """
-Run this script to fetch metadata attributes from the PAVICS THREDDS catalog. 
+Run this script to fetch metadata attributes from the PAVICS THREDDS catalog.
 This avoids making requests to the server during tests.
 
-The results are commited to the repository, so this script only needs to be run when attributes change 
+The results are commited to the repository, so this script only needs to be run when attributes change
 or new datasets are added.
 """
 

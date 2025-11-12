@@ -4,19 +4,24 @@
 
 * Add option to supply additional custom parsers for items and collections.
 
-## [0.9.0](https://github.com/crim-ca/stac-populator/tree/0.9.0) (2025-08-26)
+## [0.10.0](https://github.com/crim-ca/stac-populator/tree/0.10.0) (2025-11-11)
 
+
+<!-- insert list items of new changes here -->
+
+## [0.9.0](https://github.com/crim-ca/stac-populator/tree/0.9.0) (2025-08-26)
 
 * Include `PYESSV_ARCHIVE_HOME` environment variable in Dockerfile.
 * Remove redundant CLI arguments.
-* Fix bug in `THREDDSLoader` iterator introduced in 0.8.0. Simple iteration over `catalog_refs` returns the catalog names (strings), whereas we want an object with a `follow` method. 
-* Remove `log_debug` option from the `CORDEXCMIP6_Ouranos` runner. 
+* Fix bug in `THREDDSLoader` iterator introduced in 0.8.0. Simple iteration over `catalog_refs` returns the
+  catalog names (strings), whereas we want an object with a `follow` method.
+* Remove `log_debug` option from the `CORDEXCMIP6_Ouranos` runner.
 * Add attributes to CORDEX IDs to avoid duplicate IDs in the STAC catalog.
 * Update test data for `CORDEXCMIP6_Ouranos`.
 * Add default `create_uid` to `THREDDSCatalogDataModel`.
 * Fix bug in `DataCubeHelper` for vertical coordinate extents.
-* Split and clean script to update test data. 
-* Add tests for RDPS and HRDPS attributes with no custom extension. 
+* Split and clean script to update test data.
+* Add tests for RDPS and HRDPS attributes with no custom extension.
 * Make sure that all tests will pass even when not connected to the internet.
 
 ## [0.8.0](https://github.com/crim-ca/stac-populator/tree/0.8.0) (2025-06-11)
@@ -33,14 +38,15 @@
 * Add support for THREDDS services added in version 5.
 * Fix bug where session details weren't being used to access THREDDS catalogs.
 * Remove `title` from THREDDS catalog links since the content was specific to Marble.
-* Change link `type` from THREDDS catalog link from `text/xml` to `application/xml` (STAC API doesn't support `text/xml` anymore).
+* Change link `type` from THREDDS catalog link from `text/xml` to `application/xml`
+  (STAC API doesn't support `text/xml` anymore).
 * Support THREDDS datasets that don't contain an `NCML` access url.
 * Support nested collections when loading STAC objects with the `DirectoryLoader`.
 * `DirectoryLoader` now supports loading STAC objects created by the `export` command.
 
 ## [0.7.0](https://github.com/crim-ca/stac-populator/tree/0.7.0) (2025-03-07)
 
-* Make sure *bounds* variables are given the auxiliary type attribute. 
+* Make sure *bounds* variables are given the auxiliary type attribute.
 * Fix for variables that have no attributes.
 * Adding ability to add collection level assets
 * Adding ability to add collection level links
@@ -66,10 +72,7 @@
 * add `ruff` as a dev dependency to format and lint files
 * add `pre-commit` as a dev dependency to run `ruff` on commit and a workflow to run it on github as well
 
-
-
 ## [0.6.0](https://github.com/crim-ca/stac-populator/tree/0.6.0) (2024-02-22)
-
 
 * Add validation to the STAC Items in `CMIP6_UofT` implementation.
 * Replace CMIP6 JSON-schema URL to
@@ -81,14 +84,12 @@
 
 ## [0.5.0](https://github.com/crim-ca/stac-populator/tree/0.5.0) (2024-01-09)
 
-
 * Refactor CMIP6 implementation using distinct classes to define THREDDS helper utilities and the CMIP6 STAC Extension
   using the same implementation strategy as other [`pystac`](https://github.com/stac-utils/pystac) extensions.
 * Add additional CMIP6 STAC Extension definitions to support STAC Collections, Items and Assets properties validation.
 * Update README with a table providing missing `DirectoryLoader` implementation and adding `CMIP6_UofT` description.
 
 ## [0.4.0](https://github.com/crim-ca/stac-populator/tree/0.4.0) (2023-11-27)
-
 
 * Replace logic to resolve and load specific implementation configuration file of a populator to avoid depending on
   inconsistent caller (`python <impl-module.py>` vs `stac-populator run <impl>`).
@@ -100,7 +101,6 @@
 * Make sure that each implementation and module employs their own logger.
 
 ## [0.3.0](https://github.com/crim-ca/stac-populator/tree/0.3.0) (2023-11-16)
-
 
 * Add request ``session`` keyword to all request-related functions and populator methods to allow sharing a common set
   of settings (`auth`, SSL `verify`, `cert`) across requests toward the STAC Catalog.
@@ -114,7 +114,6 @@
 
 ## [0.2.0](https://github.com/crim-ca/stac-populator/tree/0.2.0) (2023-11-10)
 
-
 * Add `LICENSE` file.
 * Add `bump-my-version` with `make version` and `make VERSION=<...> bump` utilities to self-update release versions.
 * Add more metadata to `pyproject.toml`.
@@ -127,7 +126,6 @@
 * Fix broken tests and invalid imports.
 
 ## [0.1.0](https://github.com/crim-ca/stac-populator/tree/0.1.0) (2023-11-08)
-
 
 * Refactor of `CMIP6_UofT` with more robust parsing strategies and STAC Item generation from THREDDS NCML metadata.
 

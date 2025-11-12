@@ -11,8 +11,7 @@ links:
       title : Project homepage
       target : https://wcrp-cmip.org/cmip-phase-6-cmip6/
       media_type: text/html
-    - rel: license  
+    - rel: license
       title : License
       target : https://raw.githubusercontent.com/WCRP-CMIP/CMIP6_CVs/main/LICENSE-CC-BY
       media_type: text/plain
-

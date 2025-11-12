@@ -48,10 +48,10 @@
   },
   "variables": {
     "time": {
+      "type": "double",
       "shape": [
         "time"
       ],
-      "type": "double",
       "attributes": {
         "standard_name": "time",
         "long_name": "Validity time",
@@ -65,10 +65,10 @@
       }
     },
     "pres": {
+      "type": "float",
       "shape": [
         "pres"
       ],
-      "type": "float",
       "attributes": {
         "axis": "Z",
         "standard_name": "air_pressure",
@@ -79,10 +79,10 @@
       }
     },
     "rlat": {
+      "type": "float",
       "shape": [
         "rlat"
       ],
-      "type": "float",
       "attributes": {
         "long_name": "latitude in rotated pole grid",
         "standard_name": "grid_latitude",
@@ -92,10 +92,10 @@
       }
     },
     "rlon": {
+      "type": "float",
       "shape": [
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "long_name": "longitude in rotated pole grid",
         "standard_name": "grid_longitude",
@@ -105,10 +105,10 @@
       }
     },
     "level": {
+      "type": "float",
       "shape": [
         "level"
       ],
-      "type": "float",
       "attributes": {
         "axis": "Z",
         "positive": "down",
@@ -121,13 +121,13 @@
       }
     },
     "GZ": {
+      "type": "float",
       "shape": [
         "time",
         "pres",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "_FillValue": [
           1.0000000150474662e+30
@@ -143,10 +143,10 @@
       }
     },
     "rotated_pole": {
+      "type": "char",
       "shape": [
         ""
       ],
-      "type": "char",
       "attributes": {
         "grid_mapping_name": "rotated_latitude_longitude",
         "earth_radius": [
@@ -166,13 +166,13 @@
       }
     },
     "HU": {
+      "type": "float",
       "shape": [
         "time",
         "pres",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "grid_mapping": "rotated_pole",
         "_FillValue": [
@@ -188,12 +188,12 @@
       }
     },
     "PC": {
+      "type": "float",
       "shape": [
         "time",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "_FillValue": [
           1.0000000150474662e+30
@@ -208,12 +208,12 @@
       }
     },
     "PN": {
+      "type": "float",
       "shape": [
         "time",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "_FillValue": [
           1.0000000150474662e+30
@@ -228,12 +228,12 @@
       }
     },
     "PR": {
+      "type": "float",
       "shape": [
         "time",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "_FillValue": [
           1.0000000150474662e+30
@@ -248,13 +248,13 @@
       }
     },
     "TD": {
+      "type": "float",
       "shape": [
         "time",
         "level",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "_FillValue": [
           1.0000000150474662e+30
@@ -270,22 +270,22 @@
       }
     },
     "pref": {
+      "type": "double",
       "shape": [
         ""
       ],
-      "type": "double",
       "attributes": {
         "units": "hPa"
       }
     },
     "TT_pressure_levels": {
+      "type": "float",
       "shape": [
         "time",
         "pres",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "_FillValue": [
           1.0000000150474662e+30
@@ -301,13 +301,13 @@
       }
     },
     "TT_model_levels": {
+      "type": "float",
       "shape": [
         "time",
         "level",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "_FillValue": [
           1.0000000150474662e+30
@@ -323,13 +323,13 @@
       }
     },
     "UU_pressure_levels": {
+      "type": "float",
       "shape": [
         "time",
         "pres",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "_FillValue": [
           1.0000000150474662e+30
@@ -345,13 +345,13 @@
       }
     },
     "UU_model_levels": {
+      "type": "float",
       "shape": [
         "time",
         "level",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "_FillValue": [
           1.0000000150474662e+30
@@ -367,13 +367,13 @@
       }
     },
     "VV_pressure_levels": {
+      "type": "float",
       "shape": [
         "time",
         "pres",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "_FillValue": [
           1.0000000150474662e+30
@@ -389,13 +389,13 @@
       }
     },
     "VV_model_levels": {
+      "type": "float",
       "shape": [
         "time",
         "level",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "_FillValue": [
           1.0000000150474662e+30
@@ -411,10 +411,10 @@
       }
     },
     "leadtime": {
+      "type": "float",
       "shape": [
         "time"
       ],
-      "type": "float",
       "attributes": {
         "standard_name": "forecast_period",
         "long_name": "Lead time (since forecast_reference_time)",
@@ -426,10 +426,10 @@
       }
     },
     "reftime": {
+      "type": "double",
       "shape": [
         ""
       ],
-      "type": "double",
       "attributes": {
         "standard_name": "forecast_reference_time",
         "units": "hours since 2024-01-01 00:00:00",
@@ -438,11 +438,11 @@
       }
     },
     "lon": {
+      "type": "float",
       "shape": [
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "units": "degrees_east",
         "standard_name": "longitude",
@@ -451,11 +451,11 @@
       }
     },
     "lat": {
+      "type": "float",
       "shape": [
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "long_name": "latitude",
         "standard_name": "latitude",
@@ -464,16 +464,16 @@
       }
     },
     "a": {
+      "type": "double",
       "shape": [
         "level"
-      ],
-      "type": "double"
+      ]
     },
     "b": {
+      "type": "double",
       "shape": [
         "level"
-      ],
-      "type": "double"
+      ]
     }
   },
   "access_urls": {
