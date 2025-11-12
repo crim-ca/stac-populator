@@ -1,7 +1,7 @@
 # STAC Catalog Populator
 
-![Latest Version](https://img.shields.io/badge/latest%20version-0.9.0-blue?logo=github)
-![Commits Since Latest](https://img.shields.io/github/commits-since/crim-ca/stac-populator/0.9.0.svg?logo=github)
+![Latest Version](https://img.shields.io/badge/latest%20version-0.10.0-blue?logo=github)
+![Commits Since Latest](https://img.shields.io/github/commits-since/crim-ca/stac-populator/0.10.0.svg?logo=github)
 ![GitHub License](https://img.shields.io/github/license/crim-ca/stac-populator)
 
 This repository contains a framework [STACpopulator](STACpopulator)
@@ -30,7 +30,7 @@ Provided implementations of `STACpopulatorBase`:
 |----------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
 | [CMIP6_UofT][CMIP6_UofT]                     | Crawls a THREDDS Catalog for CMIP6 NCML-annotated NetCDF references to publish corresponding STAC Collection and Items. |
 | [DirectoryLoader][DirLoader]                 | Crawls a subdirectory hierarchy of pre-generated STAC Collections and Items to publish to a STAC API endpoint.          |
-| [CORDEX-CMIP6_Ouranos][CORDEX-CMIP6_Ouranos] | Crawls a THREDDS Catalog for CORDEX-CMIP6 NetCDF references to publish corresponding STAC Collection and Items. | 
+| [CORDEX-CMIP6_Ouranos][CORDEX-CMIP6_Ouranos] | Crawls a THREDDS Catalog for CORDEX-CMIP6 NetCDF references to publish corresponding STAC Collection and Items.         |
 
 [CMIP6_UofT]: STACpopulator/implementations/CMIP6_UofT/add_CMIP6.py
 [DirLoader]: STACpopulator/implementations/DirectoryLoader/crawl_directory.py
@@ -78,7 +78,7 @@ stac-populator update-collection --help
 
 ### CMIP6 extension: extra requirements
 
-The CMIP6 stac-populator extension requires that the [pyessv-archive](https://github.com/ES-DOC/pyessv-archive) data 
+The CMIP6 stac-populator extension requires that the [pyessv-archive](https://github.com/ES-DOC/pyessv-archive) data
 files be installed. To install this package to the default location in your home directory at `~/.esdoc/pyessv-archive`:
 
 ```shell
@@ -98,7 +98,7 @@ PYESSV_ARCHIVE_HOME=/some/other/place make setup-pyessv-archive
 *Note*: <br>
 If you have installed the [pyessv-archive](https://github.com/ES-DOC/pyessv-archive) data files to a non-default
 location, you need to specify that location with the `PYESSV_ARCHIVE_HOME` environment variable. For example,
-if you've installed the pyessv-archive files to `/some/other/place` then run the following before executing 
+if you've installed the pyessv-archive files to `/some/other/place` then run the following before executing
 any of the example commands above:
 
 ```shell
@@ -111,7 +111,7 @@ You can also employ the pre-built Docker, which can be called as follows,
 where `[command]` corresponds to any of the above example operations.
 
 ```shell
-docker run -ti ghcr.io/crim-ca/stac-populator:0.9.0 [command]
+docker run -ti ghcr.io/crim-ca/stac-populator:0.10.0 [command]
 ```
 
 *Note*: <br>
@@ -160,8 +160,8 @@ pre-commit install
 
 ### Writing tests
 
-Unit tests use the [pytest-recording](https://github.com/kiwicom/pytest-recording) package to cache 
-network responses. This allows the tests to be run offline and allows them to reliably pass regardless of 
+Unit tests use the [pytest-recording](https://github.com/kiwicom/pytest-recording) package to cache
+network responses. This allows the tests to be run offline and allows them to reliably pass regardless of
 whether a remote resource is available or not.
 
 Whenever you're writing tests that make a request to an external resource, please use the `@pytest.mark.vcr`

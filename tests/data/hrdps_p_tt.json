@@ -51,10 +51,10 @@
   },
   "variables": {
     "rlon": {
+      "type": "float",
       "shape": [
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "long_name": "longitude in rotated pole grid",
         "units": "degrees",
@@ -68,10 +68,10 @@
       }
     },
     "rlat": {
+      "type": "float",
       "shape": [
         "rlat"
       ],
-      "type": "float",
       "attributes": {
         "long_name": "latitude in rotated pole grid",
         "units": "degrees",
@@ -85,10 +85,10 @@
       }
     },
     "time": {
+      "type": "int",
       "shape": [
         "time"
       ],
-      "type": "int",
       "attributes": {
         "long_name": "time",
         "units": "hours since 2024-01-01 00:00:00",
@@ -102,12 +102,12 @@
       }
     },
     "HRDPS_P_TT_10000": {
+      "type": "float",
       "shape": [
         "time",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "long_name": "Forecast: Air temperature",
         "units": "deg_C",
@@ -121,10 +121,10 @@
       }
     },
     "rotated_pole": {
+      "type": "float",
       "shape": [
         ""
       ],
-      "type": "float",
       "attributes": {
         "grid_north_pole_longitude": [
           65.3051528930664
@@ -148,11 +148,11 @@
       }
     },
     "lon": {
+      "type": "float",
       "shape": [
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "long_name": "longitude",
         "units": "degrees_east",
@@ -166,11 +166,11 @@
       }
     },
     "lat": {
+      "type": "float",
       "shape": [
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "long_name": "latitude",
         "units": "degrees_north",
