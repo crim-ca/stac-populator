@@ -2,7 +2,7 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
-<!-- insert list items of new changes here -->
+* Add option to supply additional custom parsers for items and collections.
 
 ## [1.11.0](https://github.com/crim-ca/stac-populator/tree/1.11.0) (2025-11-12)
 

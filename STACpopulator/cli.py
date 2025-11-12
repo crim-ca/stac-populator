@@ -17,6 +17,12 @@ from STACpopulator.log import add_logging_options, setup_logging
 from STACpopulator.request_utils import add_request_options, apply_request_options
 
 
+def _extra_parser_argument(arg: str) -> tuple[str, str]:
+    if "=" in arg:
+        return tuple(a.strip() for a in arg.split("=", 1))
+    raise argparse.ArgumentTypeError("--extra-parser-arguments must be in the form 'key=value'")
+
+
 def add_parser_args(parser: argparse.ArgumentParser) -> None:
     """Add parser arguments to the argument parser."""
     parser.add_argument(
@@ -45,6 +51,34 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     for implementation_module_name, module in implementation_modules().items():
         implementation_parser = populators_subparser.add_parser(implementation_module_name)
         module.add_parser_args(implementation_parser)
+        implementation_parser.add_argument(
+            "-x",
+            "--extra-item-parsers",
+            action="append",
+            help="Functions that may modify items before upload. "
+            "Should be specified in the form 'module:function_name' "
+            "and have the signature function(item: dict, **kw)",
+        )
+        implementation_parser.add_argument(
+            "-X",
+            "--extra-collection-parsers",
+            action="append",
+            help="Functions that may modify collections before upload. "
+            "Should be specified in the form 'module:function_name' or "
+            "path/to/python/file.py:function_name. Functions should "
+            "have the signature function(collection: dict, **kw) -> None "
+            "and should modify the collection dict in place.",
+        )
+        implementation_parser.add_argument(
+            "-a",
+            "--extra-parser-arguments",
+            action="append",
+            type=_extra_parser_argument,
+            help="Extra keyword arguments that should be passed to extra "
+            "item and collection function as "
+            "keyword arguments. "
+            "Should be specified in the form 'key=value'",
+        )
         implementation_parser.add_argument(
             "--update-collection-mode",
             dest="update_collection",

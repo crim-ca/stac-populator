@@ -1,18 +1,16 @@
 import argparse
 import json
 import logging
-import os
-from typing import Any, Iterable, MutableMapping, Optional, Union
+from typing import Any, MutableMapping, Union
 
 from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
 from requests.sessions import Session
 
-from STACpopulator.collection_update import UpdateModesOptional
 from STACpopulator.extensions.cmip6 import CMIP6Helper, CMIP6Properties
 from STACpopulator.extensions.datacube import DataCubeHelper
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
-from STACpopulator.input import ErrorLoader, GenericLoader, THREDDSLoader
+from STACpopulator.input import ErrorLoader, THREDDSLoader
 from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
 
@@ -24,26 +22,6 @@ class CMIP6populator(STACpopulatorBase):
 
     item_properties_model = CMIP6Properties
     item_geometry_model = GeoJSONPolygon
-
-    def __init__(
-        self,
-        stac_host: str,
-        data_loader: GenericLoader,
-        update: Optional[bool] = False,
-        session: Optional[Session] = None,
-        config_file: Optional[Union[os.PathLike[str], str]] = None,
-        update_collection: UpdateModesOptional = "none",
-        exclude_summaries: Iterable[str] = (),
-    ) -> None:
-        super().__init__(
-            stac_host,
-            data_loader,
-            update=update,
-            session=session,
-            config_file=config_file,
-            update_collection=update_collection,
-            exclude_summaries=exclude_summaries,
-        )
 
     def create_stac_item(
         self, item_name: str, item_data: MutableMapping[str, Any]
@@ -126,6 +104,9 @@ def runner(ns: argparse.Namespace, session: Session) -> int:
         update=ns.update,
         session=session,
         config_file=ns.config,
+        extra_item_parsers=ns.extra_item_parsers,
+        extra_collection_parsers=ns.extra_collection_parsers,
+        extra_parser_arguments=ns.extra_parser_arguments,
         update_collection=ns.update_collection,
         exclude_summaries=ns.exclude_summary,
     )
