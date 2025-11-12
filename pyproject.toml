@@ -20,7 +20,7 @@ STACpopulator = ["**/collection_config.yml", "extensions/schemas/**/*.json"]
 
 
 
-[tool.pytest.ini_options]
+[tool.pytest]
 norecursedirs = [
     ".*",
     "build",
@@ -31,7 +31,7 @@ norecursedirs = [
     "requirements*",
     "lib",
 ]
-python_files = "test*.py"
+python_files = ["test*.py"]
 # these break debugger breakpoints
 # add them manually with 'make test-cov'
 #addopts = [
@@ -54,7 +54,7 @@ output = "reports/coverage.xml"
 
 
 [tool.bumpversion]
-current_version = "0.9.0"
+current_version = "0.10.0"
 commit = true
 commit_args = "--no-verify"
 tag = true
@@ -121,9 +121,18 @@ convention = "numpy"
 [tool.ruff.lint.per-file-ignores]
 "tests/**.py" = ["D", "ANN"]
 
+
+[tool.markdownlint]
+# invoke via pre-commit
+# config options: https://github.com/DavidAnson/markdownlint/tree/main/doc
+MD013.line_length = 120
+MD013.tables = false
+MD033.allowed_elements = ["br"]
+
+
 [project]
 name = "STACpopulator"
-version = "0.9.0"
+version = "0.10.0"
 description = "Utility to populate STAC Catalog, Collections and Items from various dataset/catalog sources."
 requires-python = ">=3.10,<4"
 dependencies = [
@@ -187,7 +196,7 @@ Changelog = "https://github.com/crim-ca/stac-populator/blob/master/CHANGES.md"
 
 [project.optional-dependencies]
 dev = [
-    "pytest~=8.3",
+    "pytest~=9.0",
     "pytest-cov~=7.0",
     "coverage~=7.6",
     "responses~=0.25",

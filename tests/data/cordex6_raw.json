@@ -4,6 +4,8 @@
     "": "http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2"
   },
   "attributes": {
+    "title": "CRMC5 output, model ran by Ouranos, prepared for CORDEX-CMIP6",
+    "license": "https://cordex.org/data-access/cordex-cmip6-data/cordex-cmip6-terms-of-use",
     "Conventions": "CF-1.11",
     "activity_id": "DD",
     "comment": "CRCM5 v3331 0.11 deg AMNO11d1 L56 S17-15m MPI-ESM1-2-LR membre 1 PILSPEC PS3",
@@ -22,14 +24,12 @@
     "product": "model-output",
     "project_id": "CORDEX",
     "source_type": "ARCM",
-    "title": "CRMC5 output, model ran by Ouranos, prepared for CORDEX-CMIP6",
     "external_variables": "areacella",
     "frequency": "day",
     "variable_id": "tas",
     "history": "Thu Aug 29 22:41:53 2024: ncks --cmp=dfl,6 CORDEX/CMIP6/DD/NAM-12/OURANOS/MPI-ESM1-2-LR/ssp370/r1i1p1f1/CRCM5/v1-r1/day/tas/v20231208/tas_NAM-12_MPI-ESM1-2-LR_ssp370_r1i1p1f1_OURANOS_CRCM5_v1-r1_day_20150101-20151231.nc CORDEX/CMIP6/DD/NAM-12/OURANOS/MPI-ESM1-2-LR/ssp370/r1i1p1f1/CRCM5/v1-r1/day/tas/v20231208/tas_NAM-12_MPI-ESM1-2-LR_ssp370_r1i1p1f1_OURANOS_CRCM5_v1-r1_day_20150101-20151231.nc.comp\nFri Dec 08 15:09:39 2023: Metadata converted to CORDEX specifications.Monthly files merged by chunks of 1 years. Data resampled from H to D.\nSat May 21 03:43:17 2022: ncks -O --chunk_policy g3d --cnk_dmn plev,1 --cnk_dmn rlon,50 --cnk_dmn rlat,50 --cnk_dmn time,250 /home/dpaquin1/scratch/arch/cau/201501/nc4c_tas_cau_201501_se.nc /home/dpaquin1/scratch/arch/cau/201501/tas_cau_201501_se.nc\nSat May 21 03:40:09 2022: ncks -O --fl_fmt=netcdf4_classic -L 6 /home/dpaquin1/scratch/arch/cau/201501/trim_tas_cau_201501_se.nc /home/dpaquin1/scratch/arch/cau/201501/nc4c_tas_cau_201501_se.nc\nSat May 21 03:40:04 2022: ncks -O -d time,2015-01-01 00:00:00,2015-01-31 23:59:59 /home/dpaquin1/postprod/cau/transit2/201501/tas_cau_201501_se.nc /home/dpaquin1/scratch/arch/cau/201501/trim_tas_cau_201501_se.nc",
     "tracking_id": "hdl:21.14100/036eef09-912f-4d92-b73b-27c751fcc9e3",
     "coordinates": "vertices_latitude vertices_longitude crs",
-    "license": "https://cordex.org/data-access/cordex-cmip6-data/cordex-cmip6-terms-of-use",
     "source": "Canadian Regional Climate Model version 5",
     "source_id": "CRCM5-SN",
     "source_name": "CRCM5",
@@ -88,10 +88,10 @@
   },
   "variables": {
     "rlat": {
+      "type": "double",
       "shape": [
         "rlat"
       ],
-      "type": "double",
       "attributes": {
         "_FillValue": [
           NaN
@@ -112,10 +112,10 @@
       }
     },
     "rlon": {
+      "type": "double",
       "shape": [
         "rlon"
       ],
-      "type": "double",
       "attributes": {
         "long_name": "longitude in rotated pole grid",
         "actual_range": [
@@ -136,10 +136,10 @@
       }
     },
     "time": {
+      "type": "double",
       "shape": [
         "time"
       ],
-      "type": "double",
       "attributes": {
         "_FillValue": [
           NaN
@@ -153,10 +153,10 @@
       }
     },
     "crs": {
+      "type": "char",
       "shape": [
         ""
       ],
-      "type": "char",
       "attributes": {
         "grid_mapping_name": "rotated_latitude_longitude",
         "grid_north_pole_latitude": [
@@ -173,12 +173,12 @@
       }
     },
     "tas": {
+      "type": "float",
       "shape": [
         "time",
         "rlat",
         "rlon"
       ],
-      "type": "float",
       "attributes": {
         "long_name": "Near-Surface Air Temperature",
         "_FillValue": [
@@ -201,12 +201,12 @@
       }
     },
     "vertices_latitude": {
+      "type": "double",
       "shape": [
         "rlat",
         "rlon",
         "bounds"
       ],
-      "type": "double",
       "attributes": {
         "_FillValue": [
           NaN
@@ -220,12 +220,12 @@
       }
     },
     "vertices_longitude": {
+      "type": "double",
       "shape": [
         "rlat",
         "rlon",
         "bounds"
       ],
-      "type": "double",
       "attributes": {
         "_FillValue": [
           NaN
@@ -239,10 +239,10 @@
       }
     },
     "height": {
+      "type": "double",
       "shape": [
         ""
       ],
-      "type": "double",
       "attributes": {
         "_FillValue": [
           NaN
@@ -257,11 +257,11 @@
       }
     },
     "lat": {
+      "type": "double",
       "shape": [
         "rlat",
         "rlon"
       ],
-      "type": "double",
       "attributes": {
         "_FillValue": [
           NaN
@@ -278,11 +278,11 @@
       }
     },
     "lon": {
+      "type": "double",
       "shape": [
         "rlat",
         "rlon"
       ],
-      "type": "double",
       "attributes": {
         "_FillValue": [
           NaN
