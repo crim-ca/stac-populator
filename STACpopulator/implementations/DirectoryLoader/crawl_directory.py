@@ -2,11 +2,12 @@ import argparse
 import inspect
 import logging
 import os.path
-from typing import Any, MutableMapping, Optional
+from typing import Any, Iterable, MutableMapping, Optional
 
 import requests
 from requests.sessions import Session
 
+from STACpopulator.collection_update import UpdateModesOptional
 from STACpopulator.input import STACDirectoryLoader
 from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populators import STACpopulatorBase
@@ -26,9 +27,18 @@ class DirectoryPopulator(STACpopulatorBase):
         update: bool,
         collection: dict[str, Any],
         session: Optional[Session] = None,
+        update_collection: UpdateModesOptional = "none",
+        exclude_summaries: Iterable[str] = (),
     ) -> None:
         self._collection = collection
-        super().__init__(stac_host, loader, update=update, session=session)
+        super().__init__(
+            stac_host,
+            loader,
+            update=update,
+            session=session,
+            update_collection=update_collection,
+            exclude_summaries=exclude_summaries,
+        )
 
     def load_config(self) -> MutableMapping[str, Any]:
         """Load configuration options."""

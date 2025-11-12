@@ -5,12 +5,14 @@ import pkgutil
 import sys
 import warnings
 from types import ModuleType
+from typing import get_args
 
 import pystac
 import requests
 
 import STACpopulator.implementations
 from STACpopulator import __version__
+from STACpopulator.collection_update import UpdateModes, update_api_collection
 from STACpopulator.exceptions import STACPopulatorError
 from STACpopulator.export import export_catalog
 from STACpopulator.log import add_logging_options, setup_logging
@@ -45,6 +47,23 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     for implementation_module_name, module in implementation_modules().items():
         implementation_parser = populators_subparser.add_parser(implementation_module_name)
         module.Populator.update_parser_args(implementation_parser)
+    update_parser = commands_subparser.add_parser(
+        "update-collection", description="Update collection information based on items in the collection"
+    )
+    update_parser.add_argument("stac-collection-uri", help="URI of collection to update from a STAC API instance")
+    update_parser.add_argument(
+        "--mode",
+        choices=get_args(UpdateModes),
+        default="all",
+        help="Choose whether to update summaries, extents, or all (both).",
+    )
+    update_parser.add_argument(
+        "--exclude-summary",
+        nargs="*",
+        action="extend",
+        default=[],
+        help="Exclude these properties when updating collection summaries. ",
+    )
     export_parser = commands_subparser.add_parser("export", description="Export a STAC catalog to JSON files on disk.")
     export_parser.add_argument("stac_host", help="STAC API URL")
     export_parser.add_argument("directory", type=str, help="Path to a directory to write STAC catalog contents.")
@@ -81,6 +100,8 @@ def run(ns: argparse.Namespace) -> int:
             if ns.stac_version:
                 pystac.set_stac_version(ns.stac_version)
             return implementation_modules()[ns.populator].Populator.run(ns, session) or 0
+        elif ns.command == "update_collection":
+            return update_api_collection(ns.mode, ns.stac_collection_uri, ns.exclude_summary) or 0
         else:
             return export_catalog(ns.directory, ns.stac_host, session, ns.resume, ns.ignore_duplicate_ids) or 0
 
