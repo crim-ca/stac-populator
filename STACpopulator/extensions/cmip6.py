@@ -309,7 +309,7 @@ class ItemCMIP6Extension(CMIP6Extension[pystac.Item]):
             key: asset
             for key, asset in self.item.get_assets().items()
             if (isinstance(service_type, ServiceType) and service_type.value in asset.extra_fields)
-            or any(ServiceType.from_value(field, default=None) for field in asset.extra_fields)
+            or any(ServiceType.from_value(field, default=False) for field in asset.extra_fields)
         }
 
     def __repr__(self) -> str:
