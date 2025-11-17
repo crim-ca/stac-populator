@@ -6,16 +6,14 @@
 
 ## [0.11.0](https://github.com/crim-ca/stac-populator/tree/0.11.0) (2025-11-17)
 
-
-<!-- insert list items of new changes here -->
-
-## [1.11.0](https://github.com/crim-ca/stac-populator/tree/1.11.0) (2025-11-12)
-
 * Add option to automatically update collection extents and summaries based on ingested items.
 
 ## [0.10.0](https://github.com/crim-ca/stac-populator/tree/0.10.0) (2025-11-11)
 
-<!-- insert list items of new changes here -->
+* Add `pre-commit` linting rules (code format + STAC field sorting in JSON).
+* Add initial RDPS and HRDPS examples with minimal metadata from Ouranos THREDDS samples.
+* Fix `datacube` to report `[None, None]` instead of `["", ""]` for unbounded `cube:dimensions.extent`.
+* Fix unique ID creation from THREDDS access URLs.
 
 ## [0.9.0](https://github.com/crim-ca/stac-populator/tree/0.9.0) (2025-08-26)
 
