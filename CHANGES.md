@@ -13,11 +13,11 @@
 * Fix return type of `from_data` in `THREDDSCatalogDataModel`.
 * Update RDPS and HRDPS tests.
 
-## [1.11.0](https://github.com/crim-ca/stac-populator/tree/1.11.0) (2025-11-17)
+## [0.11.0](https://github.com/crim-ca/stac-populator/tree/0.11.0) (2025-11-17)
 
 * Add option to automatically update collection extents and summaries based on ingested items.
 
-## [1.10.0](https://github.com/crim-ca/stac-populator/tree/1.10.0) (2025-11-11)
+## [0.10.0](https://github.com/crim-ca/stac-populator/tree/0.10.0) (2025-11-11)
 
 * Add `pre-commit` linting rules (code format + STAC field sorting in JSON).
 * Add initial RDPS and HRDPS examples with minimal metadata from Ouranos THREDDS samples.
