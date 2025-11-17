@@ -99,7 +99,7 @@ contacts:
       - processor
     emails:
       - value: support-geo@crim.ca
-        roles: 
+        roles:
           - work
     logo:
       href: https://raw.githubusercontent.com/henriaidasso/image-store/refs/heads/main/img/crim.png

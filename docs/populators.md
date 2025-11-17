@@ -1,3 +1,4 @@
+<!-- markdownlint-disable MD059 -->
 # Adding New Implementations
 
 This documentation describes how to create a new STAC populator implementation.
@@ -203,7 +204,8 @@ class RDPSpopulator(STACpopulatorBase):
 
     def create_stac_item(self, item_name: str, item_data: dict[str, Any]) -> dict[str, Any]:
         """Return a STAC Item."""
-        # The variable `self._session` is inherited from the parent `STACpopulatorBase` class and passed as a `kwargs` to appropriate helpers via the `from_data(...)` method.
+        # The variable `self._session` is inherited from `STACpopulatorBase` and is passed as a keyword
+        # argument to appropriate helpers via this `from_data(...)` call.
         model = self.data_model.from_data(item_data, session=self._session)
         return model.stac_item()
 ```
@@ -232,6 +234,7 @@ from .add_RDPS import add_parser_args, runner
 __all__ = ["add_parser_args", "runner"]
 ```
 
+<!-- markdownlint-disable-next-line MD029 -->
 4. Register the new populator implementation in [`STACpopulator/implementations/__init__.py`][populators-impl-init]
 
 ```python
