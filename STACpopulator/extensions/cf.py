@@ -54,7 +54,7 @@ class CFHelper(ExtensionHelper):
         """Extracts cf:parameter-like information from item_data."""
         parameters = []
 
-        for _, var in self.variables.items():
+        for var in self.variables.values():
             attrs = var.get("attributes", {})
             name = attrs.get("standard_name")  # Get the required standard name
             if not name:
