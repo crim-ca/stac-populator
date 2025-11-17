@@ -1,30 +1,44 @@
 {
+  "stac_version": "1.0.0",
   "type": "Collection",
   "id": "test",
   "title": "test",
-  "stac_version": "1.0.0",
   "description": "test",
-  "summaries": {"needs_summaries_update": ["true"]},
+  "keywords": [
+    "test"
+  ],
+  "license": "MIT",
   "extent": {
     "spatial": {
       "bbox": [
-        [-180, -90, 180, 90]
+        [
+          0,
+          0,
+          0,
+          0
+        ]
       ]
     },
     "temporal": {
       "interval": [
-        ["1850-01-01T00:00:00Z", null]
+        [
+          "2020-01-01T00:00:00Z",
+          null
+        ]
       ]
     }
   },
-  "license": "MIT",
-  "keywords": ["test"],
+  "summaries": {
+    "needs_summaries_update": [
+      "true"
+    ]
+  },
   "links": [
     {
       "href": "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/catalog/birdhouse/testdata/xclim/cmip6/catalog.xml",
-      "rel": "source",
       "type": "application/xml",
-      "title": "THREDDS data source"
+      "title": "THREDDS data source",
+      "rel": "source"
     }
   ]
 }

@@ -11,9 +11,9 @@
   "id": "EuroSAT-subset-test",
   "title": "EuroSAT subset test",
   "description": "EuroSAT dataset with labeled annotations for land-cover classification and associated imagery. This collection represents the samples part of the test split set for training machine learning algorithms.",
+  "license": "MIT",
   "version": "0.4.0",
   "experimental": true,
-  "license": "MIT",
   "extent": {
     "spatial": {
       "bbox": [
@@ -144,204 +144,204 @@
     ]
   },
   "assets": {
+    "license": {
+      "href": "https://raw.githubusercontent.com/phelber/EuroSAT/master/LICENSE",
+      "type": "text/plain",
+      "title": "License",
+      "description": "License contents associated to the EuroSAT dataset.",
+      "roles": [
+        "legal",
+        "license"
+      ],
+      "sci:doi": "10.1109/JSTARS.2019.2918242"
+    },
     "source": {
       "href": "https://github.com/phelber/EuroSAT/",
       "type": "text/html",
+      "title": "GitHub repository",
+      "description": "Source GitHub repository of the EuroSAT dataset.",
       "roles": [
         "data",
         "source",
         "scientific",
         "citation"
       ],
-      "title": "GitHub repository",
-      "description": "Source GitHub repository of the EuroSAT dataset.",
       "sci:doi": "10.1109/JSTARS.2019.2918242"
     },
     "paper": {
       "href": "https://www.researchgate.net/publication/319463676",
       "type": "text/html",
+      "title": "Scientific Paper",
+      "description": "ResearchGate page with embedded PDF of the scientific paper supporting the dataset.",
       "roles": [
         "paper",
         "scientific",
         "citation"
       ],
-      "title": "Scientific Paper",
-      "description": "ResearchGate page with embedded PDF of the scientific paper supporting the dataset.",
       "sci:doi": "10.1109/JSTARS.2019.2918242"
     },
     "thumbnail": {
       "href": "https://raw.githubusercontent.com/phelber/EuroSAT/master/eurosat_overview_small.jpg",
       "type": "image/jpeg",
+      "description": "Preview of dataset samples.",
       "roles": [
         "thumbnail",
         "overview"
       ],
-      "description": "Preview of dataset samples.",
-      "sci:doi": "10.1109/JSTARS.2019.2918242"
-    },
-    "license": {
-      "href": "https://raw.githubusercontent.com/phelber/EuroSAT/master/LICENSE",
-      "type": "text/plain",
-      "roles": [
-        "legal",
-        "license"
-      ],
-      "title": "License",
-      "description": "License contents associated to the EuroSAT dataset.",
       "sci:doi": "10.1109/JSTARS.2019.2918242"
     }
   },
   "links": [
     {
-      "rel": "cite-as",
       "href": "https://arxiv.org/abs/1709.00029",
       "type": "text/html",
-      "title": "EuroSAT: A Novel Dataset and Deep Learning Benchmark for Land Use and Land Cover Classification"
+      "title": "EuroSAT: A Novel Dataset and Deep Learning Benchmark for Land Use and Land Cover Classification",
+      "rel": "cite-as"
     },
     {
-      "rel": "license",
       "href": "https://raw.githubusercontent.com/phelber/EuroSAT/master/LICENSE",
       "type": "text/html",
-      "title": "EuroSAT: A Novel Dataset and Deep Learning Benchmark for Land Use and Land Cover Classification"
+      "title": "EuroSAT: A Novel Dataset and Deep Learning Benchmark for Land Use and Land Cover Classification",
+      "rel": "license"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-0.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-1.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-2.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-3.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-4.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-5.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-6.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-7.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-8.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-9.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-10.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-11.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-12.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-13.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-14.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-15.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-16.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-17.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-18.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "item",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/item-19.json",
-      "type": "application/geo+json"
+      "type": "application/geo+json",
+      "rel": "item"
     },
     {
-      "rel": "root",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/catalog.json",
-      "type": "application/json"
+      "type": "application/json",
+      "rel": "root"
     },
     {
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/collection.json",
+      "type": "application/json",
+      "title": "EuroSAT STAC Collection with samples from 'test' split.",
       "rel": "self",
-      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/collection.json",
-      "type": "application/json",
-      "title": "EuroSAT STAC Collection with samples from 'test' split.",
       "ml-aoi:split": "test"
     },
     {
+      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/collection.json",
+      "type": "application/json",
+      "title": "EuroSAT STAC Collection with samples from 'test' split.",
       "rel": "collection",
-      "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/test/collection.json",
-      "type": "application/json",
-      "title": "EuroSAT STAC Collection with samples from 'test' split.",
       "ml-aoi:split": "test"
     },
     {
-      "rel": "related",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/train/collection.json",
       "type": "application/json",
       "title": "EuroSAT STAC Collection with samples from 'test' split.",
+      "rel": "related",
       "ml-aoi:split": "train"
     },
     {
-      "rel": "related",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/validate/collection.json",
       "type": "application/json",
       "title": "EuroSAT STAC Collection with samples from 'test' split.",
+      "rel": "related",
       "ml-aoi:split": "validate"
     },
     {
-      "rel": "parent",
       "href": "https://raw.githubusercontent.com/ai-extensions/stac-data-loader/0.4.0/data/EuroSAT/stac/subset/catalog.json",
       "type": "application/json",
-      "title": "STAC Catalog"
+      "title": "STAC Catalog",
+      "rel": "parent"
     }
   ]
 }
