@@ -178,6 +178,8 @@ class TestModule(_TestDirectoryLoader):
             log_level_stderr=None,
             command="run",
             populator="DirectoryLoader",
+            update_collection="none",
+            exclude_summary=[],
         )
 
     def test_set_stac_version(self, namespace, runner):

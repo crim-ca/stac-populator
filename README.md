@@ -1,7 +1,7 @@
 # STAC Catalog Populator
 
-![Latest Version](https://img.shields.io/badge/latest%20version-0.10.0-blue?logo=github)
-![Commits Since Latest](https://img.shields.io/github/commits-since/crim-ca/stac-populator/0.10.0.svg?logo=github)
+![Latest Version](https://img.shields.io/badge/latest%20version-1.11.0-blue?logo=github)
+![Commits Since Latest](https://img.shields.io/github/commits-since/crim-ca/stac-populator/1.11.0.svg?logo=github)
 ![GitHub License](https://img.shields.io/github/license/crim-ca/stac-populator)
 
 This repository contains a framework [STACpopulator](STACpopulator)
@@ -11,6 +11,10 @@ STAC API on a server node.
 
 It can also be used to export data from an existing STAC API or catalog to files on disk. These can then later
 be used to populate a STAC API with the `DirectoryLoader` implementation.
+
+It can also be used to update a STAC collection's extents and/or summaries based on the STAC items that already
+are part of the collection. It does this by iterating through the items in the collection and updating the
+relevant collection properties accordingly.
 
 ## Framework
 
@@ -71,6 +75,9 @@ stac-populator run [implementation] --help
 
 # obtain general help about exporting STAC catalogs to a directory on disk
 stac-populator export --help
+
+# obtain general help about updating STAC collections based on their items
+stac-populator update-collection --help
 ```
 
 ### CMIP6 extension: extra requirements
@@ -108,7 +115,7 @@ You can also employ the pre-built Docker, which can be called as follows,
 where `[command]` corresponds to any of the above example operations.
 
 ```shell
-docker run -ti ghcr.io/crim-ca/stac-populator:0.10.0 [command]
+docker run -ti ghcr.io/crim-ca/stac-populator:1.11.0 [command]
 ```
 
 *Note*: <br>

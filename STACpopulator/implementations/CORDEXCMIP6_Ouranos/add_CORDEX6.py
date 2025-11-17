@@ -62,6 +62,8 @@ def runner(ns: argparse.Namespace, session: Session) -> int:
         update=ns.update,
         session=session,
         config_file=ns.config,
+        update_collection=ns.update_collection,
+        exclude_summaries=ns.exclude_summary,
     )
     c.ingest()
     return 0

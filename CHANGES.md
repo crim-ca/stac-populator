@@ -4,7 +4,7 @@
 
 <!-- insert list items of new changes here -->
 
-## [0.10.0](https://github.com/crim-ca/stac-populator/tree/0.10.0) (2025-11-11)
+## [1.12.0](https://github.com/crim-ca/stac-populator/tree/1.12.0) (2025-11-17)
 
 * Add `RDPS_CRIM` and `HRDPS_CRIM` implementations.
 * Add `cf` extension adding CF Parameter metadata to (H)RDPS stac asset and items.
@@ -14,6 +14,10 @@
 * Fix bug service type check in extensions' `get_assets` methods.
 * Fix return type of `from_data` in `THREDDSCatalogDataModel`.
 * Update RDPS and HRDPS tests.
+
+## [1.11.0](https://github.com/crim-ca/stac-populator/tree/1.11.0) (2025-11-12)
+
+* Add option to automatically update collection extents and summaries based on ingested items.
 
 ## [0.9.0](https://github.com/crim-ca/stac-populator/tree/0.9.0) (2025-08-26)
 
