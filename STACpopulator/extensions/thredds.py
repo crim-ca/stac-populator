@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import inspect
 from typing import Generic, TypeVar, Union, cast
 
@@ -69,7 +71,7 @@ class THREDDSExtension(
         return ""
 
     @classmethod
-    def ext(cls, obj: T, add_if_missing: bool = False) -> "THREDDSExtension[T]":
+    def ext(cls, obj: T, add_if_missing: bool = False) -> THREDDSExtension[T]:
         """Extend the given STAC Object with properties from the :stac-ext:`THREDDS Extension <thredds>`.
 
         This extension can be applied to instances of :class:`~pystac.Item` or
@@ -141,7 +143,7 @@ class THREDDSHelper(Helper):
         cls,
         data: dict[str, any],
         **kwargs,
-    ) -> "THREDDSHelper":
+    ) -> THREDDSHelper:
         """Create a THREDDSHelper instance from raw data."""
         return cls(access_urls=data["data"]["access_urls"])
 
@@ -190,7 +192,7 @@ class THREDDSCatalogDataModel(BaseSTAC):
     model_config = ConfigDict(populate_by_name=True, extra="ignore", arbitrary_types_allowed=True)
 
     @classmethod
-    def from_data(cls, data: dict, **kwargs) -> "THREDDSCatalogDataModel":
+    def from_data(cls, data: dict, **kwargs) -> THREDDSCatalogDataModel:
         """
         Instantiate class from data provided by THREDDS Loader.
 
