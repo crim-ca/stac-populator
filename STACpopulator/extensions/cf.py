@@ -36,7 +36,7 @@ class CFParameter(BaseModel):
     """CFParameter."""
 
     name: str
-    unit: Optional[str]
+    unit: str
 
     def __repr__(self) -> str:
         """Return string repr."""
@@ -59,7 +59,7 @@ class CFHelper(ExtensionHelper):
             name = attrs.get("standard_name")  # Get the required standard name
             if not name:
                 continue  # Skip if no valid name
-            unit = attrs.get("units") or ""
+            unit = attrs.get("units", "")
             parameters.append(CFParameter(name=name, unit=unit))
 
         return parameters
