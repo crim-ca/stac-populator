@@ -79,14 +79,14 @@ links:
     extra_fields:
       hreflang: fr-CA
   - rel: license
-    title: Open Government Licence - Canada
-    target: https://open.canada.ca/en/open-government-licence-canada
+    title: Environment and Climate Change Canada Data Servers End-use License
+    target: https://eccc-msc.github.io/open-data/licence/readme_en/
     media_type: text/html
     extra_fields:
       hreflang: en-CA
   - rel: license
-    title: Licence du gouvernement ouvert – Canada
-    target: https://ouvert.canada.ca/fr/licence-du-gouvernement-ouvert-canada
+    title: Licence d’utilisation finale pour les serveurs de données d’Environnement et Changement climatique Canada
+    target: https://eccc-msc.github.io/open-data/licence/readme_fr/
     media_type: text/html
     extra_fields:
       hreflang: fr-CA
@@ -96,7 +96,7 @@ contacts:
     identifier: CRIM
     position: Support
     roles:
-      - processor
+      - indexer
     emails:
       - value: support-geo@crim.ca
         roles:

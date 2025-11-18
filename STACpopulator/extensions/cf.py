@@ -36,7 +36,7 @@ class CFParameter(BaseModel):
     """CFParameter."""
 
     name: str
-    unit: Optional[str]
+    unit: str
 
     def __repr__(self) -> str:
         """Return string repr."""
@@ -54,12 +54,12 @@ class CFHelper(ExtensionHelper):
         """Extracts cf:parameter-like information from item_data."""
         parameters = []
 
-        for _, var in self.variables.items():
+        for var in self.variables.values():
             attrs = var.get("attributes", {})
             name = attrs.get("standard_name")  # Get the required standard name
             if not name:
                 continue  # Skip if no valid name
-            unit = attrs.get("units") or ""
+            unit = attrs.get("units", "")
             parameters.append(CFParameter(name=name, unit=unit))
 
         return parameters
@@ -180,8 +180,8 @@ class ItemCFExtension(CFExtension[pystac.Item]):
         return {
             key: asset
             for key, asset in self.item.get_assets().items()
-            if (service_type in ServiceType and service_type.value in asset.extra_fields)
-            or any(ServiceType.from_value(field, default=None) is ServiceType for field in asset.extra_fields)
+            if (isinstance(service_type, ServiceType) and service_type.value in asset.extra_fields)
+            or any(ServiceType.from_value(field, default=False) for field in asset.extra_fields)
         }
 
     def __repr__(self) -> str:

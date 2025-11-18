@@ -222,9 +222,11 @@ class DataCubeHelper(Helper):
             else:
                 dtype = VariableType.DATA.value
 
+            dimensions = meta.get("shape", [])
+
             variables[name] = Variable(
                 properties=dict(
-                    dimensions=meta["shape"],
+                    dimensions=[] if dimensions == [""] else dimensions,
                     type=dtype,
                     description=attrs.get("description", attrs.get("long_name", "")),
                     unit=attrs.get("units", ""),
