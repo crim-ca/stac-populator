@@ -12,6 +12,7 @@
 * Fix bug service type check in extensions' `get_assets` methods.
 * Fix return type of `from_data` in `THREDDSCatalogDataModel`.
 * Update RDPS and HRDPS tests.
+* Add documentation for implementing new populators
 
 ## [0.11.0](https://github.com/crim-ca/stac-populator/tree/0.11.0) (2025-11-17)
 
