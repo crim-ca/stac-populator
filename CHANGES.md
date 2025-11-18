@@ -4,6 +4,15 @@
 
 <!-- insert list items of new changes here -->
 
+* Add `RDPS_CRIM` and `HRDPS_CRIM` implementations.
+* Add `cf` extension adding CF Parameter metadata to (H)RDPS stac asset and items.
+* Add `cf` and `file` helpers.
+* Add `providers` and `contacts` extensions metdata to (H)RDPS stac collection.
+* Fix deprecated access to `model_fields` in `BaseSTAC` data model class.
+* Fix bug service type check in extensions' `get_assets` methods.
+* Fix return type of `from_data` in `THREDDSCatalogDataModel`.
+* Update RDPS and HRDPS tests.
+
 ## [0.11.0](https://github.com/crim-ca/stac-populator/tree/0.11.0) (2025-11-17)
 
 * Add option to automatically update collection extents and summaries based on ingested items.

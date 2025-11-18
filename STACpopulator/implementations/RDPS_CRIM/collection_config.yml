@@ -1,0 +1,149 @@
+id: RDPS_CRIM
+title: RDPS
+description: Regional Deterministic Prediction System (RDPS)
+keywords:
+  [
+    "RDPS",
+    "ECCC",
+    "MSC",
+    "Climate Change",
+    "Prediction",
+    "Regional",
+    "Deterministic",
+    "Weather forecasts",
+    "Meteorological data",
+    "Weather and Climate",
+    "Meteorological Service of Canada",
+    "Environment and Climate Change Canada",
+    "Weather and Environmental Operations",
+  ]
+license: other
+spatialextent: [-166.3, 7.2, -14.4, 85.0]
+temporalextent: ["1986-04-22", "2025-04-01"]
+
+providers:
+  - name: ECCC
+    description: Environment and Climate Change Canada (ECCC)
+    roles:
+      - licensor
+      - processor
+      - producer
+    url: https://github.com/julemai/CaSPAr/wiki/Available-products
+  - name: MSC
+    description: Meteorological Service of Canada (MSC)
+    roles:
+      - processor
+    url: https://eccc-msc.github.io/open-data
+  - name: Ouranos
+    description: Ouranos
+    roles:
+      - processor
+      - host
+    url: https://www.ouranos.ca
+
+links:
+  - rel: about
+    title: Project homepage
+    target: https://open.canada.ca/data/en/dataset/a9f2828c-0d78-5eb6-a4c7-1fc1219f1e3d
+    media_type: text/html
+    extra_fields:
+      hreflang: en-CA
+  - rel: about
+    title: Page d'accueil du projet
+    target: https://open.canada.ca/data/fr/dataset/a9f2828c-0d78-5eb6-a4c7-1fc1219f1e3d
+    media_type: text/html
+    extra_fields:
+      hreflang: fr-CA
+  - rel: author
+    title: Environment and Climate Change Canada (ECCC)
+    target: https://www.canada.ca/en/environment-climate-change.html
+    media_type: text/html
+    extra_fields:
+      hreflang: en-CA
+  - rel: author
+    title: Environnement et Changement Climatique Canada (ECCC)
+    target: https://www.canada.ca/fr/environnement-changement-climatique.html
+    media_type: text/html
+    extra_fields:
+      hreflang: fr-CA
+  - rel: describedby
+    title: Data and products of the Regional Deterministic Prediction System (RDPS)
+    target: https://eccc-msc.github.io/open-data/msc-data/nwp_rdps/readme_rdps_en
+    media_type: text/html
+    extra_fields:
+      hreflang: en-CA
+  - rel: describedby
+    title: Données et produits du Système régional de prévision déterministe (SRPD)
+    target: https://eccc-msc.github.io/open-data/msc-data/nwp_rdps/readme_rdps_fr/
+    media_type: text/html
+    extra_fields:
+      hreflang: fr-CA
+  - rel: license
+    title: Environment and Climate Change Canada Data Servers End-use License
+    target: https://eccc-msc.github.io/open-data/licence/readme_en/
+    media_type: text/html
+    extra_fields:
+      hreflang: en-CA
+  - rel: license
+    title: Licence d’utilisation finale pour les serveurs de données d’Environnement et Changement climatique Canada
+    target: https://eccc-msc.github.io/open-data/licence/readme_fr/
+    media_type: text/html
+    extra_fields:
+      hreflang: fr-CA
+
+contacts:
+  - organization: Computer Research Institute of Montreal (CRIM)
+    identifier: CRIM
+    position: Support
+    roles:
+      - indexer
+    emails:
+      - value: support-geo@crim.ca
+        roles:
+          - work
+    logo:
+      href: https://raw.githubusercontent.com/henriaidasso/image-store/refs/heads/main/img/crim.png
+      rel: icon
+      type: image/png
+      title: CRIM
+    links:
+      - rel: about
+        title: Site web
+        target: https://www.crim.ca/fr/
+        media_type: text/html
+        extra_fields:
+          hreflang: fr-CA
+  - organization: Environment and Climate Change Canada (ECCC)
+    identifier: ECCC
+    position: Support
+    roles:
+      - licensor
+      - processor
+      - producer
+    emails:
+      - value: ECWeather-Meteo@ec.gc.ca
+        roles:
+          - work
+    phones:
+      - value: +18199972800
+        roles:
+          - work
+    addresses:
+      - deliveryPoint: 77 Westmorland Street, suite 260
+        city: Fredericton
+        administrativeArea: New Brunswick
+        postalCode: E3B 6Z4
+        country: Canada
+    links:
+      - rel: about
+        title: Web page
+        target: https://www.canada.ca/en/environment-climate-change.html
+        media_type: text/html
+        extra_fields:
+          hreflang: en-CA
+      - rel: about
+        title: Site web
+        target: https://www.canada.ca/fr/environnement-changement-climatique.html
+        media_type: text/html
+        extra_fields:
+          hreflang: fr-CA
