@@ -1,7 +1,7 @@
 # STAC Catalog Populator
 
-![Latest Version](https://img.shields.io/badge/latest%20version-1.11.0-blue?logo=github)
-![Commits Since Latest](https://img.shields.io/github/commits-since/crim-ca/stac-populator/1.11.0.svg?logo=github)
+![Latest Version](https://img.shields.io/badge/latest%20version-0.11.0-blue?logo=github)
+![Commits Since Latest](https://img.shields.io/github/commits-since/crim-ca/stac-populator/0.11.0.svg?logo=github)
 ![GitHub License](https://img.shields.io/github/license/crim-ca/stac-populator)
 
 This repository contains a framework [STACpopulator](STACpopulator)
@@ -28,10 +28,14 @@ Provided implementations of `STACpopulatorBase`:
 
 | Implementation                               | Description                                                                                                             |
 |----------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| [RDPS_CRIM][RDPS_CRIM]                       | Crawls a THREDDS Catalog for RDPS NCML-annotated NetCDF references to publish corresponding STAC Collection and Items.  |
+| [HRDPS_CRIM][HRDPS_CRIM]                     | Crawls a THREDDS Catalog for HRDPS NCML-annotated NetCDF references to publish corresponding STAC Collection and Items. |
 | [CMIP6_UofT][CMIP6_UofT]                     | Crawls a THREDDS Catalog for CMIP6 NCML-annotated NetCDF references to publish corresponding STAC Collection and Items. |
 | [DirectoryLoader][DirLoader]                 | Crawls a subdirectory hierarchy of pre-generated STAC Collections and Items to publish to a STAC API endpoint.          |
 | [CORDEX-CMIP6_Ouranos][CORDEX-CMIP6_Ouranos] | Crawls a THREDDS Catalog for CORDEX-CMIP6 NetCDF references to publish corresponding STAC Collection and Items.         |
 
+[RDPS_CRIM]: STACpopulator/implementations/RDPS_CRIM/add_RDPS.py
+[HRDPS_CRIM]: STACpopulator/implementations/HRDPS_CRIM/add_HRDPS.py
 [CMIP6_UofT]: STACpopulator/implementations/CMIP6_UofT/add_CMIP6.py
 [DirLoader]: STACpopulator/implementations/DirectoryLoader/crawl_directory.py
 [CORDEX-CMIP6_Ouranos]: STACpopulator/implementations/CORDEX-CMIP6_Ouranos/add_CORDEX-CMIP6.py
@@ -111,7 +115,7 @@ You can also employ the pre-built Docker, which can be called as follows,
 where `[command]` corresponds to any of the above example operations.
 
 ```shell
-docker run -ti ghcr.io/crim-ca/stac-populator:1.11.0 [command]
+docker run -ti ghcr.io/crim-ca/stac-populator:0.11.0 [command]
 ```
 
 *Note*: <br>
