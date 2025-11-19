@@ -17,6 +17,9 @@ LOGGER = logging.getLogger(__name__)
 class CMIP6populator(THREDDSPopulator):
     """Populator that creates STAC objects representing CMIP6 data from a THREDDS catalog."""
 
+    name = "CMIP6_UofT"
+    description = "CMIP6 STAC populator from a THREDDS catalog or NCML XML."
+
     item_properties_model = CMIP6Properties
     item_geometry_model = GeoJSONPolygon
 

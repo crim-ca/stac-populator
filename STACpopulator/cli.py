@@ -1,10 +1,9 @@
 import argparse
 import functools
 import importlib
-import pkgutil
 import sys
 import warnings
-from types import ModuleType
+from pathlib import Path
 from typing import get_args
 
 import pystac
@@ -16,6 +15,7 @@ from STACpopulator.collection_update import UpdateModes, update_api_collection
 from STACpopulator.exceptions import STACPopulatorError
 from STACpopulator.export import export_catalog
 from STACpopulator.log import add_logging_options, setup_logging
+from STACpopulator.populators import STACpopulatorBase
 from STACpopulator.request_utils import add_request_options, apply_request_options
 
 
@@ -44,9 +44,10 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     populators_subparser = run_parser.add_subparsers(
         title="populator", dest="populator", description="Implementation to run."
     )
-    for implementation_module_name, module in implementation_modules().items():
-        implementation_parser = populators_subparser.add_parser(implementation_module_name)
-        module.Populator.update_parser_args(implementation_parser)
+    for name, populator in populators().items():
+        implementation_parser = populators_subparser.add_parser(name)
+        implementation_parser.description = getattr(populator, "description", name)
+        populator.update_parser_args(implementation_parser)
     update_parser = commands_subparser.add_parser(
         "update-collection", description="Update collection information based on items in the collection"
     )
@@ -76,19 +77,24 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
 
 
 @functools.cache
-def implementation_modules() -> dict[str, ModuleType]:
+def populators() -> dict[str, STACpopulatorBase]:
     """
     Try to load implementations.
 
     If one fails (i.e. due to missing dependencies) continue loading others.
     """
-    modules = {}
-    for module_info in pkgutil.iter_modules(STACpopulator.implementations.__path__):
-        try:
-            modules[module_info.name] = importlib.import_module(f"STACpopulator.implementations.{module_info.name}")
-        except STACPopulatorError as e:
-            warnings.warn(f"Could not load extension {module_info.name} because of error {e}")
-    return modules
+    impl_path = Path(STACpopulator.implementations.__path__[0])
+    for path in impl_path.glob("**/*.py"):
+        if path.name == "__init__.py":
+            path = path.parent
+        rel_path = path.relative_to(impl_path)
+        if str(rel_path) != ".":
+            module_path = str(rel_path.with_suffix("")).replace("/", ".").replace("-", "_")
+            try:
+                importlib.import_module(f"STACpopulator.implementations.{module_path}")
+            except STACPopulatorError as e:
+                warnings.warn(f"Could not load extension {rel_path} because of error {e}")
+    return {getattr(klass, "name", klass.__name__): klass for klass in STACpopulatorBase.concrete_subclasses()}
 
 
 def run(ns: argparse.Namespace) -> int:
@@ -99,7 +105,7 @@ def run(ns: argparse.Namespace) -> int:
         if ns.command == "run":
             if ns.stac_version:
                 pystac.set_stac_version(ns.stac_version)
-            return implementation_modules()[ns.populator].Populator.run(ns, session) or 0
+            return populators()[ns.populator].run(ns, session) or 0
         elif ns.command == "update_collection":
             return update_api_collection(ns.mode, ns.stac_collection_uri, ns.exclude_summary) or 0
         else:

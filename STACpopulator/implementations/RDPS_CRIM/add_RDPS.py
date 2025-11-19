@@ -10,6 +10,8 @@ LOGGER = logging.getLogger(__name__)
 class RDPSpopulator(THREDDSPopulator):
     """Populator that creates STAC objects representing RDPS data from a THREDDS catalog."""
 
+    name = "RDPS_CRIM"
+    description = "RDPS STAC populator from a THREDDS catalog or NCML XML."
     data_model = RDPSDataModel
     item_geometry_model = None  # Unnecessary, but kept for consistency
 

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 import functools
 import importlib
@@ -32,6 +34,9 @@ LOGGER = logging.getLogger(__name__)
 
 class STACpopulatorBase(ABC):
     """Abstract base class for STAC populators."""
+
+    name: Optional[str]
+    description: Optional[str]
 
     def __init__(
         self,
@@ -81,6 +86,13 @@ class STACpopulatorBase(ABC):
         LOGGER.info("Initialization complete")
         LOGGER.info(f"Collection {self.collection_name} is assigned ID {self.collection_id}")
         self._collection = self.create_stac_collection()
+
+    @classmethod
+    def concrete_subclasses(cls) -> list[STACpopulatorBase]:
+        """Return all concrete subclasses (recursive) of this class."""
+        return [
+            k for klass in cls.__subclasses__() for k in [klass] + klass.__subclasses__() if not inspect.isabstract(k)
+        ]
 
     @staticmethod
     def _load_extra_parser(func_str: str, extra_kwargs: dict[str, str]) -> Callable:
