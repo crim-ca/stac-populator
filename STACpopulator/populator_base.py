@@ -1,11 +1,14 @@
 import functools
+import importlib
+import importlib.util
 import inspect
 import json
 import logging
 import os
+import re
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Dict, Iterable, List, MutableMapping, Optional, Type, Union
+from typing import Any, Callable, Dict, Iterable, List, MutableMapping, Optional, Type, Union
 
 import pystac
 from requests.sessions import Session
@@ -17,6 +20,7 @@ from STACpopulator.api_requests import (
     stac_version_match,
 )
 from STACpopulator.collection_update import UpdateModesOptional, update_collection
+from STACpopulator.exceptions import FunctionLoadError
 from STACpopulator.input import GenericLoader
 from STACpopulator.models import AnyGeometry
 from STACpopulator.stac_utils import load_config
@@ -34,6 +38,9 @@ class STACpopulatorBase(ABC):
         update: bool = False,
         session: Optional[Session] = None,
         config_file: Optional[Union[os.PathLike[str], str]] = "collection_config.yml",
+        extra_item_parsers: Optional[list[str]] = None,
+        extra_collection_parsers: Optional[list[str]] = None,
+        extra_parser_arguments: Optional[dict[str, str] | list[tuple[str, str]]] = None,
         update_collection: UpdateModesOptional = "none",
         exclude_summaries: Iterable[str] = (),
     ) -> None:
@@ -48,6 +55,19 @@ class STACpopulatorBase(ABC):
         self._collection_config_path = config_file
         self._collection_info: MutableMapping[str, Any] = None
         self._session = session
+        extra_parser_arguments = dict(extra_parser_arguments or {})
+        self._extra_item_parsers = [
+            self._load_extra_parser(parser, extra_parser_arguments) for parser in (extra_item_parsers or [])
+        ]
+        self._extra_collection_parsers = [
+            self._load_extra_parser(parser, extra_parser_arguments) for parser in (extra_collection_parsers or [])
+        ]
+
+        if extra_parser_arguments and not (self._extra_collection_parsers or self._extra_item_parsers):
+            LOGGER.warning(
+                "extra_parser_arguments will be ignored because no extra collection or item parsers are specified."
+            )
+
         self.load_config()
 
         self._ingest_pipeline = data_loader
@@ -59,6 +79,37 @@ class STACpopulatorBase(ABC):
         LOGGER.info("Initialization complete")
         LOGGER.info(f"Collection {self.collection_name} is assigned ID {self.collection_id}")
         self._collection = self.create_stac_collection()
+
+    @staticmethod
+    def _load_extra_parser(func_str: str, extra_kwargs: dict[str, str]) -> Callable:
+        if ":" in func_str:
+            mod, func = func_str.split(":", 1)
+            if mod.endswith(".py"):
+                mod_name = re.sub(r"\W", "_", os.path.splitext(os.path.basename(mod))[0])
+                mod_spec = importlib.util.spec_from_file_location(mod_name, mod)
+                function_ns = importlib.util.module_from_spec(mod_spec)
+                try:
+                    mod_spec.loader.exec_module(function_ns)
+                except FileNotFoundError as e:
+                    raise FunctionLoadError(f"Unable to load python module from file: '{mod}'") from e
+            else:
+                try:
+                    function_ns = importlib.import_module(mod)
+                except ModuleNotFoundError as e:
+                    raise FunctionLoadError(f"Unable to load module '{mod}'") from e
+            try:
+                callable_func = getattr(function_ns, func)
+            except AttributeError as e:
+                raise FunctionLoadError(f"Unable to load function '{func}' from '{mod}'") from e
+            arg_spec = inspect.getfullargspec(callable_func)
+            if arg_spec.varkw:
+                return functools.partial(callable_func, **extra_kwargs)
+            all_kwargs = arg_spec.args + arg_spec.kwonlyargs
+            return functools.partial(callable_func, **{k: v for k, v in extra_kwargs.items() if k in all_kwargs})
+        else:
+            raise FunctionLoadError(
+                "Parser function string is not properly formatted. Should be in the form 'module:function_name'"
+            )
 
     def load_config(self) -> None:
         """
@@ -161,6 +212,8 @@ class STACpopulatorBase(ABC):
             collection.add_links(collection_links)
         collection.add_links(self._ingest_pipeline.links)
         collection_data = collection.to_dict()
+        for func in self._extra_collection_parsers:
+            func(collection_data)
         self.publish_stac_collection(collection_data)
         return collection_data
 
@@ -228,6 +281,8 @@ class STACpopulatorBase(ABC):
             LOGGER.info(f"New data item: {item_name}", extra={"item_loc": item_loc})
             try:
                 stac_item = self.create_stac_item(item_name, item_data)
+                for func in self._extra_item_parsers:
+                    func(stac_item)
             except Exception:
                 LOGGER.exception(
                     f"Failed to create STAC item for {item_name}",

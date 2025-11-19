@@ -2,8 +2,7 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
-<!-- insert list items of new changes here -->
-
+* Add option to supply additional custom parsers for items and collections.
 * Add `RDPS_CRIM` and `HRDPS_CRIM` implementations.
 * Add `cf` extension adding CF Parameter metadata to (H)RDPS stac asset and items.
 * Add `cf` and `file` helpers.
