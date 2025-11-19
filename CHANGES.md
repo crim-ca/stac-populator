@@ -2,15 +2,27 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
-<!-- insert list items of new changes here -->
+* Add option to supply additional custom parsers for items and collections.
+* Add `RDPS_CRIM` and `HRDPS_CRIM` implementations.
+* Add `cf` extension adding CF Parameter metadata to (H)RDPS stac asset and items.
+* Add `cf` and `file` helpers.
+* Add `providers` and `contacts` extensions metdata to (H)RDPS stac collection.
+* Fix deprecated access to `model_fields` in `BaseSTAC` data model class.
+* Fix bug service type check in extensions' `get_assets` methods.
+* Fix return type of `from_data` in `THREDDSCatalogDataModel`.
+* Update RDPS and HRDPS tests.
+* Add documentation for implementing new populators
 
-## [1.11.0](https://github.com/crim-ca/stac-populator/tree/1.11.0) (2025-11-12)
+## [0.11.0](https://github.com/crim-ca/stac-populator/tree/0.11.0) (2025-11-17)
 
 * Add option to automatically update collection extents and summaries based on ingested items.
 
 ## [0.10.0](https://github.com/crim-ca/stac-populator/tree/0.10.0) (2025-11-11)
 
-<!-- insert list items of new changes here -->
+* Add `pre-commit` linting rules (code format + STAC field sorting in JSON).
+* Add initial RDPS and HRDPS examples with minimal metadata from Ouranos THREDDS samples.
+* Fix `datacube` to report `[None, None]` instead of `["", ""]` for unbounded `cube:dimensions.extent`.
+* Fix unique ID creation from THREDDS access URLs.
 
 ## [0.9.0](https://github.com/crim-ca/stac-populator/tree/0.9.0) (2025-08-26)
 

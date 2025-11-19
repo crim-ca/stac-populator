@@ -141,6 +141,15 @@ class DataCubeHelper(Helper):
             },
         }
 
+    @classmethod
+    def from_data(
+        cls,
+        data: dict[str, Any],
+        **kwargs,
+    ) -> "DataCubeHelper":
+        """Create a DataCubeHelper instance from raw data."""
+        return cls(attrs=data["data"])
+
     @property
     @functools.cache
     def dimensions(self) -> dict[str, Dimension]:
@@ -213,9 +222,11 @@ class DataCubeHelper(Helper):
             else:
                 dtype = VariableType.DATA.value
 
+            dimensions = meta.get("shape", [])
+
             variables[name] = Variable(
                 properties=dict(
-                    dimensions=meta["shape"],
+                    dimensions=[] if dimensions == [""] else dimensions,
                     type=dtype,
                     description=attrs.get("description", attrs.get("long_name", "")),
                     unit=attrs.get("units", ""),

@@ -27,6 +27,9 @@ class DirectoryPopulator(STACpopulatorBase):
         update: bool,
         collection: dict[str, Any],
         session: Optional[Session] = None,
+        extra_item_parsers: Optional[list[str]] = None,
+        extra_collection_parsers: Optional[list[str]] = None,
+        extra_parser_arguments: Optional[dict[str, str] | list[tuple[str, str]]] = None,
         update_collection: UpdateModesOptional = "none",
         exclude_summaries: Iterable[str] = (),
     ) -> None:
@@ -36,6 +39,9 @@ class DirectoryPopulator(STACpopulatorBase):
             loader,
             update=update,
             session=session,
+            extra_item_parsers=extra_item_parsers,
+            extra_collection_parsers=extra_collection_parsers,
+            extra_parser_arguments=extra_parser_arguments,
             update_collection=update_collection,
             exclude_summaries=exclude_summaries,
         )

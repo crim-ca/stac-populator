@@ -64,6 +64,16 @@ LOGGER = logging.getLogger(__name__)
 class Helper:
     """Class to be subclassed by extension helpers."""
 
+    @classmethod
+    @abstractmethod
+    def from_data(
+        cls,
+        data: dict[str, Any],
+        **kwargs,
+    ) -> "Helper":
+        """Create a Helper instance from raw data."""
+        pass
+
 
 class ExtensionHelper(BaseModel, Helper):
     """Base class for dataset properties going into the catalog.
@@ -190,7 +200,8 @@ class BaseSTAC(BaseModel):
     @model_validator(mode="after")
     def find_helpers(self) -> "BaseSTAC":
         """Populate the list of extensions."""
-        for key, field in self.model_fields.items():
+        # Access model fields from class. From obj will be removed in pydantic v3
+        for key, field in type(self).model_fields.items():
             if isinstance(field.annotation, type) and issubclass(field.annotation, Helper):
                 self._helpers.append(key)
         return self
@@ -328,8 +339,8 @@ class MetaItemExtension:
         return {
             key: asset
             for key, asset in self.item.get_assets().items()
-            if (service_type is ServiceType and service_type.value in asset.extra_fields)
-            or any(ServiceType.from_value(field, default=None) is ServiceType for field in asset.extra_fields)
+            if (isinstance(service_type, ServiceType) and service_type.value in asset.extra_fields)
+            or any(ServiceType.from_value(field, default=False) for field in asset.extra_fields)
         }
 
     def __repr__(self) -> str:
