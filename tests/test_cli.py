@@ -1,5 +1,5 @@
+import inspect
 import os
-import pkgutil
 import re
 import subprocess
 import tempfile
@@ -8,6 +8,7 @@ from typing import Mapping
 import pytest
 
 from STACpopulator import implementations
+from STACpopulator.cli import populators
 
 
 def run_cli(*args: str, **kwargs: Mapping) -> subprocess.CompletedProcess:
@@ -16,7 +17,10 @@ def run_cli(*args: str, **kwargs: Mapping) -> subprocess.CompletedProcess:
 
 @pytest.fixture(scope="session")
 def populator_names():
-    return {m.name for m in pkgutil.iter_modules(implementations.__path__)}
+    """Get all registered implementation names (ignore dummy implementations created by tests)"""
+    return set(
+        name for name, pop in populators().items() if inspect.getfile(pop).startswith(implementations.__path__[0])
+    )
 
 
 @pytest.fixture(scope="session")
@@ -49,7 +53,6 @@ def test_missing_implementation(populator_help_pattern, populator_names):
     with tempfile.TemporaryDirectory() as dirname:
         pass  # this allows us to get a dirname that does not exist
     proc = run_cli("stac-populator", "run", "--help", env={**os.environ, "PYESSV_ARCHIVE_HOME": dirname})
-    print(proc.stderr)
     proc.check_returncode()
     populators = re.search(populator_help_pattern, proc.stdout)
     assert "CMIP6_UofT" in populator_names  # sanity check
