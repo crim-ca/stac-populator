@@ -2,7 +2,14 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
-<!-- insert list items of new changes here -->
+* Simplify populator implementation discovery and reduce boilerplate for new implementations.
+* Add a classmethod to add additional CLI args to the `STACpopulatorBase` class (replaces `add_parser_args`)
+* Add a classmethod to run the populator based on CLI args to the `STACpopulatorBase` class (replaces `runner`)
+* Add shared implementations for these two classmethods to a `THREDDSpopulatorBase` class that can be
+  used by all populators that pull data from THREDDS
+* Rename `populator_base.py` to `populators.py` since it now contains more than just the base populator
+* No longer require new implementations to list populator modules in `implementations.__init__.py`
+* Implementation discovery is now done by keeping track of concrete implementations of the STACpopulatorBase class
 
 ## [0.12.0](https://github.com/crim-ca/stac-populator/tree/0.12.0) (2025-11-20)
 
@@ -16,7 +23,6 @@
 * Fix return type of `from_data` in `THREDDSCatalogDataModel`.
 * Update RDPS and HRDPS tests.
 * Add documentation for implementing new populators
-* Simplify populator implementation discovery and reduce boilerplate for new implementations.
 
 ## [0.11.0](https://github.com/crim-ca/stac-populator/tree/0.11.0) (2025-11-17)
 
