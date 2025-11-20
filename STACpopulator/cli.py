@@ -3,24 +3,20 @@ import functools
 import importlib
 import sys
 import warnings
-from types import ModuleType
+from pathlib import Path
 from typing import get_args
 
 import pystac
 import requests
 
-from STACpopulator import __version__, implementations
-from STACpopulator.collection_update import UpdateModes, UpdateModesOptional, update_api_collection
+import STACpopulator.implementations
+from STACpopulator import __version__
+from STACpopulator.collection_update import UpdateModes, update_api_collection
 from STACpopulator.exceptions import STACPopulatorError
 from STACpopulator.export import export_catalog
 from STACpopulator.log import add_logging_options, setup_logging
+from STACpopulator.populators import STACpopulatorBase
 from STACpopulator.request_utils import add_request_options, apply_request_options
-
-
-def _extra_parser_argument(arg: str) -> tuple[str, str]:
-    if "=" in arg:
-        return tuple(a.strip() for a in arg.split("=", 1))
-    raise argparse.ArgumentTypeError("--extra-parser-arguments must be in the form 'key=value'")
 
 
 def add_parser_args(parser: argparse.ArgumentParser) -> None:
@@ -48,52 +44,10 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     populators_subparser = run_parser.add_subparsers(
         title="populator", dest="populator", description="Implementation to run."
     )
-    for implementation_module_name, module in implementation_modules().items():
-        implementation_parser = populators_subparser.add_parser(implementation_module_name)
-        module.add_parser_args(implementation_parser)
-        implementation_parser.add_argument(
-            "-x",
-            "--extra-item-parsers",
-            action="append",
-            help="Functions that may modify items before upload. "
-            "Should be specified in the form 'module:function_name' "
-            "and have the signature function(item: dict, **kw)",
-        )
-        implementation_parser.add_argument(
-            "-X",
-            "--extra-collection-parsers",
-            action="append",
-            help="Functions that may modify collections before upload. "
-            "Should be specified in the form 'module:function_name' or "
-            "path/to/python/file.py:function_name. Functions should "
-            "have the signature function(collection: dict, **kw) -> None "
-            "and should modify the collection dict in place.",
-        )
-        implementation_parser.add_argument(
-            "-a",
-            "--extra-parser-arguments",
-            action="append",
-            type=_extra_parser_argument,
-            help="Extra keyword arguments that should be passed to extra "
-            "item and collection function as "
-            "keyword arguments. "
-            "Should be specified in the form 'key=value'",
-        )
-        implementation_parser.add_argument(
-            "--update-collection-mode",
-            dest="update_collection",
-            choices=get_args(UpdateModesOptional),
-            default="none",
-            help="Update collection information based on new items created or updated by this populator. "
-            "Only applies if --update is also set.",
-        )
-        implementation_parser.add_argument(
-            "--exclude-summary",
-            nargs="*",
-            action="extend",
-            default=[],
-            help="Exclude these properties when updating collection summaries. ",
-        )
+    for name, populator in populators().items():
+        implementation_parser = populators_subparser.add_parser(name)
+        implementation_parser.description = getattr(populator, "description", name)
+        populator.update_parser_args(implementation_parser)
     update_parser = commands_subparser.add_parser(
         "update-collection", description="Update collection information based on items in the collection"
     )
@@ -123,21 +77,24 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
 
 
 @functools.cache
-def implementation_modules() -> dict[str, ModuleType]:
+def populators() -> dict[str, STACpopulatorBase]:
     """
     Try to load implementations.
 
     If one fails (i.e. due to missing dependencies) continue loading others.
     """
-    modules = {}
-    for implementation_module_name in implementations.__all__:
-        try:
-            modules[implementation_module_name] = importlib.import_module(
-                f".{implementation_module_name}", implementations.__package__
-            )
-        except STACPopulatorError as e:
-            warnings.warn(f"Could not load extension {implementation_module_name} because of error {e}")
-    return modules
+    impl_path = Path(STACpopulator.implementations.__path__[0])
+    for path in impl_path.glob("**/*.py"):
+        if path.name == "__init__.py":
+            path = path.parent
+        rel_path = path.relative_to(impl_path)
+        if str(rel_path) != ".":
+            module_path = str(rel_path.with_suffix("")).replace("/", ".").replace("-", "_")
+            try:
+                importlib.import_module(f"STACpopulator.implementations.{module_path}")
+            except STACPopulatorError as e:
+                warnings.warn(f"Could not load extension {rel_path} because of error {e}")
+    return {getattr(klass, "name", klass.__name__): klass for klass in STACpopulatorBase.concrete_subclasses()}
 
 
 def run(ns: argparse.Namespace) -> int:
@@ -148,7 +105,7 @@ def run(ns: argparse.Namespace) -> int:
         if ns.command == "run":
             if ns.stac_version:
                 pystac.set_stac_version(ns.stac_version)
-            return implementation_modules()[ns.populator].runner(ns, session) or 0
+            return populators()[ns.populator].run(ns, session) or 0
         elif ns.command == "update_collection":
             return update_api_collection(ns.mode, ns.stac_collection_uri, ns.exclude_summary) or 0
         else:
