@@ -26,7 +26,7 @@ build
 *.json
 
 ## Exclude schemas
-!schemas/**/*.json
+!**/schemas/**/*.json
 
 ## Exclude test files
 !tests/data/**/*.json
