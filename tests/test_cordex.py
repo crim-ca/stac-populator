@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from STACpopulator.extensions.cordex6 import Cordex6DataModel, Cordex6DataModelNcML
+from STACpopulator.datamodels.cordex6 import Cordex6DataModel, Cordex6DataModelNcML
 
 
 def get_first_item_attrs(url):

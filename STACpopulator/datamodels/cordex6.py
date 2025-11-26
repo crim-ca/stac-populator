@@ -2,8 +2,8 @@
 from pydantic import model_validator
 
 from STACpopulator.datamodels.thredds import THREDDSCatalogDataModel
-from STACpopulator.extensions.cordex6 import CordexCmip6
-from STACpopulator.extensions.xscen import Xscen
+from STACpopulator.helpers.cordex6 import CordexCmip6
+from STACpopulator.helpers.xscen import Xscen
 
 
 class Cordex6DataModel(THREDDSCatalogDataModel):

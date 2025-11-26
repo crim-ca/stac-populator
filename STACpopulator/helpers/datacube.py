@@ -4,7 +4,7 @@ from typing import Any, MutableMapping, MutableSequence, TypeVar
 import pystac
 from pystac.extensions.datacube import DatacubeExtension, Dimension, DimensionType, Variable, VariableType
 
-from STACpopulator.extensions.base import Helper
+from STACpopulator.helpers.base import Helper
 from STACpopulator.stac_utils import ncattrs_to_bbox
 
 PySTACType = TypeVar("PySTACType", pystac.Collection, pystac.Item)

@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import datetime as dt
 
-from STACpopulator.extensions.base import BaseSTAC, ExtensionHelper
+from STACpopulator.datamodels.base import BaseSTAC
+from STACpopulator.helpers.base import ExtensionHelper
 
 
 class ExTest(ExtensionHelper):

@@ -10,8 +10,9 @@ import pytest
 import requests
 import xncml
 
-from STACpopulator.extensions.cmip6 import CMIP6Helper
-from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
+from STACpopulator.extensions.thredds import THREDDSExtension
+from STACpopulator.helpers.cmip6 import CMIP6Helper
+from STACpopulator.helpers.thredds import THREDDSHelper
 from STACpopulator.input import THREDDSLoader
 from STACpopulator.models import GeoJSONPolygon, Geometry
 from STACpopulator.populator_base import STACpopulatorBase

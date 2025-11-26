@@ -8,7 +8,7 @@ import pystac
 from pydantic import BaseModel, ConfigDict, PrivateAttr, model_validator
 from pystac import STACValidationError
 
-from STACpopulator.extensions.base import Helper
+from STACpopulator.helpers.base import Helper
 from STACpopulator.models import AnyGeometry
 
 

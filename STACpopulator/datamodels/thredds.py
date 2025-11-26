@@ -4,9 +4,10 @@ import inspect
 
 from pydantic import ConfigDict, model_validator
 
-from STACpopulator.extensions.base import BaseSTAC, Helper
-from STACpopulator.extensions.datacube import DataCubeHelper
-from STACpopulator.extensions.thredds import THREDDSHelper
+from STACpopulator.datamodels.base import BaseSTAC
+from STACpopulator.helpers.base import Helper
+from STACpopulator.helpers.datacube import DataCubeHelper
+from STACpopulator.helpers.thredds import THREDDSHelper
 from STACpopulator.stac_utils import ncattrs_to_bbox, ncattrs_to_geometry
 
 

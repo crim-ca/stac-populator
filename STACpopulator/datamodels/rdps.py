@@ -1,6 +1,6 @@
-from STACpopulator.extensions.cf import CFHelper
-from STACpopulator.extensions.file import FileHelper
-from STACpopulator.extensions.thredds import THREDDSCatalogDataModel
+from STACpopulator.datamodels.thredds import THREDDSCatalogDataModel
+from STACpopulator.helpers.cf import CFHelper
+from STACpopulator.helpers.file import FileHelper
 
 
 class RDPSDataModel(THREDDSCatalogDataModel):

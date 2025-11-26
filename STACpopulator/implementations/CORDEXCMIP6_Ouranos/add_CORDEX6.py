@@ -4,7 +4,7 @@ from typing import Any
 
 from requests.sessions import Session
 
-from STACpopulator.extensions.cordex6 import Cordex6DataModel
+from STACpopulator.datamodels.cordex6 import Cordex6DataModel
 from STACpopulator.input import ErrorLoader, THREDDSLoader
 from STACpopulator.populator_base import STACpopulatorBase
 

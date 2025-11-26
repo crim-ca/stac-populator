@@ -5,7 +5,7 @@ from pathlib import Path
 
 from pydantic import FilePath
 
-from STACpopulator.extensions.base import ExtensionHelper
+from STACpopulator.helpers.base import ExtensionHelper
 
 
 # This is generated using datamodel-codegen + manual edits
