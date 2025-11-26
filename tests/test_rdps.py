@@ -2,8 +2,8 @@
 
 import json
 
-from STACpopulator.extensions.hrdps import HRDPSDataModel
-from STACpopulator.extensions.rdps import RDPSDataModel
+from STACpopulator.datamodels.hrdps import HRDPSDataModel
+from STACpopulator.datamodels.rdps import RDPSDataModel
 
 
 def test_rdps():

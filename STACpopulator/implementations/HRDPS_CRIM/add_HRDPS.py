@@ -4,7 +4,7 @@ from typing import Any
 
 from requests.sessions import Session
 
-from STACpopulator.extensions.hrdps import HRDPSDataModel
+from STACpopulator.datamodels.hrdps import HRDPSDataModel
 from STACpopulator.input import ErrorLoader, THREDDSLoader
 from STACpopulator.populator_base import STACpopulatorBase
 

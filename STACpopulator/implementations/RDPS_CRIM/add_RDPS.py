@@ -4,7 +4,7 @@ from typing import Any
 
 from requests.sessions import Session
 
-from STACpopulator.extensions.rdps import RDPSDataModel
+from STACpopulator.datamodels.rdps import RDPSDataModel
 from STACpopulator.input import ErrorLoader, THREDDSLoader
 from STACpopulator.populator_base import STACpopulatorBase
 
