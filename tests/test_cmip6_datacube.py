@@ -6,8 +6,8 @@ import xncml
 from pystac.extensions.datacube import DatacubeExtension
 from pystac.validation import validate_dict
 
-from STACpopulator.extensions.cmip6 import CMIP6Helper
-from STACpopulator.extensions.datacube import DataCubeHelper
+from STACpopulator.helpers.cmip6 import CMIP6Helper
+from STACpopulator.helpers.datacube import DataCubeHelper
 from STACpopulator.models import GeoJSONPolygon
 
 DIR = Path(__file__).parent

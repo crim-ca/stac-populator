@@ -1,18 +1,14 @@
 from __future__ import annotations
 
-import inspect
 from typing import Generic, TypeVar, Union, cast
 
 import pystac
-from pydantic import ConfigDict, model_validator
 from pystac.extensions.base import (
     ExtensionManagementMixin,
     PropertiesExtension,
 )
 
-from STACpopulator.extensions.base import BaseSTAC, Helper
-from STACpopulator.extensions.datacube import DataCubeHelper
-from STACpopulator.stac_utils import ServiceType, magpie_resource_link, ncattrs_to_bbox, ncattrs_to_geometry
+from STACpopulator.stac_utils import ServiceType
 
 T = TypeVar("T", pystac.Collection, pystac.Item)
 
@@ -130,142 +126,3 @@ class CollectionTHREDDSExtension(THREDDSExtension[pystac.Item]):
     def __repr__(self) -> str:
         """Return repr."""
         return f"<CollectionTHREDDSExtension Collection id={self.obj.id}>"
-
-
-class THREDDSHelper(Helper):
-    """Helper for interacting with THREDDS."""
-
-    def __init__(self, access_urls: dict[str, str]) -> None:
-        self.access_urls = {ServiceType.from_value(svc): url for svc, url in access_urls.items()}
-
-    @classmethod
-    def from_data(
-        cls,
-        data: dict[str, any],
-        **kwargs,
-    ) -> THREDDSHelper:
-        """Create a THREDDSHelper instance from raw data."""
-        return cls(access_urls=data["data"]["access_urls"])
-
-    @property
-    def services(self) -> list[THREDDSService]:
-        """Return a list of THREDDS services including one for this helper."""
-        return [
-            THREDDSService(
-                service_type=svc_type,
-                href=href,
-            )
-            for svc_type, href in self.access_urls.items()
-        ]
-
-    @property
-    def links(self) -> list[pystac.Link]:
-        """Return a link for this resource."""
-        url = self.access_urls[ServiceType.httpserver]
-        link = magpie_resource_link(url)
-        return [link]
-
-    def apply(self, item: T, add_if_missing: bool = False) -> T:
-        """Apply the THREDDS extension to an item."""
-        ext = THREDDSExtension.ext(item, add_if_missing=add_if_missing)
-        ext.apply(services=self.services, links=self.links)
-        return item
-
-
-class THREDDSCatalogDataModel(BaseSTAC):
-    """Base class ingesting attributes loaded by `THREDDSLoader` and creating a STAC item.
-
-    This is meant to be subclassed for each extension.
-
-    It includes two validation mechanisms:
-     - pydantic validation using type hints, and
-     - json schema validation.
-    """
-
-    # Data from loader
-    data: dict
-
-    # Extensions classes
-    datacube: DataCubeHelper
-    thredds: THREDDSHelper
-
-    model_config = ConfigDict(populate_by_name=True, extra="ignore", arbitrary_types_allowed=True)
-
-    @classmethod
-    def from_data(cls, data: dict, **kwargs) -> THREDDSCatalogDataModel:
-        """
-        Instantiate class from data provided by THREDDS Loader.
-
-        This is where we match the Loader's output to the STAC item and extensions inputs. If we had multiple
-        loaders, that's probably the only thing that would be different between them.
-        """
-        # Inject kwargs for helpers into data
-        data["_extra_kwargs"] = kwargs
-
-        return cls(
-            data=data,
-            start_datetime=data["groups"]["CFMetadata"]["attributes"]["time_coverage_start"],
-            end_datetime=data["groups"]["CFMetadata"]["attributes"]["time_coverage_end"],
-            geometry=ncattrs_to_geometry(data),
-            bbox=ncattrs_to_bbox(data),
-        )
-
-    @model_validator(mode="before")
-    @classmethod
-    def instantiate_helpers(cls, data: dict[str, any]) -> dict[str, any]:
-        """Automatically instantiate helper fields before model initialization.
-
-        This method detects all fields annotated as subclasses of `Helper`
-        and populates them by calling their respective `from_data()` constructors.
-        Any extra keyword arguments are forwarded to helpers that accept them.
-
-        Parameters
-        ----------
-        data : dict[str, Any]
-            The raw input dictionary of parameters used to construct this class.
-
-        Returns
-        -------
-        dict[str, Any]
-            The modified data dictionary with instantiated helper objects injected
-            into their corresponding fields.
-        """
-        # Retrieve forwarded kwargs and remove from the data object
-        kwargs = data["data"].pop("_extra_kwargs", {})
-
-        # Iterate over model fields and find helpers
-        for field_name, field in cls.model_fields.items():
-            field_type = field.annotation
-            if isinstance(field_type, type) and issubclass(field_type, Helper):
-                # if helper not provided in constructor
-                if field_name not in data:
-                    # Filter kwargs to only include those accepted by the helper's constructor.
-                    type_signature = inspect.signature(field_type.__init__)
-                    accepted_kwargs = {k: v for k, v in kwargs.items() if k in type_signature.parameters}
-                    # Instantiate helper and forward accepted kwargs
-                    data[field_name] = field_type.from_data(data, **accepted_kwargs)
-        return data
-
-    def create_uid(self) -> str:
-        """Return a unique ID from the server location.
-
-        For datasets with a DRS, it might might more sense to use the dataset's metadata instead.
-        """
-        if "HTTPServer" in self.data["access_urls"]:
-            location = self.data["access_urls"]["HTTPServer"].split("/fileServer/")[1]
-        elif "OpenDAP" in self.data["access_urls"]:
-            location = self.data["access_urls"]["OPENDAP"].split("/dodsC/")[1]
-        elif "NCML" in self.data["access_urls"]:
-            location = self.data["access_urls"]["NCML"].split("/ncml/")[1]
-        else:
-            raise ValueError("No valid access URL found in data.")
-        return location.replace("/", "__")
-
-
-# TODO: Validate services links exist ?
-# @field_validator("access_urls")
-# @classmethod
-# def validate_access_urls(cls, value):
-#     assert len(set(["HTTPServer", "OPENDAP"]).intersection(value.keys())) >= 1, (
-#         "Access URLs must include HTTPServer or OPENDAP keys.")
-#     return value

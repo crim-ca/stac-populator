@@ -16,7 +16,7 @@ exclude = [
 ]
 
 [tool.setuptools.package-data]
-STACpopulator = ["**/collection_config.yml", "extensions/schemas/**/*.json"]
+STACpopulator = ["**/collection_config.yml", "helpers/schemas/**/*.json"]
 
 
 

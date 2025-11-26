@@ -1,4 +1,4 @@
-from STACpopulator.extensions.rdps import RDPSDataModel
+from STACpopulator.datamodels.rdps import RDPSDataModel
 
 
 # Customize the THREDDSCatalogDataModel

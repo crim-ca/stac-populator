@@ -10,7 +10,7 @@ from pydantic import ConfigDict, Field
 from pystac.extensions.file import FileExtension
 from requests import Session
 
-from STACpopulator.extensions.base import ExtensionHelper
+from STACpopulator.helpers.base import ExtensionHelper
 
 # Constants
 T = TypeVar("T", pystac.Asset, pystac.Link)
