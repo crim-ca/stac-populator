@@ -2,6 +2,14 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
+* Simplify populator implementation discovery and reduce boilerplate for new implementations.
+* Add a classmethod to add additional CLI args to the `STACpopulatorBase` class (replaces `add_parser_args`)
+* Add a classmethod to run the populator based on CLI args to the `STACpopulatorBase` class (replaces `runner`)
+* Add shared implementations for these two classmethods to a `THREDDSpopulatorBase` class that can be
+  used by all populators that pull data from THREDDS
+* Rename `populator_base.py` to `populators.py` since it now contains more than just the base populator
+* No longer require new implementations to list populator modules in `implementations.__init__.py`
+* Implementation discovery is now done by keeping track of concrete implementations of the STACpopulatorBase class
 * Add ability to parse vertical data from CF metadata extracted from NCML files
 * Convert longitude values in range 0-360 degrees to -180-180 degrees to comply with WGS84
 

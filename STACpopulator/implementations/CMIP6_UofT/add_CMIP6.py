@@ -1,23 +1,23 @@
-import argparse
 import json
 import logging
 from typing import Any, MutableMapping, Union
 
 from pystac import STACValidationError
 from pystac.extensions.datacube import DatacubeExtension
-from requests.sessions import Session
 
 from STACpopulator.extensions.cmip6 import CMIP6Helper, CMIP6Properties
 from STACpopulator.extensions.datacube import DataCubeHelper
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
-from STACpopulator.input import ErrorLoader, THREDDSLoader
-from STACpopulator.populator_base import STACpopulatorBase
+from STACpopulator.populators import THREDDSPopulator
 
 LOGGER = logging.getLogger(__name__)
 
 
-class CMIP6populator(STACpopulatorBase):
+class CMIP6populator(THREDDSPopulator):
     """Populator that creates STAC objects representing CMIP6 data from a THREDDS catalog."""
+
+    name = "CMIP6_UofT"
+    description = "CMIP6 STAC populator from a THREDDS catalog or NCML XML."
 
     item_properties_model = CMIP6Properties
 
@@ -62,51 +62,3 @@ class CMIP6populator(STACpopulatorBase):
 
         # print(json.dumps(item.to_dict()))
         return json.loads(json.dumps(item.to_dict()))
-
-
-def add_parser_args(parser: argparse.ArgumentParser) -> None:
-    """Add additional CLI arguments to the argument parser."""
-    parser.description = "CMIP6 STAC populator from a THREDDS catalog or NCML XML."
-    parser.add_argument("stac_host", help="STAC API URL")
-    parser.add_argument("href", help="URL to a THREDDS catalog or a NCML XML with CMIP6 metadata.")
-    parser.add_argument("--update", action="store_true", help="Update collection and its items")
-    parser.add_argument(
-        "--mode",
-        choices=["full", "single"],
-        default="full",
-        help="Operation mode, processing the full dataset or only the single reference.",
-    )
-    parser.add_argument(
-        "--config",
-        type=str,
-        help=(
-            "Override configuration file for the populator. "
-            "By default, uses the adjacent configuration to the implementation class."
-        ),
-    )
-
-
-def runner(ns: argparse.Namespace, session: Session) -> int:
-    """Run the populator."""
-    LOGGER.info(f"Arguments to call: {vars(ns)}")
-
-    if ns.mode == "full":
-        data_loader = THREDDSLoader(ns.href, session=session)
-    else:
-        # To be implemented
-        data_loader = ErrorLoader()
-
-    c = CMIP6populator(
-        ns.stac_host,
-        data_loader,
-        update=ns.update,
-        session=session,
-        config_file=ns.config,
-        extra_item_parsers=ns.extra_item_parsers,
-        extra_collection_parsers=ns.extra_collection_parsers,
-        extra_parser_arguments=ns.extra_parser_arguments,
-        update_collection=ns.update_collection,
-        exclude_summaries=ns.exclude_summary,
-    )
-    c.ingest()
-    return 0

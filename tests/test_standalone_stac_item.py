@@ -13,7 +13,7 @@ import xncml
 from STACpopulator.extensions.cmip6 import CMIP6Helper
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
 from STACpopulator.input import THREDDSLoader
-from STACpopulator.populator_base import STACpopulatorBase
+from STACpopulator.populators import STACpopulatorBase
 
 
 @pytest.fixture
@@ -101,6 +101,8 @@ class MockedNoSTACUpload(STACpopulatorBase):
             },
         }
 
+    def run(cls, *args, **kwargs): ...
+
 
 @pytest.mark.vcr("test_cmip6_stac_thredds_catalog_parsing.yaml")
 def test_cmip6_stac_thredds_catalog_parsing(cur_dir):
@@ -144,7 +146,7 @@ def test_standalone_stac_item_thredds_via_loader():
     loader = THREDDSLoader(url)
     populator = MockedNoSTACUpload("https://example.com", loader)
 
-    with patch("STACpopulator.populator_base.post_stac_item") as mock:
+    with patch("STACpopulator.populators.post_stac_item") as mock:
         populator.ingest()
         for call in mock.mock_calls:
             data = call.args[3]
@@ -187,7 +189,7 @@ def test_standalone_stac_item_thredds_via_loader_with_extra_item_parser(request)
             "vkwargs_value": "f",
         },
     )
-    with patch("STACpopulator.populator_base.post_stac_item") as mock:
+    with patch("STACpopulator.populators.post_stac_item") as mock:
         populator.ingest()
         for call in mock.mock_calls:
             data = call.args[3]
@@ -218,7 +220,7 @@ def test_standalone_stac_item_thredds_via_loader_with_extra_item_parsers_from_fi
             "vkwargs_value": "f",
         },
     )
-    with patch("STACpopulator.populator_base.post_stac_item") as mock:
+    with patch("STACpopulator.populators.post_stac_item") as mock:
         populator.ingest()
         for call in mock.mock_calls:
             data = call.args[3]
@@ -241,7 +243,7 @@ def test_standalone_stac_item_update_collection(update_collection, exclude_summa
         update=True,
     )
 
-    with patch("STACpopulator.populator_base.post_stac_item"):
+    with patch("STACpopulator.populators.post_stac_item"):
         populator.ingest()
         data = populator._collection
         if update_collection in ("extents", "all"):
