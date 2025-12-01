@@ -8,7 +8,6 @@ from typing import (
     Literal,
     MutableMapping,
     Optional,
-    Type,
     TypeVar,
     Union,
     cast,
@@ -35,12 +34,7 @@ from pystac.extensions.base import (
 
 from STACpopulator.exceptions import ExtensionLoadError
 from STACpopulator.models import AnyGeometry
-from STACpopulator.stac_utils import (
-    ServiceType,
-    collection2literal,
-    ncattrs_to_bbox,
-    ncattrs_to_geometry,
-)
+from STACpopulator.stac_utils import GeoData, ServiceType, collection2literal
 
 try:
     import pyessv
@@ -140,11 +134,11 @@ class CMIP6Properties(BaseModel, validate_assignment=True):
 class CMIP6Helper:
     """Helper for CMIP6 data."""
 
-    def __init__(self, attrs: MutableMapping[str, Any], geometry_model: Type[AnyGeometry]) -> None:
+    def __init__(self, attrs: MutableMapping[str, Any]) -> None:
         self.attrs = attrs
         self.cmip6_attrs = attrs["attributes"]
         self.cfmeta = attrs["groups"]["CFMetadata"]["attributes"]
-        self.geometry_model = geometry_model
+        self._geo_data = GeoData.from_ncattrs(attrs)
 
     @property
     def uid(self) -> str:
@@ -165,12 +159,12 @@ class CMIP6Helper:
     @property
     def geometry(self) -> AnyGeometry:
         """Return the geometry."""
-        return self.geometry_model(**ncattrs_to_geometry(self.attrs))
+        return self._geo_data.to_geometry()
 
     @property
     def bbox(self) -> list[float]:
         """Return the bounding box."""
-        return ncattrs_to_bbox(self.attrs)
+        return self._geo_data.to_bbox()
 
     @property
     def start_datetime(self) -> datetime:

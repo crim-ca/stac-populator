@@ -8,7 +8,7 @@ import os
 import re
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Callable, Dict, Iterable, List, MutableMapping, Optional, Type, Union
+from typing import Any, Callable, Dict, Iterable, List, MutableMapping, Optional, Union
 
 import pystac
 from requests.sessions import Session
@@ -22,7 +22,6 @@ from STACpopulator.api_requests import (
 from STACpopulator.collection_update import UpdateModesOptional, update_collection
 from STACpopulator.exceptions import FunctionLoadError
 from STACpopulator.input import GenericLoader
-from STACpopulator.models import AnyGeometry
 from STACpopulator.stac_utils import load_config
 
 LOGGER = logging.getLogger(__name__)
@@ -150,12 +149,6 @@ class STACpopulatorBase(ABC):
     def collection_id(self) -> str:
         """Return the populator's collection id."""
         return self._collection_info["id"]
-
-    @property
-    @abstractmethod
-    def item_geometry_model(self) -> Type[AnyGeometry]:
-        """Return a geometry model class that represents the geometry used in this populator."""
-        raise NotImplementedError
 
     @abstractmethod
     def create_stac_item(self, item_name: str, item_data: dict[str, Any]) -> dict[str, Any]:

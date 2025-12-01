@@ -8,7 +8,6 @@ from requests.sessions import Session
 
 from STACpopulator.collection_update import UpdateModesOptional
 from STACpopulator.input import STACDirectoryLoader
-from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populator_base import STACpopulatorBase
 
 LOGGER = logging.getLogger(__name__)
@@ -16,8 +15,6 @@ LOGGER = logging.getLogger(__name__)
 
 class DirectoryPopulator(STACpopulatorBase):
     """Populator that constructs STAC objects from files in a directory."""
-
-    item_geometry_model = GeoJSONPolygon
 
     def __init__(
         self,

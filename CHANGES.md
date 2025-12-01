@@ -2,7 +2,8 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
-<!-- insert list items of new changes here -->
+* Add ability to parse vertical data from CF metadata extracted from NCML files
+* Convert longitude values in range 0-360 degrees to -180-180 degrees to comply with WGS84
 
 ## [0.12.0](https://github.com/crim-ca/stac-populator/tree/0.12.0) (2025-11-20)
 

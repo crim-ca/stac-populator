@@ -5,7 +5,7 @@ import pystac
 from pystac.extensions.datacube import DatacubeExtension, Dimension, DimensionType, Variable, VariableType
 
 from STACpopulator.extensions.base import Helper
-from STACpopulator.stac_utils import ncattrs_to_bbox
+from STACpopulator.stac_utils import GeoData
 
 PySTACType = TypeVar("PySTACType", pystac.Collection, pystac.Item)
 
@@ -155,25 +155,26 @@ class DataCubeHelper(Helper):
     def dimensions(self) -> dict[str, Dimension]:
         """Return Dimension objects required for Datacube extension."""
         dims = {}
+        geo_data = GeoData.from_ncattrs(self.attrs).original_data()
         for name, length in self.attrs["dimensions"].items():
             v = self.attrs["variables"].get(name)
             if v:
-                bbox = ncattrs_to_bbox(self.attrs)
                 for key, criteria in self.coordinate_criteria.items():
                     for criterion, expected in criteria.items():
                         if v["attributes"].get(criterion, None) in expected:
                             axis = self.axis[key]
                             type_ = DimensionType.SPATIAL if axis in ["x", "y", "z"] else DimensionType.TEMPORAL
-
                             if v["type"] == "int":
                                 extent = [0, int(length)]
                             else:  # Not clear the logic is sound
                                 if key == "X":
-                                    extent = bbox[0], bbox[2]
+                                    extent = geo_data["lon_min"], geo_data["lon_max"]
                                 elif key == "Y":
-                                    extent = bbox[1], bbox[3]
+                                    extent = geo_data["lat_min"], geo_data["lat_max"]
                                 elif key in ["T", "time"]:
                                     extent = self.temporal_extent()
+                                elif key in ["Z", "vertical"]:
+                                    extent = geo_data["vertical_min"], geo_data["vertical_max"]
                                 else:
                                     extent = [None, None]
 
