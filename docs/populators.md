@@ -219,7 +219,7 @@ determine which variables are required to instantiate each helper and provide th
 
 ### 4.2. Modifying the populator CLI command
 
-The new implementation will be runnable through the CLI and should show up automatically in the help message when
+The new implementation is now runnable through the CLI and should show up automatically in the help message when
 running:
 
 ```sh
@@ -227,8 +227,9 @@ stac-populator run --help
 ```
 
 To customize the name of the populator implementation in the CLI, set the `name` attribute of the populator class.
-To customize the description set the `description` attribute. For example, the `RDPSpopulator` shown above can be
-invoked with the `RDPS_CRIM` populator option because that is the value of its `name` attribute.
+To customize the description set the `description` attribute to a string describing the new populator.
+For example, the `RDPSpopulator` shown above can be invoked with the `RDPS_CRIM` populator option because that
+is the value of its `name` attribute.
 
 ```sh
 stac-populator run RDPS_CRIM --help
