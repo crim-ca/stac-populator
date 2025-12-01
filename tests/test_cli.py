@@ -1,3 +1,4 @@
+import inspect
 import os
 import re
 import subprocess
@@ -7,6 +8,7 @@ from typing import Mapping
 import pytest
 
 from STACpopulator import implementations
+from STACpopulator.cli import populators
 
 
 def run_cli(*args: str, **kwargs: Mapping) -> subprocess.CompletedProcess:
@@ -14,8 +16,16 @@ def run_cli(*args: str, **kwargs: Mapping) -> subprocess.CompletedProcess:
 
 
 @pytest.fixture(scope="session")
-def populator_help_pattern():
-    name_options = ",?|".join([imp.replace(".", "\\.") for imp in implementations.__all__])
+def populator_names():
+    """Get all registered implementation names (ignore dummy implementations created by tests)"""
+    return set(
+        name for name, pop in populators().items() if inspect.getfile(pop).startswith(implementations.__path__[0])
+    )
+
+
+@pytest.fixture(scope="session")
+def populator_help_pattern(populator_names):
+    name_options = ",?|".join([imp.replace(".", "\\.") for imp in populator_names])
     return re.compile(f"{{({name_options},?)+}}")
 
 
@@ -25,7 +35,7 @@ def test_help():
     proc.check_returncode()
 
 
-def test_run_implementation(populator_help_pattern):
+def test_run_implementation(populator_help_pattern, populator_names):
     """
     Test that all implementations can be loaded from the command line
 
@@ -35,17 +45,17 @@ def test_run_implementation(populator_help_pattern):
     proc = run_cli("stac-populator", "run", "--help")
     proc.check_returncode()
     populators = re.search(populator_help_pattern, proc.stdout)
-    assert set(implementations.__all__) == set(populators.group(0).strip("{}").split(","))
+    assert populator_names == set(populators.group(0).strip("{}").split(","))
 
 
-def test_missing_implementation(populator_help_pattern):
+def test_missing_implementation(populator_help_pattern, populator_names):
     """Test that implementations that can't load are missing from the options"""
     with tempfile.TemporaryDirectory() as dirname:
         pass  # this allows us to get a dirname that does not exist
     proc = run_cli("stac-populator", "run", "--help", env={**os.environ, "PYESSV_ARCHIVE_HOME": dirname})
     proc.check_returncode()
     populators = re.search(populator_help_pattern, proc.stdout)
-    assert "CMIP6_UofT" in implementations.__all__  # sanity check
+    assert "CMIP6_UofT" in populator_names  # sanity check
     assert "CMIP6_UofT" not in set(populators.group(0).strip("{}").split(","))
 
 
