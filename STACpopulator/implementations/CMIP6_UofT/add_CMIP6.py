@@ -8,7 +8,6 @@ from pystac.extensions.datacube import DatacubeExtension
 from STACpopulator.extensions.cmip6 import CMIP6Helper, CMIP6Properties
 from STACpopulator.extensions.datacube import DataCubeHelper
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
-from STACpopulator.models import GeoJSONPolygon
 from STACpopulator.populators import THREDDSPopulator
 
 LOGGER = logging.getLogger(__name__)
@@ -21,7 +20,6 @@ class CMIP6populator(THREDDSPopulator):
     description = "CMIP6 STAC populator from a THREDDS catalog or NCML XML."
 
     item_properties_model = CMIP6Properties
-    item_geometry_model = GeoJSONPolygon
 
     def create_stac_item(
         self, item_name: str, item_data: MutableMapping[str, Any]
@@ -37,7 +35,7 @@ class CMIP6populator(THREDDSPopulator):
         """
         # Add CMIP6 extension
         try:
-            cmip_helper = CMIP6Helper(item_data, self.item_geometry_model)
+            cmip_helper = CMIP6Helper(item_data)
             item = cmip_helper.stac_item()
         except Exception as e:
             raise Exception("Failed to add CMIP6 extension") from e

@@ -14,7 +14,6 @@ class CORDEX_STAC_Populator(THREDDSPopulator):
     description = "CMIP6-CORDEX STAC populator from a THREDDS catalog or NCML XML."
 
     data_model = Cordex6DataModel
-    item_geometry_model = None  # Unnecessary, but kept for consistency
 
     def create_stac_item(self, item_name: str, item_data: dict[str, Any]) -> dict[str, Any]:
         """Return a STAC item."""

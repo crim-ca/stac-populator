@@ -40,34 +40,12 @@ def check_wgs84_compliance(bbox: list[int | float], stac_object_type: str, stac_
             )
 
 
-def sorted_bbox(bbox: list[int | float]) -> list[int | float]:
-    """
-    Return the bbox but sorted so that dimensional values are in sorted order.
-
-    For example:
-
-    >>> bbox = [1, 3, 5, 2, 0, 4]
-    >>> sorted_bbox(bbox)
-    [1, 0, 4, 2, 3, 5]
-    """
-    return [a for b in zip(*(sorted(axis) for axis in zip(bbox[: len(bbox) // 2], bbox[len(bbox) // 2 :]))) for a in b]
-
-
 def update_collection_bbox(collection: dict, item: dict) -> None:
     """Update the spatial extent values in the collection based on the datetime properties in item."""
     item_bbox = item.get("bbox")
     if item_bbox is None:
         # bbox can be missing if there is no geometry
         return
-    bbox = sorted_bbox(item_bbox)
-    if item_bbox != bbox:
-        LOGGER.warning(
-            "STAC item with id [%s] contains a bbox with unsorted values: %s should be %s",
-            item.get("id"),
-            item_bbox,
-            bbox,
-        )
-        item_bbox = bbox
     check_wgs84_compliance(item_bbox, "item", item.get("id"))
     collection_bboxes = collection["extent"]["spatial"]["bbox"]
     if collection_bboxes:

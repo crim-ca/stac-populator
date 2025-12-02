@@ -1,0 +1,142 @@
+<netcdf location="https://redoak.cs.toronto.edu/twitcher/ows/proxy/thredds/ncml/datasets/CMIP6/CMIP/AS-RCEC/TaiESM1/historical/r1i1p1f1/Amon/huss/gn/v20200623/huss_Amon_TaiESM1_historical_r1i1p1f1_gn_185001-201412.nc">
+<attribute name="Conventions" value="CF-1.7 CMIP-6.2"/>
+<attribute name="activity_id" value="CMIP"/>
+<attribute name="branch_method" value="Hybrid-restart from year 0671-01-01 of piControl"/>
+<attribute name="branch_time" type="double" value="0.0"/>
+<attribute name="branch_time_in_child" type="double" value="0.0"/>
+<attribute name="branch_time_in_parent" type="double" value="171550.0"/>
+<attribute name="contact" value="Dr. Wei-Liang Lee (leelupin@gate.sinica.edu.tw)"/>
+<attribute name="creation_date" value="2020-06-08T08:43:22Z"/>
+<attribute name="data_specs_version" value="01.00.31"/>
+<attribute name="experiment" value="all-forcing simulation of the recent past"/>
+<attribute name="experiment_id" value="historical"/>
+<attribute name="external_variables" value="areacella"/>
+<attribute name="forcing_index" type="int" value="1"/>
+<attribute name="frequency" value="mon"/>
+<attribute name="further_info_url" value="https://furtherinfo.es-doc.org/CMIP6.AS-RCEC.TaiESM1.historical.none.r1i1p1f1"/>
+<attribute name="grid" value="finite-volume grid with 0.9x1.25 degree lat/lon resolution"/>
+<attribute name="grid_label" value="gn"/>
+<attribute name="history" value="2020-06-08T08:43:22Z ; CMOR rewrote data to be consistent with CMIP6, CF-1.7 CMIP-6.2 and CF standards."/>
+<attribute name="initialization_index" type="int" value="1"/>
+<attribute name="institution" value="Research Center for Environmental Changes, Academia Sinica, Nankang, Taipei 11529, Taiwan"/>
+<attribute name="institution_id" value="AS-RCEC"/>
+<attribute name="mip_era" value="CMIP6"/>
+<attribute name="model_id" value="TaiESM1"/>
+<attribute name="nominal_resolution" value="100 km"/>
+<attribute name="parent_activity_id" value="CMIP"/>
+<attribute name="parent_experiment_id" value="piControl"/>
+<attribute name="parent_mip_era" value="CMIP6"/>
+<attribute name="parent_source_id" value="TaiESM1"/>
+<attribute name="parent_sub_experiment_id" value="none"/>
+<attribute name="parent_time_units" value="days since 1850-01-01"/>
+<attribute name="parent_variant_label" value="r1i1p1f1"/>
+<attribute name="physics_index" type="int" value="1"/>
+<attribute name="product" value="model-output"/>
+<attribute name="realization_index" type="int" value="1"/>
+<attribute name="realm" value="atmos"/>
+<attribute name="references" value="10.5194/gmd-2019-377"/>
+<attribute name="run_variant" value="N/A"/>
+<attribute name="source" value="TaiESM 1.0 (2018): aerosol: SNAP (same grid as atmos) atmos: TaiAM1 (0.9x1.25 degree; 288 x 192 longitude/latitude; 30 levels; top level ~2 hPa) atmosChem: SNAP (same grid as atmos) land: CLM4.0 (same grid as atmos) landIce: none ocean: POP2 (320x384 longitude/latitude; 60 levels; top grid cell 0-10 m) ocnBgchem: none seaIce: CICE4"/>
+<attribute name="source_id" value="TaiESM1"/>
+<attribute name="source_type" value="AOGCM AER BGC"/>
+<attribute name="sub_experiment" value="none"/>
+<attribute name="sub_experiment_id" value="none"/>
+<attribute name="table_id" value="Amon"/>
+<attribute name="table_info" value="Creation Date:(24 July 2019) MD5:0bb394a356ef9d214d027f1aca45853e"/>
+<attribute name="title" value="TaiESM1 output prepared for CMIP6"/>
+<attribute name="variable_id" value="huss"/>
+<attribute name="variant_label" value="r1i1p1f1"/>
+<attribute name="license" value="CMIP6 model data produced by NCC is licensed under a Creative Commons Attribution ShareAlike 4.0 International License (https://creativecommons.org/licenses). Consult https://pcmdi.llnl.gov/CMIP6/TermsOfUse for terms of use governing CMIP6 output, including citation requirements and proper acknowledgment. Further information about this data, including some limitations, can be found via the further_info_url (recorded as a global attribute in this file) and at https:///pcmdi.llnl.gov/. The data producers and data providers make no warranty, either express or implied, including, but not limited to, warranties of merchantability and fitness for a particular purpose. All liabilities arising from the supply of the information (including any liability arising in negligence) are excluded to the fullest extent permitted by law."/>
+<attribute name="cmor_version" value="3.5.0"/>
+<attribute name="_NCProperties" value="version=2,netcdf=4.7.3,hdf5=1.10.5,"/>
+<attribute name="tracking_id" value="hdl:21.14100/518ccc5e-b234-4041-8dcd-82a75c246cd6"/>
+<attribute name="_CoordSysBuilder" value="ucar.nc2.internal.dataset.conv.CF1Convention"/>
+<dimension name="time" length="1980" isUnlimited="true"/>
+<dimension name="lat" length="192"/>
+<dimension name="lon" length="288"/>
+<dimension name="height" length="2"/>
+<dimension name="bnds" length="2"/>
+<group name="CFMetadata">
+<attribute name="geospatial_lon_min" value=".0" type="float"/>
+<attribute name="geospatial_lat_min" value="-90.0" type="float"/>
+<attribute name="geospatial_lon_max" value="358.75" type="float"/>
+<attribute name="geospatial_lat_max" value="90.0" type="float"/>
+<attribute name="geospatial_lon_units" value="degrees_east"/>
+<attribute name="geospatial_lat_units" value="degrees_north"/>
+<attribute name="geospatial_lon_resolution" value="1.25"/>
+<attribute name="geospatial_lat_resolution" value="0.9424083769633508"/>
+<attribute name="geospatial_vertical_min" value="2.0"/>
+<attribute name="geospatial_vertical_max" value="2.0"/>
+<attribute name="geospatial_vertical_units" value="m"/>
+<attribute name="geospatial_vertical_resolution" value="0.0"/>
+<attribute name="geospatial_vertical_positive" value="up"/>
+<attribute name="time_coverage_start" value="1848-10-23T12:00:00Z"/>
+<attribute name="time_coverage_end" value="2013-08-13T12:00:00Z"/>
+<attribute name="time_coverage_units" value="seconds"/>
+<attribute name="time_coverage_resolution" value="2627974.0"/>
+<attribute name="time_coverage_duration" value="P0Y0M60194DT0H0M0.000S"/>
+</group>
+<group name="NCISOMetadata">
+<attribute name="metadata_creation" value="2025-11-24"/>
+<attribute name="nciso_version" value="2.4.6"/>
+</group>
+<variable name="time_bnds" shape="time bnds" type="double">
+<attribute name="_ChunkSizes" type="uint" value="1 2"/>
+</variable>
+<variable name="lat_bnds" shape="lat bnds" type="double">
+<attribute name="_ChunkSizes" type="uint" value="192 2"/>
+</variable>
+<variable name="lon_bnds" shape="lon bnds" type="double">
+<attribute name="_ChunkSizes" type="uint" value="288 2"/>
+</variable>
+<variable name="huss" shape="time lat lon" type="float">
+<attribute name="standard_name" value="specific_humidity"/>
+<attribute name="long_name" value="Near-Surface Specific Humidity"/>
+<attribute name="comment" value="Near-surface (usually, 2 meter) specific humidity."/>
+<attribute name="units" value="1"/>
+<attribute name="original_name" value="QREFHT"/>
+<attribute name="original_units" value="kg/kg"/>
+<attribute name="history" value="2020-06-08T08:43:22Z altered by CMOR: Converted units from 'kg/kg' to '1'. 2020-06-08T08:43:22Z altered by CMOR: Treated scalar dimension: 'height'. 2020-06-08T08:43:22Z altered by CMOR: Converted type from 'd' to 'f'."/>
+<attribute name="cell_methods" value="area: time: mean"/>
+<attribute name="cell_measures" value="area: areacella"/>
+<attribute name="coordinates" value="height"/>
+<attribute name="missing_value" type="float" value="1.0E20"/>
+<attribute name="_FillValue" type="float" value="1.0E20"/>
+<attribute name="_ChunkSizes" type="uint" value="1 192 288"/>
+</variable>
+<variable name="time" shape="time" type="double">
+<attribute name="bounds" value="time_bnds"/>
+<attribute name="units" value="days since 0001-01-01 00:00:00"/>
+<attribute name="calendar" value="noleap"/>
+<attribute name="axis" value="T"/>
+<attribute name="long_name" value="time"/>
+<attribute name="standard_name" value="time"/>
+<attribute name="_ChunkSizes" type="uint" value="1"/>
+<attribute name="_CoordinateAxisType" value="Time"/>
+</variable>
+<variable name="lat" shape="lat" type="double">
+<attribute name="bounds" value="lat_bnds"/>
+<attribute name="units" value="degrees_north"/>
+<attribute name="axis" value="Y"/>
+<attribute name="long_name" value="Latitude"/>
+<attribute name="standard_name" value="latitude"/>
+<attribute name="_CoordinateAxisType" value="Lat"/>
+</variable>
+<variable name="lon" shape="lon" type="double">
+<attribute name="bounds" value="lon_bnds"/>
+<attribute name="units" value="degrees_east"/>
+<attribute name="axis" value="X"/>
+<attribute name="long_name" value="Longitude"/>
+<attribute name="standard_name" value="longitude"/>
+<attribute name="_CoordinateAxisType" value="Lon"/>
+</variable>
+<variable name="height" shape="" type="double">
+<attribute name="units" value="m"/>
+<attribute name="axis" value="Z"/>
+<attribute name="positive" value="up"/>
+<attribute name="long_name" value="height"/>
+<attribute name="standard_name" value="height"/>
+<attribute name="_CoordinateAxisType" value="Height"/>
+<attribute name="_CoordinateZisPositive" value="up"/>
+</variable>
+</netcdf>
