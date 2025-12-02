@@ -65,6 +65,8 @@ def test_dimensions():
                 2.0,
             ),
             "type": "spatial",
+            "step": 0.0,
+            "unit": "m",
         },
         "lat": {
             "axis": "y",
@@ -74,6 +76,8 @@ def test_dimensions():
                 90.0,
             ),
             "type": "spatial",
+            "step": 0.9424083769633508,
+            "unit": "degrees_north",
         },
         "lon": {
             "axis": "x",
@@ -83,6 +87,8 @@ def test_dimensions():
                 358.75,
             ),
             "type": "spatial",
+            "step": 1.25,
+            "unit": "degrees_east",
         },
         "time": {
             "description": "time",

@@ -93,12 +93,17 @@ class TestGeoData:
             org_data = dict(
                 lon_min=200,
                 lon_max=290,
+                lon_units="degrees_east",
+                lon_resolution=1.0,
                 lat_min=20,
                 lat_max=33,
+                lat_units="degrees_north",
+                lat_resolution=1.25,
                 vertical_min=-10,
                 vertical_max=7,
                 vertical_positive="down",
                 vertical_units="m",
+                vertical_resolution=3,
             )
             assert GeoData(**org_data).original_data() == org_data
 
@@ -120,12 +125,15 @@ class TestGeoData:
             assert data == GeoData(
                 lon_min=0.0,
                 lon_max=-1.25,
+                lon_resolution=1.25,
                 lat_min=-90.0,
                 lat_max=90.0,
+                lat_resolution=0.9424083769633508,
                 vertical_min=2.0,
                 vertical_max=2.0,
                 vertical_units="m",
                 vertical_positive="up",
+                vertical_resolution=0.0,
             )
 
         def test_without_vertical_data(self, attrs_wo_vert):
@@ -133,8 +141,10 @@ class TestGeoData:
             assert data == GeoData(
                 lon_min=0.049800001084804535,
                 lon_max=-0.00506591796875,
+                lon_resolution=0.0034359351726440477,
                 lat_min=-78.39350128173828,
                 lat_max=89.74176788330078,
+                lat_resolution=0.0016049720708009724,
                 vertical_min=None,
                 vertical_max=None,
                 vertical_units="m",

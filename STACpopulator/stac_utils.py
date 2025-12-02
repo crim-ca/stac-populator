@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 from dataclasses import asdict
 from enum import Enum
 from typing import Any, List, Literal, MutableMapping, Self, Type, Union
@@ -50,12 +51,28 @@ class GeoData:
 
     lon_min: float = Field(ge=-180.0, le=360.0)
     lon_max: float = Field(ge=-180.0, le=360.0)
+    lon_units: str = "degrees_east"
+    lon_resolution: float | None = None
     lat_min: float = Field(ge=-90.0, le=90.0)
     lat_max: float = Field(ge=-90.0, le=90.0)
+    lat_units: str = "degrees_north"
+    lat_resolution: float | None = None
     vertical_min: float | None = None
     vertical_max: float | None = None
+    # vertical units are assumed to be in metres unless otherwise specified:
+    # https://wiki.esipfed.org/Attribute_Convention_for_Data_Discovery_1-3
     vertical_units: str = "m"
+    vertical_resolution: float | None = None
+    # vertical orientation (up/down) is assumed to be "up" if not specified.
     vertical_positive: Literal["up", "down"] = "up"
+
+    # see: https://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#longitude-coordinate
+    _lon_units_pattern = re.compile(r"^degrees?_?e(ast)?$", re.IGNORECASE)
+    # see https://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#latitude-coordinate
+    _lat_units_pattern = re.compile(r"^degrees?_?n(orth)?$", re.IGNORECASE)
+    # see: https://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#vertical-coordinate
+    # TODO: try to support more units: convert some common non-metre units to metres
+    _vertical_units_pattern = re.compile(r"^m(et(re|er)s?)?$", re.IGNORECASE)
 
     @model_validator(mode="after")
     def to_wgs84(self) -> Self:
@@ -71,16 +88,22 @@ class GeoData:
         self._org_vertical_max = self.vertical_max
         self.lon_min = -(360 % self.lon_min) if self.lon_min > 180 else self.lon_min
         self.lon_max = -(360 % self.lon_max) if self.lon_max > 180 else self.lon_max
+        coordinate_err_msg = (
+            "%s units must be in %s. Units given in '%s'. "
+            "If a different coordinate system is used, "
+            "the STAC geometry representation may not be accurate."
+        )
+        if self.lon_units and not re.match(self._lon_units_pattern, self.lon_units):
+            LOGGER.warning(coordinate_err_msg, "Longitude", "degrees east", self.lon_units)
+        if self.lat_units and not re.match(self._lat_units_pattern, self.lat_units):
+            LOGGER.warning(coordinate_err_msg, "Latitude", "degrees north", self.lat_units)
+        if self.vertical_units and not re.match(self._vertical_units_pattern, self.vertical_units):
+            LOGGER.warning(coordinate_err_msg, "Vertical", "metres", self.vertical_units)
         if self.has_z():
             if self.vertical_positive == "down":
                 self.vertical_min *= -1
                 self.vertical_max *= -1
                 self.vertical_min, self.vertical_max = sorted([self.vertical_min, self.vertical_max])
-            if self.vertical_units not in ("m", "metres", "metre", "meters", "meter"):
-                # only warn for now. TODO: convert some common non-metre units to metres
-                LOGGER.warning(
-                    "Vertical units must be in metres to comply with WGS84. Units given in '%s'", self.vertical_units
-                )
         return self
 
     def original_data(self) -> dict[str, float | str | None]:
@@ -102,14 +125,14 @@ class GeoData:
         attrs = attrs["groups"]["CFMetadata"]["attributes"]
         geo_range = {}
         for field in cls.__pydantic_fields__:
-            if field not in ("vertical_units", "vertical_positive"):
-                val = attrs.get(f"geospatial_{field}")
-                geo_range[field] = None if val is None else float(val[0])
-        # vertical units are assumed to be in metres unless otherwise specified:
-        # https://wiki.esipfed.org/Attribute_Convention_for_Data_Discovery_1-3
-        geo_range["vertical_units"] = attrs.get("geospatial_vertical_units", "m")
-        # vertical orientation (up/down) is assumed to be "up" if not specified.
-        geo_range["vertical_positive"] = attrs.get("geospatial_vertical_positive", "up")
+            field_suffix = field.split("_")[-1]
+            val = attrs.get(f"geospatial_{field}")
+            if field_suffix in ("min", "max", "resolution"):
+                if isinstance(val, list):
+                    val = val[0]
+                geo_range[field] = None if val is None else float(val)
+            elif val is not None:
+                geo_range[field] = val
         return cls(**geo_range)
 
     def has_z(self) -> bool:
