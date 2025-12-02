@@ -5,7 +5,7 @@ import os
 import re
 from dataclasses import asdict
 from enum import Enum
-from typing import Any, List, Literal, MutableMapping, Self, Type, Union
+from typing import Any, List, Literal, MutableMapping, Type, Union
 
 import numpy as np
 import pystac
@@ -75,7 +75,7 @@ class GeoData:
     _vertical_units_pattern = re.compile(r"^m(et(re|er)s?)?$", re.IGNORECASE)
 
     @model_validator(mode="after")
-    def to_wgs84(self) -> Self:
+    def to_wgs84(self) -> GeoData:
         """
         Make the data WGS84 compliant.
 
