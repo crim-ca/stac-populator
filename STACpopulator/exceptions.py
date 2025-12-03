@@ -14,3 +14,9 @@ class FunctionLoadError(STACPopulatorError):
     """External function loading error."""
 
     pass
+
+
+class AuthenticationError(STACPopulatorError):
+    """Authentication error."""
+
+    pass
