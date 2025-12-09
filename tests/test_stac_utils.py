@@ -1,6 +1,8 @@
 from pathlib import Path
+from unittest.mock import patch
 
 import numpy as np
+import pyproj
 import pytest
 import xncml
 
@@ -48,154 +50,187 @@ def test_np2py():
 
 
 class TestGeoData:
+    @pytest.fixture
+    def basic_data(self):
+        return {
+            "x": [10, 20],
+            "y": [30, 40],
+            "z": [-10, 12],
+            "x_resolution": 1.3,
+            "y_resolution": 0.22,
+            "z_resolution": 1,
+            "crs": pyproj.CRS(4979),
+        }
+
     class TestValidations:
-        def test_already_compliant(self):
-            data = GeoData(lon_min=-40, lon_max=140, lat_min=20, lat_max=33, vertical_min=-10, vertical_max=7)
-            assert data.lon_min == -40.0
-            assert data.lon_max == 140.0
-            assert data.lat_min == 20.0
-            assert data.lat_max == 33.0
-            assert data.vertical_min == -10.0
-            assert data.vertical_max == 7.0
+        def test_create_crs_epsg_code(self, basic_data):
+            GeoData(**{**basic_data, "crs": 4326})
 
-        def test_latitude_out_of_range(self):
-            with pytest.raises(ValueError):
-                GeoData(lon_min=-40, lon_max=140, lat_min=-91, lat_max=33)
-            with pytest.raises(ValueError):
-                GeoData(lon_min=-40, lon_max=140, lat_min=20, lat_max=91)
+        def test_create_crs_wkt(self, basic_data, epsg4979_0_360_wkt):
+            GeoData(**{**basic_data, "crs": epsg4979_0_360_wkt})
 
-        def test_longitude_out_of_range(self):
-            with pytest.raises(ValueError):
-                GeoData(lon_min=-181, lon_max=140, lat_min=20, lat_max=33)
-            with pytest.raises(ValueError):
-                GeoData(lon_min=-40, lon_max=361, lat_min=20, lat_max=33)
-
-        def test_longitude_convert_to_wgs84_compliant(self):
-            data = GeoData(lon_min=190, lon_max=300, lat_min=20, lat_max=33)
-            assert data.lon_min == -170.0
-            assert data.lon_max == -60.0
-
-        def test_vertical_inverted_if_down(self):
-            data = GeoData(
-                lon_min=-40,
-                lon_max=140,
-                lat_min=20,
-                lat_max=33,
-                vertical_min=-10,
-                vertical_max=7,
-                vertical_positive="down",
+    class TestProperties:
+        @pytest.fixture
+        def geo_with_different_units(self, basic_data):
+            wkt = (
+                pyproj.CRS(4979)
+                .to_wkt()
+                .replace('north,ORDER[1],ANGLEUNIT["degree"', 'north,ORDER[1],ANGLEUNIT["north_degree"')
+                .replace('east,ORDER[2],ANGLEUNIT["degree"', 'north,ORDER[2],ANGLEUNIT["east_degree"')
+                .replace('LENGTHUNIT["metre"', 'LENGTHUNIT["up_metre"')
+                .replace(',ID["EPSG",4979]', "")
             )
-            assert data.vertical_min == -7
-            assert data.vertical_max == 10
+            return GeoData(**{**basic_data, "crs": pyproj.CRS(wkt)})
 
-    class TestOriginalData:
-        def test_original_data_maintained(self):
-            org_data = dict(
-                lon_min=200,
-                lon_max=290,
-                lon_units="degrees_east",
-                lon_resolution=1.0,
-                lat_min=20,
-                lat_max=33,
-                lat_units="degrees_north",
-                lat_resolution=1.25,
-                vertical_min=-10,
-                vertical_max=7,
-                vertical_positive="down",
-                vertical_units="m",
-                vertical_resolution=3,
-            )
-            assert GeoData(**org_data).original_data() == org_data
+        def test_x_units(self, geo_with_different_units):
+            assert geo_with_different_units.x_units == "north_degree"
+
+        def test_y_units(self, geo_with_different_units):
+            assert geo_with_different_units.y_units == "east_degree"
+
+        def test_z_units(self, geo_with_different_units):
+            assert geo_with_different_units.z_units == "up_metre"
+
+    class TestXIsLongitude:
+        @pytest.fixture
+        def crs_json(self):
+            json_dict = pyproj.CRS(4326).to_json_dict()
+            json_dict.pop("id")
+            return json_dict
+
+        def test_no_match(self, basic_data):
+            geo = GeoData(**{**basic_data, "crs": pyproj.CRS(4326)})
+            assert not geo.x_is_longitude
+
+        def test_matches_name(self, basic_data, crs_json):
+            crs_json["coordinate_system"]["axis"][0]["name"] = "geodetic longitude"
+            geo = GeoData(**{**basic_data, "crs": pyproj.CRS(crs_json)})
+            assert geo.x_is_longitude
+
+        def test_matches_abbreviation(self, basic_data, crs_json):
+            crs_json["coordinate_system"]["axis"][0]["abbreviation"] = "Lon"
+            geo = GeoData(**{**basic_data, "crs": pyproj.CRS(crs_json)})
+            assert geo.x_is_longitude
+
+        def test_matches_direction(self, basic_data, crs_json):
+            crs_json["coordinate_system"]["axis"][0]["direction"] = "east"
+            geo = GeoData(**{**basic_data, "crs": pyproj.CRS(crs_json)})
+            assert geo.x_is_longitude
+
+        def test_cached(self, basic_data):
+            geo = GeoData(**{**basic_data, "crs": pyproj.CRS(4326)})
+            val = geo.x_is_longitude
+            with patch("re.search") as mock:
+                assert geo.x_is_longitude == val
+                assert not mock.call_count
+            # reset cache
+            geo.crs = pyproj.CRS(4326)
+            with patch("re.search") as mock:
+                geo.x_is_longitude
+                assert mock.call_count
+
+    class TestToWGS84:
+        def test_no_change(self, basic_data):
+            geo = GeoData(**basic_data)
+            out = geo.to_wgs84
+            assert geo.x == out["lat"]
+            assert geo.y == out["lon"]
+            assert geo.z == out["vert"]
+
+        def test_from_shifted_longitude(self, basic_data, epsg4979_0_360_wkt):
+            geo = GeoData(**{**basic_data, "x": [100, 280], "crs": pyproj.CRS(epsg4979_0_360_wkt)})
+            out = geo.to_wgs84
+            assert out["lon"] == pytest.approx([100, -80])
+
+        def test_from_cylindrical(self, basic_data):
+            geo = GeoData(**{**basic_data, "x": [10044, 33000], "y": [-235544, 909900], "crs": pyproj.CRS(4087)})
+            out = geo.to_wgs84
+            assert out["lat"] == pytest.approx([-2.1159277528264853, 8.173770770203525])
+            assert out["lon"] == pytest.approx([0.09022678713696472, 0.29644404375944206])
+
+        def test_from_NAD83(self, basic_data):
+            geo = GeoData(**{**basic_data, "y": [2093070, 2000000], "x": [10436931, 5740845], "crs": pyproj.CRS(3348)})
+            out = geo.to_wgs84
+            assert out["lat"] == pytest.approx([38.7545891461986, 53.94358296286908])
+            assert out["lon"] == pytest.approx([-40.00269171523382, -98.98931749790985])
 
     class TestFromNcattrs:
         @pytest.fixture
-        def attrs_w_vert(self):
+        def attrs_w_vert(self, epsg4979_0_360_wkt):
             file_path = DIR / "data" / "huss_Amon_TaiESM1_historical_r1i1p1f1_gn_185001-201412.xml"
             ds = xncml.Dataset(filepath=str(file_path))
-            return ds.to_cf_dict()
+            attrs = ds.to_cf_dict()
+            attrs["@stac-populator"] = {"fallback_crs": epsg4979_0_360_wkt}
+            return attrs
 
         @pytest.fixture
-        def attrs_wo_vert(self):
+        def attrs_wo_vert(self, epsg4979_0_360_wkt):
             file_path = DIR / "data" / "o3_Amon_GFDL-ESM4_historical_r1i1p1f1_gr1_185001-194912.xml"
             ds = xncml.Dataset(filepath=str(file_path))
-            return ds.to_cf_dict()
+            attrs = ds.to_cf_dict()
+            attrs["@stac-populator"] = {"fallback_crs": epsg4979_0_360_wkt}
+            return attrs
 
-        def test_with_vertical_data(self, attrs_w_vert):
+        def test_with_vertical_data(self, attrs_w_vert, epsg4979_0_360_wkt):
             data = GeoData.from_ncattrs(attrs_w_vert)
             assert data == GeoData(
-                lon_min=0.0,
-                lon_max=-1.25,
-                lon_resolution=1.25,
-                lat_min=-90.0,
-                lat_max=90.0,
-                lat_resolution=0.9424083769633508,
-                vertical_min=2.0,
-                vertical_max=2.0,
-                vertical_units="m",
-                vertical_positive="up",
-                vertical_resolution=0.0,
+                crs=pyproj.CRS(epsg4979_0_360_wkt),
+                x=[0.0, 358.75],
+                x_resolution=1.25,
+                y=[-90.0, 90.0],
+                y_resolution=0.9424083769633508,
+                z=[2.0, 2.0],
+                z_resolution=0.0,
             )
 
-        def test_without_vertical_data(self, attrs_wo_vert):
+        def test_without_vertical_data(self, attrs_wo_vert, epsg4979_0_360_wkt):
             data = GeoData.from_ncattrs(attrs_wo_vert)
             assert data == GeoData(
-                lon_min=0.049800001084804535,
-                lon_max=-0.00506591796875,
-                lon_resolution=0.0034359351726440477,
-                lat_min=-78.39350128173828,
-                lat_max=89.74176788330078,
-                lat_resolution=0.0016049720708009724,
-                vertical_min=None,
-                vertical_max=None,
-                vertical_units="m",
-                vertical_positive="up",
+                crs=pyproj.CRS(epsg4979_0_360_wkt),
+                x=[0.049800001084804535, 359.99493408203125],
+                x_resolution=0.0034359351726440477,
+                y=[-78.39350128173828, 89.74176788330078],
+                y_resolution=0.0016049720708009724,
+                z=None,
+                z_resolution=None,
             )
 
-    class TestHasZ:
-        def test_has_z(self):
-            data = GeoData(lon_min=-40, lon_max=140, lat_min=20, lat_max=33, vertical_min=-10, vertical_max=7)
-            assert data.has_z()
-
-        def test_no_z(self):
-            data = GeoData(lon_min=-40, lon_max=140, lat_min=20, lat_max=33)
-            assert not data.has_z()
-
     class TestCrossesAntimeridian:
-        def test_crosses(self):
-            data = GeoData(lon_min=130, lon_max=30, lat_min=20, lat_max=33)
-            assert data.crosses_antimeridian()
+        def test_crosses(self, basic_data):
+            geo = GeoData(**{**basic_data, "y": [170, -33]})
+            assert geo.crosses_antimeridian()
 
-        def test_not_crosses(self):
-            data = GeoData(lon_min=40, lon_max=80, lat_min=20, lat_max=33)
-            assert not data.crosses_antimeridian()
+        def test_not_crosses(self, basic_data):
+            geo = GeoData(**{**basic_data, "y": [-33, 170]})
+            assert not geo.crosses_antimeridian()
 
     class TestToBBox:
-        def test_2d_no_cross(self):
-            data = GeoData(lon_min=40, lon_max=80, lat_min=20, lat_max=33)
-            assert data.to_bbox() == [40, 20, 80, 33]
+        def test_2d_no_cross(self, basic_data):
+            geo = GeoData(**{**basic_data, "y": [40, 80], "x": [20, 33], "z": None})
+            assert geo.to_bbox() == [40, 20, 80, 33]
 
-        def test_2d_cross(self):
-            data = GeoData(lon_min=130, lon_max=30, lat_min=20, lat_max=33)
-            assert data.to_bbox() == [130, 20, 30, 33]
+        def test_2d_cross(self, basic_data):
+            geo = GeoData(**{**basic_data, "y": [130, 30], "x": [20, 33], "z": None})
+            assert geo.to_bbox() == [130, 20, 30, 33]
 
-        def test_3d_no_cross(self):
-            data = GeoData(lon_min=40, lon_max=80, lat_min=20, lat_max=33, vertical_min=-3, vertical_max=44)
-            assert data.to_bbox() == [40, 20, -3, 80, 33, 44]
+        def test_3d_no_cross(self, basic_data):
+            geo = GeoData(**{**basic_data, "y": [40, 80], "x": [20, 33], "z": [-3, 44]})
+            assert geo.to_bbox() == [40, 20, -3, 80, 33, 44]
 
-        def test_3d_cross(self):
-            data = GeoData(lon_min=130, lon_max=30, lat_min=20, lat_max=33, vertical_min=-3, vertical_max=44)
-            assert data.to_bbox() == [130, 20, -3, 30, 33, 44]
+        def test_3d_cross(self, basic_data):
+            geo = GeoData(**{**basic_data, "y": [130, 30], "x": [20, 33], "z": [-3, 44]})
+            assert geo.to_bbox() == [130, 20, -3, 30, 33, 44]
 
     class TestToGeometry:
-        def test_2d_no_cross(self):
-            data = GeoData(lon_min=40, lon_max=80, lat_min=20, lat_max=33)
-            assert data.to_geometry() == GeoJSONPolygon(
+        def test_2d_no_cross(self, basic_data):
+            geo = GeoData(**{**basic_data, "y": [40, 80], "x": [20, 33], "z": None})
+            assert geo.to_geometry() == GeoJSONPolygon(
                 type="Polygon", coordinates=[[[40.0, 20.0], [40.0, 33.0], [80.0, 33.0], [80.0, 20.0], [40.0, 20.0]]]
             )
 
-        def test_2d_cross(self):
-            data = GeoData(lon_min=130, lon_max=30, lat_min=20, lat_max=33)
-            assert data.to_geometry() == GeoJSONMultiPolygon(
+        def test_2d_cross(self, basic_data):
+            geo = GeoData(**{**basic_data, "y": [130, 30], "x": [20, 33], "z": None})
+            assert geo.to_geometry() == GeoJSONMultiPolygon(
                 type="MultiPolygon",
                 coordinates=[
                     [[[130.0, 20.0], [130.0, 33.0], [180.0, 33.0], [180.0, 20.0], [130.0, 20.0]]],
@@ -203,15 +238,15 @@ class TestGeoData:
                 ],
             )
 
-        def test_3d_different_vertical_min_max(self):
-            data = GeoData(lon_min=40, lon_max=80, lat_min=20, lat_max=33, vertical_min=-3, vertical_max=44)
-            assert data.to_geometry() == GeoJSONPolygon(
+        def test_3d_different_vertical_min_max(self, basic_data):
+            geo = GeoData(**{**basic_data, "y": [40, 80], "x": [20, 33], "z": [-3, 44]})
+            assert geo.to_geometry() == GeoJSONPolygon(
                 type="Polygon", coordinates=[[[40.0, 20.0], [40.0, 33.0], [80.0, 33.0], [80.0, 20.0], [40.0, 20.0]]]
             )
 
-        def test_3d_same_vertical_min_max(self):
-            data = GeoData(lon_min=40, lon_max=80, lat_min=20, lat_max=33, vertical_min=-3, vertical_max=-3)
-            assert data.to_geometry() == GeoJSONPolygon(
+        def test_3d_same_vertical_min_max(self, basic_data):
+            geo = GeoData(**{**basic_data, "y": [40, 80], "x": [20, 33], "z": [-3, -3]})
+            assert geo.to_geometry() == GeoJSONPolygon(
                 type="Polygon",
                 coordinates=[
                     [[40.0, 20.0, -3.0], [40.0, 33.0, -3.0], [80.0, 33.0, -3.0], [80.0, 20.0, -3.0], [40.0, 20.0, -3.0]]

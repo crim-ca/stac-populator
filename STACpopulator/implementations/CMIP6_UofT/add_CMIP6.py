@@ -44,7 +44,7 @@ class CMIP6populator(THREDDSPopulator):
         try:
             dc_helper = DataCubeHelper(item_data)
             dc_ext = DatacubeExtension.ext(item, add_if_missing=True)
-            dc_ext.apply(dimensions=dc_helper.dimensions, variables=dc_helper.variables)
+            dc_ext.apply(dimensions=dc_helper.dimensions, variablattrses=dc_helper.variables)
         except Exception as e:
             raise Exception("Failed to add Datacube extension") from e
 

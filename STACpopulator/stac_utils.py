@@ -3,19 +3,24 @@ from __future__ import annotations
 import logging
 import os
 import re
-from dataclasses import asdict
 from enum import Enum
-from typing import Any, List, Literal, MutableMapping, Type, Union
+from functools import cached_property
+from typing import Any, List, Literal, MutableMapping, Type, TypedDict, Union
 
 import numpy as np
+import pyproj
+import pyproj.crs
 import pystac
 import yaml
-from pydantic import Field, model_validator
+from pydantic import ConfigDict, field_validator
 from pydantic.dataclasses import dataclass
 
+from STACpopulator.exceptions import STACPopulatorError
 from STACpopulator.models import GeoJSONMultiPolygon, GeoJSONPolygon
 
 LOGGER = logging.getLogger(__name__)
+
+CoordDict = TypedDict("Coordinates", {"lat": float, "lon": float, "vert": float | None})
 
 
 def load_config(
@@ -45,137 +50,176 @@ def collection2literal(collection: str, property: str = "label") -> "Type[Litera
     return Literal[terms]  # noqa
 
 
-@dataclass
+@dataclass(config=ConfigDict(arbitrary_types_allowed=True))
 class GeoData:
     """Representation of Geographic Data."""
 
-    lon_min: float = Field(ge=-180.0, le=360.0)
-    lon_max: float = Field(ge=-180.0, le=360.0)
-    lon_units: str = "degrees_east"
-    lon_resolution: float | None = None
-    lat_min: float = Field(ge=-90.0, le=90.0)
-    lat_max: float = Field(ge=-90.0, le=90.0)
-    lat_units: str = "degrees_north"
-    lat_resolution: float | None = None
-    vertical_min: float | None = None
-    vertical_max: float | None = None
-    # vertical units are assumed to be in metres unless otherwise specified:
-    # https://wiki.esipfed.org/Attribute_Convention_for_Data_Discovery_1-3
-    vertical_units: str = "m"
-    vertical_resolution: float | None = None
-    # vertical orientation (up/down) is assumed to be "up" if not specified.
-    vertical_positive: Literal["up", "down"] = "up"
+    crs: pyproj.CRS
+    x: tuple[float, float]
+    y: tuple[float, float]
+    z: tuple[float, float] | None
+    x_resolution: float | None
+    y_resolution: float | None
+    z_resolution: float | None
 
-    # see: https://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#longitude-coordinate
-    _lon_units_pattern = re.compile(r"^degrees?_?e(ast)?$", re.IGNORECASE)
-    # see https://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#latitude-coordinate
-    _lat_units_pattern = re.compile(r"^degrees?_?n(orth)?$", re.IGNORECASE)
-    # see: https://cfconventions.org/cf-conventions/v1.6.0/cf-conventions.html#vertical-coordinate
-    # TODO: try to support more units: convert some common non-metre units to metres
-    _vertical_units_pattern = re.compile(r"^m(et(re|er)s?)?$", re.IGNORECASE)
+    @field_validator("crs", mode="before")
+    @classmethod
+    def create_crs(cls, val: Any) -> pyproj.CRS:
+        """Convert crs value to a valid pyproj.CRS class."""
+        return pyproj.CRS(val)
 
-    @model_validator(mode="after")
-    def to_wgs84(self) -> GeoData:
-        """
-        Make the data WGS84 compliant.
+    def __setattr__(self, name: str, value: Any) -> None:
+        """Set attributes normally but also invalidate cached properties that would need to be recalculated."""
+        if name in ("crs", "x", "y", "z") and hasattr(self, "to_wgs84"):
+            del self.to_wgs84
+        if name == "crs" and hasattr(self, "x_is_longitude"):
+            del self.x_is_longitude
+        super().__setattr__(name, value)
 
-        This involves converting the longitude ranges to be between -180 an 180 degrees and
-        ensuring that positive vertical values represent values higher than the surface.
-        """
-        self._org_lon_min = self.lon_min
-        self._org_lon_max = self.lon_max
-        self._org_vertical_min = self.vertical_min
-        self._org_vertical_max = self.vertical_max
-        self.lon_min = -(360 % self.lon_min) if self.lon_min > 180 else self.lon_min
-        self.lon_max = -(360 % self.lon_max) if self.lon_max > 180 else self.lon_max
-        coordinate_err_msg = (
-            "%s units must be in %s. Units given in '%s'. "
-            "If a different coordinate system is used, "
-            "the STAC geometry representation may not be accurate."
+    @property
+    def x_units(self) -> str:
+        """Return the unit name for the x axis."""
+        return self.crs.axis_info[0].unit_name
+
+    @property
+    def y_units(self) -> str:
+        """Return the unit name for the y axis."""
+        return self.crs.axis_info[1].unit_name
+
+    @property
+    def z_units(self) -> str | None:
+        """Return the unit name for the z axis or None if there are no values for the z axis."""
+        if self.z:
+            return self.crs.axis_info[2].unit_name
+
+    @cached_property
+    def x_is_longitude(self) -> bool:
+        """Return True if x is the longitudinal axis."""
+        return self._crs_axis_is_longitude(self.crs.axis_info[0])
+
+    @staticmethod
+    def _crs_axis_is_longitude(axis) -> bool:  # noqa: ANN001
+        """Guess if axis contains longitude values."""
+        lon_pattern = re.compile(r"(^|\s)lon", re.IGNORECASE)
+        return bool(
+            re.search(lon_pattern, axis.name)
+            or re.search(lon_pattern, axis.abbrev)
+            or axis.direction.lower() in ("east", "west")
         )
-        if self.lon_units and not re.match(self._lon_units_pattern, self.lon_units):
-            LOGGER.warning(coordinate_err_msg, "Longitude", "degrees east", self.lon_units)
-        if self.lat_units and not re.match(self._lat_units_pattern, self.lat_units):
-            LOGGER.warning(coordinate_err_msg, "Latitude", "degrees north", self.lat_units)
-        if self.vertical_units and not re.match(self._vertical_units_pattern, self.vertical_units):
-            LOGGER.warning(coordinate_err_msg, "Vertical", "metres", self.vertical_units)
-        if self.has_z():
-            if self.vertical_positive == "down":
-                self.vertical_min *= -1
-                self.vertical_max *= -1
-                self.vertical_min, self.vertical_max = sorted([self.vertical_min, self.vertical_max])
-        return self
 
-    def original_data(self) -> dict[str, float | str | None]:
+    @cached_property
+    def to_wgs84(self) -> CoordDict:
         """
-        Return a dictionary representing the original values of the fields used to create this GeoData object.
+        Return coordinate values converted from the current CRS to a WGS 84 compliant CRS.
 
-        These are the values before the longitude values have been made compliant with WGS84.
+        Coordinate values are for longitude, latitude and vertical.
+        If the coordinates are 3 dimensional, the CRS EPSG:4979 is used; otherwise EPSG:4326
+        is used.
         """
-        data = asdict(self)
-        data["lon_min"] = self._org_lon_min
-        data["lon_max"] = self._org_lon_max
-        data["vertical_min"] = self._org_vertical_min
-        data["vertical_max"] = self._org_vertical_max
-        return data
+        transformer = pyproj.Transformer.from_crs(self.crs, ("EPSG:4979" if self.z else "EPSG:4326"), always_xy=True)
+        coords = ((self.x, self.y) if self.x_is_longitude else (self.y, self.x)) + (self.z,)
+        lon, lat, *vert = transformer.transform(*coords)
+        if vert:
+            vert = vert[0]
+        else:
+            vert = None
+        for val in lon:
+            if val > 180 or val < -180:
+                raise STACPopulatorError(
+                    f"Longitude value {val} is not compliant with WGS 84. "
+                    "Please check that the CRS is correct for this data."
+                )
+        for val in lat:
+            if val > 90 or val < -90:
+                raise STACPopulatorError(
+                    f"Latitude value {val} is not compliant with WGS 84. "
+                    "Please check that the CRS is correct for this data."
+                )
+        return {"lat": lat, "lon": lon, "vert": vert}
 
     @classmethod
     def from_ncattrs(cls, attrs: MutableMapping[str, Any]) -> GeoData:
         """Return a GeoData object from parsing attributes from CFMetadata."""
-        attrs = attrs["groups"]["CFMetadata"]["attributes"]
-        geo_range = {}
-        for field in cls.__pydantic_fields__:
-            field_suffix = field.split("_")[-1]
-            val = attrs.get(f"geospatial_{field}")
-            if field_suffix in ("min", "max", "resolution"):
+        cf_attrs = attrs["groups"]["CFMetadata"]["attributes"]
+        stac_populator_attrs = attrs.get("@stac-populator", {})
+        geo_data = {}
+        # get coordinate reference system
+        force_crs = stac_populator_attrs.get("force_crs")
+        fallback_crs = stac_populator_attrs.get("fallback_crs")
+        if force_crs is not None:
+            geo_data["crs"] = force_crs
+        elif "geospatial_bounds_crs" in cf_attrs:
+            geo_data["crs"] = cf_attrs["geospatial_bounds_crs"]
+            if "geospatial_bounds_crs_vertical" in cf_attrs:
+                all_crs = (cf_attrs["geospatial_bounds_crs"], cf_attrs["geospatial_bounds_crs_vertical"])
+                geo_data["crs"] = pyproj.crs.CompoundCRS(name=" + ".join(all_crs), components=all_crs)
+        elif fallback_crs is not None:
+            geo_data["crs"] = fallback_crs
+        elif cf_attrs.get("geospatial_vertical_min") and cf_attrs.get("geospatial_vertical_max"):
+            geo_data["crs"] = "EPSG:4979"
+        else:
+            geo_data["crs"] = "EPSG:4326"
+        geo_data["crs"] = pyproj.CRS(geo_data["crs"])
+        # ensure that the CRS is 3D if there are vertical values in the cf_attrs
+        if len(geo_data["crs"].axis_info) < 3 and any("_vertical_" in attr for attr in cf_attrs):
+            geo_data["crs"] = geo_data["crs"].to_3d()
+        x_name = "lon" if cls._crs_axis_is_longitude(geo_data["crs"].axis_info[0]) else "lat"
+        # discover min, max, and resolution values for x, y, and z axes
+        for axis in ("lat", "lon", "vertical"):
+            key = "z" if axis == "vertical" else ("x" if axis == x_name else "y")
+            geo_data[key] = []
+            for attr in ("min", "max", "resolution"):
+                val = cf_attrs.get(f"geospatial_{axis}_{attr}")
                 if isinstance(val, list):
                     val = val[0]
-                geo_range[field] = None if val is None else float(val)
-            elif val is not None:
-                geo_range[field] = val
-        return cls(**geo_range)
-
-    def has_z(self) -> bool:
-        """Return True if this GeoData contains data for the z (vertical) axis."""
-        return self.vertical_min is not None and self.vertical_max is not None
+                if attr == "resolution":
+                    geo_data[f"{key}_resolution"] = None if val is None else float(val)
+                else:
+                    geo_data[key].append(None if val is None else float(val))
+        if geo_data["z"] == [None, None]:
+            geo_data["z"] = None
+        return cls(**geo_data)
 
     def crosses_antimeridian(self) -> bool:
         """Return True if the geometry that this GeoData represents extends across the antimeridian."""
-        return self.lon_min > self.lon_max
+        lon_min, lon_max = self.to_wgs84["lon"]
+        return lon_min > lon_max
 
     def to_bbox(self) -> list[float]:
         """Return a bounding box representation of this GeoData."""
-        bbox = [self.lon_min, self.lat_min, self.lon_max, self.lat_max]
-        if self.has_z():
-            bbox.insert(2, self.vertical_min)
-            bbox.append(self.vertical_max)
+        data = self.to_wgs84
+        bbox = [data["lon"][0], data["lat"][0], data["lon"][1], data["lat"][1]]
+        if data["vert"]:
+            bbox.insert(2, data["vert"][0])
+            bbox.append(data["vert"][1])
         return bbox
 
     def _create_linear_ring(
         self, lon_min: float | None = None, lon_max: float | None = None, vertical_val: float | None = None
     ) -> List[List[float]]:
-        lon_min = self.lon_min if lon_min is None else lon_min
-        lon_max = self.lon_max if lon_max is None else lon_max
+        lon_min = self.to_wgs84["lon"][0] if lon_min is None else lon_min
+        lon_max = self.to_wgs84["lon"][1] if lon_max is None else lon_max
+        lat_min, lat_max = self.to_wgs84["lat"]
         ring = [
             [
                 lon_min,
-                self.lat_min,
+                lat_min,
             ],
             [
                 lon_min,
-                self.lat_max,
+                lat_max,
             ],
             [
                 lon_max,
-                self.lat_max,
+                lat_max,
             ],
             [
                 lon_max,
-                self.lat_min,
+                lat_min,
             ],
             [
                 lon_min,
-                self.lat_min,
+                lat_min,
             ],
         ]
         if vertical_val is not None:
@@ -193,7 +237,8 @@ class GeoData:
         omitted from the result here, it can still be seen in the bounding box that is returned
         from calling the to_bbox method.
         """
-        vertical_val = self.vertical_min if self.vertical_min == self.vertical_max else None
+        vertical = self.to_wgs84["vert"]
+        vertical_val = vertical[0] if vertical and vertical[0] == vertical[1] else None
         if self.crosses_antimeridian():
             return GeoJSONMultiPolygon(
                 type="MultiPolygon",

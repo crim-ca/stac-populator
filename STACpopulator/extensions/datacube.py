@@ -155,7 +155,8 @@ class DataCubeHelper(Helper):
     def dimensions(self) -> dict[str, Dimension]:
         """Return Dimension objects required for Datacube extension."""
         dims = {}
-        geo_data = GeoData.from_ncattrs(self.attrs).original_data()
+        geo_data = GeoData.from_ncattrs(self.attrs)
+        reference_system = geo_data.crs.to_epsg() or geo_data.crs.to_wkt()
         for name, length in self.attrs["dimensions"].items():
             v = self.attrs["variables"].get(name)
             if v:
@@ -170,19 +171,19 @@ class DataCubeHelper(Helper):
                                 extent = [0, int(length)]
                             else:  # Not clear the logic is sound
                                 if key == "X":
-                                    extent = geo_data["lon_min"], geo_data["lon_max"]
-                                    unit = geo_data["lon_units"]
-                                    step = geo_data["lon_resolution"]
+                                    extent = geo_data.x
+                                    unit = geo_data.x_units
+                                    step = geo_data.x_resolution
                                 elif key == "Y":
-                                    extent = geo_data["lat_min"], geo_data["lat_max"]
-                                    unit = geo_data["lat_units"]
-                                    step = geo_data["lat_resolution"]
+                                    extent = geo_data.y
+                                    unit = geo_data.y_units
+                                    step = geo_data.y_resolution
                                 elif key in ["T", "time"]:
                                     extent = self.temporal_extent()
-                                elif key in ["Z", "vertical"]:
-                                    extent = geo_data["vertical_min"], geo_data["vertical_max"]
-                                    unit = geo_data["vertical_units"]
-                                    step = geo_data["vertical_resolution"]
+                                elif key in ["Z", "vertical"] and geo_data.z:
+                                    extent = geo_data.z
+                                    unit = geo_data.z_units
+                                    step = geo_data.z_resolution
                                 else:
                                     extent = [None, None]
 
@@ -195,6 +196,7 @@ class DataCubeHelper(Helper):
                                 properties["description"] = description
                             if type_ == DimensionType.SPATIAL:
                                 properties["axis"] = axis
+                                properties["reference_system"] = reference_system
                             if unit is not None:
                                 properties["unit"] = unit
                             if step is not None:

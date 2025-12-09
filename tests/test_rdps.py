@@ -2,12 +2,16 @@
 
 import json
 
+import pytest
+
 from STACpopulator.extensions.hrdps import HRDPSDataModel
 from STACpopulator.extensions.rdps import RDPSDataModel
 
 
-def test_rdps():
+@pytest.mark.vcr
+def test_rdps(epsg4979_0_360_wkt):
     attrs = json.load(open("tests/data/rdps.json"))
+    attrs["@stac-populator"] = {"fallback_crs": epsg4979_0_360_wkt}
     model = RDPSDataModel.from_data(attrs)
     item = model.stac_item()
     assets = item["assets"]
@@ -27,6 +31,7 @@ def test_rdps():
     assert any("file:size" in asset for asset in assets.values())
 
 
+@pytest.mark.vcr
 def test_hrdps_sfc():
     attrs = json.load(open("tests/data/hrdps_sfc.json"))
     model = HRDPSDataModel.from_data(attrs)
@@ -45,6 +50,7 @@ def test_hrdps_sfc():
     assert any("file:size" in asset for asset in assets.values())
 
 
+@pytest.mark.vcr
 def test_hrdps_p_tt():
     attrs = json.load(open("tests/data/hrdps_p_tt.json"))
     model = HRDPSDataModel.from_data(attrs)

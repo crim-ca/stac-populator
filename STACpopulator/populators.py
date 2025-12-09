@@ -413,6 +413,23 @@ class THREDDSPopulator(STACpopulatorBase):
                 "By default, uses the adjacent configuration to the implementation class."
             ),
         )
+        parser.add_argument(
+            "--fallback-crs",
+            help=(
+                "Coordinate reference system (CRS) to use if not specified by the NCML metadata. "
+                "This can either be specified as any string input to the pyproj.CRS class. "
+                "Use this if the NCML does not contain the geospatial_bounds_crs CF metadata field "
+                "to indicate the CRS used for this data."
+            ),
+        )
+        parser.add_argument(
+            "--force-crs",
+            help=(
+                "Coordinate reference system (CRS) to use. This will override the CRS specified in the metadata. "
+                "This can either be specified as any string input to the pyproj.CRS class. "
+                "Use this to force the use of a different CRS if the one specified in the NCML metadata is incorrect."
+            ),
+        )
 
     @classmethod
     def run(cls, ns: argparse.Namespace, session: requests.Session) -> int:
@@ -420,7 +437,7 @@ class THREDDSPopulator(STACpopulatorBase):
         LOGGER.info(f"Arguments to call: {vars(ns)}")
 
         if ns.mode == "full":
-            data_loader = THREDDSLoader(ns.href, session=session)
+            data_loader = THREDDSLoader(ns.href, fallback_crs=ns.fallback_crs, force_crs=ns.force_crs, session=session)
         else:
             # To be implemented
             data_loader = ErrorLoader()

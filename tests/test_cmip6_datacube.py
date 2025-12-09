@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pyproj
 import pystac
 import pytest
 import xncml
@@ -12,12 +13,14 @@ from STACpopulator.extensions.datacube import DataCubeHelper
 DIR = Path(__file__).parent
 
 
-def apply_attrs(xml: str):
+def apply_attrs(xml: str, crs: str):
     # create item
     file_path = DIR / "data" / xml
     ds = xncml.Dataset(filepath=str(file_path))
     attrs = ds.to_cf_dict()
     attrs["access_urls"] = {"HTTPServer": "http://example.com"}
+    attrs["@stac-populator"] = {"fallback_crs": crs}
+
     item = CMIP6Helper(attrs).stac_item()
 
     # Add extension
@@ -36,9 +39,9 @@ def apply_attrs(xml: str):
         "huss_Amon_TaiESM1_historical_r1i1p1f1_gn_185001-201412.xml",
     ),
 )
-def test_datacube_helper(xml):
+def test_datacube_helper(xml, epsg4979_0_360_wkt):
     # Create item
-    item, _dc_ext = apply_attrs(xml)
+    item, _dc_ext = apply_attrs(xml, epsg4979_0_360_wkt)
 
     # same thing as 'item.validate()' but omit the missing CMIP6 that is not official
     schemas = validate_dict(
@@ -53,9 +56,13 @@ def test_datacube_helper(xml):
     assert "datacube" in schemas[1]
 
 
-def test_dimensions():
-    _item, dc_ext = apply_attrs("huss_Amon_TaiESM1_historical_r1i1p1f1_gn_185001-201412.xml")
+def test_dimensions(epsg4979_0_360_wkt):
+    _item, dc_ext = apply_attrs("huss_Amon_TaiESM1_historical_r1i1p1f1_gn_185001-201412.xml", epsg4979_0_360_wkt)
 
+    reference_string = pyproj.CRS(epsg4979_0_360_wkt).to_wkt()
+    import re
+
+    assert re.sub(r"\n\s+", "", epsg4979_0_360_wkt) == reference_string
     assert dc_ext.properties["cube:dimensions"] == {
         "height": {
             "axis": "z",
@@ -66,7 +73,8 @@ def test_dimensions():
             ),
             "type": "spatial",
             "step": 0.0,
-            "unit": "m",
+            "unit": "metre",
+            "reference_system": reference_string,
         },
         "lat": {
             "axis": "y",
@@ -77,7 +85,8 @@ def test_dimensions():
             ),
             "type": "spatial",
             "step": 0.9424083769633508,
-            "unit": "degrees_north",
+            "unit": "degree",
+            "reference_system": reference_string,
         },
         "lon": {
             "axis": "x",
@@ -88,7 +97,8 @@ def test_dimensions():
             ),
             "type": "spatial",
             "step": 1.25,
-            "unit": "degrees_east",
+            "unit": "degree",
+            "reference_system": reference_string,
         },
         "time": {
             "description": "time",
@@ -101,10 +111,10 @@ def test_dimensions():
     }
 
 
-def test_auxiliary_variables():
+def test_auxiliary_variables(epsg4979_0_360_wkt):
     # https://github.com/crim-ca/stac-populator/issues/52
 
-    _item, dc_ext = apply_attrs("clt_Amon_EC-Earth3_historical_r2i1p1f1_gr_185001-201412.xml")
+    _item, dc_ext = apply_attrs("clt_Amon_EC-Earth3_historical_r2i1p1f1_gr_185001-201412.xml", epsg4979_0_360_wkt)
 
     p = dc_ext.properties
     assert set(["time", "lat", "lon"]) == set(p["cube:dimensions"].keys())

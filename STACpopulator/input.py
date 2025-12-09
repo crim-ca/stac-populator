@@ -55,6 +55,8 @@ class THREDDSLoader(GenericLoader):
         self,
         thredds_catalog_url: str,
         depth: Optional[int] = None,
+        fallback_crs: Optional[str] = None,
+        force_crs: Optional[str] = None,
         session: Optional[Session] = None,
     ) -> None:
         """Initialize the THREDDS loader.
@@ -67,6 +69,8 @@ class THREDDSLoader(GenericLoader):
         """
         super().__init__()
         self.depth = depth
+        self.fallback_crs = fallback_crs
+        self.force_crs = force_crs
         self.session = session or requests.Session()
         session_manager.set_session_options(**vars(self.session))
         if urlparse(thredds_catalog_url).query:
@@ -159,6 +163,8 @@ class THREDDSLoader(GenericLoader):
             # Convert NcML to CF-compliant dictionary
             attrs = xncml.Dataset.from_text(r.text).to_cf_dict()
             attrs["attributes"] = numpy_to_python_datatypes(attrs["attributes"])
+            # Add stac-populator specific fields to the CF metadata for later processing by GeoData
+            attrs["@stac-populator"] = {"force_crs": self.force_crs, "fallback_crs": self.fallback_crs}
         # access URLs should ideally be added with xncml but they're not so add them in from the siphon catalog for now.
         attrs["access_urls"] = dataset.access_urls
         return attrs

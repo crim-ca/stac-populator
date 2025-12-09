@@ -1,0 +1,52 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.5
+    method: HEAD
+    uri: https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/fileServer/birdhouse/testdata/HRDPS/HRDPS_sample/HRDPS_P_PR_SFC/2024010100.nc
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Access-Control-Allow-Headers:
+      - Origin, X-Requested-With, Content-Type, Accept, Authorization
+      Access-Control-Allow-Methods:
+      - GET, POST, OPTIONS
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '102604078'
+      Content-Type:
+      - application/x-netcdf
+      Date:
+      - Tue, 09 Dec 2025 14:31:58 GMT
+      Last-Modified:
+      - Fri, 27 Jun 2025 15:38:26 GMT
+      Server:
+      - nginx/1.23.4
+      Strict-Transport-Security:
+      - max-age=0
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Robots-Tag:
+      - noindex, nofollow
+      vary:
+      - Origin
+    status:
+      code: 200
+      message: ''
+version: 1
