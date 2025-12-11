@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import pyproj
@@ -60,8 +61,6 @@ def test_dimensions(epsg4979_0_360_wkt):
     _item, dc_ext = apply_attrs("huss_Amon_TaiESM1_historical_r1i1p1f1_gn_185001-201412.xml", epsg4979_0_360_wkt)
 
     reference_string = pyproj.CRS(epsg4979_0_360_wkt).to_wkt()
-    import re
-
     assert re.sub(r"\n\s+", "", epsg4979_0_360_wkt) == reference_string
     assert dc_ext.properties["cube:dimensions"] == {
         "height": {
