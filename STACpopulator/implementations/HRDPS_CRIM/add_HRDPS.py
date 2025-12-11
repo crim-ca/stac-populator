@@ -13,7 +13,6 @@ class HRDPSpopulator(THREDDSPopulator):
     name = "HRDPS_CRIM"
     description = "HRDPS STAC populator from a THREDDS catalog or NCML XML."
     data_model = HRDPSDataModel
-    item_geometry_model = None  # Unnecessary, but kept for consistency
 
     def create_stac_item(self, item_name: str, item_data: dict[str, Any]) -> dict[str, Any]:
         """Return a STAC item."""

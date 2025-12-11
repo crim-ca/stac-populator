@@ -2,6 +2,56 @@ interactions:
 - request:
     body: null
     headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.5
+    method: HEAD
+    uri: https://pavics.ouranos.ca/twitcher/ows/proxy/thredds/fileServer/birdhouse/testdata/HRDPS/RDPS_sample/2024010100_000.nc
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Access-Control-Allow-Headers:
+      - Origin, X-Requested-With, Content-Type, Accept, Authorization
+      Access-Control-Allow-Methods:
+      - GET, POST, OPTIONS
+      Access-Control-Allow-Origin:
+      - '*'
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '137644165'
+      Content-Type:
+      - application/x-netcdf
+      Date:
+      - Tue, 09 Dec 2025 14:31:56 GMT
+      Last-Modified:
+      - Fri, 27 Jun 2025 15:38:15 GMT
+      Server:
+      - nginx/1.23.4
+      Strict-Transport-Security:
+      - max-age=0
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - SAMEORIGIN
+      X-Robots-Tag:
+      - noindex, nofollow
+      vary:
+      - Origin
+    status:
+      code: 200
+      message: ''
+- request:
+    body: null
+    headers:
       User-Agent:
       - pystac/1.14.1
     method: GET
@@ -201,7 +251,7 @@ interactions:
       Access-Control-Allow-Origin:
       - '*'
       Age:
-      - '471'
+      - '210'
       Cache-Control:
       - max-age=600
       Connection:
@@ -211,7 +261,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       Date:
-      - Thu, 11 Dec 2025 17:40:10 GMT
+      - Tue, 09 Dec 2025 14:31:57 GMT
       ETag:
       - '"6852a0c7-36ad"'
       Last-Modified:
@@ -227,17 +277,17 @@ interactions:
       X-Cache:
       - HIT
       X-Cache-Hits:
-      - '1'
+      - '0'
       X-Fastly-Request-ID:
-      - a3d75a5611a2e8a203b9470cfdd4836bed478ec8
+      - dfb157cf18388891e5a3fba7ae244a4b2d53940a
       X-GitHub-Request-Id:
-      - 104D:28A717:1F572D:21B219:693B0024
+      - FD61:A91B0:16DBCA3:1815195:69383209
       X-Served-By:
-      - cache-yyz4582-YYZ
+      - cache-yul1970052-YUL
       X-Timer:
-      - S1765474811.779594,VS0,VE2
+      - S1765290717.026657,VS0,VE1
       expires:
-      - Thu, 11 Dec 2025 17:42:20 GMT
+      - Tue, 09 Dec 2025 14:38:27 GMT
       x-proxy-cache:
       - MISS
     status:
@@ -257,11 +307,11 @@ interactions:
       Access-Control-Allow-Origin:
       - '*'
       Age:
-      - '470'
+      - '210'
       CF-Cache-Status:
       - HIT
       CF-Ray:
-      - 9ac6c4005e243a00-YYZ
+      - 9ab53586bf2aa1e0-YYZ
       Cache-Control:
       - max-age=1200
       Connection:
@@ -273,16 +323,16 @@ interactions:
       Content-Type:
       - text/html; charset=utf-8
       Date:
-      - Thu, 11 Dec 2025 17:40:10 GMT
+      - Tue, 09 Dec 2025 14:31:57 GMT
       Location:
       - https://proj.org/en/latest/schemas/v0.4/projjson.schema.json
       Server:
       - cloudflare
       Set-Cookie:
-      - __cf_bm=_lEghuPwUV6LZvop2t6ddDiwfcvI2uonI3ygZuELPcg-1765474810-1.0.1.1-xbPXIUX0FksFDdcBPX9Mc5Gxq_H34W9Wbj5EpJSZz0wXj0hVXE4yDDi2EWR64GZwtpl.IjhLR2GOKBXz9wt2jbZVI4DvSeTUSSG_bdVI4qo;
-        path=/; expires=Thu, 11-Dec-25 18:10:10 GMT; domain=.proj.org; HttpOnly; Secure;
+      - __cf_bm=RaLLoR8anxIPIAswldsm9xvzyT4312J2zT.1PwgqaZ8-1765290717-1.0.1.1-CxDWxnDIrxhyvdvCzEdU_ibtM8glek7WkeK1zdxnHkvlkDSBdlFekhums58d4sQUdpktB6YGfng0fUopWPA3O5ul.Qa4Yt4C8IM_HLKJbi0;
+        path=/; expires=Tue, 09-Dec-25 15:01:57 GMT; domain=.proj.org; HttpOnly; Secure;
         SameSite=None
-      - _cfuvid=EeYKrFBEY9UOo1uyNlQoQWCPclOzd_dP1nnQmsEqYSk-1765474810994-0.0.1.1-604800000;
+      - _cfuvid=wOjIM_N1CPQ9ZbYSs1xUgdClEh.RaPlxq4KiMrhSIPQ-1765290717263-0.0.1.1-604800000;
         path=/; domain=.proj.org; HttpOnly; Secure; SameSite=None
       Vary:
       - Accept-Language, Accept-Encoding
@@ -297,7 +347,7 @@ interactions:
       referrer-policy:
       - no-referrer-when-downgrade
       x-backend:
-      - web-i-060787fcb1b884160
+      - web-i-0e374c9dcc2dba95c
       x-content-type-options:
       - nosniff
       x-rtd-domain:
@@ -774,11 +824,11 @@ interactions:
       Access-Control-Allow-Origin:
       - '*'
       Age:
-      - '471'
+      - '210'
       CF-Cache-Status:
       - HIT
       CF-Ray:
-      - 9ac6c400fe2c4a29-YYZ
+      - 9ab53587cd3236a5-YYZ
       Cache-Control:
       - max-age=1200
       Connection:
@@ -786,7 +836,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Thu, 11 Dec 2025 17:40:11 GMT
+      - Tue, 09 Dec 2025 14:31:57 GMT
       ETag:
       - W/"c5bc7ca065287598bed5404a0ec79ce0"
       Last-Modified:
@@ -794,10 +844,10 @@ interactions:
       Server:
       - cloudflare
       Set-Cookie:
-      - __cf_bm=PcMVSXI1H4eGUYSBID5bQLrfh7Ih5aOi7XaW.8kQBjQ-1765474811-1.0.1.1-lnPD4leJNfao0_khMqGTFW77aQiZQGO5F73C3aybj7BGDHm7f7c_MORLd113FeVqWHUjWba00uv1TWBilQOSIL52vHn2POqlUkUKKGVbb0w;
-        path=/; expires=Thu, 11-Dec-25 18:10:11 GMT; domain=.proj.org; HttpOnly; Secure;
+      - __cf_bm=wS8hmR4qof495hXujnNBPbD9.aXRUo.59Q6bhrXcQV8-1765290717-1.0.1.1-ghxaKhOyxEARX3A5XmUsUQ.j5axi1R4tgNGfi3MT4cOvV3IZ5qDM87ORjxjhDN8G6nzNGJve.oQkg8L9KKj.MkE.wehVk4ZY2nkSiqchZAA;
+        path=/; expires=Tue, 09-Dec-25 15:01:57 GMT; domain=.proj.org; HttpOnly; Secure;
         SameSite=None
-      - _cfuvid=7JzJSUD3pvN21UWa.B73h2sUj75tvDaQNb4vYURtjdM-1765474811060-0.0.1.1-604800000;
+      - _cfuvid=W6AnSj1nA7D.f2m2ZecC8BCYXmXNd8OPT1zBS6FKmm0-1765290717455-0.0.1.1-604800000;
         path=/; domain=.proj.org; HttpOnly; Secure; SameSite=None
       Transfer-Encoding:
       - chunked
@@ -843,6 +893,229 @@ interactions:
       - path
       x-served:
       - Nginx-Proxito-Sendfile
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - pystac/1.14.1
+    method: GET
+    uri: https://stac-extensions.github.io/cf/v0.2.0/schema.json
+  response:
+    body:
+      string: "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"$id\":
+        \"https://stac-extensions.github.io/cf/v0.2.0/schema.json#\",\n  \"title\":
+        \"CF Extension\",\n  \"description\": \"STAC CF Extension for STAC Items and
+        STAC Collections.\",\n  \"type\": \"object\",\n  \"required\": [\n    \"stac_extensions\"\n
+        \ ],\n  \"properties\": {\n    \"stac_extensions\": {\n      \"type\": \"array\",\n
+        \     \"contains\": {\n        \"const\": \"https://stac-extensions.github.io/cf/v0.2.0/schema.json\"\n
+        \     }\n    },\n    \"assets\": {\n      \"type\": \"object\",\n      \"additionalProperties\":
+        {\n        \"$ref\": \"#/definitions/fields\"\n      }\n    }\n  },\n  \"oneOf\":
+        [\n    {\n      \"$comment\": \"Schema for Collections\",\n      \"type\":
+        \"object\",\n      \"required\": [\n        \"type\"\n      ],\n      \"properties\":
+        {\n        \"type\": {\n          \"const\": \"Collection\"\n        },\n
+        \       \"item_assets\": {\n          \"type\": \"object\",\n          \"additionalProperties\":
+        {\n            \"$ref\": \"#/definitions/fields\"\n          }\n        },\n
+        \       \"summaries\": {\n          \"oneOf\": [\n            {\n              \"$ref\":
+        \"#/definitions/fields\"\n            },\n            {\n              \"$comment\":
+        \"JSON Schema summary\",\n              \"type\": \"object\",\n              \"properties\":
+        {\n                \"cf:parameter\": {\n                  \"type\": \"object\",\n
+        \                 \"properties\": {\n                    \"type\": {\n                      \"const\":
+        \"array\"\n                    }\n                  }\n                }\n
+        \             },\n              \"patternProperties\": {\n                \"^(?!cf:)\":
+        {\n                  \"$comment\": \"Above, change `cf` to the prefix of this
+        extension\"\n                }\n              },\n              \"additionalProperties\":
+        false\n            }\n          ]\n        }\n      },\n      \"allOf\": [\n
+        \       {\n          \"$ref\": \"#/definitions/fields\"\n        }\n      ]\n
+        \   },\n    {\n      \"$comment\": \"Schema for Items\",\n      \"type\":
+        \"object\",\n      \"required\": [\n        \"type\"\n      ],\n      \"properties\":
+        {\n        \"type\": {\n          \"const\": \"Feature\"\n        },\n        \"properties\":
+        {\n          \"$ref\": \"#/definitions/fields\"\n        }\n      },\n      \"allOf\":
+        [\n        {\n          \"$ref\": \"#/definitions/cf_in_assets\"\n        }\n
+        \     ]\n    }\n  ],\n  \"definitions\": {\n    \"cf_in_assets\": {\n      \"required\":
+        [\n        \"assets\"\n      ],\n      \"properties\": {\n        \"assets\":
+        {\n          \"not\": {\n            \"additionalProperties\": {\n              \"not\":
+        {\n                \"allOf\": [\n                  {\n                    \"required\":
+        [\n                      \"cf:parameter\"\n                    ]\n                  },\n
+        \                 {\n                    \"$ref\": \"#/definitions/fields\"\n
+        \                 }\n                ]\n              }\n            }\n          }\n
+        \       }\n      }\n    },\n    \"forbid_fields\": {\n      \"patternProperties\":
+        {\n        \"^(?!cf:)\": {}\n      },\n      \"additionalProperties\": false\n
+        \   },\n    \"fields\": {\n      \"type\": \"object\",\n      \"properties\":
+        {\n        \"cf:parameter\": {\n          \"type\": \"array\",\n          \"minItems\":
+        1,\n          \"items\": {\n            \"type\": \"object\",\n            \"required\":
+        [\n              \"name\"\n            ],\n            \"properties\": {\n
+        \             \"name\": {\n                \"type\": \"string\",\n                \"minLength\":
+        1\n              },\n              \"unit\": {\n                \"type\":
+        \"string\"\n              }\n            }\n          }\n        }\n      },\n
+        \     \"patternProperties\": {\n        \"^(?!cf:)\": {\n          \"$comment\":
+        \"Above, change `cf` to the prefix of this extension\"\n        }\n      },\n
+        \     \"additionalProperties\": false\n    }\n  }\n}\n"
+    headers:
+      Accept-Ranges:
+      - bytes
+      Access-Control-Allow-Origin:
+      - '*'
+      Age:
+      - '210'
+      Cache-Control:
+      - max-age=600
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '3577'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 09 Dec 2025 14:31:57 GMT
+      ETag:
+      - '"64ef0976-df9"'
+      Last-Modified:
+      - Wed, 30 Aug 2023 09:18:46 GMT
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31556952
+      Vary:
+      - Accept-Encoding
+      Via:
+      - 1.1 varnish
+      X-Cache:
+      - HIT
+      X-Cache-Hits:
+      - '0'
+      X-Fastly-Request-ID:
+      - c20532d51b6d8e0aced18b275cd0dfc2bfe7ac0b
+      X-GitHub-Request-Id:
+      - 457E:26ED36:17C866E:1901D2D:6938320A
+      X-Served-By:
+      - cache-yul1970044-YUL
+      X-Timer:
+      - S1765290718.779995,VS0,VE1
+      expires:
+      - Tue, 09 Dec 2025 14:38:28 GMT
+      x-proxy-cache:
+      - MISS
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - pystac/1.14.1
+    method: GET
+    uri: https://stac-extensions.github.io/file/v2.1.0/schema.json
+  response:
+    body:
+      string: "{\n  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\n  \"$id\":
+        \"https://stac-extensions.github.io/file/v2.1.0/schema.json#\",\n  \"title\":
+        \"File Info Extension\",\n  \"description\": \"STAC File Info Extension for
+        STAC Items, STAC Catalogs, and STAC Collections.\",\n  \"oneOf\": [\n    {\n
+        \     \"$comment\": \"This is the schema for STAC Items.\",\n      \"allOf\":
+        [\n        {\n          \"type\": \"object\",\n          \"required\": [\n
+        \           \"type\",\n            \"assets\"\n          ],\n          \"properties\":
+        {\n            \"type\": {\n              \"const\": \"Feature\"\n            },\n
+        \           \"assets\": {\n              \"type\": \"object\",\n              \"additionalProperties\":
+        {\n                \"$ref\": \"#/definitions/fields\"\n              }\n            },\n
+        \           \"links\": {\n              \"type\": \"array\",\n              \"items\":
+        {\n                \"$ref\": \"#/definitions/fields\"\n              }\n            }\n
+        \         }\n        },\n        {\n          \"$ref\": \"#/definitions/stac_extensions\"\n
+        \       }\n      ]\n    },\n    {\n      \"$comment\": \"This is the schema
+        for STAC Catalogs.\",\n      \"allOf\": [\n        {\n          \"type\":
+        \"object\",\n          \"required\": [\n            \"type\"\n          ],\n
+        \         \"properties\": {\n            \"type\": {\n              \"const\":
+        \"Catalog\"\n            },\n            \"links\": {\n              \"type\":
+        \"array\",\n              \"items\": {\n                \"$ref\": \"#/definitions/fields\"\n
+        \             }\n            }\n          }\n        },\n        {\n          \"$ref\":
+        \"#/definitions/stac_extensions\"\n        }\n      ]\n    },\n    {\n      \"$comment\":
+        \"This is the schema for STAC Collections.\",\n      \"allOf\": [\n        {\n
+        \         \"type\": \"object\",\n          \"required\": [\n            \"type\"\n
+        \         ],\n          \"properties\": {\n            \"type\": {\n              \"const\":
+        \"Collection\"\n            },\n            \"assets\": {\n              \"type\":
+        \"object\",\n              \"additionalProperties\": {\n                \"$ref\":
+        \"#/definitions/fields\"\n              }\n            },\n            \"links\":
+        {\n              \"type\": \"array\",\n              \"items\": {\n                \"$ref\":
+        \"#/definitions/fields\"\n              }\n            },\n            \"item_assets\":
+        {\n              \"type\": \"object\",\n              \"additionalProperties\":
+        {\n                \"$ref\": \"#/definitions/fields\"\n              }\n            }\n
+        \         }\n        },\n        {\n          \"$ref\": \"#/definitions/stac_extensions\"\n
+        \       }\n      ]\n    }\n  ],\n  \"definitions\": {\n    \"stac_extensions\":
+        {\n      \"type\": \"object\",\n      \"required\": [\n        \"stac_extensions\"\n
+        \     ],\n      \"properties\": {\n        \"stac_extensions\": {\n          \"type\":
+        \"array\",\n          \"contains\": {\n            \"const\": \"https://stac-extensions.github.io/file/v2.1.0/schema.json\"\n
+        \         }\n        }\n      }\n    },\n    \"fields\": {\n      \"$comment\":
+        \"Add your new fields here. Don't require them here, do that above in the
+        item schema.\",\n      \"type\": \"object\",\n      \"properties\": {\n        \"file:byte_order\":
+        {\n          \"type\": \"string\",\n          \"enum\": [\n            \"big-endian\",\n
+        \           \"little-endian\"\n          ],\n          \"title\": \"File Byte
+        Order\"\n        },\n        \"file:checksum\": {\n          \"type\": \"string\",\n
+        \         \"pattern\": \"^[a-f0-9]+$\",\n          \"title\": \"File Checksum
+        (Multihash)\"\n        },\n        \"file:header_size\": {\n          \"type\":
+        \"integer\",\n          \"minimum\": 0,\n          \"title\": \"File Header
+        Size\"\n        },\n        \"file:size\": {\n          \"type\": \"integer\",\n
+        \         \"minimum\": 0,\n          \"title\": \"File Size\"\n        },\n
+        \       \"file:values\": {\n          \"type\": \"array\",\n          \"minItems\":
+        1,\n          \"items\": {\n            \"type\": \"object\",\n            \"required\":
+        [\n              \"values\",\n              \"summary\"\n            ],\n
+        \           \"properties\": {\n              \"values\": {\n                \"type\":
+        \"array\",\n                \"minItems\": 1,\n                \"items\": {\n
+        \                 \"description\": \"Any data type is allowed\"\n                }\n
+        \             },\n              \"summary\": {\n                \"type\":
+        \"string\",\n                \"minLength\": 1\n              }\n            }\n
+        \         }\n        },\n        \"file:local_path\": {\n          \"type\":
+        \"string\",\n          \"pattern\": \"^[^\\\\r\\\\n\\\\t\\\\\\\\:'\\\"/]+(/[^\\\\r\\\\n\\\\t\\\\\\\\:'\\\"/]+)*/?$\",\n
+        \         \"title\": \"Relative File Path\"\n        }\n      },\n      \"patternProperties\":
+        {\n        \"^(?!file:)\": {\n          \"$comment\": \"Above, change `template`
+        to the prefix of this extension\"\n        }\n      },\n      \"additionalProperties\":
+        false\n    }\n  }\n}\n"
+    headers:
+      Accept-Ranges:
+      - bytes
+      Access-Control-Allow-Origin:
+      - '*'
+      Age:
+      - '210'
+      Cache-Control:
+      - max-age=600
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '4536'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Tue, 09 Dec 2025 14:31:57 GMT
+      ETag:
+      - '"61b4cf00-11b8"'
+      Last-Modified:
+      - Sat, 11 Dec 2021 16:17:04 GMT
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31556952
+      Vary:
+      - Accept-Encoding
+      Via:
+      - 1.1 varnish
+      X-Cache:
+      - HIT
+      X-Cache-Hits:
+      - '0'
+      X-Fastly-Request-ID:
+      - bd5a55119048e8c6e497927c6924dc98632a48c0
+      X-GitHub-Request-Id:
+      - 22FE:94DB3:1771900:18AB712:6938320C
+      X-Served-By:
+      - cache-yul1970063-YUL
+      X-Timer:
+      - S1765290718.939109,VS0,VE1
+      expires:
+      - Tue, 09 Dec 2025 14:38:28 GMT
+      x-proxy-cache:
+      - MISS
     status:
       code: 200
       message: OK

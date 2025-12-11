@@ -2,6 +2,7 @@ import json
 import os
 import pathlib
 import sys
+from copy import deepcopy
 from unittest.mock import patch
 from urllib.parse import quote
 
@@ -13,7 +14,6 @@ import xncml
 from STACpopulator.extensions.cmip6 import CMIP6Helper
 from STACpopulator.extensions.thredds import THREDDSExtension, THREDDSHelper
 from STACpopulator.input import THREDDSLoader
-from STACpopulator.models import GeoJSONPolygon, Geometry
 from STACpopulator.populators import STACpopulatorBase
 
 
@@ -26,8 +26,25 @@ def quote_none_safe(url):
     return quote(url, safe="")
 
 
+def _approximate_nested(val: float | list):
+    if isinstance(val, list):
+        return [_approximate_nested(x) for x in val]
+    else:
+        return pytest.approx(val)
+
+
+def compare_stac_items(item1, item2):
+    item_copy = deepcopy(item1)
+    geometry = item_copy["geometry"]
+    if item_copy["bbox"] is not None:
+        item_copy["bbox"] = _approximate_nested(item_copy["bbox"])
+    if geometry is not None:
+        geometry["coordinates"] = _approximate_nested(geometry["coordinates"])
+    assert item_copy == item2
+
+
 @pytest.mark.vcr
-def test_standalone_stac_item_thredds_ncml(cur_dir):
+def test_standalone_stac_item_thredds_ncml(cur_dir, epsg4979_0_360_wkt):
     thredds_url = "https://pavics.ouranos.ca/twitcher/ows/proxy/thredds"
     thredds_path = "birdhouse/testdata/xclim/cmip6"
     thredds_nc = "sic_SImon_CCCma-CanESM5_ssp245_r13i1p2f1_2020.nc"
@@ -48,7 +65,8 @@ def test_standalone_stac_item_thredds_ncml(cur_dir):
         "WMS": f"{thredds_url}/wms/{thredds_path}/{thredds_nc}",
         "NetcdfSubset": f"{thredds_url}/ncss/{thredds_path}/{thredds_nc}/dataset.html",
     }
-    stac_item = CMIP6Helper(attrs, GeoJSONPolygon).stac_item()
+    attrs["@stac-populator"] = {"fallback_crs": epsg4979_0_360_wkt}
+    stac_item = CMIP6Helper(attrs).stac_item()
     thredds_helper = THREDDSHelper(attrs["access_urls"])
     thredds_ext = THREDDSExtension.ext(stac_item)
     thredds_ext.apply(services=thredds_helper.services, links=thredds_helper.links)
@@ -57,12 +75,10 @@ def test_standalone_stac_item_thredds_ncml(cur_dir):
     with open(ref_file, mode="r", encoding="utf-8") as ff:
         reference = pystac.Item.from_dict(json.load(ff)).to_dict()
 
-    assert stac_item.to_dict() == reference
+    compare_stac_items(stac_item.to_dict(), reference)
 
 
 class MockedNoSTACUpload(STACpopulatorBase):
-    item_geometry_model = Geometry
-
     def load_config(self):
         # bypass auto-load config
         self._collection_info = {
