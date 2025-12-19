@@ -22,14 +22,8 @@ RequestMethod = Literal[
     "PATCH",
     "DELETE",
     "OPTIONS",
-    "head",
-    "get",
-    "post",
-    "put",
-    "patch",
-    "delete",
-    "options",
 ]
+
 AnyRequestMethod = Union[RequestMethod, str]
 HeadersType = Mapping[str, str]
 HeadersTupleType = List[Tuple[str, str]]
@@ -47,6 +41,7 @@ HeaderCookiesType = Union[HeadersBaseType, CookiesBaseType]
 HeaderCookiesTuple = Union[Tuple[None, None], Tuple[HeadersBaseType, CookiesBaseType]]
 AnyCookiesContainer = Union[CookiesBaseType, AnyHeadersContainer]
 AnyHeadersCookieContainer = Union[AnyHeadersContainer, AnyCookiesContainer]
+
 RequestOptions = TypedDict(
     "RequestOptions",
     {
