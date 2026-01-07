@@ -20,7 +20,7 @@ from STACpopulator.auth.typedefs import (
 from STACpopulator.auth.utils import fully_qualified_name, make_request
 from STACpopulator.exceptions import AuthenticationError
 
-LOGGER = logging.getLogger("cli.auth")
+LOGGER = logging.getLogger(__name__)
 
 
 class AuthHandler(AuthBase):
