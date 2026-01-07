@@ -139,12 +139,8 @@ class BasicAuthHandler(AuthHandler, HTTPBasicAuth):
     def username(self, username: str) -> None:
         self.identity = username
 
-    def __call__(self, request: AnyRequestType) -> AnyRequestType:
-        """Call method for basic authentication handler."""
-        return HTTPBasicAuth.__call__(self, request)
 
-
-class RequestAuthHandler(AuthHandler, HTTPBasicAuth):
+class RequestAuthHandler(AuthHandler):
     """Base class to send a request in order to retrieve an authorization token."""
 
     def __init__(
@@ -164,7 +160,6 @@ class RequestAuthHandler(AuthHandler, HTTPBasicAuth):
             method=method,
             headers=headers,
         )
-        HTTPBasicAuth.__init__(self, username=identity, password=password)
         self.token = token
         self._common_token_names = ["auth", "access_token", "token"]
 
