@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import (
+    Callable,
     Dict,
     List,
     Literal,
@@ -9,7 +10,7 @@ from typing import (
     Union,
 )
 
-from requests import PreparedRequest
+from requests import PreparedRequest, Response
 from requests import Request as RequestsRequest
 from requests.structures import CaseInsensitiveDict
 from typing_extensions import NotRequired, TypedDict
@@ -41,6 +42,8 @@ HeaderCookiesType = Union[HeadersBaseType, CookiesBaseType]
 HeaderCookiesTuple = Union[Tuple[None, None], Tuple[HeadersBaseType, CookiesBaseType]]
 AnyCookiesContainer = Union[CookiesBaseType, AnyHeadersContainer]
 AnyHeadersCookieContainer = Union[AnyHeadersContainer, AnyCookiesContainer]
+RequestCachingKeywords = Dict[str, AnyValueType]
+RequestCachingFunction = Callable[[AnyRequestMethod, str, RequestCachingKeywords], Response]
 
 RequestOptions = TypedDict(
     "RequestOptions",

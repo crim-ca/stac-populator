@@ -3,7 +3,7 @@ import inspect
 import logging
 import os
 import re
-from typing import Any, Callable, Dict, Optional, Type, Union
+from typing import Any, Optional, Type, Union
 
 import requests
 from requests import Response
@@ -11,15 +11,10 @@ from typing_extensions import Unpack
 
 from STACpopulator.auth.typedefs import (
     AnyRequestMethod,
-    AnyValueType,
     RequestOptions,
 )
 
 LOGGER = logging.getLogger(__name__)
-
-
-RequestCachingKeywords = Dict[str, AnyValueType]
-RequestCachingFunction = Callable[[AnyRequestMethod, str, RequestCachingKeywords], Response]
 
 
 def make_request(
