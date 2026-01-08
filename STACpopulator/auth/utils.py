@@ -56,14 +56,7 @@ def make_request(
     }  # add as unknown to always remove them since they are passed by arguments
     for req_opt in set(request_kwargs) - known_req_opts:
         request_kwargs.pop(req_opt)
-    request_args = (method, url, request_kwargs)
-    return _request_call(*request_args)
-
-
-def _request_call(method: AnyRequestMethod, url: str, kwargs: RequestCachingKeywords) -> Response:
-    """Request operation employed by :func:`request_extra` without caching."""
-    with requests.Session() as session:
-        res = session.request(method, url, **kwargs)
+    res = requests.request(method, url, **request_kwargs)
     return res
 
 

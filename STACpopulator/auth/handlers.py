@@ -3,7 +3,6 @@ from __future__ import annotations
 import abc
 import inspect
 import logging
-from http import HTTPStatus
 from typing import Any, Dict, Optional, Type, Union
 
 from requests import Response
@@ -189,10 +188,10 @@ class RequestAuthHandler(AuthHandler):
         """Launch an authentication request to retrieve the authorization token."""
         auth_headers = {"Accept": ContentType.APP_JSON}
         auth_headers.update(self.headers)
-        resp = make_request(self.method, self.url, headers=auth_headers)
-        if resp.status_code != HTTPStatus.OK:
+        res = make_request(self.method, self.url, headers=auth_headers)
+        if not res.ok:
             return None
-        return self.get_token_from_response(resp)
+        return self.get_token_from_response(res)
 
     def get_token_from_response(self, response: Response) -> Optional[str]:
         """Extract the authorization token from a valid authentication response."""

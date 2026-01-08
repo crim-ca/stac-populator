@@ -27,7 +27,7 @@ def add_request_options(parser: argparse.ArgumentParser) -> None:
     )
     parser.add_argument(
         "-c",
-        "--auth-class",
+        "--auth-handler",
         dest="auth_handler",
         metavar="AUTH_HANDLER_CLASS",
         action=ValidateAuthHandlerAction,
