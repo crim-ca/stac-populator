@@ -27,7 +27,7 @@ class AuthHandler(AuthBase):
     """Authentication handler class."""
 
     url: Optional[str]
-    method: AnyRequestMethod
+    method: AnyRequestMethod = "GET"
     headers: Optional[AnyHeadersContainer]
     identity: Optional[str]
     password: Optional[str]
