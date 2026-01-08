@@ -3,7 +3,15 @@ import logging
 
 from requests.sessions import Session
 
-from STACpopulator.auth.handlers import AuthHandler, BasicAuthHandler, BearerAuthHandler, CookieAuthHandler
+from STACpopulator.auth.handlers import (
+    AuthHandler,
+    BasicAuthHandler,
+    BearerAuthHandler,
+    CookieAuthHandler,
+    CookieJarAuthHandler,
+    DigestAuthHandler,
+    ProxyAuthHandler,
+)
 from STACpopulator.auth.utils import fully_qualified_name
 from STACpopulator.auth.validators import ValidateAuthHandlerAction, ValidateHeaderAction, ValidateMethodAction
 
@@ -13,7 +21,17 @@ LOGGER = logging.getLogger(__name__)
 def add_request_options(parser: argparse.ArgumentParser) -> None:
     """Add arguments to a parser to allow update of a request session definition used across a populator procedure."""
     auth_handlers = " | ".join(
-        [f"{fully_qualified_name(handler)}" for handler in [BasicAuthHandler, BearerAuthHandler, CookieAuthHandler]]
+        [
+            f"{fully_qualified_name(handler)}"
+            for handler in [
+                BasicAuthHandler,
+                DigestAuthHandler,
+                ProxyAuthHandler,
+                BearerAuthHandler,
+                CookieAuthHandler,
+                CookieJarAuthHandler,
+            ]
+        ]
     )
 
     parser.add_argument("--cert", type=argparse.FileType(), help="Path to a certificate file to use.")

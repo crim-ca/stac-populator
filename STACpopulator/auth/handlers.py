@@ -3,10 +3,11 @@ from __future__ import annotations
 import abc
 import inspect
 import logging
+from http import cookiejar
 from typing import Any, Dict, Optional, Type, Union
 
-from requests import Response
-from requests.auth import AuthBase, HTTPBasicAuth
+from requests import PreparedRequest, Response
+from requests.auth import AuthBase, HTTPBasicAuth, HTTPDigestAuth, HTTPProxyAuth
 from requests.structures import CaseInsensitiveDict
 
 from STACpopulator.auth.typedefs import (
@@ -25,11 +26,11 @@ LOGGER = logging.getLogger(__name__)
 class AuthHandler(AuthBase):
     """Authentication handler class."""
 
-    url: Optional[str] = None
-    method: AnyRequestMethod = "GET"
-    headers: Optional[AnyHeadersContainer] = {}
-    identity: Optional[str] = None
-    password: Optional[str] = None  # nosec
+    url: Optional[str]
+    method: AnyRequestMethod
+    headers: Optional[AnyHeadersContainer]
+    identity: Optional[str]
+    password: Optional[str]
 
     def __init__(
         self,
@@ -37,21 +38,18 @@ class AuthHandler(AuthBase):
         password: Optional[str] = None,
         url: Optional[str] = None,
         method: AnyRequestMethod = "GET",
-        headers: Optional[AnyHeadersContainer] = None,
+        headers: Optional[AnyHeadersContainer] = {},
     ) -> None:
-        if identity is not None:
-            self.identity = identity
-        if password is not None:
-            self.password = password
-        if url is not None:
-            self.url = url
+        self.identity = identity
+        self.password = password
+        self.url = url
         if method is not None:
             self.method = method
         if headers:
             self.headers = headers
 
     @abc.abstractmethod
-    def __call__(self, request: AnyRequestType) -> AnyRequestType:
+    def __call__(self, r: PreparedRequest) -> PreparedRequest:
         """Call method to perform inline authentication retrieval prior to sending the request."""
         raise NotImplementedError
 
@@ -129,14 +127,41 @@ class BasicAuthHandler(AuthHandler, HTTPBasicAuth):
         AuthHandler.__init__(self, identity=username, password=password, **kwargs)
         HTTPBasicAuth.__init__(self, username=username, password=password)
 
-    @property
-    def username(self) -> str:
-        """Auth username."""
-        return self.identity
 
-    @username.setter
-    def username(self, username: str) -> None:
-        self.identity = username
+class DigestAuthHandler(AuthHandler, HTTPDigestAuth):
+    """Digest authentication handler class."""
+
+    def __init__(self, username: str, password: str, **kwargs) -> None:
+        AuthHandler.__init__(self, identity=username, password=password, **kwargs)
+        HTTPDigestAuth.__init__(self, username=username, password=password)
+
+
+class ProxyAuthHandler(AuthHandler, HTTPProxyAuth):
+    """Proxy authentication handler class."""
+
+    def __init__(self, username: str, password: str, **kwargs) -> None:
+        AuthHandler.__init__(self, identity=username, password=password, **kwargs)
+        HTTPProxyAuth.__init__(self, username=username, password=password)
+
+
+class CookieJarAuthHandler(AuthHandler):
+    """Cookie jar authentication handler class."""
+
+    def __init__(self, identity: str, **kwargs) -> None:
+        AuthHandler.__init__(self, identity=identity, **kwargs)
+        self.cookiefile = identity
+        self._cookiejar = None
+
+    def __call__(self, r: PreparedRequest) -> PreparedRequest:
+        """Call method loading cookie jar prior to sending the request."""
+        # Lazy-load cookie jar
+        if self._cookiejar is None:
+            jar = cookiejar.MozillaCookieJar(self.cookie_file)
+            jar.load(ignore_discard=True, ignore_expires=True)
+            self._cookiejar = jar
+
+        r._cookies = self._cookiejar
+        return r
 
 
 class RequestAuthHandler(AuthHandler):
@@ -269,7 +294,7 @@ class CookieAuthHandler(RequestAuthHandler):
     def parse_token(token: Union[str, CookiesType]) -> str:
         """Parse token to a form that can be included in a request `Cookie` header.
 
-        Returns the token string as is if it is a string. Otherwise, if the token is a mapping where keys are cookie
+        Returns the token string as is if it's a string. Otherwise, if the token is a mapping where keys are cookie
         names and values are cookie values, converts the cookie to a `key=val;...` string that can be accepted as the
         value of the "Cookie" header.
         """
