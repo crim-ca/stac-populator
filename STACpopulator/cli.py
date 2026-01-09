@@ -15,6 +15,7 @@ from STACpopulator.collection_update import UpdateModes, update_api_collection
 from STACpopulator.exceptions import STACPopulatorError
 from STACpopulator.export import export_catalog
 from STACpopulator.log import add_logging_options, setup_logging
+from STACpopulator.populators import STACpopulatorBase
 from STACpopulator.request.utils import add_request_options, apply_request_options
 
 
