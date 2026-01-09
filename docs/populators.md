@@ -176,10 +176,6 @@ STAC API.
 `Populator` classes are defined in a specific directory created under `STACpopulator/implementations/`, to which we will
 refer in the following as the populator's package.
 
-📝 **NOTE** - To maintain consistency, the name of the newly created populator package should follow the naming
-convention: `STACpopulator/implementations/IMPLEMENTATION_AUTHOR/`. For instance, we create the
-`STACpopulator/implementations/RDPS_CRIM/` directory for the `RDPSpopulator`, with `RDPS_CRIM` being the package name.
-
 ### 4.1. Creating the populator class
 
 A `Populator` class inherits from the abstract [`STACpopulatorBase`][populator-base-class] class. It must specify the
@@ -194,21 +190,25 @@ The example below shows the [`RDPSpopulator`][rdps-populator-class] class.
 from typing import Any
 
 from STACpopulator.extensions.rdps import RDPSDataModel
-from STACpopulator.populator_base import STACpopulatorBase
+from STACpopulator.populators import THREDDSPopulator  # Note: the THREDDSPopulator inherits from STACpopulatorBase
 
 
-class RDPSpopulator(STACpopulatorBase):
+class RDPSpopulator(THREDDSPopulator):
     """Populator that creates STAC objects representing RDPS data from a THREDDS catalog."""
 
+    name = "RDPS_CRIM"
+    description = "RDPS STAC populator from a THREDDS catalog or NCML XML."
     data_model = RDPSDataModel
 
     def create_stac_item(self, item_name: str, item_data: dict[str, Any]) -> dict[str, Any]:
-        """Return a STAC Item."""
-        # The variable `self._session` is inherited from `STACpopulatorBase` and is passed as a keyword
-        # argument to appropriate helpers via this `from_data(...)` call.
-        model = self.data_model.from_data(item_data, session=self._session)
-        return model.stac_item()
+        """Return a STAC item."""
+        dm = self.data_model.from_data(item_data, session=self._session)
+        return dm.stac_item()
 ```
+
+📝 **NOTE** - To maintain consistency, the name of the newly created populator package should follow the naming
+convention: `STACpopulator/implementations/IMPLEMENTATION_AUTHOR/`. For instance, we create the
+`STACpopulator/implementations/RDPS_CRIM/` directory for the `RDPSpopulator`, with `RDPS_CRIM` being the package name.
 
 📝 **NOTE** - Optionally, populator-level variables can be passed to helpers for initialization via keyword arguments
 (`kwargs`) provided to the static `def from_data(...)` method of the `DataModel`. In the example above, the
@@ -217,30 +217,34 @@ class RDPSpopulator(STACpopulatorBase):
 determine which variables are required to instantiate each helper and provide them. In our tutorial, the
 [FileHelper][file-helper] receives the `session` object for initialization and reuse it for its internal operations.
 
-### 4.2. Adding populator CLI command
+### 4.2. Modifying the populator CLI command
 
-To be able to invoke the populator from the CLI, the following updates must be performed.
+The new implementation is now runnable through the CLI and should show up automatically in the help message when
+running:
 
-1. Copy the `def add_parser_args(...)` and `def runner(...)` methods from the
-   [`STACpopulator/implementations/RDPS_CRIM/add_RDPS.py`][add-rdps-module] module.
-2. Update the Python docstrings and CLI help strings to reflect the new populator’s name and specific behavior.
-3. Export these methods in the `__init__.py` file of the populator's directory.
-
-For instance, in `STACpopulator/implementations/RDPS_CRIM/__init__.py` for the RDPS populator.
-
-```python
-from .add_RDPS import add_parser_args, runner
-
-__all__ = ["add_parser_args", "runner"]
+```sh
+stac-populator run --help
 ```
 
-<!-- markdownlint-disable-next-line MD029 -->
-4. Register the new populator implementation in [`STACpopulator/implementations/__init__.py`][populators-impl-init]
+To customize the name of the populator implementation in the CLI, set the `name` attribute of the populator class.
+To customize the description set the `description` attribute to a string describing the new populator.
+For example, the `RDPSpopulator` shown above can be invoked with the `RDPS_CRIM` populator option because that
+is the value of its `name` attribute.
 
-```python
-__all__ = [..., "RDPS_CRIM", "IMPLEMENTATION_AUTHOR"]
-# Replace IMPLEMENTATION_AUTHOR with the name of your new implementation's package name
+```sh
+stac-populator run RDPS_CRIM --help
 ```
+
+📝 **NOTE** - To maintain consistency, the name of the newly created populator should follow the naming
+convention: `IMPLEMENTATION_AUTHOR`. For instance, the `RDPSpopulator` is given the name `RDPS_CRIM` because
+it is an implementation for RDPS data and it was developed by CRIM. Names must be unique.
+
+If the populator requires additional command line arguments these can be added by extending the
+`STACpopulatorBase.update_parser_args` class method. All command line arguments will be passed to the
+`run` classmethod as a namespace object.
+
+📝 **NOTE** - When extending the `STACpopulatorBase.update_parser_args` class method make sure to call
+`super().update_parser_args(parser)` or the CLI won't include all of the required parser arguments for your populator.
 
 ## 5. Collection-level Extensions
 
@@ -280,11 +284,7 @@ extensions are handled) is currently under active development and will be availa
   https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/extensions/base.py#L159
 [rdps-collection-config]:
   https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/implementations/RDPS_CRIM/collection_config.yml
-[add-rdps-module]:
-  https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/implementations/RDPS_CRIM/add_RDPS.py
 [rdps-populator-class]:
   https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/implementations/RDPS_CRIM/add_RDPS.py#L14
 [rdps-datamodel-class]:
   https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/extensions/rdps.py#L8
-[populators-impl-init]:
-  https://github.com/crim-ca/stac-populator/blob/5b668e9490a0944ba988545ac3655e34710adebd/STACpopulator/implementations/__init__.py
