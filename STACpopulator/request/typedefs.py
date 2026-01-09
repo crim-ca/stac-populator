@@ -24,7 +24,6 @@ RequestMethod = Literal[
     "DELETE",
     "OPTIONS",
 ]
-
 AnyRequestMethod = Union[RequestMethod, str]
 HeadersType = Mapping[str, str]
 HeadersTupleType = List[Tuple[str, str]]
@@ -44,7 +43,6 @@ AnyCookiesContainer = Union[CookiesBaseType, AnyHeadersContainer]
 AnyHeadersCookieContainer = Union[AnyHeadersContainer, AnyCookiesContainer]
 RequestCachingKeywords = Dict[str, AnyValueType]
 RequestCachingFunction = Callable[[AnyRequestMethod, str, RequestCachingKeywords], Response]
-
 RequestOptions = TypedDict(
     "RequestOptions",
     {
@@ -67,11 +65,9 @@ RequestOptions = TypedDict(
 
 
 class ContentType(Enum):
-    """
-    Supported ``Content-Type`` values.
+    """Supported `Content-Type` values.
 
     Media-Type nomenclature::
-
         <type> "/" [x- | <tree> "."] <subtype> ["+" suffix] *[";" parameter=value]
     """
 

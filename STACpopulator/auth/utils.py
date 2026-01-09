@@ -9,7 +9,7 @@ import requests
 from requests import Response
 from typing_extensions import Unpack
 
-from STACpopulator.auth.typedefs import (
+from STACpopulator.request.typedefs import (
     AnyRequestMethod,
     RequestOptions,
 )

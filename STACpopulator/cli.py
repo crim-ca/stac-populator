@@ -14,7 +14,7 @@ from STACpopulator.collection_update import UpdateModes, UpdateModesOptional, up
 from STACpopulator.exceptions import STACPopulatorError
 from STACpopulator.export import export_catalog
 from STACpopulator.log import add_logging_options, setup_logging
-from STACpopulator.request_utils import add_request_options, apply_request_options
+from STACpopulator.request.utils import add_request_options, apply_request_options
 
 
 def _extra_parser_argument(arg: str) -> tuple[str, str]:

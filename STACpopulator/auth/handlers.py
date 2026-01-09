@@ -10,15 +10,15 @@ from requests import PreparedRequest, Response
 from requests.auth import AuthBase, HTTPBasicAuth, HTTPDigestAuth, HTTPProxyAuth
 from requests.structures import CaseInsensitiveDict
 
-from STACpopulator.auth.typedefs import (
+from STACpopulator.auth.utils import fully_qualified_name, make_request
+from STACpopulator.exceptions import AuthenticationError
+from STACpopulator.request.typedefs import (
     AnyHeadersContainer,
     AnyRequestMethod,
     AnyRequestType,
     ContentType,
     CookiesType,
 )
-from STACpopulator.auth.utils import fully_qualified_name, make_request
-from STACpopulator.exceptions import AuthenticationError
 
 LOGGER = logging.getLogger(__name__)
 
