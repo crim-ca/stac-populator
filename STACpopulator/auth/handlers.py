@@ -127,6 +127,10 @@ class BasicAuthHandler(AuthHandler, HTTPBasicAuth):
         AuthHandler.__init__(self, identity=username, password=password, **kwargs)
         HTTPBasicAuth.__init__(self, username=username, password=password)
 
+    def __call__(self, r: PreparedRequest) -> PreparedRequest:
+        """Call method to perform authentication prior to sending the request."""
+        return HTTPBasicAuth.__call__(self, r)
+
 
 class DigestAuthHandler(AuthHandler, HTTPDigestAuth):
     """Digest authentication handler class."""
@@ -135,6 +139,10 @@ class DigestAuthHandler(AuthHandler, HTTPDigestAuth):
         AuthHandler.__init__(self, identity=username, password=password, **kwargs)
         HTTPDigestAuth.__init__(self, username=username, password=password)
 
+    def __call__(self, r: PreparedRequest) -> PreparedRequest:
+        """Call method to perform authentication prior to sending the request."""
+        return HTTPDigestAuth.__call__(self, r)
+
 
 class ProxyAuthHandler(AuthHandler, HTTPProxyAuth):
     """Proxy authentication handler class."""
@@ -142,6 +150,10 @@ class ProxyAuthHandler(AuthHandler, HTTPProxyAuth):
     def __init__(self, username: str, password: str, **kwargs) -> None:
         AuthHandler.__init__(self, identity=username, password=password, **kwargs)
         HTTPProxyAuth.__init__(self, username=username, password=password)
+
+    def __call__(self, r: PreparedRequest) -> PreparedRequest:
+        """Call method to perform authentication prior to sending the request."""
+        return HTTPProxyAuth.__call__(self, r)
 
 
 class CookieJarAuthHandler(AuthHandler):
@@ -230,7 +242,7 @@ class RequestAuthHandler(AuthHandler):
         else:
             auth_token = next(
                 (body[name] for name in self._common_token_names if name in body),
-                default=None,
+                None,
             )
         return auth_token
 

@@ -1,4 +1,3 @@
-from enum import Enum
 from typing import (
     Callable,
     Dict,
@@ -64,7 +63,7 @@ RequestOptions = TypedDict(
 )
 
 
-class ContentType(Enum):
+class ContentType:
     """Supported `Content-Type` values.
 
     Media-Type nomenclature::
