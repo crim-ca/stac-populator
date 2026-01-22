@@ -27,8 +27,8 @@ class AuthHandler(AuthBase):
     """Authentication handler class."""
 
     url: Optional[str]
-    method: AnyRequestMethod = "GET"
-    headers: Optional[AnyHeadersContainer] = {}
+    method: AnyRequestMethod
+    headers: AnyHeadersContainer
     identity: Optional[str]
     password: Optional[str]
 
@@ -38,15 +38,13 @@ class AuthHandler(AuthBase):
         password: Optional[str] = None,
         url: Optional[str] = None,
         method: AnyRequestMethod = "GET",
-        headers: Optional[AnyHeadersContainer] = {},
+        headers: Optional[AnyHeadersContainer] = None,
     ) -> None:
         self.identity = identity
         self.password = password
         self.url = url
-        if method is not None:
-            self.method = method
-        if headers:
-            self.headers = headers
+        self.method = method if method is not None else "GET"
+        self.headers = headers if headers is not None else {}
 
     @abc.abstractmethod
     def __call__(self, r: PreparedRequest) -> PreparedRequest:
