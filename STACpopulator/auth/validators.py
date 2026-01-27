@@ -5,7 +5,9 @@ from typing import Any, Optional, Sequence, Union
 from requests.auth import AuthBase
 
 from STACpopulator.auth.handlers import AuthHandler
-from STACpopulator.auth.utils import fully_qualified_name, import_target
+from STACpopulator.auth.utils import fully_qualified_name
+from STACpopulator.exceptions import FunctionLoadError
+from STACpopulator.utils import import_target
 
 
 class ValidateAuthHandlerAction(argparse.Action):
@@ -21,10 +23,11 @@ class ValidateAuthHandlerAction(argparse.Action):
         """Validate the referenced authentication handler implementation."""
         if not (auth_handler_ref and isinstance(auth_handler_ref, str)):
             return None
-        auth_handler = import_target(auth_handler_ref)
-        if not auth_handler:
+        try:
+            auth_handler = import_target(auth_handler_ref)
+        except FunctionLoadError as e:
             error = f"Could not resolve class reference to specified Authentication Handler: [{auth_handler_ref}]."
-            raise argparse.ArgumentError(self, error)
+            raise argparse.ArgumentError(self, error) from e
         auth_handler_name = fully_qualified_name(auth_handler)
         if not issubclass(auth_handler, (AuthHandler, AuthBase)):
             error = (

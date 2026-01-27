@@ -2,13 +2,10 @@ from __future__ import annotations
 
 import argparse
 import functools
-import importlib
-import importlib.util
 import inspect
 import json
 import logging
 import os
-import re
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any, Callable, Dict, Iterable, List, MutableMapping, Optional, Type, Union, get_args
@@ -24,10 +21,10 @@ from STACpopulator.api_requests import (
     stac_version_match,
 )
 from STACpopulator.collection_update import UpdateModesOptional, update_collection
-from STACpopulator.exceptions import FunctionLoadError
 from STACpopulator.input import ErrorLoader, GenericLoader, THREDDSLoader
 from STACpopulator.models import AnyGeometry
 from STACpopulator.stac_utils import load_config
+from STACpopulator.utils import import_target
 
 LOGGER = logging.getLogger(__name__)
 
@@ -96,34 +93,12 @@ class STACpopulatorBase(ABC):
 
     @staticmethod
     def _load_extra_parser(func_str: str, extra_kwargs: dict[str, str]) -> Callable:
-        if ":" in func_str:
-            mod, func = func_str.split(":", 1)
-            if mod.endswith(".py"):
-                mod_name = re.sub(r"\W", "_", os.path.splitext(os.path.basename(mod))[0])
-                mod_spec = importlib.util.spec_from_file_location(mod_name, mod)
-                function_ns = importlib.util.module_from_spec(mod_spec)
-                try:
-                    mod_spec.loader.exec_module(function_ns)
-                except FileNotFoundError as e:
-                    raise FunctionLoadError(f"Unable to load python module from file: '{mod}'") from e
-            else:
-                try:
-                    function_ns = importlib.import_module(mod)
-                except ModuleNotFoundError as e:
-                    raise FunctionLoadError(f"Unable to load module '{mod}'") from e
-            try:
-                callable_func = getattr(function_ns, func)
-            except AttributeError as e:
-                raise FunctionLoadError(f"Unable to load function '{func}' from '{mod}'") from e
-            arg_spec = inspect.getfullargspec(callable_func)
-            if arg_spec.varkw:
-                return functools.partial(callable_func, **extra_kwargs)
-            all_kwargs = arg_spec.args + arg_spec.kwonlyargs
-            return functools.partial(callable_func, **{k: v for k, v in extra_kwargs.items() if k in all_kwargs})
-        else:
-            raise FunctionLoadError(
-                "Parser function string is not properly formatted. Should be in the form 'module:function_name'"
-            )
+        callable_func = import_target(func_str)
+        arg_spec = inspect.getfullargspec(callable_func)
+        if arg_spec.varkw:
+            return functools.partial(callable_func, **extra_kwargs)
+        all_kwargs = arg_spec.args + arg_spec.kwonlyargs
+        return functools.partial(callable_func, **{k: v for k, v in extra_kwargs.items() if k in all_kwargs})
 
     def load_config(self) -> None:
         """
