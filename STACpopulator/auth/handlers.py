@@ -58,7 +58,9 @@ class AuthHandler(AuthBase):
         """Parse arguments that can define an authentication handler and remove them from dictionary for following calls."""
         auth_handler = kwargs.pop("auth_handler", None)
         auth_identity = kwargs.pop("auth_identity", None)
-        auth_identity, auth_password = (auth_identity.split(":", 1) if auth_identity else None), None
+        auth_identity, auth_password = (
+            auth_identity.split(":", 1) if auth_identity and ":" in auth_identity else (auth_identity, None)
+        )
         auth_url = kwargs.pop("auth_url", None)
         auth_method = kwargs.pop("auth_method", None)
         auth_headers = kwargs.pop("auth_headers", {})
@@ -78,7 +80,7 @@ class AuthHandler(AuthBase):
             ("headers", CaseInsensitiveDict(auth_headers)),
             ("token", auth_token),
         ]
-        if len(auth_handler_sign.parameters) == 0:
+        if not auth_handler_sign.parameters:
             auth_handler = auth_handler()
             for auth_param, auth_option in auth_opts:
                 if auth_option and hasattr(auth_handler, auth_param):
