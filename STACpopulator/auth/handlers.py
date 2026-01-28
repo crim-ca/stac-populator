@@ -55,22 +55,36 @@ class AuthHandler(AuthBase):
     def from_data(
         kwargs: Dict[str, Optional[Union[Type[AuthHandler], str]]],
     ) -> Optional[AuthHandler]:
-        """Parse arguments that can define an authentication handler and remove them from dictionary for following calls."""
-        auth_handler = kwargs.pop("auth_handler", None)
-        auth_identity = kwargs.pop("auth_identity", None)
-        auth_identity, auth_password = (
-            auth_identity.split(":", 1) if auth_identity and ":" in auth_identity else (auth_identity, None)
-        )
-        auth_url = kwargs.pop("auth_url", None)
-        auth_method = kwargs.pop("auth_method", None)
-        auth_headers = kwargs.pop("auth_headers", {})
-        auth_token = kwargs.pop("auth_token", None)
+        """Parse arguments that define an authentication handler.
 
-        if not (auth_handler and issubclass(auth_handler, (AuthHandler, AuthBase))):
+        Args:
+            kwargs: Dictionary containing authentication options:
+                - auth_handler (str): The authentication handler class to instantiate using parameters below.
+                - auth_identity (str, optional): Identity string, optionally containing password as "user:pass".
+                - auth_url (str, optional): URL for authentication.
+                - auth_method (str, optional): Authentication method.
+                - auth_headers (dict, optional): Additional headers for authentication.
+                - auth_token (str, optional): Authentication token.
+
+        Returns
+        -------
+            An instantiated `AuthHandler`, or None if `auth_handler` is invalid.
+        """
+        auth_handler_class = kwargs.get("auth_handler")
+        if not (auth_handler_class and issubclass(auth_handler_class, (AuthHandler, AuthBase))):
             return None
 
-        auth_handler_name = fully_qualified_name(auth_handler)
-        auth_handler_sign = inspect.signature(auth_handler)
+        auth_identity = kwargs.get("auth_identity")
+        auth_password = None
+        if auth_identity and ":" in auth_identity:
+            auth_identity, auth_password = auth_identity.split(":", 1)
+
+        auth_url = kwargs.get("auth_url")
+        auth_method = kwargs.get("auth_method")
+        auth_headers = kwargs.get("auth_headers", {})
+        auth_token = kwargs.get("auth_token")
+
+        auth_handler_sign = inspect.signature(auth_handler_class)
         auth_opts = [
             ("username", auth_identity),
             ("identity", auth_identity),
@@ -80,37 +94,32 @@ class AuthHandler(AuthBase):
             ("headers", CaseInsensitiveDict(auth_headers)),
             ("token", auth_token),
         ]
+
         if not auth_handler_sign.parameters:
-            auth_handler = auth_handler()
+            auth_handler = auth_handler_class()
             for auth_param, auth_option in auth_opts:
                 if auth_option and hasattr(auth_handler, auth_param):
                     setattr(auth_handler, auth_param, auth_option)
         else:
             auth_params = list(auth_handler_sign.parameters)
             auth_kwargs = {opt: val for opt, val in auth_opts if opt in auth_params}
-            # allow partial match of required parameters by name to better support custom implementations
+
+            # allow partial match of required parameters by name to support custom implementations
             # (e.g.: 'MagpieAuth' using 'magpie_url' instead of plain 'url')
             for param_name, param in auth_handler_sign.parameters.items():
-                if param.kind not in [
-                    param.POSITIONAL_ONLY,
-                    param.POSITIONAL_OR_KEYWORD,
-                ]:
+                if param.kind not in [param.POSITIONAL_ONLY, param.POSITIONAL_OR_KEYWORD]:
                     continue
                 if param_name not in auth_kwargs:
                     for opt, val in auth_opts:
                         if param_name.endswith(opt):
-                            LOGGER.debug(
-                                "Using authentication partial match: [%s] -> [%s]",
-                                opt,
-                                param_name,
-                            )
+                            LOGGER.debug("Using authentication partial match: [%s] -> [%s]", opt, param_name)
                             auth_kwargs[param_name] = val
                             break
             LOGGER.debug("Using authentication parameters: %s", auth_kwargs)
-            auth_handler = auth_handler(**auth_kwargs)
+            auth_handler = auth_handler_class(**auth_kwargs)
         LOGGER.info(
             "Will use specified Authentication Handler [%s] with provided options.",
-            auth_handler_name,
+            fully_qualified_name(auth_handler_class),
         )
         return auth_handler
 
