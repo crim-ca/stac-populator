@@ -1,17 +1,35 @@
 import argparse
 import re
-from typing import Any, Optional, Sequence, Union
+from typing import Any, Dict, Optional, Sequence, Type, Union
 
 from requests.auth import AuthBase
 
-from STACpopulator.auth.handlers import AuthHandler
 from STACpopulator.auth.utils import fully_qualified_name
 from STACpopulator.exceptions import FunctionLoadError
 from STACpopulator.utils import import_target
+from STACpopulator.auth.handlers import (
+    AuthHandler,
+    BasicAuthHandler,
+    BearerAuthHandler,
+    CookieAuthHandler,
+    CookieJarAuthHandler,
+    DigestAuthHandler,
+    ProxyAuthHandler,
+)
+from STACpopulator.auth.utils import fully_qualified_name, import_target
 
 
 class ValidateAuthHandlerAction(argparse.Action):
     """Action that will validate that the input argument references an authentication handler that can be resolved."""
+
+    DEFAUTH_HANDLER_ALIASES: Dict[str, Type[AuthHandler]] = {
+        "basic": BasicAuthHandler,
+        "digest": DigestAuthHandler,
+        "proxy": ProxyAuthHandler,
+        "bearer": BearerAuthHandler,
+        "cookie": CookieAuthHandler,
+        "cookiejar": CookieJarAuthHandler,
+    }
 
     def __call__(
         self,
@@ -20,21 +38,34 @@ class ValidateAuthHandlerAction(argparse.Action):
         auth_handler_ref: Optional[str],
         option_string: Optional[str] = None,
     ) -> None:
-        """Validate the referenced authentication handler implementation."""
+        """Validate and resolve the authentication handler class."""
         if not (auth_handler_ref and isinstance(auth_handler_ref, str)):
             return None
-        try:
-            auth_handler = import_target(auth_handler_ref)
-        except FunctionLoadError as e:
-            error = f"Could not resolve class reference to specified Authentication Handler: [{auth_handler_ref}]."
-            raise argparse.ArgumentError(self, error) from e
-        auth_handler_name = fully_qualified_name(auth_handler)
+
+        # Check aliases first
+        auth_handler = self.DEFAUTH_HANDLER_ALIASES.get(auth_handler_ref.lower())
+
+        # Fall back to fully qualified name resolution
+        if not auth_handler:
+             try:
+                auth_handler = import_target(auth_handler_ref)
+            except FunctionLoadError as e:
+                error = f"Could not resolve class reference to specified Authentication Handler: [{auth_handler_ref}]."
+                raise argparse.ArgumentError(self, error) from e
+            
+            if not auth_handler:
+                aliases = ", ".join(self.DEFAUTH_HANDLER_ALIASES.keys())
+                raise argparse.ArgumentError(
+                    self,
+                    f"Could not resolve '{auth_handler_ref}'. Use a built-in alias ({aliases}) or a valid class path.",
+                )
+
         if not issubclass(auth_handler, (AuthHandler, AuthBase)):
-            error = (
-                f"Resolved Authentication Handler [{auth_handler_name}] is "
-                "not of appropriate sub-type: oneOf[AuthHandler, AuthBase]."
+            raise argparse.ArgumentError(
+                self,
+                f"Resolved handler '{fully_qualified_name(auth_handler)}' is not a subclass of AuthHandler or AuthBase.",
             )
-            raise argparse.ArgumentError(self, error)
+
         setattr(namespace, self.dest, auth_handler)
 
 
