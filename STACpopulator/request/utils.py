@@ -93,30 +93,22 @@ def apply_request_options(session: Session, ns: argparse.Namespace) -> None:
     session.verify = ns.verify
     session.cert = ns.cert
 
-    # Extract auth options from namespace to prevent no attribute errors
-    auth_handler = getattr(ns, "auth_handler", None)
-    auth_identity = getattr(ns, "auth_identity", None)
-    auth_url = getattr(ns, "auth_url", None)
-    auth_method = getattr(ns, "auth_method", None)
-    auth_headers = getattr(ns, "auth_headers", None)
-    auth_token = getattr(ns, "auth_token", None)
-
     # Check if any auth options are provided without an auth_handler.
     # `auth_method` has a default value, so we don't check it here.
-    if any([auth_identity, auth_url, auth_headers, auth_token]) and not auth_handler:
+    if any([ns.auth_identity, ns.auth_url, ns.auth_headers, ns.auth_token]) and not ns.auth_handler:
         raise ValueError(
             "auth_handler must be specified when using authentication options "
             "(--auth-identity, --auth-url, --auth-method, --auth-header, --auth-token)"
         )
 
-    if not auth_handler:
+    if not ns.auth_handler:
         return
 
     session.auth = AuthHandler.from_data(
-        auth_handler=auth_handler,
-        auth_identity=auth_identity,
-        auth_url=auth_url,
-        auth_method=auth_method,
-        auth_headers=auth_headers,
-        auth_token=auth_token,
+        auth_handler=ns.auth_handler,
+        auth_identity=ns.auth_identity,
+        auth_url=ns.auth_url,
+        auth_method=ns.auth_method,
+        auth_headers=ns.auth_headers,
+        auth_token=ns.auth_token,
     )
