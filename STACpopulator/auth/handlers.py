@@ -4,7 +4,7 @@ import abc
 import inspect
 import logging
 from http import cookiejar
-from typing import Any, Dict, Optional, Type
+from typing import Any, Optional, Type
 
 from requests import PreparedRequest, Response
 from requests.auth import AuthBase, HTTPBasicAuth, HTTPDigestAuth, HTTPProxyAuth
@@ -53,38 +53,37 @@ class AuthHandler(AuthBase):
 
     @staticmethod
     def from_data(
-        kwargs: Dict[str, Optional[Type[AuthHandler] | str]],
+        auth_handler: Optional[Type[AuthHandler]] = None,
+        auth_identity: Optional[str] = None,
+        auth_url: Optional[str] = None,
+        auth_method: Optional[str] = None,
+        auth_headers: Optional[dict] = None,
+        auth_token: Optional[str] = None,
     ) -> Optional[AuthHandler]:
         """Parse arguments that define an authentication handler.
 
         Args:
-            kwargs: Dictionary containing authentication options:
-                - auth_handler (str): The authentication handler class to instantiate using parameters below.
-                - auth_identity (str, optional): Identity string, optionally containing password as "user:pass".
-                - auth_url (str, optional): URL for authentication.
-                - auth_method (str, optional): Authentication method.
-                - auth_headers (dict, optional): Additional headers for authentication.
-                - auth_token (str, optional): Authentication token.
+            auth_handler: The authentication handler class to instantiate.
+            auth_identity: Identity string, optionally containing password as "user:pass".
+            auth_url: URL for authentication.
+            auth_method: Authentication method (HTTP verb).
+            auth_headers: Additional headers for authentication.
+            auth_token: Authentication token.
 
         Returns
         -------
             An instantiated `AuthHandler`, or None if `auth_handler` is invalid.
         """
-        auth_handler_class = kwargs.get("auth_handler")
-        if not (auth_handler_class and issubclass(auth_handler_class, (AuthHandler, AuthBase))):
+        if not (auth_handler and issubclass(auth_handler, (AuthHandler, AuthBase))):
             return None
 
-        auth_identity = kwargs.get("auth_identity")
         auth_password = None
         if auth_identity and ":" in auth_identity:
             auth_identity, auth_password = auth_identity.split(":", 1)
 
-        auth_url = kwargs.get("auth_url")
-        auth_method = kwargs.get("auth_method")
-        auth_headers = kwargs.get("auth_headers", {})
-        auth_token = kwargs.get("auth_token")
+        auth_headers = auth_headers or {}
 
-        auth_handler_sign = inspect.signature(auth_handler_class)
+        auth_handler_sign = inspect.signature(auth_handler)
         auth_opts = [
             ("username", auth_identity),
             ("identity", auth_identity),
@@ -96,10 +95,10 @@ class AuthHandler(AuthBase):
         ]
 
         if not auth_handler_sign.parameters:
-            auth_handler = auth_handler_class()
+            auth_handler_obj = auth_handler()
             for auth_param, auth_option in auth_opts:
-                if auth_option and hasattr(auth_handler, auth_param):
-                    setattr(auth_handler, auth_param, auth_option)
+                if auth_option and hasattr(auth_handler_obj, auth_param):
+                    setattr(auth_handler_obj, auth_param, auth_option)
         else:
             auth_params = list(auth_handler_sign.parameters)
             auth_kwargs = {opt: val for opt, val in auth_opts if opt in auth_params}
@@ -116,12 +115,12 @@ class AuthHandler(AuthBase):
                             auth_kwargs[param_name] = val
                             break
             LOGGER.debug("Using authentication parameters: %s", auth_kwargs)
-            auth_handler = auth_handler_class(**auth_kwargs)
+            auth_handler_obj = auth_handler(**auth_kwargs)
         LOGGER.info(
             "Will use specified Authentication Handler [%s] with provided options.",
-            fully_qualified_name(auth_handler_class),
+            fully_qualified_name(auth_handler),
         )
-        return auth_handler
+        return auth_handler_obj
 
 
 class BasicAuthHandler(AuthHandler, HTTPBasicAuth):

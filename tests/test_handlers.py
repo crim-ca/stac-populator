@@ -141,41 +141,37 @@ class TestAuthHandlerFromData:
     """Tests for AuthHandler.from_data factory method."""
 
     def test_returns_none_without_handler(self):
-        assert AuthHandler.from_data(kwargs={"other_param": "value"}) is None
-        assert AuthHandler.from_data(kwargs={"auth_handler": str}) is None
+        assert AuthHandler.from_data() is None
+        assert AuthHandler.from_data(auth_handler=str) is None
 
     def test_creates_basic_auth_handler(self):
-        kwargs = {
-            "auth_handler": BasicAuthHandler,
-            "auth_identity": "user:pass",
-        }
-        handler = AuthHandler.from_data(kwargs)
+        handler = AuthHandler.from_data(
+            auth_handler=BasicAuthHandler,
+            auth_identity="user:pass",
+        )
         assert isinstance(handler, BasicAuthHandler)
 
     def test_creates_bearer_handler(self):
-        kwargs = {
-            "auth_handler": BearerAuthHandler,
-            "auth_token": "access-token",
-        }
-        handler = AuthHandler.from_data(kwargs)
+        handler = AuthHandler.from_data(
+            auth_handler=BearerAuthHandler,
+            auth_token="access-token",
+        )
         assert isinstance(handler, BearerAuthHandler)
 
     def test_creates_cookie_handler(self):
-        kwargs = {
-            "auth_handler": CookieAuthHandler,
-            "auth_token": "session=xyz789",
-        }
-        handler = AuthHandler.from_data(kwargs)
+        handler = AuthHandler.from_data(
+            auth_handler=CookieAuthHandler,
+            auth_token="session=xyz789",
+        )
         assert isinstance(handler, CookieAuthHandler)
 
     def test_parses_params(self):
-        kwargs = {
-            "auth_handler": BearerAuthHandler,
-            "auth_token": "access-token",
-            "auth_url": API_AUTH_URI,
-            "auth_headers": {"Custom-Header": "custom-value"},
-        }
-        handler = AuthHandler.from_data(kwargs)
+        handler = AuthHandler.from_data(
+            auth_handler=BearerAuthHandler,
+            auth_token="access-token",
+            auth_url=API_AUTH_URI,
+            auth_headers={"Custom-Header": "custom-value"},
+        )
 
         assert handler.token == "access-token"
         assert handler.url == API_AUTH_URI
