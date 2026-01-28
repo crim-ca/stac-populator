@@ -4,12 +4,8 @@ from typing import Any, Type, Union
 
 import requests
 from requests import Response
-from typing_extensions import Unpack
 
-from STACpopulator.request.typedefs import (
-    RequestMethod,
-    RequestOptions,
-)
+from STACpopulator.auth import RequestMethod
 
 LOGGER = logging.getLogger(__name__)
 
@@ -18,7 +14,7 @@ def make_request(
     method: RequestMethod,
     url: str,
     ssl_verify: bool = True,
-    **request_kwargs: Unpack[RequestOptions],
+    **request_kwargs: Any,
 ) -> Response:
     """Make an HTTP request with additional request options.
 
