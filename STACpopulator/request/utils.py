@@ -3,16 +3,7 @@ import logging
 
 from requests.sessions import Session
 
-from STACpopulator.auth.handlers import (
-    AuthHandler,
-    BasicAuthHandler,
-    BearerAuthHandler,
-    CookieAuthHandler,
-    CookieJarAuthHandler,
-    DigestAuthHandler,
-    ProxyAuthHandler,
-)
-from STACpopulator.auth.utils import fully_qualified_name
+from STACpopulator.auth.handlers import AuthHandler
 from STACpopulator.auth.validators import ValidateAuthHandlerAction, ValidateHeaderAction, ValidateMethodAction
 
 LOGGER = logging.getLogger(__name__)
@@ -20,19 +11,7 @@ LOGGER = logging.getLogger(__name__)
 
 def add_request_options(parser: argparse.ArgumentParser) -> None:
     """Add arguments to a parser to allow update of a request session definition used across a populator procedure."""
-    auth_handlers = " | ".join(
-        [
-            f"{fully_qualified_name(handler)}"
-            for handler in [
-                BasicAuthHandler,
-                DigestAuthHandler,
-                ProxyAuthHandler,
-                BearerAuthHandler,
-                CookieAuthHandler,
-                CookieJarAuthHandler,
-            ]
-        ]
-    )
+    auth_handlers = ", ".join(ValidateAuthHandlerAction.DEFAUTH_HANDLER_ALIASES.keys())
 
     parser.add_argument("--cert", type=argparse.FileType(), help="Path to a certificate file to use.")
     parser.add_argument(
@@ -47,13 +26,12 @@ def add_request_options(parser: argparse.ArgumentParser) -> None:
         "-c",
         "--auth-handler",
         dest="auth_handler",
-        metavar="AUTH_HANDLER_CLASS",
+        metavar="AUTH_HANDLER",
         action=ValidateAuthHandlerAction,
         help=(
-            "Script or module path reference to a class that handles inline request authentication."
-            "The expected format is path/to/script.py:module.AuthHandlerClass or installed.module.AuthHandlerClass."
-            f"Following built-in implementations are available: {auth_handlers}."
-            "Custom implementations may be provided for more advanced use cases."
+            "Authentication handler to use. "
+            f"Built-in options: {auth_handlers}. "
+            "For custom handlers, use: 'path/to/script.py:ClassName' or 'module:ClassName'."
         ),
     )
     parser.add_argument(
