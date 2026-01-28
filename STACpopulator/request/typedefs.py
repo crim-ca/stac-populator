@@ -4,7 +4,6 @@ from typing import (
     Literal,
     Mapping,
     Tuple,
-    Union,
 )
 
 from requests import PreparedRequest
@@ -21,12 +20,12 @@ RequestMethod = Literal[
     "DELETE",
     "OPTIONS",
 ]
-AnyHeadersContainer = Union[
-    Mapping[str, str],  # Headers can be provided as a dict-like object
-    List[Tuple[str, str]],  # or as a list of tuples
-    CaseInsensitiveDict,  # or as a CaseInsensitiveDict from requests
-]
-AnyRequestType = Union[PreparedRequest, RequestsRequest]
+AnyHeadersContainer = (
+    Mapping[str, str]  # Headers can be provided as a dict-like object
+    | List[Tuple[str, str]]  # or as a list of tuples
+    | CaseInsensitiveDict  # or as a CaseInsensitiveDict from requests
+)
+AnyRequestType = PreparedRequest | RequestsRequest
 CookiesType = Dict[str, str]
 RequestOptions = TypedDict(
     "RequestOptions",
@@ -37,8 +36,8 @@ RequestOptions = TypedDict(
         "retry": NotRequired[int],
         "retries": NotRequired[int],
         "max_retries": NotRequired[int],
-        "backoff": NotRequired[Union[int, float]],
-        "backoff_factor": NotRequired[Union[int, float]],
+        "backoff": NotRequired[int | float],
+        "backoff_factor": NotRequired[int | float],
         "headers": NotRequired[AnyHeadersContainer],
         "cookies": NotRequired[CookiesType],
         "stream": NotRequired[bool],
@@ -48,12 +47,5 @@ RequestOptions = TypedDict(
     total=False,
 )
 
-
-class ContentType:
-    """Supported `Content-Type` values.
-
-    Media-Type nomenclature::
-        <type> "/" [x- | <tree> "."] <subtype> ["+" suffix] *[";" parameter=value]
-    """
-
-    APP_JSON = "application/json"
+# Standard Content-Type for JSON responses
+APP_JSON = "application/json"

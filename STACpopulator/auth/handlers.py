@@ -4,7 +4,7 @@ import abc
 import inspect
 import logging
 from http import cookiejar
-from typing import Any, Dict, Optional, Type, Union
+from typing import Any, Dict, Optional, Type
 
 from requests import PreparedRequest, Response
 from requests.auth import AuthBase, HTTPBasicAuth, HTTPDigestAuth, HTTPProxyAuth
@@ -13,9 +13,9 @@ from requests.structures import CaseInsensitiveDict
 from STACpopulator.auth.utils import fully_qualified_name, make_request
 from STACpopulator.exceptions import AuthenticationError
 from STACpopulator.request.typedefs import (
+    APP_JSON,
     AnyHeadersContainer,
     AnyRequestType,
-    ContentType,
     CookiesType,
     RequestMethod,
 )
@@ -53,7 +53,7 @@ class AuthHandler(AuthBase):
 
     @staticmethod
     def from_data(
-        kwargs: Dict[str, Optional[Union[Type[AuthHandler], str]]],
+        kwargs: Dict[str, Optional[Type[AuthHandler] | str]],
     ) -> Optional[AuthHandler]:
         """Parse arguments that define an authentication handler.
 
@@ -232,7 +232,7 @@ class RequestAuthHandler(AuthHandler):
 
     def authenticate(self) -> Optional[str]:
         """Launch an authentication request to retrieve the authorization token."""
-        auth_headers = {"Accept": ContentType.APP_JSON}
+        auth_headers = {"Accept": APP_JSON}
         auth_headers.update(self.headers)
         res = make_request(self.method, self.url, headers=auth_headers)
         if not res.ok:
@@ -242,7 +242,7 @@ class RequestAuthHandler(AuthHandler):
     def get_token_from_response(self, response: Response) -> Optional[str]:
         """Extract the authorization token from a valid authentication response."""
         content_type = response.headers.get("Content-Type")
-        if not content_type == ContentType.APP_JSON:
+        if not content_type == APP_JSON:
             return None
 
         body = response.json()
@@ -300,7 +300,7 @@ class CookieAuthHandler(RequestAuthHandler):
         url: Optional[str] = None,
         method: RequestMethod = "GET",
         headers: Optional[AnyHeadersContainer] = None,
-        token: Optional[Union[str, CookiesType]] = None,
+        token: Optional[str | CookiesType] = None,
     ) -> None:
         super().__init__(
             identity=identity,
@@ -312,7 +312,7 @@ class CookieAuthHandler(RequestAuthHandler):
         )
 
     @staticmethod
-    def parse_token(token: Union[str, CookiesType]) -> str:
+    def parse_token(token: str | CookiesType) -> str:
         """Parse token to a form that can be included in a request `Cookie` header.
 
         Returns the token string as is if it's a string. Otherwise, if the token is a mapping where keys are cookie
