@@ -14,10 +14,10 @@ from STACpopulator.auth.utils import fully_qualified_name, make_request
 from STACpopulator.exceptions import AuthenticationError
 from STACpopulator.request.typedefs import (
     AnyHeadersContainer,
-    AnyRequestMethod,
     AnyRequestType,
     ContentType,
     CookiesType,
+    RequestMethod,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ class AuthHandler(AuthBase):
     """Authentication handler class."""
 
     url: Optional[str]
-    method: AnyRequestMethod
+    method: RequestMethod
     headers: AnyHeadersContainer
     identity: Optional[str]
     password: Optional[str]
@@ -37,7 +37,7 @@ class AuthHandler(AuthBase):
         identity: Optional[str] = None,
         password: Optional[str] = None,
         url: Optional[str] = None,
-        method: AnyRequestMethod = "GET",
+        method: RequestMethod = "GET",
         headers: Optional[AnyHeadersContainer] = None,
     ) -> None:
         self.identity = identity
@@ -193,7 +193,7 @@ class RequestAuthHandler(AuthHandler):
         identity: Optional[str] = None,
         password: Optional[str] = None,
         url: Optional[str] = None,
-        method: AnyRequestMethod = "GET",
+        method: RequestMethod = "GET",
         headers: Optional[AnyHeadersContainer] = None,
         token: Optional[str] = None,
     ) -> None:
@@ -298,7 +298,7 @@ class CookieAuthHandler(RequestAuthHandler):
         identity: Optional[str] = None,
         password: Optional[str] = None,
         url: Optional[str] = None,
-        method: AnyRequestMethod = "GET",
+        method: RequestMethod = "GET",
         headers: Optional[AnyHeadersContainer] = None,
         token: Optional[Union[str, CookiesType]] = None,
     ) -> None:

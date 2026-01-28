@@ -1,15 +1,13 @@
 from typing import (
-    Callable,
     Dict,
     List,
     Literal,
     Mapping,
-    Optional,
     Tuple,
     Union,
 )
 
-from requests import PreparedRequest, Response
+from requests import PreparedRequest
 from requests import Request as RequestsRequest
 from requests.structures import CaseInsensitiveDict
 from typing_extensions import NotRequired, TypedDict
@@ -23,25 +21,13 @@ RequestMethod = Literal[
     "DELETE",
     "OPTIONS",
 ]
-AnyRequestMethod = Union[RequestMethod, str]
-HeadersType = Mapping[str, str]
-HeadersTupleType = List[Tuple[str, str]]
-HeadersBaseType = Union[HeadersType, HeadersTupleType]
-AnyHeadersContainer = Union[HeadersBaseType, CaseInsensitiveDict]
+AnyHeadersContainer = Union[
+    Mapping[str, str],  # Headers can be provided as a dict-like object
+    List[Tuple[str, str]],  # or as a list of tuples
+    CaseInsensitiveDict,  # or as a CaseInsensitiveDict from requests
+]
 AnyRequestType = Union[PreparedRequest, RequestsRequest]
-Number = Union[int, float]
-ValueType = Union[str, Number, bool]
-AnyValueType = Optional[ValueType]
 CookiesType = Dict[str, str]
-CookiesTupleType = List[Tuple[str, str]]
-HeaderCookiesList = Union[HeadersTupleType, CookiesTupleType]
-CookiesBaseType = Union[CookiesType, CookiesTupleType]
-HeaderCookiesType = Union[HeadersBaseType, CookiesBaseType]
-HeaderCookiesTuple = Union[Tuple[None, None], Tuple[HeadersBaseType, CookiesBaseType]]
-AnyCookiesContainer = Union[CookiesBaseType, AnyHeadersContainer]
-AnyHeadersCookieContainer = Union[AnyHeadersContainer, AnyCookiesContainer]
-RequestCachingKeywords = Dict[str, AnyValueType]
-RequestCachingFunction = Callable[[AnyRequestMethod, str, RequestCachingKeywords], Response]
 RequestOptions = TypedDict(
     "RequestOptions",
     {
@@ -51,10 +37,10 @@ RequestOptions = TypedDict(
         "retry": NotRequired[int],
         "retries": NotRequired[int],
         "max_retries": NotRequired[int],
-        "backoff": NotRequired[Number],
-        "backoff_factor": NotRequired[Number],
+        "backoff": NotRequired[Union[int, float]],
+        "backoff_factor": NotRequired[Union[int, float]],
         "headers": NotRequired[AnyHeadersContainer],
-        "cookies": NotRequired[AnyCookiesContainer],
+        "cookies": NotRequired[CookiesType],
         "stream": NotRequired[bool],
         "cache": NotRequired[bool],
         "cache_enabled": NotRequired[bool],

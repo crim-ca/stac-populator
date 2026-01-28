@@ -7,7 +7,7 @@ from requests import Response
 from typing_extensions import Unpack
 
 from STACpopulator.request.typedefs import (
-    AnyRequestMethod,
+    RequestMethod,
     RequestOptions,
 )
 
@@ -15,7 +15,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 def make_request(
-    method: AnyRequestMethod,
+    method: RequestMethod,
     url: str,
     ssl_verify: bool = True,
     **request_kwargs: Unpack[RequestOptions],
