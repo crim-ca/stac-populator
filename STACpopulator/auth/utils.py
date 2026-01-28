@@ -5,7 +5,7 @@ from typing import Any, Type, Union
 import requests
 from requests import Response
 
-from STACpopulator.auth import RequestMethod
+from STACpopulator.request.typedefs import RequestMethod
 
 LOGGER = logging.getLogger(__name__)
 
