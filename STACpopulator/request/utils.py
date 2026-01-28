@@ -71,7 +71,7 @@ def add_request_options(parser: argparse.ArgumentParser) -> None:
         help=(
             "Additional HTTP headers to include when sending requests via the authentication handler. "
             "This option may be specified multiple times; each value must be formatted as "
-            "`Header-Name: value`. Header names are case-insensitive; single or double quotes may be used to delimit the value;"
+            "`Header-Name: value`. Header names are case-insensitive; single or double quotes may be used to delimit the value; "
             "surrounding spaces are trimmed."
         ),
     )
