@@ -4,9 +4,6 @@ from typing import Any, Dict, Optional, Sequence, Type, Union
 
 from requests.auth import AuthBase
 
-from STACpopulator.auth.utils import fully_qualified_name
-from STACpopulator.exceptions import FunctionLoadError
-from STACpopulator.utils import import_target
 from STACpopulator.auth.handlers import (
     AuthHandler,
     BasicAuthHandler,
@@ -16,13 +13,15 @@ from STACpopulator.auth.handlers import (
     DigestAuthHandler,
     ProxyAuthHandler,
 )
-from STACpopulator.auth.utils import fully_qualified_name, import_target
+from STACpopulator.auth.utils import fully_qualified_name
+from STACpopulator.exceptions import FunctionLoadError
+from STACpopulator.utils import import_target
 
 
 class ValidateAuthHandlerAction(argparse.Action):
     """Action that will validate that the input argument references an authentication handler that can be resolved."""
 
-    DEFAUTH_HANDLER_ALIASES: Dict[str, Type[AuthHandler]] = {
+    DEFAULT_HANDLER_ALIASES: Dict[str, Type[AuthHandler]] = {
         "basic": BasicAuthHandler,
         "digest": DigestAuthHandler,
         "proxy": ProxyAuthHandler,
@@ -43,21 +42,21 @@ class ValidateAuthHandlerAction(argparse.Action):
             return None
 
         # Check aliases first
-        auth_handler = self.DEFAUTH_HANDLER_ALIASES.get(auth_handler_ref.lower())
+        auth_handler = self.DEFAULT_HANDLER_ALIASES.get(auth_handler_ref.lower())
 
         # Fall back to fully qualified name resolution
         if not auth_handler:
-             try:
+            try:
                 auth_handler = import_target(auth_handler_ref)
             except FunctionLoadError as e:
                 error = f"Could not resolve class reference to specified Authentication Handler: [{auth_handler_ref}]."
                 raise argparse.ArgumentError(self, error) from e
-            
+
             if not auth_handler:
-                aliases = ", ".join(self.DEFAUTH_HANDLER_ALIASES.keys())
+                aliases = ", ".join(self.DEFAULT_HANDLER_ALIASES.keys())
                 raise argparse.ArgumentError(
                     self,
-                    f"Could not resolve '{auth_handler_ref}'. Use a built-in alias ({aliases}) or a valid class path.",
+                    f"Could not resolve '{auth_handler_ref}'. Use a built-in handler alias ({aliases}) or a valid class path.",
                 )
 
         if not issubclass(auth_handler, (AuthHandler, AuthBase)):

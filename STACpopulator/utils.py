@@ -7,8 +7,7 @@ from STACpopulator.exceptions import FunctionLoadError
 
 
 def import_target(target_str: str) -> Callable:
-    """
-    Import a target resource class or function from a Python script or directly from a module reference.
+    """Import a target resource class or function from a Python script or directly from a module reference.
 
     The Python script does not need to be defined within a module directory (i.e.: with ``__init__.py``).
     Files can be imported from virtually anywhere. To avoid name conflicts in generated module references,

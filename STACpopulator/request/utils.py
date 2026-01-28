@@ -11,7 +11,7 @@ LOGGER = logging.getLogger(__name__)
 
 def add_request_options(parser: argparse.ArgumentParser) -> None:
     """Add arguments to a parser to allow update of a request session definition used across a populator procedure."""
-    auth_handlers = ", ".join(ValidateAuthHandlerAction.DEFAUTH_HANDLER_ALIASES.keys())
+    auth_handlers = ", ".join(ValidateAuthHandlerAction.DEFAULT_HANDLER_ALIASES.keys())
 
     parser.add_argument("--cert", type=argparse.FileType(), help="Path to a certificate file to use.")
     parser.add_argument(
