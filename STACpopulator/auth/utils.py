@@ -1,9 +1,6 @@
-import importlib
 import inspect
 import logging
-import os
-import re
-from typing import Any, Optional, Type, Union
+from typing import Any, Type, Union
 
 import requests
 from requests import Response
@@ -76,66 +73,3 @@ def fully_qualified_name(obj: Union[Any, Type[Any]]) -> str:
     if "builtins" in getattr(cls, "__module__", "builtins"):  # sometimes '_sitebuiltins'
         return cls.__name__
     return ".".join([cls.__module__, cls.__name__])
-
-
-def import_target(target: str, default_root: Optional[str] = None) -> Optional[Any]:
-    """Import a target resource class or function from a Python script as module or directly from a module reference.
-
-    The Python script does not need to be defined within a module directory (i.e.: with ``__init__.py``).
-    Files can be imported from virtually anywhere. To avoid name conflicts in generated module references,
-    each imported target employs its full escaped file path as module name.
-
-    The following target formats are supported:
-
-    .. code-block:: text
-        "path/to/script.py:function"
-        "path/to/script.py:Class"
-        "module.path.function"
-        "module.path.Class"
-
-    Parameters
-    ----------
-    target : str
-        Resource to be imported, specified as a module path or file path with
-        an optional attribute reference.
-    default_root : str, optional
-        Root directory to use when resolving relative file paths. Defaults to `None`.
-
-    Returns
-    -------
-    Any or None
-        The imported class or function if found; otherwise, `None`.
-    """
-    if ":" in target:
-        mod_path, target = target.rsplit(":", 1)
-        if not mod_path.startswith("/"):
-            if default_root:
-                mod_root = default_root
-            else:
-                mod_root = os.path.abspath(os.path.curdir)
-            if not os.path.isdir(mod_root):
-                LOGGER.warning("Cannot import relative target, root directory not found: [%s]", mod_root)
-                return None
-            mod_path = os.path.join(mod_root, mod_path)
-        mod_path = os.path.abspath(mod_path)
-        if not os.path.isfile(mod_path):
-            LOGGER.warning("Cannot import target reference, file not found: [%s]", mod_path)
-            return None
-        mod_name = re.sub(r"\W", "_", mod_path)
-        mod_spec = importlib.util.spec_from_file_location(mod_name, mod_path)
-    else:
-        mod_name = target
-        mod_path, target = target.rsplit(".", 1)
-        mod_spec = importlib.util.find_spec(mod_path)
-
-    if not mod_spec:
-        LOGGER.warning(
-            "Cannot import target reference [%s], not found in file: [%s]",
-            mod_name,
-            mod_path,
-        )
-        return None
-
-    mod = importlib.util.module_from_spec(mod_spec)
-    mod_spec.loader.exec_module(mod)
-    return getattr(mod, target, None)
