@@ -77,7 +77,7 @@ def add_request_options(parser: argparse.ArgumentParser) -> None:
         action=ValidateMethodAction,
         choices=ValidateMethodAction.methods,
         type=str.upper,
-        default=AuthHandler.method,
+        default="GET",
         help=(
             "Authentication HTTP request method to be passed down to the specified Authentication Handler "
             "(default: %(default)s, case-insensitive)."
