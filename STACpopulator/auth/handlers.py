@@ -62,16 +62,24 @@ class AuthHandler(AuthBase):
     ) -> Optional[AuthHandler]:
         """Parse arguments that define an authentication handler.
 
-        Args:
-            auth_handler: The authentication handler class to instantiate.
-            auth_identity: Identity string, optionally containing password as "user:pass".
-            auth_url: URL for authentication.
-            auth_method: Authentication method (HTTP verb).
-            auth_headers: Additional headers for authentication.
-            auth_token: Authentication token.
+        Parameters
+        ----------
+        auth_handler : Optional[Type[AuthHandler]]
+            The authentication handler class to instantiate.
+        auth_identity : Optional[str]
+            Identity string, optionally containing password as "user:pass".
+        auth_url : Optional[str]
+            URL for authentication.
+        auth_method : Optional[str]
+            Authentication method (HTTP verb).
+        auth_headers : Optional[dict]
+            Additional headers for authentication.
+        auth_token : Optional[str]
+            Authentication token.
 
         Returns
         -------
+        Optional[AuthHandler]
             An instantiated `AuthHandler`, or None if `auth_handler` is invalid.
         """
         if not (auth_handler and issubclass(auth_handler, (AuthHandler, AuthBase))):
