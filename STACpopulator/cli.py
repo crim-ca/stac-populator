@@ -16,7 +16,7 @@ from STACpopulator.exceptions import STACPopulatorError
 from STACpopulator.export import export_catalog
 from STACpopulator.log import add_logging_options, setup_logging
 from STACpopulator.populators import STACpopulatorBase
-from STACpopulator.request_utils import add_request_options, apply_request_options
+from STACpopulator.request.utils import add_request_options, apply_request_options
 
 
 def add_parser_args(parser: argparse.ArgumentParser) -> None:
