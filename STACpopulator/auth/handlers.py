@@ -57,30 +57,19 @@ class AuthHandler(AuthBase):
         auth_identity: Optional[str] = None,
         auth_url: Optional[str] = None,
         auth_method: Optional[str] = None,
-        auth_headers: Optional[dict] = None,
+        auth_headers: Optional[AnyHeadersContainer] = None,
         auth_token: Optional[str] = None,
     ) -> Optional[AuthHandler]:
         """Parse arguments that define an authentication handler.
 
-        Parameters
-        ----------
-        auth_handler : Optional[Type[AuthHandler]]
-            The authentication handler class to instantiate.
-        auth_identity : Optional[str]
-            Identity string, optionally containing password as "user:pass".
-        auth_url : Optional[str]
-            URL for authentication.
-        auth_method : Optional[str]
-            Authentication method (HTTP verb).
-        auth_headers : Optional[dict]
-            Additional headers for authentication.
-        auth_token : Optional[str]
-            Authentication token.
+        :param auth_handler: The authentication handler class to instantiate.
+        :param auth_identity: Identity string, optionally containing password as "user:pass".
+        :param auth_url: URL for authentication.
+        :param auth_method: Authentication method (HTTP verb).
+        :param auth_headers: Additional headers for authentication.
+        :param auth_token: Authentication token.
 
-        Returns
-        -------
-        Optional[AuthHandler]
-            An instantiated `AuthHandler`, or None if `auth_handler` is invalid.
+        :return: An instantiated `AuthHandler`, or None if `auth_handler` is invalid.
         """
         if not (auth_handler and issubclass(auth_handler, (AuthHandler, AuthBase))):
             return None
@@ -241,10 +230,10 @@ class RequestAuthHandler(AuthHandler):
         """Launch an authentication request to retrieve the authorization token."""
         auth_headers = {"Accept": APP_JSON}
         auth_headers.update(self.headers)
-        res = make_request(self.method, self.url, headers=auth_headers)
-        if not res.ok:
+        resp = make_request(self.method, self.url, headers=auth_headers)
+        if not resp.ok:
             return None
-        return self.get_token_from_response(res)
+        return self.get_token_from_response(resp)
 
     def get_token_from_response(self, response: Response) -> Optional[str]:
         """Extract the authorization token from a valid authentication response."""
