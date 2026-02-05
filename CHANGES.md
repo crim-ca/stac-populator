@@ -2,6 +2,11 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
+<!-- insert list items of new changes here -->
+
+## [0.13.0](https://github.com/crim-ca/stac-populator/tree/0.13.0) (2026-01-29)
+
+
 * Simplify populator implementation discovery and reduce boilerplate for new implementations.
 * Add a classmethod to add additional CLI args to the `STACpopulatorBase` class (replaces `add_parser_args`)
 * Add a classmethod to run the populator based on CLI args to the `STACpopulatorBase` class (replaces `runner`)
