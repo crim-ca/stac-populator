@@ -2,10 +2,12 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
-<!-- insert list items of new changes here -->
+* Add ability to parse vertical data from CF metadata extracted from NCML files
+* Convert coordinates using any CRS to to comply with WGS84 when building STAC bbox and geometries
+* Add option to provide a fallback CRS to use when one is not specified in the metadata
+* Add option to provide a CRS that will override the one specified in the metadata
 
 ## [0.13.0](https://github.com/crim-ca/stac-populator/tree/0.13.0) (2026-01-29)
-
 
 * Simplify populator implementation discovery and reduce boilerplate for new implementations.
 * Add a classmethod to add additional CLI args to the `STACpopulatorBase` class (replaces `add_parser_args`)
@@ -15,10 +17,6 @@
 * Rename `populator_base.py` to `populators.py` since it now contains more than just the base populator
 * No longer require new implementations to list populator modules in `implementations.__init__.py`
 * Implementation discovery is now done by keeping track of concrete implementations of the STACpopulatorBase class
-* Add ability to parse vertical data from CF metadata extracted from NCML files
-* Convert coordinates using any CRS to to comply with WGS84 when building STAC bbox and geometries
-* Add option to provide a fallback CRS to use when one is not specified in the metadata
-* Add option to provide a CRS that will override the one specified in the metadata
 
 ## [0.12.0](https://github.com/crim-ca/stac-populator/tree/0.12.0) (2025-11-20)
 
