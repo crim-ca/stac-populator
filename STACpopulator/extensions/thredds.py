@@ -12,7 +12,7 @@ from pystac.extensions.base import (
 
 from STACpopulator.extensions.base import BaseSTAC, Helper
 from STACpopulator.extensions.datacube import DataCubeHelper
-from STACpopulator.stac_utils import ServiceType, magpie_resource_link, ncattrs_to_bbox, ncattrs_to_geometry
+from STACpopulator.stac_utils import GeoData, ServiceType, magpie_resource_link
 
 T = TypeVar("T", pystac.Collection, pystac.Item)
 
@@ -201,13 +201,13 @@ class THREDDSCatalogDataModel(BaseSTAC):
         """
         # Inject kwargs for helpers into data
         data["_extra_kwargs"] = kwargs
-
+        geo_data = GeoData.from_ncattrs(data)
         return cls(
             data=data,
             start_datetime=data["groups"]["CFMetadata"]["attributes"]["time_coverage_start"],
             end_datetime=data["groups"]["CFMetadata"]["attributes"]["time_coverage_end"],
-            geometry=ncattrs_to_geometry(data),
-            bbox=ncattrs_to_bbox(data),
+            geometry=geo_data.to_geometry(),
+            bbox=geo_data.to_bbox(),
         )
 
     @model_validator(mode="before")

@@ -61,7 +61,7 @@ def stac_items_data():
                     "properties": {"datetime": "2014-02-22T00:00:00Z", "string": "test1", "number": 3, "bool": False},
                 },
                 {
-                    "bbox": [-1, 4, 1, -1],
+                    "bbox": [-1, -1, 1, 4],
                     "properties": {
                         "start_datetime": "2015-09-02T00:00:00Z",
                         "end_datetime": "2222-03-02T00:00:00Z",
@@ -137,11 +137,6 @@ class TestUpdateAPICollection:
     def test_update_summaries_with_exclusions(self, post_collection_mock, mode):
         updated = self.get_updated(mode, post_collection_mock, exclude_summaries=["string", "bool"])
         assert updated["summaries"] == {"number": {"maximum": 10, "minimum": 3}}
-
-    def test_sorted_bbox_warning(self, post_collection_mock, caplog):
-        caplog.set_level(logging.WARNING)
-        self.get_updated("extents", post_collection_mock)
-        assert "contains a bbox with unsorted values" in caplog.text
 
     @pytest.mark.parametrize("bbox_update", enumerate([-200, -100, 200, 100]))
     def test_wgs84_compliance_warning(

@@ -146,6 +146,7 @@ dependencies = [
     "pyessv~=0.9",
     "requests~=2.32",
     "lxml~=6.0",
+    "pyproj~=3.7"
 ]
 readme = "README.md"
 license = { file = "LICENSE" }
