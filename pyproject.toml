@@ -201,7 +201,7 @@ dev = [
     "pytest-cov~=7.1",
     "coverage~=7.13",
     "responses~=0.25",
-    "bump-my-version~=1.0",
+    "bump-my-version~=1.3",
     "jsonschema~=4.26",
     "pystac[validation]",
     "ruff~=0.15",
