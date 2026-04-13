@@ -2,6 +2,11 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
+<!-- insert list items of new changes here -->
+
+## [0.14.0](https://github.com/crim-ca/stac-populator/tree/0.14.0) (2026-04-13)
+
+
 * Add ability to parse vertical data from CF metadata extracted from NCML files
 * Convert coordinates using any CRS to to comply with WGS84 when building STAC bbox and geometries
 * Add option to provide a fallback CRS to use when one is not specified in the metadata
