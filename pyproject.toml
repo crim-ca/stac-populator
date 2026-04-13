@@ -202,7 +202,7 @@ dev = [
     "coverage~=7.6",
     "responses~=0.25",
     "bump-my-version~=1.0",
-    "jsonschema~=4.23",
+    "jsonschema~=4.26",
     "pystac[validation]",
     "ruff~=0.9",
     "pre-commit~=4.1",
