@@ -101,8 +101,6 @@ regex = true
 search = "^name = \"STACpopulator\"\nversion = \"{current_version}\"$"
 replace = "name = \"STACpopulator\"\nversion = \"{new_version}\""
 
-
-
 [tool.ruff]
 line-length = 120
 target-version = "py312"
