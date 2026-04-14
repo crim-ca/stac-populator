@@ -2,7 +2,8 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
-<!-- insert list items of new changes here -->
+* Add `-c`/`--collection` option to `export` operation to filter which collections should be exported,
+  rather than the entire catalog. The value can be the plain Collection ID or a regex pattern.
 
 ## [0.14.0](https://github.com/crim-ca/stac-populator/tree/0.14.0) (2026-04-13)
 

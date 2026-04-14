@@ -74,6 +74,11 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
         action="store_true",
         help="Do not raise an error if STAC items with the same ids are found in a collection.",
     )
+    export_parser.add_argument(
+        "-c", "--collection",
+        type=str,
+        help="Specific ID or regex pattern for which to filter matched collections from the catalog(s).",
+    )
 
 
 @functools.cache
@@ -109,7 +114,14 @@ def run(ns: argparse.Namespace) -> int:
         elif ns.command == "update_collection":
             return update_api_collection(ns.mode, ns.stac_collection_uri, ns.exclude_summary) or 0
         else:
-            return export_catalog(ns.directory, ns.stac_host, session, ns.resume, ns.ignore_duplicate_ids) or 0
+            return export_catalog(
+                ns.directory,
+                ns.stac_host,
+                session,
+                ns.resume,
+                ns.ignore_duplicate_ids,
+                ns.collection,
+            ) or 0
 
 
 def main(*args: str) -> int:

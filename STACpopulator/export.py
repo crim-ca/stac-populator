@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import pathlib
+import re
 import time
 from typing import Iterable, cast
 
@@ -112,7 +113,7 @@ def _write_stac_data(
         elif not resume:
             raise FileExistsError(file)
     if create_parent:
-        file.parent.mkdir(exist_ok=True)
+        file.parent.mkdir(exist_ok=True, parents=True)
     with open(file, mode="w", encoding="utf-8") as f:
         json.dump(data, f)
 
@@ -123,6 +124,7 @@ def _export_catalog(
     start_time: int,
     resume: bool = False,
     ignore_duplicate_ids: bool = False,
+    collection_pattern: re.Pattern[str] | None = None,
 ) -> None:
     """
     Export a STAC catalog or collection to files on disk.
@@ -144,7 +146,15 @@ def _export_catalog(
             ignore_duplicate_ids,
         )
     for child in client.get_children():
-        _export_catalog(child, directory, start_time, resume, ignore_duplicate_ids)
+        if (
+            isinstance(child, pystac_client.CollectionClient) and
+            collection_pattern and not collection_pattern.match(child.id)
+        ):
+            LOGGER.info(f"Skipping collection {child.id} as it does not match the collection pattern")
+            continue
+        child_type = "collection" if isinstance(child, pystac_client.CollectionClient) else "catalog"
+        LOGGER.info(f"Exporting {child_type} [{child.id}]")
+        _export_catalog(child, directory, start_time, resume, ignore_duplicate_ids, collection_pattern)
 
 
 def export_catalog(
@@ -153,6 +163,7 @@ def export_catalog(
     session: requests.Session,
     resume: bool = False,
     ignore_duplicate_ids: bool = False,
+    collection: re.Pattern[str] | str | None = None,
 ) -> None:
     """Export a STAC catalog to files on disk."""
     stac_api_io = StacApiIO()
@@ -160,4 +171,7 @@ def export_catalog(
     directory = pathlib.Path(directory)
     client = Client.open(stac_host, stac_io=stac_api_io)
     start_time = time.time()
-    _export_catalog(client, directory, start_time, resume, ignore_duplicate_ids)
+    collection_pattern = collection
+    if isinstance(collection, str):  # convenience plain ID to regex
+        collection_pattern = re.compile(f"^{collection.strip('^$')}$")
+    _export_catalog(client, directory, start_time, resume, ignore_duplicate_ids, collection_pattern)
