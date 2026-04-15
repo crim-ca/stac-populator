@@ -77,6 +77,7 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     export_parser.add_argument(
         "-c",
         "--collection",
+        nargs="*",
         help=(
             "Only export collections whose ID matches the regex pattern. "
             "A plain ID without pattern will only match the exact collection."
