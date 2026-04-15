@@ -151,7 +151,10 @@ def _export_catalog(
             and collection_pattern
             and not collection_pattern.match(child.id)
         ):
-            LOGGER.info(f"Skipping collection {child.id} as it does not match the collection pattern")
+            LOGGER.info(
+                f"Skipping collection {child.id} as it does not match"
+                f"the collection pattern '{collection_pattern.pattern}'."
+            )
             continue
         child_type = "collection" if isinstance(child, pystac_client.CollectionClient) else "catalog"
         LOGGER.info(f"Exporting {child_type} [{child.id}]")

@@ -67,7 +67,7 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     )
     export_parser = commands_subparser.add_parser("export", description="Export a STAC catalog to JSON files on disk.")
     export_parser.add_argument("stac_host", help="STAC API URL")
-    export_parser.add_argument("directory", type=str, help="Path to a directory to write STAC catalog contents.")
+    export_parser.add_argument("directory", help="Path to a directory to write STAC catalog contents.")
     export_parser.add_argument("-r", "--resume", action="store_true", help="Resume a partial download.")
     export_parser.add_argument(
         "--ignore-duplicate-ids",
@@ -77,8 +77,10 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     export_parser.add_argument(
         "-c",
         "--collection",
-        type=str,
-        help="Specific ID or regex pattern for which to filter matched collections from the catalog(s).",
+        help=(
+            "Only export collections whose ID matches the regex pattern. "
+            "A plain ID without pattern will only match the exact collection."
+        ),
     )
 
 
