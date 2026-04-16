@@ -2,7 +2,11 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
-<!-- insert list items of new changes here -->
+* Add `-c`/`--collection` option to `export` operation to filter which collections should be exported,
+  rather than the entire catalog. The value can be the plain Collection ID or a regex pattern.
+* Add explicit log entries of processed or skipped Catalogs/Collections
+  (fixes [#101](https://github.com/crim-ca/stac-populator/issues/101)).
+* Fix `export` target directory parent(s) creation if missing.
 
 ## [0.14.0](https://github.com/crim-ca/stac-populator/tree/0.14.0) (2026-04-13)
 
@@ -14,13 +18,13 @@
 ## [0.13.0](https://github.com/crim-ca/stac-populator/tree/0.13.0) (2026-01-29)
 
 * Simplify populator implementation discovery and reduce boilerplate for new implementations.
-* Add a classmethod to add additional CLI args to the `STACpopulatorBase` class (replaces `add_parser_args`)
-* Add a classmethod to run the populator based on CLI args to the `STACpopulatorBase` class (replaces `runner`)
-* Add shared implementations for these two classmethods to a `THREDDSpopulatorBase` class that can be
+* Add a `classmethod` to add additional CLI args to the `STACpopulatorBase` class (replaces `add_parser_args`)
+* Add a `classmethod` to run the populator based on CLI args to the `STACpopulatorBase` class (replaces `runner`)
+* Add shared implementations for these two `classmethod` to a `THREDDSpopulatorBase` class that can be
   used by all populators that pull data from THREDDS
 * Rename `populator_base.py` to `populators.py` since it now contains more than just the base populator
 * No longer require new implementations to list populator modules in `implementations.__init__.py`
-* Implementation discovery is now done by keeping track of concrete implementations of the STACpopulatorBase class
+* Implementation discovery is now done by keeping track of concrete implementations of the `STACpopulatorBase` class
 
 ## [0.12.0](https://github.com/crim-ca/stac-populator/tree/0.12.0) (2025-11-20)
 
@@ -28,7 +32,7 @@
 * Add `RDPS_CRIM` and `HRDPS_CRIM` implementations.
 * Add `cf` extension adding CF Parameter metadata to (H)RDPS stac asset and items.
 * Add `cf` and `file` helpers.
-* Add `providers` and `contacts` extensions metdata to (H)RDPS stac collection.
+* Add `providers` and `contacts` extensions metadata to (H)RDPS stac collection.
 * Fix deprecated access to `model_fields` in `BaseSTAC` data model class.
 * Fix bug service type check in extensions' `get_assets` methods.
 * Fix return type of `from_data` in `THREDDSCatalogDataModel`.
