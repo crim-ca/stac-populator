@@ -163,9 +163,7 @@ def _export_catalog(
             continue
         if found_cols & {child.id}:
             if collection_ignore_duplicate_ids:
-                LOGGER.warning(
-                    f"Duplicate collection ID {child.id} was already processed. Skipping it."
-                )
+                LOGGER.warning(f"Duplicate collection ID {child.id} was already processed. Skipping it.")
                 continue
             else:
                 raise DuplicateIDError(
