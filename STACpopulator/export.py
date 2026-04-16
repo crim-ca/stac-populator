@@ -124,12 +124,16 @@ def _export_catalog(
     start_time: int,
     resume: bool = False,
     ignore_duplicate_ids: bool = False,
+    collection_ignore_duplicate_ids: bool = False,
     collection_patterns: list[re.Pattern[str]] | None = None,
 ) -> None:
     """
     Export a STAC catalog or collection to files on disk.
 
     This is a recursive helper function initiated by the export_catalog function.
+
+    The collection patterns employ ``re.Pattern.match`` to allow both literal IDs and regexes.
+    Adjust the regex definitions as needed if you need a *search* over the entire IDs.
     """
     directory /= client.id
     file_name = "catalog.json" if isinstance(client, Client) else "collection.json"
@@ -145,6 +149,7 @@ def _export_catalog(
             resume,
             ignore_duplicate_ids,
         )
+    found_cols = set()
     for child in client.get_children():
         if (
             isinstance(child, pystac_client.CollectionClient)
@@ -156,9 +161,29 @@ def _export_catalog(
                 f"the collection patterns {json.dumps([col.pattern for col in collection_patterns])}."
             )
             continue
+        if found_cols & {child.id}:
+            if collection_ignore_duplicate_ids:
+                LOGGER.warning(
+                    f"Duplicate collection ID {child.id} was already processed. Skipping it."
+                )
+                continue
+            else:
+                raise DuplicateIDError(
+                    f"Duplicate collection ID {child.id} was already processed and were not allowed. "
+                    f"Refine your search criteria or disable duplicate safeguard with the provided option."
+                )
+        found_cols.add(child.id)
         child_type = "collection" if isinstance(child, pystac_client.CollectionClient) else "catalog"
         LOGGER.info(f"Exporting {child_type} [{child.id}]")
-        _export_catalog(child, directory, start_time, resume, ignore_duplicate_ids, collection_patterns)
+        _export_catalog(
+            child,
+            directory,
+            start_time,
+            resume,
+            ignore_duplicate_ids,
+            collection_ignore_duplicate_ids,
+            collection_patterns,
+        )
 
 
 def export_catalog(
@@ -167,6 +192,7 @@ def export_catalog(
     session: requests.Session,
     resume: bool = False,
     ignore_duplicate_ids: bool = False,
+    collection_ignore_duplicate_ids: bool = False,
     collections: Iterable[re.Pattern[str] | str] | None = None,
 ) -> None:
     """Export a STAC catalog to files on disk."""
@@ -178,6 +204,14 @@ def export_catalog(
     collection_patterns = []
     for col in collections if collections else []:
         if isinstance(col, str):  # convenience plain ID to regex
-            col = re.compile(f"^{col.strip('^$')}$")
+            col = re.compile(col)
         collection_patterns.append(col)
-    _export_catalog(client, directory, start_time, resume, ignore_duplicate_ids, collection_patterns)
+    _export_catalog(
+        client,
+        directory,
+        start_time,
+        resume,
+        ignore_duplicate_ids,
+        collection_ignore_duplicate_ids,
+        collection_patterns,
+    )

@@ -72,15 +72,22 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     export_parser.add_argument(
         "--ignore-duplicate-ids",
         action="store_true",
-        help="Do not raise an error if STAC items with the same ids are found in a collection.",
+        help="Do not raise an error if STAC Items with the same IDs are found in a collection.",
+    )
+    export_parser.add_argument(
+        "--collection-ignore-duplicate-ids",
+        action="store_true",
+        help="Do not raise an error if STAC Collections with the same IDs are found catalog(s).",
     )
     export_parser.add_argument(
         "-c",
         "--collection",
         nargs="*",
         help=(
-            "Only export collections whose ID matches the regex pattern. "
-            "A plain ID without pattern will only match the exact collection."
+            "Only export collections whose ID matches the entire regex pattern. "
+            "A plain ID without pattern will only match the exact collection. "
+            "If a search pattern is needed, employ adequate regexes as needed. "
+            "Multiple collection IDs can be provided. "
         ),
     )
 
@@ -125,6 +132,7 @@ def run(ns: argparse.Namespace) -> int:
                     session,
                     ns.resume,
                     ns.ignore_duplicate_ids,
+                    ns.collection_ignore_duplicate_ids,
                     ns.collection,
                 )
                 or 0
