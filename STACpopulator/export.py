@@ -167,7 +167,7 @@ def _export_catalog(
                 continue
             else:
                 raise DuplicateIDError(
-                    f"Duplicate collection ID {child.id} was already processed and were not allowed. "
+                    f"Duplicate collection ID {child.id} was already processed and was not allowed. "
                     f"Refine your search criteria or disable duplicate safeguard with the provided option."
                 )
         found_cols.add(child.id)

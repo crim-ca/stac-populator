@@ -77,7 +77,7 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     export_parser.add_argument(
         "--collection-ignore-duplicate-ids",
         action="store_true",
-        help="Do not raise an error if STAC Collections with the same IDs are found catalog(s).",
+        help="Do not raise an error if STAC Collections with the same IDs are found in catalog(s).",
     )
     export_parser.add_argument(
         "-c",
