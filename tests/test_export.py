@@ -1,4 +1,5 @@
 import json
+import re
 
 import pystac_client
 import pytest
@@ -138,34 +139,195 @@ def test_export_catalog_nested_no_duplicates(tmp_path, catalog_nested_info):
         export_catalog(tmp_path, url, session, ignore_duplicate_ids=False)
 
 
+@pytest.fixture
+def catalog_nested_info_without_duplicates():
+    """
+    Expected result for the export when ignoring duplicates.
+
+    Because the catalog ``usgs_galileo_catalog`` contains ``../usgs_galileo_controlled_images_catalog/catalog.json``
+    and `../usgs_galileo_controlled_images_catalog/catalog.json.1``, each refer to the same ID,
+    (i.e.: ``usgs_galileo_controlled_images_catalog``). At this nesting level, there is no distinction between
+    a "collection of catalog" and a "collection of items". They are just "directory" collections.
+    Therefore, although they have nested child items that differ, they get filtered preemptively by higher-level match.
+    Commented ones are the items and collections that happen to be under ``catalog.json.1``.
+    """
+    url = "https://asc-jupiter.s3.us-west-2.amazonaws.com/catalog.json"
+    file_structure = {
+        "usgs_jupiter_catalog",
+        "usgs_jupiter_catalog/catalog.json",
+        "usgs_jupiter_catalog/usgs_europa_catalog",
+        "usgs_jupiter_catalog/usgs_europa_catalog/catalog.json",
+        "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog",
+        "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/catalog.json",
+        "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog",
+        "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/catalog.json",
+        # "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/catalog.json.1",
+        # "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_images_voy1_voy2_galileo_equi",
+        # "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_images_voy1_voy2_galileo_equi/collection.json",
+        # "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_images_voy1_voy2_galileo_equi/item-s0349875100.json",
+        # "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_images_voy1_voy2_galileo_npola",
+        # "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_images_voy1_voy2_galileo_npola/collection.json",
+        # "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_images_voy1_voy2_galileo_npola/item-s0349875100.json",
+        # "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_images_voy1_voy2_galileo_spola",
+        # "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_images_voy1_voy2_galileo_spola/collection.json",
+        # "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_images_voy1_voy2_galileo_spola/item-s0360063900.json",
+        "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_mosaics_voy1_voy2_galileo_equi",
+        "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_mosaics_voy1_voy2_galileo_equi/collection.json",
+        "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_mosaics_voy1_voy2_galileo_equi/item-10ESGLOBAL01.json",
+        "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_mosaics_voy1_voy2_galileo_npola",
+        "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_mosaics_voy1_voy2_galileo_npola/collection.json",
+        "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_mosaics_voy1_voy2_galileo_npola/item-14ESGLOCOL01.json",
+        "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_mosaics_voy1_voy2_galileo_spola",
+        "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_mosaics_voy1_voy2_galileo_spola/collection.json",
+        "usgs_jupiter_catalog/usgs_europa_catalog/usgs_galileo_catalog/usgs_galileo_controlled_images_catalog/usgs_controlled_mosaics_voy1_voy2_galileo_spola/item-10ESGLOBAL01.json",
+    }
+    return url, file_structure
+
+
 @pytest.mark.vcr("test_export_catalog_nested.yaml")
-def test_export_catalog_nested_with_duplicates(tmp_path, catalog_nested_info):
-    url, expected = catalog_nested_info
+def test_export_catalog_nested_ignore_duplicates(tmp_path, catalog_nested_info_without_duplicates):
+    url, expected = catalog_nested_info_without_duplicates
     with (
         requests.Session() as session,
         pytest.warns((pystac_client.warnings.FallbackToPystac, pystac_client.warnings.NoConformsTo)),
     ):
-        export_catalog(tmp_path, url, session, ignore_duplicate_ids=True)
+        export_catalog(tmp_path, url, session, ignore_duplicate_ids=True, collection_ignore_duplicate_ids=True)
     assert expected == {str(p.relative_to(tmp_path)) for p in tmp_path.rglob("*")}
     _test_file_types(tmp_path)
 
 
-@pytest.mark.vcr("test_export_catalog_nested.yaml")
-def test_export_catalog_nested_with_many_duplicates(tmp_path, catalog_nested_info):
-    url, _ = catalog_nested_info
-    base_path = (
-        tmp_path
-        / "usgs_jupiter_catalog"
-        / "usgs_europa_catalog"
-        / "usgs_galileo_catalog"
-        / "usgs_galileo_controlled_images_catalog"
-    )
-    base_path.mkdir(parents=True)
-    for i in range(1, 20):
-        (base_path / f"catalog.json.{i}").touch()
-    with (
-        requests.Session() as session,
-        pytest.warns((pystac_client.warnings.FallbackToPystac, pystac_client.warnings.NoConformsTo)),
-    ):
-        export_catalog(tmp_path, url, session, resume=True, ignore_duplicate_ids=True)
-    assert (base_path / "catalog.json.20").exists()
+@pytest.mark.vcr("test_export_api.yaml")
+def test_export_api_with_collection_filter_exact_match(tmp_path, catalog_api_info):
+    url, _ = catalog_api_info
+    expected_collections = {"EuroSAT-subset-train", "montreal_2023"}
+    expected_structure = {
+        "stac-fastapi",
+        "stac-fastapi/catalog.json",
+        "stac-fastapi/EuroSAT-subset-train",
+        "stac-fastapi/EuroSAT-subset-train/collection.json",
+        "stac-fastapi/EuroSAT-subset-train/item-EuroSAT-subset-train-sample-59-class-SeaLake.json",
+        "stac-fastapi/montreal_2023",
+        "stac-fastapi/montreal_2023/collection.json",
+        "stac-fastapi/montreal_2023/item-wildfire_timestamp_2023_08_30_12_00_00.json",
+    }
+    with requests.Session() as session:
+        export_catalog(tmp_path, url, session, collections=expected_collections)
+    result_structure = {str(p.relative_to(tmp_path)) for p in tmp_path.rglob("*")}
+    assert result_structure == expected_structure
+    _test_file_types(tmp_path)
+
+
+@pytest.mark.vcr("test_export_api.yaml")
+def test_export_api_with_collection_filter_regex_pattern(tmp_path, catalog_api_info):
+    url, _ = catalog_api_info
+    pattern = re.compile(r"EuroSAT-subset-.*")
+    expected_structure = {
+        "stac-fastapi",
+        "stac-fastapi/catalog.json",
+        "stac-fastapi/EuroSAT-subset-train",
+        "stac-fastapi/EuroSAT-subset-train/collection.json",
+        "stac-fastapi/EuroSAT-subset-train/item-EuroSAT-subset-train-sample-59-class-SeaLake.json",
+        "stac-fastapi/EuroSAT-subset-validate",
+        "stac-fastapi/EuroSAT-subset-validate/collection.json",
+        "stac-fastapi/EuroSAT-subset-validate/item-EuroSAT-subset-validate-sample-19-class-SeaLake.json",
+        "stac-fastapi/EuroSAT-subset-test",
+        "stac-fastapi/EuroSAT-subset-test/collection.json",
+        "stac-fastapi/EuroSAT-subset-test/item-EuroSAT-subset-test-sample-19-class-SeaLake.json",
+    }
+    with requests.Session() as session:
+        export_catalog(tmp_path, url, session, collections=[pattern])
+    result_structure = {str(p.relative_to(tmp_path)) for p in tmp_path.rglob("*")}
+    assert result_structure == expected_structure
+    _test_file_types(tmp_path)
+
+
+@pytest.mark.vcr("test_export_api.yaml")
+def test_export_api_with_collection_filter_mixed_patterns(tmp_path, catalog_api_info):
+    url, _ = catalog_api_info
+    patterns = [
+        re.compile(r"EuroSAT-full-.*"),
+        "newyork_2024",
+    ]
+    expected_structure = {
+        "stac-fastapi",
+        "stac-fastapi/catalog.json",
+        "stac-fastapi/EuroSAT-full-train",
+        "stac-fastapi/EuroSAT-full-train/collection.json",
+        "stac-fastapi/EuroSAT-full-train/item-EuroSAT-full-train-sample-16199-class-SeaLake.json",
+        "stac-fastapi/EuroSAT-full-test",
+        "stac-fastapi/EuroSAT-full-test/collection.json",
+        "stac-fastapi/EuroSAT-full-test/item-EuroSAT-full-test-sample-5399-class-SeaLake.json",
+        "stac-fastapi/EuroSAT-full-validate",
+        "stac-fastapi/EuroSAT-full-validate/collection.json",
+        "stac-fastapi/EuroSAT-full-validate/item-EuroSAT-full-validate-sample-5399-class-SeaLake.json",
+        "stac-fastapi/newyork_2024",
+        "stac-fastapi/newyork_2024/collection.json",
+        "stac-fastapi/newyork_2024/item-wildfire_timestamp_2024_06_30_12_00_00.json",
+    }
+    with requests.Session() as session:
+        export_catalog(tmp_path, url, session, collections=patterns)
+    result_structure = {str(p.relative_to(tmp_path)) for p in tmp_path.rglob("*")}
+    assert result_structure == expected_structure
+    _test_file_types(tmp_path)
+
+
+@pytest.mark.vcr("test_export_api.yaml")
+def test_export_api_with_collection_filter_partial_match_regex(tmp_path, catalog_api_info):
+    url, _ = catalog_api_info
+    pattern = re.compile(r".*_202[34]")
+    expected_structure = {
+        "stac-fastapi",
+        "stac-fastapi/catalog.json",
+        "stac-fastapi/montreal_2023",
+        "stac-fastapi/montreal_2023/collection.json",
+        "stac-fastapi/montreal_2023/item-wildfire_timestamp_2023_08_30_12_00_00.json",
+        "stac-fastapi/newyork_2024",
+        "stac-fastapi/newyork_2024/collection.json",
+        "stac-fastapi/newyork_2024/item-wildfire_timestamp_2024_06_30_12_00_00.json",
+    }
+    with requests.Session() as session:
+        export_catalog(tmp_path, url, session, collections=[pattern])
+    result_structure = {str(p.relative_to(tmp_path)) for p in tmp_path.rglob("*")}
+    assert result_structure == expected_structure
+    _test_file_types(tmp_path)
+
+
+@pytest.mark.vcr("test_export_api.yaml")
+def test_export_api_with_collection_filter_no_match(tmp_path, catalog_api_info):
+    url, _ = catalog_api_info
+    pattern = re.compile(r"NonExistentCollection-.*")
+    expected_structure = {
+        "stac-fastapi",
+        "stac-fastapi/catalog.json",
+    }
+    with requests.Session() as session:
+        export_catalog(tmp_path, url, session, collections=[pattern])
+    result_structure = {str(p.relative_to(tmp_path)) for p in tmp_path.rglob("*")}
+    assert result_structure == expected_structure
+
+
+@pytest.mark.vcr("test_export_api.yaml")
+def test_export_api_with_collection_filter_complex_regex(tmp_path, catalog_api_info):
+    url, _ = catalog_api_info
+    pattern = re.compile(r"EuroSAT-(subset|full)-(train|validate)")
+    expected_structure = {
+        "stac-fastapi",
+        "stac-fastapi/catalog.json",
+        "stac-fastapi/EuroSAT-subset-train",
+        "stac-fastapi/EuroSAT-subset-train/collection.json",
+        "stac-fastapi/EuroSAT-subset-train/item-EuroSAT-subset-train-sample-59-class-SeaLake.json",
+        "stac-fastapi/EuroSAT-subset-validate",
+        "stac-fastapi/EuroSAT-subset-validate/collection.json",
+        "stac-fastapi/EuroSAT-subset-validate/item-EuroSAT-subset-validate-sample-19-class-SeaLake.json",
+        "stac-fastapi/EuroSAT-full-train",
+        "stac-fastapi/EuroSAT-full-train/collection.json",
+        "stac-fastapi/EuroSAT-full-train/item-EuroSAT-full-train-sample-16199-class-SeaLake.json",
+        "stac-fastapi/EuroSAT-full-validate",
+        "stac-fastapi/EuroSAT-full-validate/collection.json",
+        "stac-fastapi/EuroSAT-full-validate/item-EuroSAT-full-validate-sample-5399-class-SeaLake.json",
+    }
+    with requests.Session() as session:
+        export_catalog(tmp_path, url, session, collections=[pattern])
+    result_structure = {str(p.relative_to(tmp_path)) for p in tmp_path.rglob("*")}
+    assert result_structure == expected_structure
+    _test_file_types(tmp_path)

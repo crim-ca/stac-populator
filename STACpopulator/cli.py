@@ -67,12 +67,28 @@ def add_parser_args(parser: argparse.ArgumentParser) -> None:
     )
     export_parser = commands_subparser.add_parser("export", description="Export a STAC catalog to JSON files on disk.")
     export_parser.add_argument("stac_host", help="STAC API URL")
-    export_parser.add_argument("directory", type=str, help="Path to a directory to write STAC catalog contents.")
+    export_parser.add_argument("directory", help="Path to a directory to write STAC catalog contents.")
     export_parser.add_argument("-r", "--resume", action="store_true", help="Resume a partial download.")
     export_parser.add_argument(
         "--ignore-duplicate-ids",
         action="store_true",
-        help="Do not raise an error if STAC items with the same ids are found in a collection.",
+        help="Do not raise an error if STAC Items with the same IDs are found in a collection.",
+    )
+    export_parser.add_argument(
+        "--collection-ignore-duplicate-ids",
+        action="store_true",
+        help="Do not raise an error if STAC Collections with the same IDs are found in catalog(s).",
+    )
+    export_parser.add_argument(
+        "-c",
+        "--collection",
+        nargs="*",
+        help=(
+            "Only export collections whose ID matches the entire regex pattern. "
+            "A plain ID without pattern will only match the exact collection. "
+            "If a search pattern is needed, employ adequate regexes as needed. "
+            "Multiple collection IDs can be provided. "
+        ),
     )
 
 
@@ -109,7 +125,18 @@ def run(ns: argparse.Namespace) -> int:
         elif ns.command == "update_collection":
             return update_api_collection(ns.mode, ns.stac_collection_uri, ns.exclude_summary) or 0
         else:
-            return export_catalog(ns.directory, ns.stac_host, session, ns.resume, ns.ignore_duplicate_ids) or 0
+            return (
+                export_catalog(
+                    ns.directory,
+                    ns.stac_host,
+                    session,
+                    ns.resume,
+                    ns.ignore_duplicate_ids,
+                    ns.collection_ignore_duplicate_ids,
+                    ns.collection,
+                )
+                or 0
+            )
 
 
 def main(*args: str) -> int:
