@@ -6,7 +6,7 @@ repos:
     rev: v0.48.0
     hooks:
       - id: markdownlint
-        args: [--fix, --config, pyproject.toml, --configPointer, /tool/markdownlint, "**/*.md"]
+        args: [--fix, --config, pyproject.toml, --configPointer, /tool/markdownlint, "--ignore-path", ".gitignore", "**/*.md"]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:

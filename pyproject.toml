@@ -85,7 +85,9 @@ replace = "LABEL version=\"{new_version}\""
 
 [[tool.bumpversion.files]]
 filename = "CHANGES.md"
-search = "## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)"
+search = """
+## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
+"""
 replace = """
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
