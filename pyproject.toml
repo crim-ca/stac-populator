@@ -132,7 +132,7 @@ MD033.allowed_elements = ["br"]
 
 [project]
 name = "STACpopulator"
-version = "1.15.1"
+version = "0.15.0"
 description = "Utility to populate STAC Catalog, Collections and Items from various dataset/catalog sources."
 requires-python = ">=3.10,<4"
 dependencies = [
