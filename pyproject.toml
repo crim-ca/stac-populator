@@ -85,13 +85,16 @@ replace = "LABEL version=\"{new_version}\""
 
 [[tool.bumpversion.files]]
 filename = "CHANGES.md"
-search = "## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)"
+search = """
+## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
+"""
 replace = """
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
 <!-- insert list items of new changes here -->
 
-## [{new_version}](https://github.com/crim-ca/stac-populator/tree/{new_version}) ({now:%Y-%m-%d})"""
+## [{new_version}](https://github.com/crim-ca/stac-populator/tree/{new_version}) ({now:%Y-%m-%d})
+"""
 
 [[tool.bumpversion.files]]
 filename = "pyproject.toml"
@@ -129,7 +132,7 @@ MD033.allowed_elements = ["br"]
 
 [project]
 name = "STACpopulator"
-version = "0.15.0"
+version = "1.15.1"
 description = "Utility to populate STAC Catalog, Collections and Items from various dataset/catalog sources."
 requires-python = ">=3.10,<4"
 dependencies = [

@@ -2,7 +2,7 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
-* fix interaction between pre-commit hooks and bump-my-version.
+* Fix interaction between pre-commit hooks and bump-my-version.
 
 ## [0.15.0](https://github.com/crim-ca/stac-populator/tree/0.15.0) (2026-04-21)
 
