@@ -3,6 +3,7 @@
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
 * Fix interaction between pre-commit hooks and bump-my-version.
+* Warn user if using outdated PROJ library that handles cylindrical CRS incorrectly.
 
 ## [0.15.0](https://github.com/crim-ca/stac-populator/tree/0.15.0) (2026-04-21)
 
