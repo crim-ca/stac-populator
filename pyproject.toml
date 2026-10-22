@@ -204,5 +204,6 @@ dev = [
     "pystac[validation]",
     "ruff~=0.15",
     "pre-commit~=4.1",
-    "pytest-recording~=0.13"
+    "pytest-recording~=0.13",
+    "vcrpy>=8.2.0"
 ]
