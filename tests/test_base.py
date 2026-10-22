@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import datetime as dt
+from typing import ClassVar
 
 from STACpopulator.extensions.base import BaseSTAC, ExtensionHelper
 
@@ -10,7 +11,7 @@ from STACpopulator.extensions.base import BaseSTAC, ExtensionHelper
 class ExTest(ExtensionHelper):
     f: float
     n: float
-    _prefix: str = "ex"
+    _prefix: ClassVar[str] = "ex"
 
 
 # Customize the THREDDSCatalogDataModel
@@ -25,6 +26,7 @@ class _TestDataModel(BaseSTAC):
 
 
 def test_extension():
+    """Tests that class creation preserve and resolve the configured prefix on STAC properties."""
     geom = {"type": "Polygon", "coordinates": [[[0, 0], [0, 1], [1, 1], [1, 0], [0, 0]]]}
     model = _TestDataModel(
         id="test", geometry=geom, bbox=[0, 0, 1, 1], datetime=dt.datetime(2021, 1, 1), ex={"f": 1.0, "n": float("nan")}

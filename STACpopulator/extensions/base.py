@@ -32,7 +32,7 @@ import types
 from abc import abstractmethod
 from datetime import datetime as Datetime
 from pathlib import Path
-from typing import Any, Generic, Optional, Type, TypeVar, Union, cast
+from typing import Any, ClassVar, Generic, Optional, Type, TypeVar, Union, cast
 
 import jsonschema
 import pystac
@@ -40,7 +40,6 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     Field,
-    FilePath,
     PrivateAttr,
     create_model,
     model_validator,
@@ -75,7 +74,27 @@ class Helper:
         pass
 
 
-class ExtensionHelper(BaseModel, Helper):
+class ExtensionHelperMeta(type(BaseModel)):
+    """Configure prefixed aliases before Pydantic builds a helper model."""
+
+    def __new__(
+        mcs: type,
+        name: str,
+        bases: tuple[type[Any], ...],
+        namespace: dict[str, Any],
+        **kwargs: Any,
+    ) -> type:
+        """Create a helper class with aliases derived from its prefix."""
+        prefix = namespace.get("_prefix")
+        if isinstance(prefix, str):
+            config = dict(namespace.get("model_config", {}))
+            config["alias_generator"] = lambda key: f"{prefix}:{key}"
+            namespace["model_config"] = ConfigDict(**config)
+
+        return super().__new__(mcs, name, bases, namespace, **kwargs)
+
+
+class ExtensionHelper(BaseModel, Helper, metaclass=ExtensionHelperMeta):
     """Base class for dataset properties going into the catalog.
 
     Subclass this with attributes.
@@ -90,26 +109,18 @@ class ExtensionHelper(BaseModel, Helper):
         Properties not meant to be validated by json schema, but still included in the data model.
     """
 
-    _prefix: str = PrivateAttr()
-    _schema_uri: FilePath = PrivateAttr(None)
-    _schema_exclude: list[str] = PrivateAttr([])
+    _prefix: ClassVar[str | None] = None
+    _schema_uri: ClassVar[Path | None] = None
+    _schema_exclude: ClassVar[list[str]] = []
 
     model_config = ConfigDict(populate_by_name=True, extra="ignore", ser_json_inf_nan="strings")
-
-    @classmethod
-    def __init_subclass__(cls, **kwargs) -> None:
-        """Automatically set an alias generator from the `_prefix`."""
-        prefix = cls._prefix.default
-
-        if prefix is not None:
-            cls.model_config["alias_generator"] = lambda key: f"{prefix}:{key}"
 
     @model_validator(mode="before")
     @classmethod
     def validate_jsonschema(cls, data: dict) -> dict:
         """Validate the data model against the json schema, if given."""
         # Load schema
-        uri = cls._schema_uri.default
+        uri = cls._schema_uri
         if uri is not None:
             with open(uri) as f:
                 schema = json.load(f)
@@ -117,7 +128,7 @@ class ExtensionHelper(BaseModel, Helper):
             validator_cls.check_schema(schema)
             validator = validator_cls(schema)
 
-            attrs = {f"{cls._prefix.default}:{k}": v for (k, v) in data.items() if k not in cls._schema_exclude.default}
+            attrs = {f"{cls._prefix}:{k}": v for (k, v) in data.items() if k not in cls._schema_exclude}
             errors = list(validator.iter_errors(attrs))
             if errors:
                 raise ValueError(errors)
