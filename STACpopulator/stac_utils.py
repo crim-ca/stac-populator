@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import os
 import re
+import warnings
 from enum import Enum
 from functools import cached_property
 from typing import Any, List, Literal, MutableMapping, Type, TypedDict, Union
@@ -12,6 +13,7 @@ import pyproj
 import pyproj.crs
 import pystac
 import yaml
+from packaging import version
 from pydantic import ConfigDict, field_validator
 from pydantic.dataclasses import dataclass
 
@@ -116,6 +118,10 @@ class GeoData:
         If the coordinates are 3 dimensional, the CRS EPSG:4979 is used; otherwise EPSG:4326
         is used.
         """
+        if version.parse(pyproj.__version__) < version.parse("3.8.0"):
+            warnings.warn(
+                "transformations for cylindrical CRS may be incorrect. See https://github.com/OSGeo/PROJ/pull/4328."
+            )
         transformer = pyproj.Transformer.from_crs(self.crs, ("EPSG:4979" if self.z else "EPSG:4326"), always_xy=True)
         coords = ((self.x, self.y) if self.x_is_longitude else (self.y, self.x)) + (self.z,)
         lon, lat, *vert = transformer.transform(*coords)
