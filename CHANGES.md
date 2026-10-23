@@ -3,7 +3,7 @@
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
 * Adjust `ExtensionHelper._prefix` to use the `ClassVar[str]` annotation to reflect how it is used by classes.
-* Replace `__init_subclass__` by `__new__` to setup `alias_generator` that prepares the `pydantic` model with 
+* Replace `__init_subclass__` by `__new__` to setup `alias_generator` that prepares the `pydantic` model with
   STAC extension prefixes to align with `ClassVar` and avoid depending on internal field attributes of `pydantic`.
 * Update to `pydantic~=2.14` requirement. The version was allowed with previous requirements, but internal changes
   to `pydantic` cause the prepration of the STAC prefix attribute to crash.
