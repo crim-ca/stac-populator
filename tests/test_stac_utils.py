@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 from unittest.mock import patch
 
@@ -142,10 +143,11 @@ class TestGeoData:
             out = geo.to_wgs84
             assert out["lon"] == pytest.approx([100, -80])
 
+        @pytest.mark.skipif(sys.version_info < (3, 12), reason="A bug in a dependency (pyproj) means this will fail.")
         def test_from_cylindrical(self, basic_data):
             geo = GeoData(**{**basic_data, "x": [10044, 33000], "y": [-235544, 909900], "crs": pyproj.CRS(4087)})
             out = geo.to_wgs84
-            assert out["lat"] == pytest.approx([-2.1159277528264853, 8.173770770203525])
+            assert out["lat"] == pytest.approx([-2.1301781880832484, 8.228292131056463])
             assert out["lon"] == pytest.approx([0.09022678713696472, 0.29644404375944206])
 
         def test_from_NAD83(self, basic_data):

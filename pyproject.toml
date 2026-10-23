@@ -85,7 +85,9 @@ replace = "LABEL version=\"{new_version}\""
 
 [[tool.bumpversion.files]]
 filename = "CHANGES.md"
-search = "## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)"
+search = """
+## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
+"""
 replace = """
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
@@ -137,14 +139,15 @@ dependencies = [
     "colorlog~=6.10",
     "pyyaml~=6.0",
     "siphon~=0.10",
-    "pystac~=1.14.3",
+    "pystac>=1.14.3,<1.16.0",
     "pystac-client~=0.9",
     "xncml~=0.3",  # python 3.12 support
     "pydantic~=2.14",
     "pyessv~=0.9",
     "requests~=2.33",
     "lxml~=6.0",
-    "pyproj~=3.7"
+    "pyproj~=3.7",
+    'pyproj~=3.8;python_version>="3.12"'
 ]
 readme = "README.md"
 license = { file = "LICENSE" }
