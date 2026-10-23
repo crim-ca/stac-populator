@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
+from typing import ClassVar
 
-from pydantic import FilePath, model_validator
+from pydantic import model_validator
 
 from STACpopulator.extensions.base import ExtensionHelper
 from STACpopulator.extensions.thredds import THREDDSCatalogDataModel
@@ -44,9 +45,11 @@ class CordexCmip6(ExtensionHelper):
     # Extra fields
     external_variables: str | list[str]
 
-    _prefix = "cordex6"
+    _prefix: ClassVar[str] = "cordex6"
     # Note that this is not a STAC item schema, but a schema for the global attributes of the CMIP6 data.
-    _schema_uri: FilePath = Path(__file__).parent / "schemas" / "cordex6" / "cmip6-cordex-global-attrs-schema.json"
+    _schema_uri: ClassVar[Path] = (
+        Path(__file__).parent / "schemas" / "cordex6" / "cmip6-cordex-global-attrs-schema.json"
+    )
 
 
 # Customize the THREDDSCatalogDataModel

@@ -142,7 +142,7 @@ dependencies = [
     "pystac>=1.14.3,<1.16.0",
     "pystac-client~=0.9",
     "xncml~=0.3",  # python 3.12 support
-    "pydantic~=2.10",
+    "pydantic~=2.14",
     "pyessv~=0.9",
     "requests~=2.33",
     "lxml~=6.0",
@@ -207,5 +207,6 @@ dev = [
     "pystac[validation]",
     "ruff~=0.15",
     "pre-commit~=4.1",
-    "pytest-recording~=0.13"
+    "pytest-recording~=0.13",
+    "vcrpy>=8.2.0"
 ]

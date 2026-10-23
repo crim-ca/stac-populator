@@ -5,6 +5,7 @@ from __future__ import annotations
 import functools
 from typing import (
     Any,
+    ClassVar,
     Dict,
     Generic,
     Iterable,
@@ -46,7 +47,7 @@ class CFParameter(BaseModel):
 class CFHelper(ExtensionHelper):
     """CFHelper."""
 
-    _prefix: str = "cf"
+    _prefix: ClassVar[str] = "cf"
     variables: Dict[str, Any]
 
     @functools.cached_property
