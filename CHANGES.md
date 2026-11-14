@@ -2,6 +2,10 @@
 
 ## [Unreleased](https://github.com/crim-ca/stac-populator) (latest)
 
+<!-- insert list items of new changes here -->
+
+## [0.16.0](https://github.com/crim-ca/stac-populator/tree/0.16.0) (2026-11-13)
+
 * Adjust `ExtensionHelper._prefix` to use the `ClassVar[str]` annotation to reflect how it is used by classes.
 * Replace `__init_subclass__` by `__new__` to setup `alias_generator` that prepares the `pydantic` model with
   STAC extension prefixes to align with `ClassVar` and avoid depending on internal field attributes of `pydantic`.
@@ -10,6 +14,7 @@
 * Fix `make setup-pyessv-archive` assuming certain directories exist.
 * Fix interaction between pre-commit hooks and bump-my-version.
 * Warn user if using outdated PROJ library that handles cylindrical CRS incorrectly.
+* Multiple dependency updates.
 
 ## [0.15.0](https://github.com/crim-ca/stac-populator/tree/0.15.0) (2026-04-21)
 
